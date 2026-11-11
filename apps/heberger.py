@@ -2,7 +2,7 @@
   1. après media_upload :  python3 ~/Documents/SuperApps/heberger.py <fichier> '<upload_url>' <content_type>
   2. après media_confirm : python3 ~/Documents/SuperApps/heberger.py --verifier '<url publique>'
 Pourquoi : le robot (publier.py) écrivait le curl à sa façon (« curl -s -o /dev/null -X PUT… ») et la permission
-« curl -X PUT » le refusait : rien ne partait (CAM20062, 29/10 19:18). Une seule commande fixe = plus de refus.
+« curl -X PUT » le refusait : rien ne partait (RUSH, 29/10 19:18). Une seule commande fixe = plus de refus.
 Sortie : « PUT 200 » ou « URL 200 ». Code 1 si ce n'est pas 200.
 """
 import subprocess

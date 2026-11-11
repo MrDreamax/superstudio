@@ -42,7 +42,7 @@ V = {v["id"]: v for v in json.load(open("videos_courtes.json"))}
 L = {l["id"]: l for l in json.load(open("moments_ids.json"))} if os.path.exists("moments_ids.json") else {}
 dup = json.load(open("doublons_biblio.json"))
 
-# Da Nang 21-22/10/2025 : la biblio a déjà 167 photos de cette séance -> on écarte les scènes à moins de 60 s d'une photo déjà en biblio
+# Séance photo 21-22/10/2025 : la biblio a déjà 167 photos de cette séance -> on écarte les scènes à moins de 60 s d'une photo déjà en biblio
 lib_ts = []
 for r in csv.DictReader(open(f"{B}/_Catalogue/_INDEX.csv", encoding="utf-8")):
     if r["date_tournage"] in ("2025-10-21", "2025-10-22") and r["dossier"].startswith("PHOTOS"):
@@ -62,8 +62,8 @@ for iid, x in kept.items():
     src = P.get(iid) or V.get(iid) or L.get(iid)
     if not src: skipped.append((iid, "id inconnu")); continue
     if src["path"] in dup: skipped.append((iid, "déjà en biblio")); continue
-    if iid.startswith("P") and src["dossier"] == "Da Nang" and any(abs(src["ts"] - t) < 60 for t in lib_ts):
-        skipped.append((iid, "séance Da Nang déjà en biblio")); continue
+    if iid.startswith("P") and src["dossier"] == "Séance photo" and any(abs(src["ts"] - t) < 60 for t in lib_ts):
+        skipped.append((iid, "séance Séance photo déjà en biblio")); continue
     th = src.get("thumb") or src.get("img")
     try:
         h = dhash(Image.open(th))

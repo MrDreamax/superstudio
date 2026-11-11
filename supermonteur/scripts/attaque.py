@@ -1,4 +1,4 @@
-"""Temps forts d'une musique : où la faire démarrer pour qu'elle « frappe » dès la 1re image (28/10, CAM20062 :
+"""Temps forts d'une musique : où la faire démarrer pour qu'elle « frappe » dès la 1re image (28/10, RUSH :
 « trouve le moment de la musique qui a de l'impact », au lieu d'un bruitage ajouté).
 
     python3 attaque.py <musique> [début] [fin]     -> les 5 plus fortes attaques entre début et fin (défaut 0-60 s)

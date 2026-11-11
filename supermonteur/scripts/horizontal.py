@@ -3,9 +3,9 @@ sous-titres blancs en minuscules SF Pro sur l'image (02/11), B-rolls de vie, mus
   python3 horizontal.py derush <rush>   (dans le dossier du reel : plages.json + words.rush.json -> cut.mp4, cut.segments.json, cut.words.json)
   python3 horizontal.py teaser      (champ teaser de horizontal.json -> met le meilleur moment en ouverture dans cut.mp4, à lancer une fois avant le rendu)
   python3 horizontal.py             (horizontal.json -> final.mp4, plan.json pour le Gardien, ~20 s)
-horizontal.json = {"titre": "Ne pas être viral m'a rapporté 6k€", "jaune": ["6 000 euros"], "musique": "In This Shirt.mp3", "debut": 9.21, "ecart": 15, "lignes": [["je vous dois des excuses", 5], ...],
+horizontal.json = {"titre": "3 erreurs qui tuent tes reels", "jaune": ["3 erreurs"], "musique": "In This Shirt.mp3", "debut": 9.21, "ecart": 15, "lignes": [["voici mon conseil", 5], ...],
   "brolls": [{"src": "09-SOCIAL/x.mp4", "from": 1.0, "de": "texte d'une ligne", "a": {"coupe": 1, "decale": 0.3}}, ...]}
-teaser = {"de": "j'ai reçu", "a": "six mille euros", "lignes": [["j'ai reçu un virement", 4], ["près de 6 000 euros", 5]]} : de / a = mots exacts de la transcription.
+teaser = {"de": "voici", "a": "trois erreurs", "lignes": [["voici les erreurs", 4], ["qui tuent tes reels", 5]]} : de / a = mots exacts de la transcription.
 lignes = texte + nombre de mots transcrits couverts (28 signes max), coupé seul en morceaux de 4 mots max à l'écran. de / a = le texte d'une ligne (son 1er mot) ou {"coupe": n, "decale": s}.
 """
 import csv, datetime, json, os, re, shutil, subprocess, sys

@@ -2,7 +2,7 @@
 - [31/10] Un défaut ne compte que s'il existe pour le style choisi : l’utilisateur choisit son style reel par reel, donc un reel simple sans motion, sans b-roll ou sans titre n'est PAS un défaut.
 - [31/10] Ne jamais demander d'étalonner son image, ni d'ajouter du motion, des b-rolls ou des effets à un reel qui n'en a pas.
 - [30/10] Entre deux phrases, y a-t-il un blanc qu'on entend ? Oui = défaut : il veut des coupes « plus serrées », au ras de la voix.
-- [22/10] Chaque mot s'entend-il en entier, avec sa dernière syllabe et ses petites consonnes finales (« script », « Dreamax », « d'avance ») ? Un mot mangé = défaut.
+- [22/10] Chaque mot s'entend-il en entier, avec sa dernière syllabe et ses petites consonnes finales (« script », « l’utilisateur », « d'avance ») ? Un mot mangé = défaut.
 - [21/10] Entend-on une respiration ou une inspiration avant une phrase ou après la dernière ? Oui = défaut (« enlève la respiration au début de chaque phrase »).
 - [20/10] Voit-on ou entend-on une micro-coupure, un saut, ou une image de la tête qui flashe entre deux plans ? Oui = défaut (« la vidéo bugue »).
 - [29/10] Une coupe tombe-t-elle en plein milieu d'une phrase ? Oui = défaut : on coupe au début ou à la fin d'une phrase.

@@ -50,7 +50,7 @@ Dossier : `<config.json → publication>/<AAAA-MM-JJ>-<slug>/` (date de publicat
  "youtube": {"titre": "...", "description": "..."},
  "tiktok": {"legende": "..."}}
 ```
-Comment l'écrire (modèle validé : `livrables/publication/2026-10-16-echantillon/fiche-publication.png`) :
+Comment l'écrire (modèle validé : `(exemple retiré)`) :
 - **Mot-clé** : 1 principal (ce que la cible tape : « formats Instagram », « trouver des clients coach »). En 1re ligne de légende, dit à voix haute (vérifie dans la transcription). Plus écrit sur la cover (cover sans texte, 17/10). Règles 6 à 10 de la fiche experts.
 - **Légende Instagram + Facebook (01/11, l’utilisateur : « juste une ligne super court »)** : UNE ligne super courte, 8 mots environ, avec le mot-clé. S'il y a un CTA DANS la vidéo, il devient la ligne 2 ; sinon, pas de CTA. **Aucun hashtag.** (Remplace la légende de 1 ou 2 phrases du 20/10.)
 - **CTA** : seulement s'il est dit dans la vidéo (champ `cta_dans_video`), repris tel quel en phrase 2. Sinon aucun. Celui du script si la vidéo le dit. Sinon `cta_defaut` de `config.json` (vide = `mot_cle` de 00-Moi/marque.json), dans le dosage que donne son carnet. Un mot-clé freebie seulement si son automatisation (ManyChat ou GoHighLevel) répond ; dans le doute : `cta_defaut`, et alerte dans la fiche.
@@ -110,6 +110,7 @@ Historique de toutes les vidéos terminées : `<config.json → archive_dir>/AAA
 - Une cover qui n'est pas une image du reel (28/10 : toujours la meilleure image du reel). Et jamais une cover générée de zéro par IA.
 - Répondre aux commentaires ou aux DM (la relation reste humaine).
 - Un trial reel (`TRIAL_REEL`) : supprimé le 29/10.
+- Programmer une STORY (07/11) : même s'il dit « publie », les stories, il les poste lui-même à la main (stickers, sondage, musique depuis le téléphone). Je livre les PNG 1080 × 1920 via SendUserFile et je m'arrête là.
 - Inventer une info absente du Brain ou de la vidéo : dis « je ne l'ai pas ».
 
 En cas d'échec (Metricool muet, vidéo introuvable, programmation refusée) : une ligne dans ~/Documents/Brain/04-Audits/erreurs-taches.md (date, tâche, erreur) et dis-le en une ligne.

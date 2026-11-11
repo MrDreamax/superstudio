@@ -2,7 +2,7 @@
   python3 serveur.py [port]
 Depuis le 28/10 : l’utilisateur fait la veille lui-même (il enregistre des reels sur Instagram). L'onglet « Mes enregistrés » les lit
 (insta.py, session Chrome), il coche, « Traduire » les envoie dans la veille du jour « AAAA-MM-JJ-enregistres ».
-Ce que le serveur fait seul : couverture, téléchargement yt-dlp, transcription faster-whisper « small », copie Brain.
+Ce que le serveur fait seul : couverture, téléchargement yt-dlp, transcription ElevenLabs (secours faster-whisper « small »), copie Brain.
 Ce que Claude fait (lancé par le serveur, ../ouvrier_claude.py, via sv.py) : chercher sur Apify, trier, choisir les 10,
 traduire les scripts. Le serveur ne publie rien et n'envoie rien.
 """
@@ -269,7 +269,7 @@ dans SA niche.
    - Le sujet : celui de l’utilisateur s'il en a donné un, sinon le problème n°1 de sa cible.
    - "hook" + "script" : le script de l’utilisateur, MÊME plan étape par étape, même rythme, longueur à ±30 %% de la référence. "hook" = la
      1re phrase, mot à mot. "script" = la suite, d'un seul bloc prêt à dire (sans le hook). Tutoiement, sa voix, phrases courtes,
-     zéro ton IA, aucun tiret cadratin. Rien d'inventé : un chiffre ou un résultat client qu'on n'a pas = [à remplir].
+     zéro ton IA, aucun tiret cadratin, AUCUN deux-points (« : », c'est dit à l'oral : « Numéro 1, le problème. »). Rien d'inventé : un chiffre ou un résultat client qu'on n'a pas = [à remplir].
      La référence finit par un appel à l'action : celui de l'utilisateur, lié au sujet.
    - Référence marquée « AUCUNE VOIX » (bureau + texte) : ouvre l'image indiquée avec Read et ajoute "ecran" = le texte à l'écran de
      la référence, mot pour mot, une ligne par texte, dans l'ordre. Alors "format" dit « bureau + texte, sans voix », "hook" = le 1er
@@ -367,6 +367,26 @@ def whisper():
     return MODELE["m"]
 
 
+def transcrire_veille(video):
+    """09/11 (l’utilisateur : « remplace Whisper par ElevenLabs ») : ElevenLabs d'abord (~2 s par reel au lieu de ~40 s, plus juste,
+    ~1 crédit par seconde de vidéo), langue détectée seule. Whisper du Mac seulement en secours (plus de crédit, pas d'internet)."""
+    sys.path.insert(0, os.path.expanduser("~/.claude/skills/supermonteur/scripts"))
+    try:
+        from mots import elevenlabs, segments
+        infos = {}
+        mots = elevenlabs(video, langue=None, infos=infos)
+        return segments(mots), infos.get("langue") or "?"
+    except Exception as e:
+        try:
+            from mots import _alerter
+            _alerter(e)  # bandeau rouge + notif iPhone si plus de crédit / clé refusée
+        except Exception:
+            pass
+        print(f"ElevenLabs indisponible ({e}) -> secours Whisper du Mac", file=sys.stderr)
+        segs, info = whisper().transcribe(video, beam_size=5, vad_filter=True)
+        return [{"debut": round(s.start, 1), "fin": round(s.end, 1), "texte": s.text.strip()} for s in segs if s.text.strip()], info.language
+
+
 def liberer_whisper():
     if MODELE.pop("m", None) is not None:
         gc.collect()  # Mac 8 Go : on rend la mémoire entre deux veilles
@@ -454,8 +474,7 @@ def preparer_reel(vid, r, i, n):
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", "1", "-i", video, "-frames:v", "1", "-vf", "scale=540:-2", mini],
                        timeout=60, env=ENV_FF)
         c.maj_reel(vid, r["code"], miniature=os.path.exists(mini))
-    segs, info = whisper().transcribe(video, beam_size=5, vad_filter=True)
-    segments = [{"debut": round(s.start, 1), "fin": round(s.end, 1), "texte": s.text.strip()} for s in segs if s.text.strip()]
+    segments, langue = transcrire_veille(video)
     sans_voix = r.get("transpose") and sum(len(s["texte"].split()) for s in segments) < 15
     if sans_voix:  # 28/10 nuit (l’utilisateur) : bureau + texte, sans voix → 12 images de la vidéo, Claude y lit le texte à l'écran
         planche = c.chemin(vid, "_ecran", r["code"] + ".jpg")
@@ -466,17 +485,17 @@ def preparer_reel(vid, r, i, n):
                         "-frames:v", "1", planche], timeout=120, env=ENV_FF)
         segments = []
     os.remove(video)  # disque du Mac : on ne garde que le texte et la miniature
-    trans = {"langue": "texte à l'écran" if sans_voix else info.language, "segments": segments}
+    trans = {"langue": "texte à l'écran" if sans_voix else langue, "segments": segments}
     raison = a_ecarter(c.veille(vid), dict(r, transcription=trans))
     if sans_voix:
         c.maj_reel(vid, r["code"], transcription=trans, statut="transcrit", sans_voix=True, marche="")
     elif raison:
         c.maj_reel(vid, r["code"], transcription=trans, statut="ecarte", raison=raison)
-    elif info.language == "fr" and not r.get("transpose"):  # transposé : même en français, Claude réécrit dans sa niche
+    elif langue == "fr" and not r.get("transpose"):  # transposé : même en français, Claude réécrit dans sa niche
         ph = phrases_fr(segments)
         c.maj_reel(vid, r["code"], transcription=trans, statut="pret", phrases=ph, hook=ph[0]["f"], marche="fr")
     else:
-        c.maj_reel(vid, r["code"], transcription=trans, statut="transcrit", marche=info.language)
+        c.maj_reel(vid, r["code"], transcription=trans, statut="transcrit", marche=langue)
 
 
 def atelier():

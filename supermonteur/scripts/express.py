@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Monteur EXPRESS (29/10/2026) : titre + sous-titres + musique, SANS le rendu HyperFrames.
   python3 express.py <dossier du reel>        (plan.json prêt, dérush fait : clip.mp4 + words.json, comme pour monte.sh)
-Pourquoi : IMG_6945 (style Minimaliste) = 6 min de machine par version, dont 5 min de rendu Chrome image par image pour
+Pourquoi : RUSH (style Minimaliste) = 6 min de machine par version, dont 5 min de rendu Chrome image par image pour
 un titre fixe et des sous-titres. Ici : build.mjs garde le découpage et la place de chaque sous-titre (mêmes règles),
 Pillow dessine chaque état de l'écran en PNG transparent, ffmpeg les pose sur clip.mp4 (puce vidéo du Mac), puis le
 même mix.py et le même Gardien que monte.sh. Refuse tout plan qui a autre chose qu'un titre et des sous-titres -> monte.sh.
 """
-import html, json, os, re, subprocess, sys, time
+import glob, html, json, os, re, subprocess, sys, time
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 S = os.path.dirname(os.path.abspath(__file__))
@@ -20,12 +20,16 @@ def run(cmd, log):
     return r.returncode
 
 plan = json.load(open("plan.json"))
-EN_TROP = [k for k in ("brolls", "bigwords", "numbers", "motions", "lists", "proofs", "inserts", "silences", "keywords", "cta", "ctaMenu", "mini", "zooms")   # 30/10 : mini et zooms oubliés = cartons perdus sans alerte (CAM20063)
+EN_TROP = [k for k in ("brolls", "bigwords", "numbers", "motions", "lists", "proofs", "inserts", "silences", "keywords", "cta", "ctaMenu", "mini", "zooms", "cartons")   # 09/11 : cartons = cartons.py dans monte.sh ; 30/10 : mini et zooms oubliés = cartons perdus sans alerte (RUSH)
            if plan.get(k)]
 if EN_TROP: stop(f"ce plan a {', '.join(EN_TROP)} : pas un montage express, lancer monte.sh", 2)
 W, H, FPS = 1080, 1920, 30
 os.environ["PATH"] = f"{os.path.expanduser('~/.local/bin')}:{os.path.expanduser('~/.local/node/bin')}:{os.environ['PATH']}"
 
+# 11/11 : même fin propre que monte.sh (coupes d'un ancien dérush qui finissaient après le rush), avant le Gardien
+r_ = subprocess.run(["python3", f"{S}/fin_propre.py", "plan.json"], capture_output=True, text=True)
+print(r_.stdout.strip()) if r_.stdout.strip() else None
+if r_.returncode: stop("fin_propre.py : " + (r_.stderr.strip().splitlines() or ["?"])[-1])
 etape("Composition (découpage des sous-titres du moteur)")
 if run(["node", f"{S}/build.mjs", "--plan", "plan.json", "--out", "index.html"], "build.log"): stop("build.mjs (voir build.log)")
 print(open("build.log").read().strip().splitlines()[-1])
@@ -45,9 +49,9 @@ SUBSIZE = int(css(r'\.cap\{[^}]*?font-family:"Sub";font-weight:700;font-size:(\d
 SUBTRACK = float(css(r'\.cap\{[^}]*?font-size:\d+px;line-height:[\d.]+;letter-spacing:([\d.]+)px', 0))
 caps = []
 for cls, cid, top, txt in re.findall(r'<div class="(cap[^"]*)" id="(c[\d_]+)"(?: style="top:(\d+)px")?>(.*?)</div>', page):
-    if "<" in txt: stop(f"sous-titre {cid} avec mot fort ({txt}) : lancer monte.sh", 2)
-    a, b = times[cid]; caps.append((a, b, html.unescape(txt), int(top or SUBY)))
-# 29/10 (CAM20065 écran coupé, sous-titres sur l'animation claire) : la couleur de plan.typo.sub (CSS .cap) est suivie ;
+    if "<" in re.sub(r'<span style="color:#[0-9A-Fa-f]{6}">[^<]*</span>', "", txt): stop(f"sous-titre {cid} avec mot fort ({txt}) : lancer monte.sh", 2)
+    a, b = times[cid]; caps.append((a, b, txt, int(top or SUBY)))   # 11/11 : txt garde les <span> de plan.couleurs
+# 29/10 (RUSH écran coupé, sous-titres sur l'animation claire) : la couleur de plan.typo.sub (CSS .cap) est suivie ;
 # une couleur foncée n'a pas d'ombre (l'ombre noire floute le texte foncé). Avant : toujours blanc.
 _col = re.search(r"\.cap\{font-weight:[^}]*?color:(#[0-9A-Fa-f]{6})", page)
 SUBCOL = tuple(int(_col[1][i:i + 2], 16) for i in (1, 3, 5)) if _col else (255, 255, 255)
@@ -73,7 +77,7 @@ if plan.get("title"):
                          num("ht1", r"letter-spacing:([\d.]+)px"), int(num("ht1", r"font-weight:(\d+)", 700)), coul("ht1")),
                         (MAJ("ht2", html.unescape(l2)), tf("ht2"), num("ht2", r"font-size:(\d+)px"), num("ht2", r"line-height:([\d.]+)", 1.1),
                          num("ht2", r"letter-spacing:([\d.]+)px"), int(num("ht2", r"font-weight:(\d+)", 400)), coul("ht2"))])
-    # 05/11 (IMG_7045 « L'antiviralité ? » sur une ligne) : une ligne vide gardait sa hauteur = encadré blanc trop haut, texte collé en haut
+    # 05/11 (RUSH « L'antiviralité ? » sur une ligne) : une ligne vide gardait sa hauteur = encadré blanc trop haut, texte collé en haut
     title["lines"] = [l for l in title["lines"] if l[0].strip()] or title["lines"][:1]
 print(f"{len(caps)} sous-titres · titre {'oui' if title else 'non'} · police {os.path.basename(FONT)} {SUBSIZE} px · y {SUBY}")
 
@@ -93,25 +97,48 @@ def ecrit(draw, x, base, t, f, track, fill):
 def baseline(top, size, lh, f):
     asc, desc = f.getmetrics(); return top + (size * lh - (asc + desc)) / 2 + asc
 
-def calque_sous_titre(img, txt, top):
+def mots_colores(raw):
+    """11/11 : « LIVE » en <span style="color:#FFD60A"> (plan.couleurs) -> [(mot, couleur ou None)]."""
+    out = []
+    for m in re.finditer(r'<span style="color:(#[0-9A-Fa-f]{6})">([^<]*)</span>|([^<]+)', raw):
+        col = tuple(int(m[1][i:i + 2], 16) for i in (1, 3, 5)) if m[1] else None
+        out += [(html.unescape(w), col) for w in (m[2] if m[1] else m[3]).split()]
+    return out
+
+def calque_sous_titre(img, raw, top):
     f = font(FONT, SUBSIZE, 700); lh = 1.05
+    mc = mots_colores(raw); txt = " ".join(w for w, _ in mc)
     mots, lignes, cur = txt.split(), [], ""
     for m in mots:   # boîte de 840 px (left/right 120) : retour à la ligne comme le navigateur
         essai = (cur + " " + m).strip()
         if cur and largeur(essai, f, SUBTRACK) > W - 240: lignes.append(cur); cur = m
         else: cur = essai
     lignes.append(cur)
-    # 03/11 (IMG_7023 : 50 s de dessin) : tout se dessine dans une bande de 80 px autour du texte, plus sur l'écran entier :
+    # 03/11 (RUSH : 50 s de dessin) : tout se dessine dans une bande de 80 px autour du texte, plus sur l'écran entier :
     # le flou (portée ~30 px) n'atteint jamais le bord de la bande, donc même image au pixel près, ~8 x moins de calcul
     y0 = max(0, int(top) - 80); y1 = min(H, int(top + len(lignes) * SUBSIZE * lh) + 80)
     texte = Image.new("L", (W, y1 - y0), 0); dt = ImageDraw.Draw(texte)
+    masques = {}   # couleur -> masque des seuls mots de cette couleur (11/11)
+    k = 0
     for i, l in enumerate(lignes):
-        ecrit(dt, (W - largeur(l, f, SUBTRACK)) / 2, baseline(top + i * SUBSIZE * lh, SUBSIZE, lh, f) - y0, l, f, SUBTRACK, 255)
+        x0, base = (W - largeur(l, f, SUBTRACK)) / 2, baseline(top + i * SUBSIZE * lh, SUBSIZE, lh, f) - y0
+        ecrit(dt, x0, base, l, f, SUBTRACK, 255)
+        pos = 0
+        for w in l.split(" "):
+            col = mc[k][1] if k < len(mc) else None; k += 1
+            if col:
+                if col not in masques: masques[col] = Image.new("L", texte.size, 0)
+                dm = ImageDraw.Draw(masques[col])
+                for c in range(pos, pos + len(w)):
+                    dm.text((x0 + f.getlength(l[:c]) + SUBTRACK * c, base), l[c], font=f, fill=255, anchor="ls")
+            pos += len(w) + 1
     if SUBOMBRE:
         ombre = texte.filter(ImageFilter.GaussianBlur(9)).point(lambda v: int(v * 0.55))   # text-shadow 0 3px 18px rgba(0,0,0,.55)
         noir = Image.new("RGBA", texte.size, (0, 0, 0, 0)); noir.putalpha(ombre)
         img.alpha_composite(noir, (0, y0 + 3))
     blanc = Image.new("RGBA", texte.size, SUBCOL + (0,)); blanc.putalpha(texte); img.alpha_composite(blanc, (0, y0))
+    for col, m in masques.items():   # mots en couleur posés par-dessus, au même endroit
+        cl = Image.new("RGBA", texte.size, col + (0,)); cl.putalpha(m); img.alpha_composite(cl, (0, y0))
 
 def calque_titre(img):
     t = title; box = t["box"]
@@ -129,7 +156,7 @@ def calque_titre(img):
         if rgba: m = m.point(lambda v, a=float(rgba[4]): int(v * a))
         c = Image.new("RGBA", m.size, tuple(int(rgba[i]) for i in (1, 2, 3)) if rgba else box[2].strip()); c.putalpha(m)
         img.alpha_composite(c, (round(x0), round(y0)))
-    # 29/10 (IMG_6952, l’utilisateur : « avec de l'ombre pour améliorer la lisibilité ») : l'ombre du titre comme le CSS de build.mjs
+    # 29/10 (RUSH, l’utilisateur : « avec de l'ombre pour améliorer la lisibilité ») : l'ombre du titre comme le CSS de build.mjs
     # (.htitle douce ; onlight / typo.shadow "forte" = ombre forte en 4 couches). Avant : titre express sans aucune ombre.
     if not box:
         masque = Image.new("L", (W, H), 0); dm = ImageDraw.Draw(masque); y = y0 + pt
@@ -181,6 +208,11 @@ if run(["ffmpeg", "-nostdin", "-y", "-v", "error", "-i", plan.get("cam", "clip.m
 
 etape("Mix")
 if run(["python3", f"{S}/mix.py", "plan.json", R, plan.get("cam", "clip.mp4"), "final.mp4"], "mix.log"): stop("mix.py (voir mix.log)")
+# 09/11 (disque plein : 20 Go d'anciens rendus) : on garde seulement le dernier rendu, final.mp4 est déjà fait
+for vieux in glob.glob("renders/express_*.mp4"):
+    if os.path.abspath(vieux) != os.path.abspath(R):
+        try: os.remove(vieux)
+        except OSError: pass
 print("\n".join(l for l in open("mix.log").read().splitlines() if l.startswith(("musique", "final"))))
 
 etape("Gardien final")

@@ -12,7 +12,7 @@ Source : 2 personnes côte à côte en 16:9 (visio : tuile gauche L, tuile droit
 python3 $S/podcast.py speakers cut169.mp4 words.json     # ajoute "who": "L"/"R" à chaque mot, imprime une ligne par phrase ; ?? = doute -> vérifier à l'œil
 ```
 4. **plan.json** comme d'habitude (fixes, keywords, title, cta, music…) + le bloc podcast :
-`"podcast": {"src": "cut169.mp4", "top": "L", "delogo": [24, 34, 266, 152], "segments": "cut169.segments.json"}` (`top` = tuile en haut, défaut l'hôte ; `delogo` = ancien logo incrusté à effacer, ex. MYDREAMAX ; avec un titre-question, pas de mots forts → `"full": [[a, b]]` à la main).
+`"podcast": {"src": "cut169.mp4", "top": "L", "delogo": [24, 34, 266, 152], "segments": "cut169.segments.json"}` (`top` = tuile en haut, défaut l'hôte ; `delogo` = ancien logo incrusté à effacer, ex. SUPER STUDIO ; avec un titre-question, pas de mots forts → `"full": [[a, b]]` à la main).
 Les `keywords` décident les pleins écrans : 2-4 mots forts sur 40 s (1 plein écran par mot fort, 1re occurrence seulement).
 5. **Mise en page** puis le moteur normal (étape 6 sans `matte.py` : pas de chiffre derrière la tête en split) :
 ```bash

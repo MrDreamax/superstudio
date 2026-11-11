@@ -3,7 +3,7 @@
   python3 headtop.py clip.mp4 START END --json   -> {"top", "cx", "hw", "visage"} (aperçu du cockpit : il imite le détourage)
 23/10 (retour n6 de l'utilisateur, « les mots géants ne sont pas bien derrière la tête ») : le haut des cheveux est MESURÉ sur
 la silhouette détourée (Robust Video Matting, le modèle de matte.py) au-dessus du visage (MediaPipe). Avant : front - 0,45 x hauteur
-du visage, une estimation faite sur Meta Verified ; sur des cheveux courts elle tombait ~50 px trop haut (IMG_6799 : 465 contre 512
+du visage, une estimation faite sur Meta Verified ; sur des cheveux courts elle tombait ~50 px trop haut (RUSH : 465 contre 512
 mesuré) et le mot flottait au-dessus de la tête au lieu de passer derrière.
 Sort en erreur (« pas de visage ») si la tête n'est pas vue sur au moins la moitié de la plage (plan sur le décor, caméra retournée) :
 build.mjs pose alors le mot devant, lisible, sans faire semblant de le passer derrière une tête absente (retour n2, 23/10).

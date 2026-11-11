@@ -3,7 +3,7 @@
 **31/10 : Cockpit et Derush Lab PÉRIMÉS depuis le 29/10 (Derush Lab retiré, retours dans l'appli SuperMonteur). Voir `SKILL.md`. Ce fichier reste pour l'historique et la réparation.**
 
 Remplace **Style Lab ET Cut Notes** (décision de l'utilisateur, 23/10). Maquette validée en 2 rounds (Brain `01-Projets/cockpit-montage.md`,
-images `Stratosphere/livrables/cockpit-montage/complet-r1/C.png`, `complet-r2/1c.png` et `2b.png`). Ancienne page v2 (panneau de cartes)
+images `(exemple retiré)`, `complet-r2/1c.png` et `2b.png`). Ancienne page v2 (panneau de cartes)
 et ancien serveur : `supermonteur/_backup/2026-10-23-cockpit-v2/`. Look Apple clair. Utilisable par un client SANS bibliothèque de B-rolls
 ni de photos, ni de musique.
 
@@ -14,17 +14,17 @@ ni de photos, ni de musique.
 **Décision 23/10 ~20h15 (l’utilisateur) : cette timeline s'appelle Derush Lab, outil INTERNE (jamais pour les clients ni le kit), qui sert
 EXCLUSIVEMENT à dérusher une vidéo.** Séparation « dérush seul » à faire (Brain 01-Projets/cockpit-montage.md, Reprise 23/10 ~20h15).
  (prime sur la v4 ci-dessous pour l'étape 1)
-- **DERUSH LAB = `cockpit.py <dossier> --port <p> --lab` (codé le 23/10 ~23h31, maquette `livrables/cockpit-montage/derushlab-r1/A.png`
+- **DERUSH LAB = `cockpit.py <dossier> --port <p> --lab` (codé le 23/10 ~23h31, maquette `(exemple retiré)`
   choisie par l’utilisateur)** : la timeline SEULE. En haut « Derush Lab · titre · 1:00 → 0:34 », plus d'étapes, ni Tout auto, ni Exporter
   (`body.lab`). Pas besoin de `plan.json` (dossier = words_rush.json + 1er dérush derush.py + cut.words.json → words.json + cockpit.json
   + cadre.json). Bouton « ✓ Valider le dérush » → `/api/valider` : derush.py `--plages` si la timeline a changé (clip.mp4), puis
   **`gardien.py <dossier> --derush`** (~5 s : mot coupé, respiration, plans ≥ 2 s, micro-coupure, silence, flash ; rapport
   `gardien-derush.json`, log `_cockpit/gardien-derush.log`) ; `cockpit-etat.json` `lab` = {plages, ok, quand}. Tout vert = message
   « ✅ Dérush validé » + bouton vert « ▶ Revoir le dérush » ; un rouge = « ❌ 1 point à régler : … » ; une retouche après = à revalider.
-  Testé sur une copie d'IMG_6850 : 20 s, 6/6 vert, clip.mp4 h264 1080x1920 33,8 s, 0 erreur dans la page. Sauvegarde avant :
+  Testé sur une copie d'RUSH : 20 s, 6/6 vert, clip.mp4 h264 1080x1920 33,8 s, 0 erreur dans la page. Sauvegarde avant :
   `supermonteur/_backup/2026-10-23-derushlab-avant/`.
 Demande de l’utilisateur : « une timeline pour contrôler précisément ce qu'on coupe / garde, 1er dérush déjà fait par l'IA, plus de texte ».
-Maquettes : `livrables/cockpit-montage/timeline-r1/` (A, B, C) puis `timeline-r2/1.png` VALIDÉE + son `timeline-r2/courbe-1-bourse.png`
+Maquettes : `(exemple retiré)` (A, B, C) puis `timeline-r2/1.png` VALIDÉE + son `timeline-r2/courbe-1-bourse.png`
 (« courbe depuis le bas » finition Bourse, MAIS « exacte, très précise »). Sauvegarde avant v5 : `supermonteur/_backup/2026-10-23-cockpit-v4/`.
 - **Écran** : la conversation se range (classe `.main.e1`) ; en haut à gauche le téléphone joue le RUSH en sautant les coupes ;
   à droite la **LOUPE** = le bloc ouvert en grand (images du rush + son) avec 1,6 s autour, règle en secondes, ‹ Précédent / Suivant ›
@@ -49,12 +49,12 @@ Maquettes : `livrables/cockpit-montage/timeline-r1/` (A, B, C) puis `timeline-r2
   « à écouter » sans bloquer (fins ET débuts) ; mots hors des plages = retirés des sous-titres. Le Gardien bloque toujours un plan < 2 s :
   la timeline montre en orange un bloc gardé < 2 s.
 
-- **Barre de lecture (23/10, maquette `livrables/cockpit-montage/barre-r1/C`, son choix « barre en rouge sur la timeline et sur la
+- **Barre de lecture (23/10, maquette `(exemple retiré)`, son choix « barre en rouge sur la timeline et sur la
   coupe en grand »)** : la barre rouge s'attrape et se tire dans le reel bout à bout ET dans la loupe (étiquette = l'instant du reel,
   ou « coupé ») ; la vidéo suit en pause, l'image du rush s'affiche au-dessus du doigt (reel bout à bout), la loupe suit si on sort de sa
   fenêtre. Fonctions `brancherTete`, `ovVersRush`.
 - **1er dérush (23/10)** : derush.py ne coupe JAMAIS en milieu de phrase (seulement après . , ! ? … ; :) ; voir SKILL.md.
-- **Gardien (23/10, IMG_6850)** : fin de mot = voix douce 6 dB au-dessus du bruit de la pièce (`queue_mot.py`) ; une coupe dans un plan qui
+- **Gardien (23/10, RUSH)** : fin de mot = voix douce 6 dB au-dessus du bruit de la pièce (`queue_mot.py`) ; une coupe dans un plan qui
   bouge n'est pas un « flash » (`mouvement()` dans gardien.py) ; build.mjs : mot fort calé sur toute la ligne + marge de 12 % avec un style perso.
 
 ## v4 (23/10 soir, retours de l’utilisateur après test) : CE QUI A CHANGÉ (prime sur le reste de cette notice)
@@ -62,7 +62,7 @@ Maquettes : `livrables/cockpit-montage/timeline-r1/` (A, B, C) puis `timeline-r2
   (macOS refuse ~/Documents aux serveurs de preview), puis `preview_start {url: "http://127.0.0.1:<port>"}` (pas de `name`).
 - **2 étapes seulement : 1 Dérushage › 2 Style**, puis Exporter. L'étape 3 (moments forts : zoom, carton, mot géant, motion, B-roll)
   est SUPPRIMÉE : `plan_final` n'appelle plus `ajouter_moments` (code laissé dormant, ne plus le proposer).
-- **Étape 1 = dérushage « phrase en grand »** (maquette `livrables/cockpit-montage/derush-r2/B.png`) : à gauche le téléphone joue le
+- **Étape 1 = dérushage « phrase en grand »** (maquette `(exemple retiré)`) : à gauche le téléphone joue le
   RUSH en sautant ce qui est coupé (montage virtuel, instantané) ; à droite le texte en phrases (`cockpit.json` `"phrases"` [[i, j]]
   si Claude les écrit, sinon découpage auto : reprises de `_cockpit/drop.claude.json`, mots de liaison, vrais blancs) ; dessous le son
   de la phrase choisie en grand (`/api/onde`, 10 ms, en dB) avec 2 poignées Début / Fin (←/→ = 10 ms, rejoue 1 s autour de la coupe
@@ -93,7 +93,7 @@ Maquettes : `livrables/cockpit-montage/timeline-r1/` (A, B, C) puis `timeline-r2
 - **Au centre, la vidéo** (téléphone + calques HTML) et la bande : coupes en rouge numérotées en haut, notes en bleu en bas. Barre espace =
   lecture. En pause, la **zone interdite d'Insta** (règle 16/10 : haut 270 px, bas 1480 px, côtés 65 px, 120 px à droite sous 1100 px) est en rouge sur la vidéo ; le Gardien (`zones.mjs`) bloque tout rendu avec du texte dedans. « Écouter » une coupe = le téléphone passe sur le rush (`/video/rush`) le temps du passage. Voile « Je remets le passage… »
   pendant le dérush. Pas de zone qui défile dans la page : si la conversation est longue, c'est la page qui défile, la vidéo reste en place.
-- **1er lancement (ni style ni ancien look)** : « Bienvenue » + **5 lignes qui se déplient** (23/10, maquettes `livrables/cockpit-montage/perso-r1/`) :
+- **1er lancement (ni style ni ancien look)** : « Bienvenue » + **5 lignes qui se déplient** (23/10, maquettes `(exemple retiré)`) :
   1 Police (ouvre la **galerie des 6 polices au centre**, en blanc), 2 Taille (titre S / M / L / XL, sous-titres 44-58 px), 3 Couleurs
   (titre ligne 1, ligne 2, sous-titres : 6 pastilles + une couleur libre), 4 Position (titre en haut / plus bas, centré / à gauche ;
   sous-titres haut / menton / bas), 5 Plus (majuscules ou minuscules, 1 à 4 mots, ombre douce / forte). La vidéo se pose pendant le titre
@@ -102,7 +102,7 @@ Maquettes : `livrables/cockpit-montage/timeline-r1/` (A, B, C) puis `timeline-r2
   la date dessous (touche la date du reel ou d'un essai pour la changer), les réseaux du reel, « Fabriquer le reel » (puis Télécharger)
   et « Programmer N contenus ». Pendant la fabrication : une roue sur chaque carte, ✓ ou ✗ à la fin. « Revenir au montage » en haut.
 
-## Les 3 étapes (23/10, maquettes validées : `livrables/cockpit-montage/passes-r1/A.png` + `r2-3b.png`)
+## Les 3 étapes (23/10, maquettes validées : `(exemple retiré)` + `r2-3b.png`)
 - **Barre du haut : 1 Dérushage › 2 Style › 3 Motion / B-roll** (`cockpit-etat.json` `passe`). On touche une étape pour y aller.
   **⚡ Tout auto** (en haut à droite) : garde tous les conseils de Claude (coupes, ouverture, style « Ton combo » si aucun, moments
   forts, musique) et lance « Fabriquer le reel » (pas de programmation).
@@ -123,7 +123,7 @@ Maquettes : `livrables/cockpit-montage/timeline-r1/` (A, B, C) puis `timeline-r2
   - Mot géant `mot: tete | sous` → `plan.bigwords` (matte.py, derrière la tête) ou `plan.subwords` (en géant dans le sous-titre, même avec un titre).
   - Carton plein `carton: {l1, l2, fond: nuit | noir | bleu | flou}` → `plan.mini` card. Fond TOUJOURS en dégradé (jamais uni, l’utilisateur 23/10).
   - Motion design `motion: chiffres | trait` (+ `illus` pour trait) → `plan.motions` (build.mjs). Validé le 23/10 après 5 rounds
-    (`livrables/cockpit-montage/motion-r2/` motion3-F + motion5-L ; étude Jun Yuh : Brain 02-Formations/jun-yuh-motion-design.md) :
+    (`(exemple retiré)` motion3-F + motion5-L ; étude Jun Yuh : Brain 02-Formations/jun-yuh-motion-design.md) :
     `chiffres` = 1-2-3 géants derrière la tête (matte.py `fgm_k`), numérotés dans l'ordre de la vidéo, 4 max, mot au-dessus ;
     `trait` = illustration du Carrousel (`art.py`, 8 : camera, script_long, chat, checklist, stairs, chart_up, copies, apples_grid) au
     trait blanc, côté opposé au visage, mot dessous ; servie par `GET /illus/<nom>.svg` (`-trait` = version au trait). Le moment peut
@@ -151,7 +151,7 @@ Maquettes : `livrables/cockpit-montage/timeline-r1/` (A, B, C) puis `timeline-r2
    ancien look. Essais et story prennent le même style.
    **Titre 2 lignes max (toutes les vidéos, avec ou sans style)** : `build.mjs` mesure chaque ligne (Pillow, axes graisse / largeur des
    polices variables) et baisse sa taille jusqu'à tenir dans 940 px (`titre rétréci…` dans `build.log`) ; l'aperçu fait pareil
-   (`fitJS`, mesure refaite quand une police arrive). Tests 23/10 sur la copie IMG_6799 : Condensé or taille L (129 → 124 / 119 px) et
+   (`fitJS`, mesure refaite quand une police arrive). Tests 23/10 sur la copie RUSH : Condensé or taille L (129 → 124 / 119 px) et
    Large à gauche en minuscules ombre forte : Gardien ✅, `zones.mjs` 0 texte en zone interdite.
    **Anciens looks** : 3 par défaut dans `cockpit.py` (`LOOKS`) : Premium sombre (Montserrat + Instrument Serif, blanc = le style actuel de
    l'utilisateur), Clair épuré (Inter + DM Serif, mots en serif bleu clair), Cinéma chaud (Poppins + Playfair, texte ivoire, serif or doux).
@@ -171,7 +171,7 @@ Maquettes : `livrables/cockpit-montage/timeline-r1/` (A, B, C) puis `timeline-r2
 
 ## Comment Claude s'en sert
 1. Étapes 1-4 du SKILL (cadre, transcription du rush, `drop.json` + dérush, `words.json` corrigé, `plan.json`).
-2. Écrire `cockpit.json` dans le dossier du reel (exemple : `montages/2026-10-22-img6799-cockpit/cockpit.json`) : `titre`, `rush`
+2. Écrire `cockpit.json` dans le dossier du reel (exemple : `(exemple retiré)`) : `titre`, `rush`
    (chemin du rush ORIGINAL), `hooks` (3 : `id`, `nom`, `detail`, + `title` ou `bigwords`), `reco_hook`, `keywords` (6-10 mots forts),
    `musiques` (0 à 3 : `id`, `nom`, `titre`, `artiste`, `src`, `from`, `pourquoi`), `reco_musique`, `legende`, `raisons`, `essais`,
    `story`, `carrousel`, et `looks` seulement pour un client qui a les siens.
@@ -184,5 +184,5 @@ Maquettes : `livrables/cockpit-montage/timeline-r1/` (A, B, C) puis `timeline-r2
 Pour Claude : `GET /api/plan` = le plan que « Fabriquer » enverrait au moteur. `?t=2.6` fige la vidéo (captures de contrôle).
 Le panneau navigateur caché gèle les calques (requestAnimationFrame) : normal, pas un bug.
 
-## Testé le 23/10 sur la COPIE d'IMG_6799 (port 8793 ; le reel validé n'a pas été touché)
+## Testé le 23/10 sur la COPIE d'RUSH (port 8793 ; le reel validé n'a pas été touché)
 Voir la section « v3 codé » du Brain `01-Projets/cockpit-montage.md`.

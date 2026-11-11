@@ -63,7 +63,7 @@ Le style est VERROUILLÉ par l'utilisateur au Style Lab (13/10) : Montserrat 700
 - (greffe GitHub 14/10, NON appliqué car ça contredit un choix validé de l'utilisateur) Sous-titres sur 3 tailles (support 52-80 px, ancre 76-112 px, mot héros 150-240 px) contre 52 px partout (Style Lab). audrey-560 `hyperframes-cinematic-caption` [P]
 - (idem) Zéro mouvement « d'attente » (dérive lente des blocs motion, flottement des inserts) contre la règle « jamais figé ». HeyGen `motion-doctrine` [P]
 - (idem) Sortie = 75 % de l'entrée (inserts 0,34 s au lieu de 0,25 s, listes 0,14 s au lieu de 0,3 s) contre les sorties validées le 13/10. HeyGen `motion-doctrine` [P]
-- ~~Passer HyperFrames de 0.6.81 à 0.8.x~~ FAIT le 25/10 (0.8.149, testé sur une copie d'IMG_6799 du 22/10) : la 0.6.81 sautait une image à 4,10 / 8,17 / 16,33 / 32,17 s… (19 sur ce reel), la 0.8 0 ; rendu 2 fois plus rapide ; image identique ailleurs. Piège : le compilateur 0.8 prend la police nommée « Serif » pour la famille générique serif (titre rendu en Inter) → famille renommée « SMSerif » dans build.mjs et viral.py. Chrome de rendu 0.8 = ~/.cache/hyperframes/chrome (zones.mjs, shoot.mjs, brolltexte.py regardent aussi là).
+- ~~Passer HyperFrames de 0.6.81 à 0.8.x~~ FAIT le 25/10 (0.8.149, testé sur une copie d'RUSH du 22/10) : la 0.6.81 sautait une image à 4,10 / 8,17 / 16,33 / 32,17 s… (19 sur ce reel), la 0.8 0 ; rendu 2 fois plus rapide ; image identique ailleurs. Piège : le compilateur 0.8 prend la police nommée « Serif » pour la famille générique serif (titre rendu en Inter) → famille renommée « SMSerif » dans build.mjs et viral.py. Chrome de rendu 0.8 = ~/.cache/hyperframes/chrome (zones.mjs, shoot.mjs, brolltexte.py regardent aussi là).
 
 ## C. Changements du moteur
 ### Appliqués le 13/10 (OK de l'utilisateur, testés)
@@ -77,7 +77,7 @@ Le style est VERROUILLÉ par l'utilisateur au Style Lab (13/10) : Montserrat 700
 - Sidechain 30 / 450 ms (la musique remonte en douceur entre les phrases).
 - Zoom : 5 s mini entre deux zooms dans le hook (0-7 s), 8 s ensuite.
 - Outils : `lookstats.py` (mesure du look + cadre), `match_look.py` (cale chaque ajout sur le rush, couleur réelle jamais touchée), `univers_check.py` (fiche univers + test 5 sur 7 + planche), `score.py` (débit, car/s, image cam, yeux).
-- Voix : paramètre `voice_lufs` (config, défaut -14 ; musique et SFX suivent). Test A/B -14 / -16 rendu : `livrables/test-voix-AB/`, en attente du choix de l'utilisateur.
+- Voix : paramètre `voice_lufs` (config, défaut -14 ; musique et SFX suivent). Test A/B -14 / -16 rendu : `(exemple retiré)`, en attente du choix de l'utilisateur.
 
 ### Appliqués le 14/10 (greffe GitHub, « tout greffer » de l'utilisateur, testés sur copies OPUS + green screen, sauvegarde `_backup/2026-10-14-avant-greffe-github/`)
 - Bug corrigé : GSAP arrondissait `strokeDashoffset` au px entier, donc tout tracé `pathLength=1` sautait de vide à plein à mi-course (courbe `chart`, coche `badge`, lien `connect`, courbe et axes des preuves). `F()` ajoute `autoRound:false`. Mesuré : anneau 0,81 -> 0,52 -> 0,26 -> 0,08 au lieu de 1 -> 1 -> 0 -> 0.

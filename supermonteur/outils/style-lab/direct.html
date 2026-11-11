@@ -1,0 +1,311 @@
+<title>Style Lab</title>
+<style>
+:root{--bg:#F6F7F9;--card:#FFFFFF;--ink:#0B0B0D;--mute:#5B6170;--line:#E3E6EC;--acc:#2F74FF;--acc-ink:#FFFFFF;--chip:#F0F2F6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B0B0D;--card:#15171C;--ink:#F3F4F6;--mute:#9AA1AE;--line:#262A33;--acc:#4F8BFF;--acc-ink:#FFFFFF;--chip:#1E2129}}
+:root[data-theme="dark"]{--bg:#0B0B0D;--card:#15171C;--ink:#F3F4F6;--mute:#9AA1AE;--line:#262A33;--acc:#4F8BFF;--acc-ink:#FFFFFF;--chip:#1E2129}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+html,body{height:100%;overflow:hidden}
+.wrap{height:100vh;height:100dvh;max-width:1280px;margin:0 auto;padding:14px 16px;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:12px 24px}
+header{grid-column:1/-1;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+h1{font-size:22px;line-height:1.15;letter-spacing:-.3px;font-weight:700}
+.sub{color:var(--mute);font-size:14px}
+.left{min-height:0;display:flex;flex-direction:column;align-items:center;gap:8px}
+.phone{position:relative;flex:1 1 auto;min-height:0;height:100%;aspect-ratio:9/16;border-radius:22px;overflow:hidden;background:#000;box-shadow:0 14px 40px rgba(0,0,0,.18);cursor:pointer}
+.stage{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:0 0;overflow:hidden}
+.stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cap{position:absolute;left:120px;right:120px;text-align:center;color:#fff;font-weight:700;line-height:1.05;text-transform:uppercase;text-shadow:0 3px 18px rgba(0,0,0,.55);transition:opacity .08s}
+.cap em{font-style:italic;font-weight:400;text-transform:none;letter-spacing:0;text-shadow:0 0 24px rgba(255,255,255,.25),0 3px 18px rgba(0,0,0,.5)}
+.htitle{position:absolute;left:0;right:0;text-align:center;color:#fff;text-shadow:0 4px 26px rgba(0,0,0,.55),0 1px 3px rgba(0,0,0,.35);padding:30px 60px 38px;transition:opacity .25s}
+.htitle .box{display:inline-block}
+.htitle.boxed .box{background:rgba(0,0,0,.8);border-radius:24px;padding:20px 48px 26px}
+.ht1,.ht2{font-weight:700;white-space:nowrap;letter-spacing:1px;line-height:1.15}   /* 11/11 l’utilisateur : titre = exactement la police des sous-titres */
+.ctrl{display:flex;gap:8px;justify-content:center;flex:none}
+.btn{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;cursor:pointer}
+.btn:focus-visible,.chip:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.right{min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;align-content:start;gap:12px;overflow:hidden}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.panel.full{grid-column:1/-1}
+.panel h2{font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var(--mute);font-weight:700;margin-bottom:8px}
+.row + .row{margin-top:10px}
+.row .lab{font-weight:650;font-size:14px;margin-bottom:5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{position:relative;appearance:none;border:1.5px solid transparent;background:var(--chip);color:var(--ink);font:inherit;font-size:14px;padding:6px 11px;border-radius:10px;cursor:pointer;min-height:34px;transition:background .15s,border-color .15s}
+.chip[aria-pressed="true"]{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.chip .sw{display:inline-block;width:14px;height:14px;border-radius:4px;margin-right:6px;vertical-align:-2px;box-shadow:inset 0 0 0 1px rgba(127,127,127,.45)}
+#picker{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.chip.add{background:transparent;border:1.5px dashed var(--line);color:var(--mute)}
+.chip[data-saved]::after{content:"";position:absolute;top:4px;right:4px;width:6px;height:6px;border-radius:50%;background:var(--acc)}
+.chip[data-saved][aria-pressed="true"]::after{background:var(--acc-ink)}   /* 11/11 : point bleu = ton style enregistré (plus « la maison ») */
+.send{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#note{flex:1 1 220px;min-width:0;height:42px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:0 12px;font:inherit;font-size:14px}
+.go{appearance:none;border:0;background:var(--acc);color:var(--acc-ink);font:inherit;font-weight:700;font-size:15px;height:42px;padding:0 18px;border-radius:12px;cursor:pointer}
+.go[disabled]{opacity:.6;cursor:default}
+.msg{font-size:13px;color:var(--mute);flex-basis:100%}
+.msg:empty{display:none}
+.msg.ok{color:#14894A}
+pre{white-space:pre-wrap;word-break:break-word;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:8px;font-size:12px;display:none;flex-basis:100%}
+.legend{font-size:12px;color:var(--mute);display:flex;align-items:center;gap:6px}
+.legend i{width:6px;height:6px;border-radius:50%;background:var(--acc);display:inline-block}
+@media (max-width:980px){.right{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:760px){
+  .wrap{grid-template-columns:1fr;grid-template-rows:auto auto minmax(0,1fr);padding:10px 12px;gap:8px}
+  header{gap:8px}h1{font-size:18px}.sub{display:none}
+  .left{flex-direction:row;justify-content:center;align-items:flex-end;height:40vh;height:40dvh}
+  .ctrl{flex-direction:column}
+  .right{grid-template-columns:minmax(0,1fr);gap:8px}.panel,.row,.chips{min-width:0}
+  .panel{padding:10px 12px;border-radius:14px}.panel h2{margin-bottom:4px}
+  .row{display:flex;align-items:center;gap:8px}.row + .row{margin-top:6px}
+  .row .lab{flex:0 0 66px;font-size:12.5px;margin:0;line-height:1.2}
+  .chips{flex-wrap:wrap;gap:5px}   /* 11/11 : aucun défilement, même de côté : les choix passent à la ligne */
+  .chip{font-size:13px;padding:5px 9px;min-height:32px;white-space:nowrap;flex:none}
+  #note{display:none}.go{flex:1;height:44px}
+}
+.foot{grid-column:1/-1;color:var(--mute);font-size:13px;text-align:center;margin-top:8px}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Ton style de montage</h1>
+    <p class="sub">Clique : l'aperçu change tout de suite. Puis « Valider mon style ».</p>
+    <span class="legend" id="legend" hidden><i></i> = ton style enregistré</span>
+  </header>
+
+  <div class="left">
+    <div class="phone" id="phone" title="Clique pour pause / lecture">
+      <div class="stage" id="stage">
+        <video id="vid" playsinline muted loop autoplay preload="auto"></video>
+        <div class="htitle" id="htitle"><div class="box"><div class="ht1" id="ht1"></div><div class="ht2" id="ht2"></div></div></div>
+        <div class="cap" id="cap"></div>
+      </div>
+    </div>
+    <div class="ctrl">
+      <button class="btn" id="snd" type="button">Activer le son</button>
+      <button class="btn" id="rew" type="button">Revoir le début</button>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="panel" id="p-sub"><h2>Sous-titres</h2></div>
+    <div class="panel" id="p-title"><h2>Titre du début</h2></div>
+    <div class="panel full">
+      <div class="send">
+        <input id="note" type="text" placeholder="Une remarque ? (facultatif)">
+        <input type="file" id="fontfile" accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2" hidden>
+        <button class="go" id="go" type="button">Valider mon style</button>
+        <div class="msg" id="msg" role="status"></div>
+        <pre id="code"></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const D = /*__DATA__*/null;
+const A = (D && D.assets) || {};
+const url = f => A[f] || (f.endsWith(".ttf") ? "fonts/" + f : f);
+// échelles des polices (round.py / fonts/scales.json) : même hauteur de lettres à taille égale
+const SCALE = {"BebasNeue-Regular.ttf": 1.35, "Cinzel.ttf": 1.096, "SpaceGrotesk.ttf": 1, "Outfit.ttf": 1, "Poppins-SemiBold.ttf": 1.003, "Inter.ttf": .962, "Oswald.ttf": .864, "Archivo.ttf": 1, "Anton-Regular.ttf": 1.1, "LeagueSpartan.ttf": 1.061, "Kanit-Bold.ttf": 1.087, "LilitaOne-Regular.ttf": 1, "Montserrat.ttf": 1,
+               "InstrumentSerif-Italic.ttf": 1, "PlayfairDisplay-Italic.ttf": .97, "BodoniModa-Italic.ttf": 1.096, "DMSerifDisplay-Italic.ttf": 1.025};
+const AUTO = D.subY || 1300;
+const SEC = {
+  sub: [
+    {k: "police", lab: "Police", opts: [["Montserrat", "Montserrat.ttf", "la maison"], ["Anton", "Anton-Regular.ttf", "haute et serrée"],
+      ["Lilita One", "LilitaOne-Regular.ttf", "ronde, fun"], ["Cinzel", "Cinzel.ttf", "luxe"], ["Space Grotesk", "SpaceGrotesk.ttf", "tech"]]},   /* 11/11 l’utilisateur : 5 polices max, les plus différentes */
+    {k: "taille", lab: "Taille", opts: [["Petite", 40], ["Moyenne", 52, "la maison"], ["Grande", 64], ["Très grande", 76]]},
+    {k: "casse", lab: "Lettres", opts: [["MAJUSCULES", true, "la maison"], ["minuscules", false]]},
+  ],
+  title: [
+    {k: "ttaille", lab: "Taille", opts: [["Petit", 50], ["Moyen", 62, "la maison"], ["Grand", 76]]},   /* 1 seule taille pour les 2 lignes (règle titre 1 taille) */
+    {k: "tfond", lab: "Fond", opts: [["Pas d'encadré", false, "la maison"], ["Encadré blanc", "#FFFFFF"]]},   /* 11/11 l’utilisateur : blanc ou rien */
+  ],
+};
+let CUSTOM = "#E4572E";
+const boxColor = () => { const v = val("tfond")[1]; return v === "custom" ? CUSTOM : v || null; };
+const lum = h => { const n = parseInt(h.slice(1), 16), c = [n >> 16, n >> 8 & 255, n & 255].map(x => { x /= 255; return x <= .03928 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4; });
+  return .2126 * c[0] + .7152 * c[1] + .0722 * c[2] > .35 ? 1 : 0; };
+const pick = {};
+for (const g of Object.values(SEC)) for (const s of g) pick[s.k] = s.opts.findIndex(o => o[2] === "la maison") >= 0 ? s.opts.findIndex(o => o[2] === "la maison") : 0;
+const val = k => { for (const g of Object.values(SEC)) for (const s of g) if (s.k === k) return s.opts[pick[k]]; };
+
+// ---------- polices ----------
+const fam = f => "F_" + f.replace(/\W/g, "");
+for (const f of new Set([...Object.values(SEC).flat().filter(s => /police/.test(s.k)).flatMap(s => s.opts.map(o => o[1])), "InstrumentSerif-Italic.ttf"])) {   /* + serif du mot fort */
+  try { const ff = new FontFace(fam(f), `url("${url(f)}")`, {weight: "100 900", style: /Italic/.test(f) ? "italic" : "normal"});
+        ff.load().then(x => { document.fonts.add(x); render(true); }).catch(() => {}); } catch (e) {}
+}
+
+// ---------- panneaux ----------
+let ADD = null, CLIENT_FONT = null;   // {file, name} : police ajoutée par le client
+function build(id, list) {
+  const p = document.getElementById(id);
+  for (const s of list) {
+    const r = document.createElement("div"); r.className = "row";
+    const l = document.createElement("div"); l.className = "lab"; l.textContent = s.lab; r.appendChild(l);
+    const c = document.createElement("div"); c.className = "chips"; c.setAttribute("role", "group"); c.setAttribute("aria-label", s.lab);
+    s.opts.forEach((o, i) => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = o[0];
+      if (s.k === "tfond" && o[1]) { const sw = document.createElement("span"); sw.className = "sw"; sw.style.background = o[1] === "custom" ? CUSTOM : o[1];
+        if (o[1] === "custom") sw.id = "sw-custom"; b.prepend(sw); }   /* 11/11 encadré du titre, couleur au choix */
+      if (o[2] && o[2] !== "la maison") b.title = o[2];
+      if (/police/.test(s.k)) b.style.fontFamily = `${fam(o[1])}, inherit`;
+      b.setAttribute("aria-pressed", String(i === pick[s.k]));
+      b.onclick = () => { pick[s.k] = i; [...c.children].forEach((x, j) => x.setAttribute("aria-pressed", String(j === i)));
+                          if (s.k.startsWith("t")) { V.currentTime = 0; V.play().catch(() => {}); } render(true); };
+      c.appendChild(b);
+    });
+    if (s.k === "police") {   /* 11/11 : le client peut ajouter SA police (fichier .ttf / .otf / .woff) */
+      const add = document.createElement("button"); add.type = "button"; add.className = "chip add"; add.textContent = "+ Ma police";
+      add.title = "Ajoute ta police (fichier .ttf, .otf ou .woff)"; add.onclick = () => document.getElementById("fontfile").click();
+      c.appendChild(add); ADD = {s, c, add};
+    }
+    s.c = c; r.appendChild(c); p.appendChild(r);
+  }
+}
+build("p-sub", SEC.sub); build("p-title", SEC.title);
+let touched = false; document.addEventListener("click", e => { if (e.target.closest(".chip")) touched = true; });
+/* 11/11 l’utilisateur : points bleus sur le style ENREGISTRÉ (dernier envoi) ; au chargement, la page repart de ce style */
+function applySaved(ch, preselect) {
+  if (!ch) return; let any = false;
+  for (const g of Object.values(SEC)) for (const s of g) {
+    const sv = ch[s.k]; if (!sv || !s.c) continue;
+    const i = s.opts.findIndex(o => o[0] === sv.label);
+    [...s.c.children].forEach((x, j) => { if (j === i) x.dataset.saved = "1"; else delete x.dataset.saved; });
+    if (i >= 0) { any = true; if (preselect) { pick[s.k] = i; [...s.c.children].forEach((x, j) => x.setAttribute("aria-pressed", String(j === i))); } }
+  }
+  document.getElementById("legend").hidden = !any; render(true);
+}
+document.getElementById("fontfile").onchange = async e => {
+  const file = e.target.files[0]; e.target.value = ""; if (!file) return;
+  const msg = document.getElementById("msg");
+  try { const ff = new FontFace("F_client", await file.arrayBuffer(), {weight: "100 900"}); await ff.load(); document.fonts.add(ff); }
+  catch (err) { msg.className = "msg"; msg.textContent = "Ce fichier n'est pas une police lisible. Essaie un fichier .ttf, .otf ou .woff."; return; }
+  msg.textContent = "";
+  const name = file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ").slice(0, 24);
+  CLIENT_FONT = {file, name};
+  const {s, c, add} = ADD;
+  let i = s.opts.findIndex(o => o[1] === "client");
+  if (i < 0) {
+    s.opts.push([name, "client", "ta police"]); i = s.opts.length - 1;
+    const b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.style.fontFamily = "F_client, inherit";
+    b.onclick = () => { pick.police = i; [...c.children].forEach((x, j) => x.setAttribute("aria-pressed", String(j === i))); render(true); };
+    c.insertBefore(b, add);
+  }
+  s.opts[i][0] = name; c.children[i].textContent = name; c.children[i].title = "Ta police";
+  pick.police = i; [...c.children].forEach((x, j) => x.setAttribute("aria-pressed", String(j === i)));
+  try { c.children[i].scrollIntoView({block: "nearest", inline: "nearest"}); } catch (err) {}
+  render(true);
+};
+
+// ---------- sous-titres : groupes de 3 mots max, coupés à la ponctuation, le mot fort isolé ----------
+const FINP = /[\s.,!?…;:«»"“”]+$/u;   // tout retirer (mot fort)
+// 11/11 l’utilisateur, même règle que build.mjs : on garde … ? ; on enlève , . ; ! ; « : » reste seulement avant une citation
+const FINS = (t, nxt) => { let r = String(t).replace(/[\s,;!]+$/u, ""); if (!/(\.\.\.|…)$/.test(r)) r = r.replace(/[\s,;.!]+$/u, "");
+  if (/:$/.test(r) && !(nxt && /^[«"“]/.test(nxt.trim()))) r = r.replace(/[\s:]+$/u, ""); return r; };
+const KWN = s => s.toLowerCase().replace(/[«»"….,!?;:]/g, "");
+const G = []; let cur = [];
+const flush = () => { if (cur.length) G.push(cur); cur = []; };
+for (const w of D.words) {
+  const isK = false;   /* 11/11 : plus de mot fort, le mot reste dans sa phrase (comme build.mjs) */
+  if (isK) { flush(); G.push([{...w, k: true}]); continue; }
+  if (cur.length && (w.t - cur[cur.length - 1].e > 0.5)) flush();
+  cur.push(w);
+  if (cur.length >= 3 || /[.,!?;:]$/.test(w.w)) flush();
+}
+flush();
+G.forEach((g, i) => { g.t = i === 0 ? 0 : g[0].t;   /* 11/11 l’utilisateur : sous-titre dès la 1re image */ g.e = i + 1 < G.length ? Math.min(G[i + 1][0].t, g[g.length - 1].e + 0.6) : g[g.length - 1].e + 0.4; });
+
+// ---------- rendu ----------
+const V = document.getElementById("vid"), cap = document.getElementById("cap"), ht = document.getElementById("htitle");
+const h1 = document.getElementById("ht1"), h2 = document.getElementById("ht2");
+V.src = url("clip.mp4");
+h1.textContent = D.title.l1; h2.textContent = D.title.l2;
+let lastG = -2;
+function fit(el, base) {   // une ligne tient dans 940 px (règle « jamais 3 lignes »)
+  el.style.fontSize = base + "px"; const w = el.scrollWidth; return w > 940 ? Math.floor(base * 940 / (w * 1.03)) : base;
+}
+function render(force) {
+  const sf = val("police")[1], size = Math.round(val("taille")[1] * (SCALE[sf] || 1)), mf = false /* 11/11 l’utilisateur : jamais de mot fort */;
+  const y = Math.min(AUTO /* 11/11 l’utilisateur : sous-titres toujours au col */, 1480 - Math.round(53 * size / 52));
+  cap.style.textTransform = val("casse")[1] ? "uppercase" : "none";   /* 11/11 option majuscules / minuscules */
+  cap.style.fontFamily = fam(sf); cap.style.fontSize = size + "px"; cap.style.letterSpacing = ".5px"; cap.style.top = y + "px";
+  const t = V.currentTime || 0;
+  const gi = G.findIndex(g => t >= g.t && t < g.e);
+  if (force || gi !== lastG) {
+    lastG = gi; cap.textContent = "";
+    if (gi >= 0) {
+      const g = G[gi];
+      if (g[0].k && mf) { const em = document.createElement("em"); em.textContent = g[0].w.replace(FINP, ""); em.style.fontFamily = fam("InstrumentSerif-Italic.ttf"); /* mot fort = serif italique de la maison */ em.style.fontSize = "132px"; cap.appendChild(em); }
+      else cap.textContent = g.map((w, i) => FINS(w.w, (g[i + 1] || (G[gi + 1] || [])[0] || {}).w)).join(" ");
+    }
+  }
+  // titre
+  const tsz = Math.round(val("ttaille")[1] * (SCALE[sf] || 1)), tt = val("casse")[1] ? "uppercase" : "none";
+  for (const h of [h1, h2]) { h.style.fontFamily = fam(sf); h.style.textTransform = tt; }
+  /* 11/11 l’utilisateur : 1 ligne si le titre entier tient sans rétrécir, sinon 2 lignes max (jamais 3) */
+  h1.textContent = D.title.l1 + " " + D.title.l2; h2.style.display = "none";
+  if (fit(h1, tsz) < tsz) { h1.textContent = D.title.l1; h2.style.display = ""; }
+  const f = h2.style.display === "none" ? tsz : Math.min(fit(h1, tsz), fit(h2, tsz));   /* une ligne trop longue = les 2 rétrécissent ensemble */
+  h1.style.fontSize = f + "px"; h2.style.fontSize = f + "px";
+  const bc = boxColor(), box = ht.querySelector(".box");
+  ht.classList.toggle("boxed", !!bc); box.style.background = bc || "";
+  const ink = bc && lum(bc) > .6 ? "#0B0B0D" : "#fff";   /* encadré clair = texte noir, sans ombre (comme build.mjs avec box "#…") */
+  ht.style.color = ink; ht.style.textShadow = bc ? "none" : "";
+  /* 11/11 l’utilisateur : titre au-dessus de la tête ; s'il touche les cheveux, remonté (jamais au-dessus de 270 px, zone morte) */
+  let top = 280;
+  if (D.headTop) { const bas = ht.offsetHeight - 38 - (bc ? 26 : 0); if (top + bas + 24 > D.headTop) top = Math.max(240, Math.round(D.headTop - 24 - bas)); }
+  ht.style.top = top + "px";
+  ht.style.opacity = t < D.title.end ? 1 : 0;
+}
+(function loop() { render(false); requestAnimationFrame(loop); })();
+
+// ---------- échelle de l'aperçu ----------
+const phone = document.getElementById("phone"), stage = document.getElementById("stage");
+const sc = () => { stage.style.transform = `scale(${phone.clientWidth / 1080})`; };
+new ResizeObserver(sc).observe(phone); sc();
+/* 11/11 l’utilisateur : tout tient sur UN écran, jamais de défilement. Si les choix débordent (petit écran), on les réduit (zoom) jusqu'à ce qu'ils tiennent. */
+const right = document.querySelector(".right");
+const fitRight = () => { let z = 1; right.style.zoom = 1;
+  while ((right.scrollHeight > right.clientHeight + 1 || right.scrollWidth > right.clientWidth + 1) && z > .55) { z -= .04; right.style.zoom = z; } };
+new ResizeObserver(fitRight).observe(right); addEventListener("resize", fitRight); document.fonts.ready.then(fitRight); fitRight();
+phone.onclick = () => V.paused ? V.play().catch(() => {}) : V.pause();
+document.getElementById("snd").onclick = e => { V.muted = !V.muted; e.target.textContent = V.muted ? "Activer le son" : "Couper le son"; V.play().catch(() => {}); };
+document.getElementById("rew").onclick = () => { V.currentTime = 0; V.play().catch(() => {}); };
+V.play().catch(() => {});
+
+// ---------- envoi ----------
+const choix = () => {
+  const o = {};
+  for (const g of Object.values(SEC)) for (const s of g) { const v = s.opts[pick[s.k]]; o[s.k] = {label: v[0], value: v[1] === "custom" ? CUSTOM : v[1]}; }
+  if (o.tfond.value) o.tfond.texte = lum(o.tfond.value) > .6 ? "#0B0B0D" : "#FFFFFF";
+  return o;
+};
+let db = null, me = null;
+(async () => {
+  try { db = await window.claude?.use?.("db"); const u = await window.claude?.use?.("user"); me = u ? await u.id() : null; } catch (e) { db = null; }
+  if (db) try { db.collection("submissions").orderBy("at", "desc").limit(1).onSnapshot(q => { const d = q.docs[0]; if (d) applySaved(d.data().choix, !touched); }, () => {}); } catch (e) {}
+})();
+document.getElementById("go").onclick = async () => {
+  const go = document.getElementById("go"), msg = document.getElementById("msg"), code = document.getElementById("code");
+  const payload = {at: Date.now(), by: me, choix: choix(), note: document.getElementById("note").value.trim()};
+  go.disabled = true; msg.className = "msg"; msg.textContent = "Envoi…";
+  // police du client choisie : le fichier part dans les fichiers de la page, son id va avec les choix
+  if (payload.choix.police.value === "client" && CLIENT_FONT) {
+    payload.choix.police.value = {client: true, nom: CLIENT_FONT.name, fichier: CLIENT_FONT.file.name};
+    try { const assets = await window.claude?.use?.("assets"); if (!assets) throw new Error("no-assets");
+          const up = await assets.upload(CLIENT_FONT.file); payload.choix.police.value.asset = up.id; }
+    catch (e) { payload.choix.police.value.envoi = "raté"; }
+  }
+  try {
+    if (!db) throw new Error("no-db");
+    await db.collection("submissions").doc(String(payload.at)).set(payload);
+    applySaved(payload.choix, false);
+    msg.className = "msg ok"; msg.textContent = payload.choix.police.value?.envoi === "raté"
+      ? "Choix envoyés. Ta police n'a pas pu partir : envoie le fichier à Claude dans le chat." : "Pour enregistrer le style, écris « suivant » dans le chat.";
+  } catch (e) {
+    msg.textContent = "Cette page ne joint pas Claude ici. Copie le texte ci-dessous et colle-le dans le chat.";
+    code.style.display = "block"; code.textContent = JSON.stringify(payload.choix);
+  }
+  go.disabled = false;
+};
+</script>

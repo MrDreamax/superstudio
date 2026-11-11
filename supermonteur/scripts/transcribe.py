@@ -1,6 +1,6 @@
 """Transcription mot à mot : ElevenLabs Scribe d'abord, faster-whisper du Mac en secours (moteur commun : mots.py).
   python3 transcribe.py video.mp4 out.words.json [--mac] [--model small] [--no-snap]
-ElevenLabs (23/10, rush IMG_6799) : 16/16 vraies pauses contre 8/16 pour Whisper, bords à 0,03 s, 2 s au lieu de 39 s.
+ElevenLabs (23/10, rush RUSH) : 16/16 vraies pauses contre 8/16 pour Whisper, bords à 0,03 s, 2 s au lieu de 39 s.
 Clé lue dans le trousseau (service elevenlabs-api-key), jamais dans un fichier. Pas de clé, quota vide, pas d'internet
 ou toute autre erreur -> Whisper du Mac, sans s'arrêter. --mac = Whisper forcé.
 Recalage sur le vrai son (16/10, rush de conférence) : dans une salle qui résonne, Whisper colle les pauses À L'INTÉRIEUR des mots
@@ -24,6 +24,14 @@ except SansElevenLabs as e:   # 29/10 : une seule ligne claire, c'est elle que S
     print(e, file=sys.stderr)
     sys.exit(3)
 print(f"transcription : {moteur}")
+# 06/11 (RUSH : « enlève la guillemet qui se balade toute seule », 2 fois dans le même reel) : ElevenLabs colle « » “ ”
+# aux mots (« dit:« »). Jamais de guillemet dans les sous-titres : retirés à la source, ponctuation française « : » remise.
+import re
+for w in words:
+    t = re.sub(r"[«»“”\"]", "", w["text"])
+    t = re.sub(r"(\w):$", r"\1 :", t.strip())
+    w["text"] = t if t.strip() else w["text"]
+words = [w for w in words if re.sub(r"[«»“”\"\s]", "", w["text"])]
 
 
 def snap(words, run_min=0.15, part_min=0.06, margin=0.05):

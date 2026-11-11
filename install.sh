@@ -144,6 +144,16 @@ python3 -c "import scipy, cv2" 2>/dev/null || python3 -m pip install --user -q s
 # 1.7 (juge 1.6 : 1er démarrage du Carrousel = 188 s) : le tout 1er chargement de ces modules est long, on le fait ici
 echo "Préparation du Carrousel (jusqu'à 3 min la première fois)…"
 /usr/bin/python3 -c "import numpy, scipy.ndimage, PIL" 2>/dev/null || true
+# 1.8 : Brain vide (jamais écrasé s'il existe) et les 100 musiques si leur ZIP est posé à côté
+ICI="$(dirname "$SRC")"
+if [[ -d "$ICI/Brain" && ! -d "$HOME/Documents/Brain" ]]; then cp -R "$ICI/Brain" "$HOME/Documents/Brain"; echo "Brain installé dans Documents/Brain."; fi
+mkdir -p "$HOME/Documents/Montage"
+for z in "$ICI/100-MUSIQUES.zip" "$ICI/../100-MUSIQUES.zip" "$HOME/Downloads/100-MUSIQUES.zip"; do
+  if [[ -f "$z" && ! -d "$HOME/Documents/Montage/MUSIQUE" ]]; then echo "Installation des 100 musiques…"; unzip -q "$z" -d "$HOME/Documents/Montage" && echo "100 musiques installées dans Documents/Montage/MUSIQUE."; break; fi
+done
+[[ -d "$HOME/Documents/Montage/MUSIQUE" ]] || echo "Attention : pas encore de musiques. Mets 100-MUSIQUES.zip à côté de ce dossier et relance, ou pose tes mp3 dans Documents/Montage/MUSIQUE."
+# ElevenLabs obligatoire (transcription des rushs)
+security find-generic-password -s elevenlabs-api-key -w >/dev/null 2>&1 || echo "À FAIRE : clé ElevenLabs. Copie ta clé (elevenlabs.io), puis double-clic sur ranger-cle-elevenlabs.command."
 echo "Super installé (version $(cat "$DEST/VERSION")). Dans Claude, onglet Code : « Ouvre Super »."
 if [[ -d "$PDEST" ]]; then echo "Publieur installé. Dans Claude : « Programme ma semaine »."; fi
 if [[ -d "$ADEST" ]]; then echo "Super installé dans ~/Documents/SuperApps. Double-clic sur ouvrir.command (ou dans Claude : « Ouvre Super »). Publication en mode essai : rien ne part tant que tu ne l'actives pas."; fi

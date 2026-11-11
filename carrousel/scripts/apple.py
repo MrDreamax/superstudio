@@ -4,12 +4,14 @@ la description contient "style": "apple". Rendu en local avec Chrome (pas besoin
   Photo BORD À BORD (touche les bords gauche et droit) ; la personne détourée dépasse au-dessus : seulement les cheveux.
   Dessins sur le cercle clair d'art.py. Dernière slide : 3 bulles de message (question / MOT / réponse).
 Types de slide :
-  cover : "kicker" (petit titre), "title", "photo", "note" facultative
+  cover : "kicker" (petit titre), "title", "photo", "accent" (mot clé en bleu) ; « sujet géant » du 07/11/2026,
+          "cover_style": "ancienne" = photo bord à bord + cheveux qui dépassent (22/10)
   photo : "photo", "title", "body" | "steps" ; "pop": false = photo sans dépassement (sujet petit dans l'image)
   art   : "art" (art.py) ou "svg", "title", "body" | "steps" | "cta" (+ "cta_q", "cta_line")
 Commun : "note" + "note_pos" ({"top":..,"left"|"right":..}) pour une note manuscrite de 3 à 5 mots.
 """
 import os
+import re
 import subprocess
 
 import numpy as np
@@ -112,10 +114,65 @@ def note(s):
     return f'<div class="note" style="{pos}">{s["note"]}</div>'
 
 
+# ---- Couverture « sujet géant » (remède 1 d'Ayo, VALIDÉE par l’utilisateur le 07/11/2026, 2 rounds) ----
+# Fond blanc, titre à gauche 2 lignes 165 px, seul le mot "accent" en bleu, tête détourée en très grand dont les
+# cheveux frôlent le bas du titre, ombre douce, aucun bouton. Modèle : (exemple retiré)
+COVERS = {}
+SWIFT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "detoure.swift")
+HEAD_W, HEAD_CX, OVER = 549, 696, 49  # calés sur A-final.png  # largeur de la tête à l'écran, son centre, cheveux qui mangent le titre (px)
+
+
+def prep_cover(name, work):
+    """Détourage complet par la détection de sujet Apple (garde micro et mains), puis mesure de la tête."""
+    fg = f"{work}/{name}-fgv.png"
+    subprocess.run(["swift", SWIFT, f"{work}/{name}.jpg", fg], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    a = np.asarray(Image.open(fg))[:, :, 3] > 128
+    ys = np.where(a.any(1))[0]
+    top, bot = int(ys.min()), int(ys.max())
+    band = a[top:top + max(120, int(.18 * (bot - top)))]
+    cols = np.where(band.any(0))[0]  # largeur de la tête = haut du sujet (18 % de sa hauteur)
+    COVERS[name] = dict(top=top, bot=bot, cx=float(cols.mean()), w=float(cols.max() - cols.min() + 1))
+    if HEAD_W / COVERS[name]["w"] > 2.4:  # personne en pied ou petite : la tête géante serait floue
+        COVERS[name]["petit"] = True
+        print(f"  ! couverture : sujet trop petit dans « {name} », ancienne couverture utilisée (prends une photo cadrée buste)")
+
+
+def cover_geant(s):
+    p, c = s["photo"], COVERS[s["photo"]]
+    if c.get("petit"):
+        return None
+    size = s.get("title_size", 165)
+    title = s["title"]
+    acc = s.get("accent")
+    if acc and acc in title:  # seul le mot clé en bleu (dernière occurrence)
+        i = title.rfind(acc)
+        title = title[:i] + f'<span style="color:{BLUE}">{acc}</span>' + title[i + len(acc):]
+    lignes = [re.sub(r"<[^>]+>", "", l) for l in s["title"].split("<br>")]
+    size = min(size, int(940 / (.42 * max(len(l) for l in lignes))))  # chaque ligne tient sur la largeur
+    bottom = 150 + len(lignes) * size * .9
+    sc = min(max(HEAD_W / c["w"], 1.0), 2.4) * s.get("zoom_tete", 1.0)
+    fin = 64 + .42 * size * len(lignes[-1])  # bout de la dernière ligne du titre
+    # les cheveux ne frôlent le titre que si la dernière ligne s'arrête avant la tête ; sinon la tête passe dessous
+    y_hair = bottom - OVER if fin < HEAD_CX else bottom + 24
+    if y_hair + (c["bot"] - c["top"]) * sc < H:  # le sujet doit toucher le bas de la slide
+        sc = (H - y_hair) / (c["bot"] - c["top"])
+    X, Y = HEAD_CX - c["cx"] * sc, y_hair - c["top"] * sc
+    kicker = f'<div class="k" style="font-size:32px">{s["kicker"]}</div>' if s.get("kicker") else ""
+    hx0, hx1 = HEAD_CX - .62 * c["w"] * sc, HEAD_CX + .62 * c["w"] * sc  # au-dessus du bas du titre : la tête seule
+    clip = f"polygon({hx0:.0f}px 0,{hx1:.0f}px 0,{hx1:.0f}px {bottom:.0f}px,{W}px {bottom:.0f}px,{W}px {H}px,0 {H}px,0 {bottom:.0f}px,{hx0:.0f}px {bottom:.0f}px)"
+    return (f'<div style="position:absolute;left:64px;top:96px">{kicker}'
+            f'<h1 class="t" style="font-size:{size}px;font-weight:800;letter-spacing:-.045em;line-height:.9;margin-top:22px">{title}</h1></div>'
+            f'<div style="position:absolute;inset:0;clip-path:{clip};filter:drop-shadow(0 6px 22px rgba(0,0,0,.16))">'
+            f'<img src="{p}-fgv.png" style="position:absolute;left:{X:.0f}px;top:{Y:.0f}px;width:{W*sc:.0f}px;height:{H*sc:.0f}px"></div>')
+
+
 def slide(s, last, heads, spec_dir):
     arrow = "" if last else '<div class="arrow">→</div>'
     t = s["type"]
-    if t == "cover":
+    geant = cover_geant(s) if t == "cover" and s.get("cover_style") != "ancienne" else None
+    if geant:
+        inner, arrow = geant, ""  # validée le 07/11/2026 : pas de flèche ni de bouton sur la couverture
+    elif t == "cover":
         p = s["photo"]
         kicker = f'<div class="k">{s["kicker"]}</div>' if s.get("kicker") else ""
         inner = (f'<div class="ctr" style="padding-top:110px">{kicker}'
@@ -150,6 +207,9 @@ def build(spec, spec_dir, out):
     os.makedirs(work, exist_ok=True)
     heads = {n: prep_photo(p, n, work) for n, p in spec.get("photos", {}).items()}
     slides = spec["slides"]
+    for s in slides:
+        if s["type"] == "cover" and s.get("cover_style") != "ancienne":
+            prep_cover(s["photo"], work)
     for i, s in enumerate(slides, 1):
         page = os.path.join(work, f"slide-{i}.html")
         with open(page, "w") as f:

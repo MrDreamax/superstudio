@@ -95,7 +95,7 @@ def search(terms):
         score = sum(t in hay for t in terms)
         if score and (r.get("qualite", "ok") == "ok" or r.get("usage") == "souvenir"):   # vieille photo = qualité moyenne normale
             f_ = r.get("fichier")
-            # 28/10 (CAM20056-57 : « pourquoi tu reprends toujours les mêmes brolls alors qu'il y en a plein ») : ses vidéos parlent
+            # 28/10 (RUSH : « pourquoi tu reprends toujours les mêmes brolls alors qu'il y en a plein ») : ses vidéos parlent
             # d'IA et de travail, le score de mots envoyait toujours dans TRAVAIL (« toi devant l'ordi » à chaque reel). Tout plan
             # qui colle compte pareil (score plafonné à 1), puis le THÈME le moins vu récemment passe devant (luxe, ville, sport...).
             rows.append(((-min(score, 1), themes.get(r.get("theme", ""), 0), r.get("date_tournage", "") < RECENT, GROUPE.get(rang, 0), r.get("orientation") != "V", nb.get(f_, 0), -score, RANG.get(rang, 1), alea(f_)),
@@ -132,7 +132,7 @@ import datetime as _dt
 RECENT = (_dt.date.today() - _dt.timedelta(days=365)).isoformat()
 def en_cours(heures=48):
     """{fichier: reel} des B-rolls déjà posés dans les plan.json des AUTRES montages des 48 dernières heures.
-    28/10 : deux chats en parallèle (CAM20055 et CAM20056-57) ont pris le même plan MacBook, car le journal n'est écrit qu'au
+    28/10 : deux chats en parallèle (RUSH et RUSH) ont pris le même plan MacBook, car le journal n'est écrit qu'au
     montage (prep). Un plan posé dans un plan.json est réservé dès qu'il y est."""
     import glob, time
     ici, out = os.path.abspath(os.getcwd()), {}
@@ -203,7 +203,7 @@ def prep(plan_p):
             if b.get("from") == "auto": b["from"], m, pk = steady(b["src"], du)
             else: d_ = shakes(b["src"], b.get("from", 0), du); m, pk = d_.mean(), d_.max()
             print(f"  tremblement {m:.2f} px/img, pic {pk:.1f}" + ("  <-- INSTABLE : prendre un autre passage (from auto) ou un autre plan" if m > SHAKE_MAX or pk > PEAK_MAX else "  (stable)"))
-            # 28/10 (CAM20055 v2 : image FIGÉE à 21 s) : plan de 4 s posé sur 4,17 s, rien ne le voyait. Bloquant.
+            # 28/10 (RUSH v2 : image FIGÉE à 21 s) : plan de 4 s posé sur 4,17 s, rien ne le voyait. Bloquant.
             long_ = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", b["src"]]))
             if long_ - float(b.get("from", 0)) < du - 0.02:
                 sys.exit(f"B-ROLL TROP COURT : {os.path.basename(b['src'])} a {long_ - float(b.get('from', 0)):.2f} s utiles pour {du:.2f} s à l'écran "

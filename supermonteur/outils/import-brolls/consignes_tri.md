@@ -1,7 +1,7 @@
 # Tri visuel de B-rolls pour les reels de la personne (marque premium)
 
 Tu regardes des planches d'images numérotées (étiquette jaune P### = photo, V### = vidéo courte, image prise au milieu).
-Sous chaque vignette : dossier d'origine (Chateau 2 M event = conférence/shooting dans un château, Conf epicu / Conférence Networking / Réseautage = conférences, Dubaï, singapour, Da Nang, Rome, Corse, Turquie = voyages, Photo perso / Studio Photo Da Nang / Dreamax Mobile = shootings) et, pour une photo, combien de photos quasi identiques elle représente.
+Sous chaque vignette : dossier d'origine (Chateau 2 M event = conférence/shooting dans un château, Conf epicu / Conférence Networking / Réseautage = conférences, Dubaï, singapour, Séance photo, Rome, Corse, Turquie = voyages, Photo perso / Studio photo / Téléphone = shootings) et, pour une photo, combien de photos quasi identiques elle représente.
 
 Référence du visage de la personne : planches/ref_visage.jpg (+ la description que te donne l'agent qui t'envoie). LIS-LA EN PREMIER.
 

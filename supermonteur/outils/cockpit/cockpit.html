@@ -1,7 +1,7 @@
 <!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Le Monteur</title>
 <style>
-/* Cockpit v3 « Claude te guide » (maquette validée le 23/10 : livrables/cockpit-montage/complet-r1/C, complet-r2/1c et 2b).
+/* Cockpit v3 « Claude te guide » (maquette validée le 23/10 : (exemple retiré), complet-r2/1c et 2b).
    Conversation à droite (23/10 : « mieux pour le contrôle »), vidéo au centre. Remplace Style Lab + Cut Notes. Ancienne page (v2, panneau de cartes) : _backup/2026-10-23-cockpit-v2/.
    Règle 23/10 : un look = polices + couleur du texte + rythme. JAMAIS d'étalonnage ni de filtre sur la vidéo du rush.
    Pas de zone qui défile dans la page : si la conversation est longue, c'est la page qui défile, la vidéo reste en place. */
@@ -207,7 +207,7 @@ body.lab #steps,body.lab #auto,body.lab #exporter,body.lab #retour{display:none!
 .bt small{position:absolute!important;left:0;right:0;bottom:0;margin:0!important;font-size:10.5px!important;color:#fff!important;background:linear-gradient(transparent,rgba(0,0,0,.75));padding:12px 5px 4px;border-radius:0 0 9px 9px;line-height:1.25;text-align:left}
 .bt i{position:absolute;top:5px;right:5px;width:18px;height:18px;border-radius:50%;background:var(--blue);color:#fff;font-size:11px;display:grid;place-items:center;font-style:normal}
 .lien{font-size:12.5px;color:var(--blue);margin-top:8px;display:block}
-/* 23/10 v5 étape 1 : dérushage en TIMELINE (maquettes livrables/cockpit-montage/timeline-r2/1.png + courbe-1-bourse.png validées).
+/* 23/10 v5 étape 1 : dérushage en TIMELINE (maquettes (exemple retiré) + courbe-1-bourse.png validées).
    La conversation se range : un message + « Suivant » en bas ; toute la largeur pour la loupe et le reel bout à bout. */
 .main.e1 .chat{display:none}
 .main.e1 .stage{padding:16px 20px;justify-content:flex-start}
@@ -253,7 +253,7 @@ body.lab #steps,body.lab #auto,body.lab #exporter,body.lab #retour{display:none!
 .ob.court{box-shadow:0 0 0 2px var(--orange)}
 .tete{position:absolute;top:-8px;bottom:-8px;width:2px;margin-left:-1px;background:var(--red);pointer-events:none}
 .ovw .tete{top:-6px;bottom:-6px}
-/* 23/10 barre de lecture (maquette livrables/cockpit-montage/barre-r1/C, choix de l’utilisateur : « barre en rouge sur la timeline et sur la
+/* 23/10 barre de lecture (maquette (exemple retiré), choix de l’utilisateur : « barre en rouge sur la timeline et sur la
    coupe en grand ») : la barre rouge s'attrape et se tire, dans le reel bout à bout ET dans la loupe ; l'image suit sous le doigt. */
 .tete.prise{pointer-events:auto;cursor:ew-resize;touch-action:none;z-index:4}
 .tete.prise::after{content:"";position:absolute;top:0;bottom:0;left:-9px;right:-9px}
@@ -639,7 +639,7 @@ function finEcoute() {
   rendreFil();
 }
 
-// ---------- 23/10 v5 étape 1 : dérushage en TIMELINE (maquettes livrables/cockpit-montage/timeline-r2/1.png + courbe-1-bourse.png validées) ----------
+// ---------- 23/10 v5 étape 1 : dérushage en TIMELINE (maquettes (exemple retiré) + courbe-1-bourse.png validées) ----------
 // Plus de texte. En haut à gauche le téléphone joue le RUSH en sautant ce qui est coupé (montage virtuel, instantané) ; à droite la
 // LOUPE : le bloc ouvert en grand (image + son) avec 1,6 s autour ; en bas le reel bout à bout, les coupes en PETIT (image + son en gris).
 // Dans la loupe on tire une sélection : dans le gris « Remettre ce bout », dans le bleu « Retirer » (un petit mot). Les bords des blocs

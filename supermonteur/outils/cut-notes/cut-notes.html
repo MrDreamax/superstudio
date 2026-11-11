@@ -1,26 +1,24 @@
 <meta charset="utf-8">
 <title>Cut Notes</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
-  /* One deliberate look: a dark, warm edit suite. Video review happens in the dark. */
+  /* 11/11 (l’utilisateur : « fond noir comme Style Lab ») : mêmes couleurs que Style Lab, noir + bleu, police système Apple */
   :root {
     color-scheme: dark;
-    --ground: #15100c;
-    --panel: #1e1611;
-    --raised: #281e17;
-    --line: #3a2c22;
-    --bone: #efe9df;
-    --ash: #9e958a;
-    --gold: #f7ce4a;
-    --ember: #f2641e;
-    --done: #8fbf8a;
-    --display: "Fraunces", Georgia, "Times New Roman", serif;
-    --ui: "Archivo", "Helvetica Neue", Arial, sans-serif;
-    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --ground: #0B0B0D;
+    --panel: #15171C;
+    --raised: #1E2129;
+    --line: #262A33;
+    --bone: #F3F4F6;
+    --ash: #9AA1AE;
+    --gold: #4F8BFF;   /* accent (ancien doré) */
+    --ember: #4F8BFF;
+    --done: #3FB27F;
+    --display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif;
+    --ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, monospace;
   }
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   html, body { height: 100%; }
   body {
     margin: 0; background: var(--ground); color: var(--bone);
@@ -37,14 +35,14 @@
   .mark p { margin: 0; color: var(--ash); font-size: 13px; }
   .head-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   label.fps { display: flex; align-items: center; gap: 6px; color: var(--ash); font-size: 13px; }
-  select { background: var(--raised); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; }
+  select { background: var(--raised); border: 1px solid var(--line); border-radius: 10px; padding: 6px 8px; }
   .pill { font: 500 12px/1 var(--mono); color: var(--ash); border: 1px solid var(--line); border-radius: 999px; padding: 6px 10px; white-space: nowrap; }
   .pill.live { color: var(--done); border-color: color-mix(in srgb, var(--done) 45%, var(--line)); }
 
-  .btn { background: var(--raised); border: 1px solid var(--line); border-radius: 6px; padding: 7px 12px; cursor: pointer; white-space: nowrap; }
+  .btn { background: var(--raised); border: 1px solid var(--line); border-radius: 10px; padding: 7px 12px; cursor: pointer; white-space: nowrap; }
   .btn:hover { border-color: var(--ash); }
   .btn:disabled { opacity: .5; cursor: default; }
-  .btn.primary { background: var(--gold); color: #1a1208; border-color: var(--gold); font-weight: 600; }
+  .btn.primary { background: var(--gold); color: #FFFFFF; border-color: var(--gold); font-weight: 600; }
   .btn.primary:hover { filter: brightness(1.05); }
   .btn.quiet { background: transparent; border-color: transparent; color: var(--ash); padding-inline: 8px; }
   .btn.quiet:hover { color: var(--bone); border-color: var(--line); }
@@ -52,12 +50,12 @@
   main { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 16px; align-items: start; }
   @media (max-width: 900px) { main { grid-template-columns: minmax(0, 1fr); } }
 
-  .stage { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: grid; }
+  .stage { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: grid; }
   .screen { position: relative; background: #000; display: grid; place-items: center; min-height: 240px; max-height: 62vh; aspect-ratio: 16 / 9; max-width: 100%; }
   .screen.portrait { aspect-ratio: 9 / 16; }
   video { width: 100%; height: 100%; max-height: 62vh; display: block; object-fit: contain; background: #000; }
   .drop { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 24px; gap: 10px; border: 2px dashed transparent; transition: border-color .15s; }
-  .drop.over { border-color: var(--gold); background: rgba(247, 206, 74, .06); }
+  .drop.over { border-color: var(--gold); background: rgba(79, 139, 255, .08); }
   .drop strong { display: block; font: 600 22px/1.2 var(--display); }
   .drop span { color: var(--ash); font-size: 14px; max-width: 36ch; display: block; margin-inline: auto; }
 
@@ -77,16 +75,16 @@
   .composer { display: grid; gap: 6px; padding: 12px 14px 14px; border-top: 1px solid var(--line); background: var(--raised); }
   .composer .at { font-size: 13px; color: var(--ash); }
   .composer .at b { font: 500 13px var(--mono); color: var(--gold); }
-  textarea#noteInput { width: 100%; min-height: 44px; resize: vertical; background: var(--ground); border: 1px solid var(--line); border-radius: 6px; padding: 9px 10px; line-height: 1.4; }
+  textarea#noteInput { width: 100%; min-height: 44px; resize: vertical; background: var(--ground); border: 1px solid var(--line); border-radius: 10px; padding: 9px 10px; line-height: 1.4; }
   textarea#noteInput::placeholder { color: var(--ash); }
   .keys { font-size: 12px; color: var(--ash); display: flex; flex-wrap: wrap; gap: 4px 14px; }
   kbd { font: 500 11px var(--mono); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; color: var(--bone); background: var(--ground); }
 
-  aside { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; max-height: calc(62vh + 190px); min-height: 320px; }
+  aside { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; max-height: calc(62vh + 190px); min-height: 320px; }
   .notes-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 14px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
   .notes-head h2 { margin: 0; font: 600 16px/1 var(--ui); letter-spacing: .01em; }
   .notes-head .count { color: var(--ash); font-size: 13px; font-weight: 400; margin-left: 6px; }
-  .banner { margin: 10px 14px 0; font-size: 13px; color: var(--ash); border: 1px dashed var(--line); border-radius: 6px; padding: 7px 10px; }
+  .banner { margin: 10px 14px 0; font-size: 13px; color: var(--ash); border: 1px dashed var(--line); border-radius: 10px; padding: 7px 10px; }
   .banner.good { color: var(--done); border-style: solid; border-color: color-mix(in srgb, var(--done) 40%, var(--line)); }
   ol.notes { list-style: none; margin: 0; padding: 8px; overflow-y: auto; display: grid; gap: 6px; align-content: start; }
   .note { border: 1px solid transparent; border-radius: 8px; padding: 9px 10px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; }
@@ -102,7 +100,7 @@
   .note-actions { grid-column: 2; display: flex; gap: 2px; flex-wrap: wrap; margin-left: -8px; }
   .note-actions .btn { font-size: 12px; padding: 2px 8px; }
   .confirm { grid-column: 2; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ash); flex-wrap: wrap; }
-  .edit-box { grid-column: 2; width: 100%; min-height: 60px; background: var(--ground); border: 1px solid var(--gold); border-radius: 6px; padding: 7px 8px; }
+  .edit-box { grid-column: 2; width: 100%; min-height: 60px; background: var(--ground); border: 1px solid var(--gold); border-radius: 10px; padding: 7px 8px; }
   .empty { color: var(--ash); padding: 18px 14px; font-size: 14px; }
   .notes-foot { border-top: 1px solid var(--line); padding: 12px 14px; display: grid; gap: 8px; }
   .notes-foot p { margin: 0; font-size: 13px; color: var(--ash); }
@@ -111,7 +109,7 @@
   .sheet { width: min(720px, 100%); background: var(--panel); border: 1px solid var(--line); border-radius: 12px; display: grid; gap: 12px; padding: 16px; max-height: calc(100% - 32px); grid-template-rows: auto auto minmax(0, 1fr) auto; }
   .sheet h3 { margin: 0; font: 600 20px/1.2 var(--display); }
   .sheet p { margin: 0; color: var(--ash); font-size: 14px; max-width: 62ch; }
-  .sheet textarea { width: 100%; min-height: 240px; height: 100%; resize: vertical; background: var(--ground); border: 1px solid var(--line); border-radius: 6px; padding: 10px; font: 500 13px/1.55 var(--mono); }
+  .sheet textarea { width: 100%; min-height: 240px; height: 100%; resize: vertical; background: var(--ground); border: 1px solid var(--line); border-radius: 10px; padding: 10px; font: 500 13px/1.55 var(--mono); }
   .sheet .row { justify-content: space-between; }
   .toggle { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ash); }
   .toast { color: var(--done); font-size: 13px; }

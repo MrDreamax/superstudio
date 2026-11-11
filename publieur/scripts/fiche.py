@@ -101,7 +101,9 @@ def fiche(f, dossier, sortie, statut=""):
 
 def semaine(fiches, sortie):
     rows, imgs = [], {}
-    jours = [x[0]["date"][:10] for x in fiches]
+    # 09/11 : 2 versions d'un même reel (champ "groupe", ex. Insta + autres réseaux) = 1 seul reel du jour
+    jours = [x[0]["date"][:10] + "|" + x[0].get("groupe", str(i)) for i, x in enumerate(fiches)]
+    jours = [j.split("|")[0] for j in dict.fromkeys(jours)]
     for i, (f, dossier) in enumerate(sorted(fiches, key=lambda x: x[0]["date"])):
         r = controler(f)
         if jours.count(f["date"][:10]) > 1:

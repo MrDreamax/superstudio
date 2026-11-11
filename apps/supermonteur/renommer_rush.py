@@ -1,7 +1,7 @@
 """Renomme le rush d'un reel pour le retrouver d'un coup d'œil (28/10/2026, l’utilisateur : « renomme les rushes pour qu'ils
 soient plus facilement trouvables »).
 
-    CAM20058.MP4  ->  2026-10-28 Tourner sans téléprompteur - CAM20058.MP4
+    RUSH.MP4  ->  2026-10-28 Tourner sans téléprompteur - RUSH.MP4
 
 Date du tournage + titre du reel + nom d'origine (on retrouve toujours le fichier par son numéro caméra).
 Le rush n'est ni copié ni modifié : seul son nom change, sur place. Toutes les fiches qui pointaient vers l'ancien
@@ -32,7 +32,7 @@ PAS_UN_RUSH = re.compile(r"/montages/|/reels/|Biblioth|B-rolls|/Musique/|/Sons/|
 
 def trouver_rushs(dossier):
     """Les rushs du reel : etat.json, sinon les chemins de vidéo cités dans les journaux du montage (hors B-rolls,
-    musiques et fichiers du montage lui-même). Un reel fait de 2 rushs (cam20056-57) en rend 2."""
+    musiques et fichiers du montage lui-même). Un reel fait de 2 rushs (RUSH) en rend 2."""
     r = (lire(os.path.join(dossier, "etat.json"), {}) or {}).get("rush")
     if r and os.path.isfile(r):
         return [r]

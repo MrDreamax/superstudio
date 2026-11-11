@@ -87,7 +87,7 @@ if youtube: uri = src
 else: uri, nom = envoie(src)
 parts = [{"file_data": {"file_uri": uri, **({} if youtube else {"mime_type": "video/mp4"})}}]
 texte_regles = open(regles, encoding="utf8").read() if regles != "non" and os.path.exists(regles) else ""
-parts.append({"text": prompt_libre or CONSIGNE + open(grille, encoding="utf8").read() + ("\n\nRÈGLES DE CYRIL (elles passent avant la grille) :\n" + texte_regles if texte_regles else "")})
+parts.append({"text": prompt_libre or CONSIGNE + open(grille, encoding="utf8").read() + ("\n\nRÈGLES DE L’UTILISATEUR (elles passent avant la grille) :\n" + texte_regles if texte_regles else "")})
 body = {"contents": [{"role": "user", "parts": parts}], "generationConfig": {"temperature": 0.2}}
 if not prompt_libre:
     body["generationConfig"].update({"responseMimeType": "application/json", "responseSchema": SCHEMA})

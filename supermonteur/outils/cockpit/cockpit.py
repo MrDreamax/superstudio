@@ -292,7 +292,7 @@ def recouper(cid):
     return lancer("Je recoupe", derush)
 
 
-# ---------- 23/10 v4 dérushage « phrase en grand » (maquette livrables/cockpit-montage/derush-r2/B.png validée) ----------
+# ---------- 23/10 v4 dérushage « phrase en grand » (maquette (exemple retiré) validée) ----------
 # Le texte du rush en phrases : la personne barre une phrase (ou un seul mot), ouvre une phrase pour voir son son en grand et
 # pose ses bords au pixel. Ses choix : ETAT["derush"] = {"coupes": [indices de mots du rush], "bords": {"debut": {i: t}, "fin": {j: t}}}
 # -> drop.json (plages de mots) + bords.json (lu par derush.py --bords). Le moteur ne tourne qu'à « Suivant ».
@@ -328,7 +328,7 @@ def mots_rush():
             for i, w in enumerate(RW) for t in [CORR.get(str(i), {}).get("text", w["text"])]]
 
 
-# ---------- 23/10 v5 : dérushage en TIMELINE (maquette livrables/cockpit-montage/timeline-r2/1.png validée) ----------
+# ---------- 23/10 v5 : dérushage en TIMELINE (maquette (exemple retiré) validée) ----------
 # Plus de texte : la personne voit le reel bout à bout (les coupes en petit) et ouvre n'importe quel bloc en grand pour remettre
 # un bout du gris ou retirer un petit mot du bleu. Ses choix = les plages GARDÉES, en secondes du rush :
 # ETAT["derush"] = {"plages": [[a, b], ...], "applique": sig} -> plages.json (derush.py --plages) au « Suivant ».
@@ -373,7 +373,7 @@ def plages_propres(liste):
     return pl
 
 
-# Derush Lab : « Valider le dérush » (maquette livrables/cockpit-montage/derushlab-r1/A.png validée le 23/10) = le moteur recoupe
+# Derush Lab : « Valider le dérush » (maquette (exemple retiré) validée le 23/10) = le moteur recoupe
 # si la timeline a changé (clip.mp4), puis le Gardien du dérush (gardien.py --derush). La page montre ses contrôles en vert / rouge.
 GROUPES_LAB = ["mot coupé", "respiration", "plans ≥ 2 s", "micro-coupure", "silence", "flash"]
 

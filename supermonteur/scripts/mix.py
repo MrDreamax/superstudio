@@ -14,6 +14,9 @@ plan.json :
      Riser qui monte et se coupe net sur "from" -> musique coupée sec (voix seule) -> retour + impact pile sur "to".
      (ancien format "music": {"silences": [...]} encore lu)
   "sfx": [{"src", "at", "volume"}]  -> facultatif : sinon SFX auto.
+  "music_zones": [{"from": 3.6, "to": 6.4, "db": -4}]  -> 11/11 (studio Super : note « baisse la musique ici » à 5 s qui baissait
+     TOUTE la vidéo) : la musique change de db SEULEMENT entre from et to (rampes de 0,3 s autour), le reste ne bouge pas.
+     Posé APRÈS la mesure : le recalage au niveau cible ne le compense pas.
 SFX auto : seulement les gros événements (config.json "sfx_auto", par priorité : hook, silence, plein écran, chiffre, CTA),
 jamais deux à moins de "sfx_gap" s (1,5) : le moins prioritaire saute. Pas de clic, frappe ni whoosh de B-roll (« parasites », 13/10).
 cues.json (écrit par build.mjs à côté de plan.json) : sons des blocs hook / mots géants / preuves / CTA, filtrés pareil.
@@ -100,7 +103,7 @@ def peak(src):
     i = max(range(len(a)), key=lambda k: abs(a[k]))
     return i / 8000
 
-# 28/10 : un son du kit introuvable (SSD débranché ?) = alerte, jamais un reel sans bruitage en silence
+# 28/10 : un son du kit introuvable (disque débranché ?) = alerte, jamais un reel sans bruitage en silence
 _manque = [k for k, v in CFG.get("sfx", {}).items() if not os.path.exists(v["src"])]
 if _manque:
     print(f"ALERTE SONS : {len(CFG['sfx']) - len(_manque)}/{len(CFG['sfx'])} trouvés, manque {', '.join(_manque)} (SSD branché ?)")
@@ -183,7 +186,7 @@ def graph():
         join = f"{''.join(parts)}amix=inputs={len(parts)}:normalize=0:duration=longest," if len(parts) > 1 else f"{parts[0]}"
         f += [f"{join}{'' if len(parts) > 1 else 'anull,'}apad,atrim=0:{dur:.3f}" + gate(sil) + duck(plan.get("sfx", [])) + "[mraw]",
               "[mraw][key]sidechaincompress=threshold=0.05:ratio=2.5:attack=30:release=450[mus]"]   # 30/450 ms : la musique remonte en douceur entre les phrases (Boykin, Judd)
-        mix.append("[mus]" if not INTRO else "[musi]")
+        mix.append("[musi]" if (INTRO or ZONES) else "[mus]")
     else:
         f.append("[key]anullsink")
     n_music_inp = len(inp)
@@ -199,10 +202,14 @@ def graph():
         mix.append(f"[s{i}]"); n += 1
     # Plafond -2 dBTP (limiteur à -2,3 dB : l'encodage AAC remonte la crête de ~0,1-0,3 dB) (EBU Tech 3344 : Instagram ré-encode, à -1 une crête peut saturer après coup) ; suréchantillonné x4 pour
     # attraper les crêtes ENTRE les échantillons. level=0 : sinon alimiter REMONTE tout jusqu'à 0 dBFS (bug 13/10).
-    boost = ""
+    boost, env = "", []
     if INTRO and segs:   # musique plus forte au début puis redescente (voir INTRO plus bas), appliquée APRÈS le recalage par morceau
         g, h, r = 10 ** (INTRO.get("db", 4) / 20), INTRO.get("dur", 2.0), INTRO.get("ramp", 2.0)
-        boost = f"[mus]volume='if(lt(t,{h}),{g:.4f},if(lt(t,{h + r}),{g:.4f}+(1-{g:.4f})*(t-{h})/{r},1))':eval=frame[musi];"
+        env.append(f"volume='if(lt(t,{h}),{g:.4f},if(lt(t,{h + r}),{g:.4f}+(1-{g:.4f})*(t-{h})/{r},1))':eval=frame")
+    if ZONES and segs:   # 11/11 : changement LOCAL du niveau de la musique (note posée à un moment précis)
+        env.append("volume='" + "*".join(f"(1-{1 - 10 ** (z['db'] / 20):.4f}*clip(min((t-{z['from'] - ZR:.3f})/{ZR},({z['to'] + ZR:.3f}-t)/{ZR}),0,1))"
+                                         for z in ZONES) + "':eval=frame")
+    if env: boost = "[mus]" + ",".join(env) + "[musi];"
     f.append(boost + f"{''.join(mix)}amix=inputs={len(mix)}:normalize=0:duration=longest,"
              f"aresample=192000,alimiter=limit={10 ** (LIM_DB / 20):.4f}:attack=5:release=50:level=0,aresample=48000,apad,atrim=0:{dur:.3f}[a]")
     return inp, f, n_music_inp
@@ -229,11 +236,11 @@ def measure(inp, f, n_music_inp):
     return res
 
 PEAKS = {}
-# 28/10 PHONE (CAM20062 v5 : « on n'entend pas trop la musique, surtout au début ») : Sweet Dreams slowed = 84 % de son énergie
+# 28/10 PHONE (RUSH v5 : « on n'entend pas trop la musique, surtout au début ») : Sweet Dreams slowed = 84 % de son énergie
 # sous 150 Hz. Un haut-parleur de téléphone ne joue rien sous ~200 Hz : mesurée pleine bande, la musique était « OK à -29 »
 # et pourtant inaudible sur iPhone. La cible (target) se mesure maintenant au-dessus de 200 Hz (ce qu'on entend vraiment),
 # et les basses de la musique sont baissées de 6 dB (elles ne servent pas sur téléphone et brouillent la voix au casque).
-# 28/10 (CAM20062 v3 : « au début le son de la musique n'est pas assez fort… commencer par un petit impact, augmenter légèrement
+# 28/10 (RUSH v3 : « au début le son de la musique n'est pas assez fort… commencer par un petit impact, augmenter légèrement
 # le son de la musique au début puis la réduire après ») : la musique démarrait en fondu de 0,6 s et baissait déjà sous la voix
 # (1er mot à 0,1 s). music.intro = {"db": 4, "dur": 2.0, "ramp": 2.0} : départ sec, +db pendant dur secondes, puis retour à la
 # cible en ramp secondes. Le niveau mesuré (cible -29) reste celui de tout le morceau ; l'impact se met dans plan.sfx
@@ -248,14 +255,18 @@ if INTRO and INTRO.get("impact", False) and _imp and os.path.exists(_imp["src"])
         and not any(x.get("at", 9) < 0.3 for x in plan.get("sfx", [])):
     plan["sfx"] = [dict(_imp, at=0.0, kind="impact-intro", align="start", dur=1.6, volume=0.5)] + list(plan.get("sfx", []))
     print("début : petit impact à 0 s + musique +%g dB pendant %g s (défaut 28/10)" % (INTRO["db"], INTRO["dur"]))
+ZR = 0.3   # rampe d'entrée / sortie d'une zone locale (s)
+ZONES = [dict(z, db=max(-30.0, min(12.0, float(z.get("db", 0))))) for z in (plan.get("music_zones") or [])
+         if isinstance(z, dict) and float(z.get("to", 0)) > float(z.get("from", 0)) and float(z.get("db", 0))]
+for z in ZONES: print(f"musique {z['db']:+g} dB seulement de {z['from']:.2f} à {z['to']:.2f} s (zone locale)")
 LIM_DB = -2.3   # plafond du limiteur ; abaissé tout seul si l'AAC fait remonter la crête (voir boucle finale)
 inp, f, n_music_inp = graph()
-# 03/11 (IMG_7023 : mix de 21 s au calme, 109 à 139 s Mac chargé) : une version qui ne change ni la voix ni la musique (titre,
+# 03/11 (RUSH : mix de 21 s au calme, 109 à 139 s Mac chargé) : une version qui ne change ni la voix ni la musique (titre,
 # sous-titres) reprend les niveaux trouvés au mix d'avant au lieu de refaire 2 ou 3 passes de mesure. La clé = le graphe de
 # mesure exact + taille et date de chaque fichier son (la vidéo rendue n'y entre pas : elle est muette). La mesure étant
 # déterministe, le résultat est le même au réglage près. Un changement = mesure complète, comme avant.
 _sig = lambda a: f"{a}|{os.path.getsize(a)}|{int(os.path.getmtime(a))}" if os.path.isfile(a) else a
-CLE_MIX = json.dumps([[_sig(a) for a in inp[2:]], f, dur], ensure_ascii=False)
+CLE_MIX = json.dumps([[_sig(a) for a in inp[2:]], f[:-1], dur], ensure_ascii=False)   # 11/11 : la dernière ligne (intro, zones locales, limiteur) est après la mesure
 MEMO_MIX = os.path.join(here, "mix-niveaux.json")
 try: _memo = json.load(open(MEMO_MIX))
 except Exception: _memo = {}

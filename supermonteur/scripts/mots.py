@@ -2,7 +2,7 @@
   from mots import transcrire
   words, moteur = transcrire("rush.mp4", debut=12.0, fin=18.5, langue="fr")   # temps relatifs au début de l'extrait
 langue=None = détection automatique. mac=True = Whisper forcé.
-ElevenLabs (23/10, rush IMG_6799) : 16/16 vraies pauses contre 8/16 pour Whisper, bords à 0,03 s, 2 s au lieu de 39 s.
+ElevenLabs (23/10, rush RUSH) : 16/16 vraies pauses contre 8/16 pour Whisper, bords à 0,03 s, 2 s au lieu de 39 s.
 Envoi en Opus 32 kb/s mono (26/10) : 45 min de podcast = ~11 Mo au lieu de 88 Mo en WAV (l'envoi WAV expirait).
 Clé lue dans le trousseau (service elevenlabs-api-key), jamais dans un fichier. Pas de clé, quota vide, pas d'internet
 ou toute autre erreur -> 29/10 : le montage S'ARRÊTE (SansElevenLabs) ; Whisper seulement si secours=True ou mac=True.
@@ -18,7 +18,8 @@ def _extrait(src, debut, fin):
     return cut + ["-i", src, "-map", "0:a:0", "-vn", "-ac", "1", "-ar", "16000"]
 
 
-def elevenlabs(src, debut=None, fin=None, langue="fr"):
+def elevenlabs(src, debut=None, fin=None, langue="fr", infos=None):
+    """infos = dict rempli avec la langue détectée (« langue » en 2 lettres), utile quand langue=None (SuperVeille)."""
     key = subprocess.run(["security", "find-generic-password", "-s", "elevenlabs-api-key", "-w"],
                          capture_output=True, text=True).stdout.strip()
     if not key:
@@ -39,12 +40,16 @@ def elevenlabs(src, debut=None, fin=None, langue="fr"):
             time.sleep(attente)
     if r.status_code != 200:
         raise RuntimeError(f"ElevenLabs {r.status_code} : {r.text[:200]}")
+    rep = r.json()
+    if infos is not None:                                             # 09/11 : SuperVeille a besoin de la langue (eng -> en)
+        code = (rep.get("language_code") or "").lower()
+        infos["langue"] = {"eng": "en", "fra": "fr", "spa": "es", "por": "pt", "deu": "de", "ita": "it"}.get(code, code[:2])
     words = []
-    for w in r.json()["words"]:
+    for w in rep["words"]:
         t = w["text"].strip()
         if w.get("type") != "word" or not t: continue
         if not any(c.isalnum() for c in t):                          # 26/10 : « ? » renvoyé seul = sous-titre « ? » à l'écran
-            if words: words[-1]["text"] += t                          # -> collé au mot d'avant
+            if words: words[-1]["text"] = (words[-1]["text"].rstrip(",") if t[:1] in ".!?" else words[-1]["text"]) + t   # -> collé au mot d'avant (09/11 : « Oh,. » -> « Oh. »)
             continue
         words.append({"text": t, "start": round(w["start"], 3), "end": round(w["end"], 3)})
     return words
@@ -92,7 +97,7 @@ class SansElevenLabs(RuntimeError):
     pass
 
 
-# 29/10 (l’utilisateur : « Bloquer le montage ») : Whisper du Mac = 20 fois plus lent et dérush moins juste (CAM20065 : une phrase
+# 29/10 (l’utilisateur : « Bloquer le montage ») : Whisper du Mac = 20 fois plus lent et dérush moins juste (RUSH : une phrase
 # entière sautée). ElevenLabs refuse = le MONTAGE s'arrête (SansElevenLabs) au lieu de passer sur Whisper.
 # secours=True = Whisper permis (SuperCarrousel, qui n'est pas un montage). mac=True = Whisper forcé, à la main seulement.
 def transcrire(src, debut=None, fin=None, langue="fr", modele="small", mac=False, secours=False, **opts):
@@ -106,7 +111,26 @@ def transcrire(src, debut=None, fin=None, langue="fr", modele="small", mac=False
             try: _alerter(e)
             except Exception: pass
             if not secours and "pas de clé" not in str(e):
+                # 06/11 : une coupure réseau n'est PAS un manque de crédit (RUSH, partage iPhone sans IPv4)
+                reseau = any(m in str(e) for m in ("Connection aborted", "Network is unreachable", "Max retries", "Failed to establish", "timed out", "Name or service", "nodename"))
+                if reseau:
+                    raise SansElevenLabs("ElevenLabs injoignable : internet coupé ou partage iPhone instable. Change de wifi puis clique « Monter le reel »")
                 raison = "plus de crédit" if "quota" in str(e) else str(e)[:160]
                 raise SansElevenLabs(f"ElevenLabs : {raison}. Ajoute du crédit sur elevenlabs.io/app/subscription (ou retire ta clé pour monter sur le Mac), puis clique « Monter le reel »")
             print(f"ElevenLabs indisponible ({e}) -> secours Whisper du Mac", file=sys.stderr)
     return whisper(src, debut, fin, langue, modele, **opts), "Mac (Whisper)"
+
+
+def segments(mots, blanc=0.6):
+    """09/11 : mots -> phrases [{debut, fin, texte}] (coupe sur . ! ? ou un blanc >= 0,6 s). Pour ceux qui lisaient les
+    segments de Whisper (SuperVeille, Tuto vers agent)."""
+    out, cur = [], []
+    for i, m in enumerate(mots):
+        if cur and m["start"] - cur[-1]["end"] >= blanc:
+            out.append(cur); cur = []
+        cur.append(m)
+        if m["text"][-1:] in ".!?":
+            out.append(cur); cur = []
+    if cur: out.append(cur)
+    return [{"debut": round(c[0]["start"], 1), "fin": round(c[-1]["end"], 1), "texte": " ".join(x["text"] for x in c)} for c in out]
+

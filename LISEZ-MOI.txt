@@ -1,6 +1,41 @@
-SUPER
+SUPER STUDIO
+
+Ton équipe de 4 robots : Le Scripteur, Le Monteur, Le Carrousel, Le Publieur.
+Tu filmes. Ils écrivent, montent, dessinent et publient.
+
+
+AVANT DE COMMENCER : 4 OBLIGATOIRES + 1 CONSEILLÉ
+
+1. Claude (OBLIGATOIRE)
+   Télécharge l'app : claude.ai/download
+   Prends un abonnement payant (Pro ou plus). Le compte gratuit n'ouvre pas l'onglet Code.
+
+2. ElevenLabs (OBLIGATOIRE)
+   Crée un compte sur elevenlabs.io et prends un abonnement (il écoute tes vidéos pour les sous-titres).
+   Crée une clé API, copie-la, puis double-clic sur ranger-cle-elevenlabs.command (dans ce dossier).
+
+3. Metricool (OBLIGATOIRE pour publier)
+   Crée un compte gratuit sur metricool.com et branche ton Instagram, ton TikTok, ta chaîne YouTube.
+   Puis dans Claude : Réglages > Connecteurs > Metricool.
+
+4. Les 100 musiques (OBLIGATOIRE pour les montages)
+   Pose le fichier 100-MUSIQUES.zip à côté de ce dossier. L'installation les range toute seule.
+
+5. Wispr Flow (CONSEILLÉ)
+   wisprflow.ai : tu parles au lieu d'écrire. Tu dictes tes demandes à Claude.
+
+
+INSTALLER (5 minutes)
 
 1. Ouvre l'app Claude, onglet Code.
-2. Écris : « Installe les applis qui sont ici : https://github.com/MrDreamax/monteur-ia »
-3. Clique « Autoriser ».
-Ensuite : double-clic sur Documents/SuperApps/ouvrir.command.
+2. Glisse ce dossier dans la fenêtre et écris : « Installe Super Studio qui est dans ce dossier ».
+3. Clique « Autoriser » quand Claude le demande.
+
+Ton Brain (ta mémoire, vide au départ) arrive dans Documents/Brain.
+Pour le remplir, dis à Claude : « Pose-moi des questions pour remplir mon Brain ».
+
+
+OUVRIR LE STUDIO
+
+Dans Claude : « Ouvre Super ».
+Tu donnes tes ordres à Claude dans le chat. Le Studio te montre les robots au travail et le résultat.

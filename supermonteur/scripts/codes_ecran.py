@@ -1,4 +1,4 @@
-"""Écrans de code façon Ayo Omolewa pour IMG_7042 : PNG 1080x1920 transparents (bandeau haut) ou pleins (plein écran),
+"""Écrans de code façon Ayo Omolewa pour RUSH : PNG 1080x1920 transparents (bandeau haut) ou pleins (plein écran),
 une image par état de surlignage, + filtre ffmpeg qui les pose sur clip.mp4 -> cam_code.mp4."""
 import json, os, sys, subprocess
 from PIL import Image, ImageDraw, ImageFont

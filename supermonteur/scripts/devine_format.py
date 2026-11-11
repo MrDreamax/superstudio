@@ -2,8 +2,8 @@
 le type de montage »). Mesure, ne décide pas : Claude regarde la planche, puis pose UNE question en boutons
 (« Tu veux un montage tier list ? »), le format deviné en 1er. Règle complète : devine-format.md.
   python3 devine_format.py rush.MOV                    -> devine.json + devine.jpg (planche de 8 images) dans le dossier courant
-  python3 devine_format.py rush.MOV --words words.json -> réutilise une transcription déjà faite (sinon Whisper small du Mac,
-                                                          gratuit, sur les 150 premières secondes seulement)
+  python3 devine_format.py rush.MOV --words words.json -> réutilise une transcription déjà faite (sinon ElevenLabs, Whisper du Mac en secours,
+                                                          sur les 150 premières secondes seulement)
   python3 devine_format.py rush.MOV --out dossier/
 Signaux : nombre de visages, taille du visage, fond vert, caméra qui bouge, voix sans visage, mots du script.
 """
@@ -66,8 +66,8 @@ if words_path:
     mots = mots.get("words", mots) if isinstance(mots, dict) else mots
 else:
     sys.path.insert(0, os.path.join(SK, "scripts"))
-    from mots import whisper
-    mots = whisper(src, 0, min(dur, 150))
+    from mots import transcrire   # 09/11 : ElevenLabs d'abord (2 s au lieu de ~40 s), Whisper du Mac en secours
+    mots, _ = transcrire(src, 0, min(dur, 150), langue=None, secours=True)
 texte = " ".join(m.get("text", m.get("word", "")) for m in mots)
 plat = unicodedata.normalize("NFKD", texte.lower().replace("’", "'")).encode("ascii", "ignore").decode()
 parle = sum(m["end"] - m["start"] for m in mots if "end" in m) / max(min(dur, 150), 1)

@@ -22,5 +22,5 @@ node $S/build.mjs --plan plan.json --out index.html && npx --yes hyperframes@0.8
 python3 $S/mix.py plan.json renders/<x>.mp4 voice.mp4 final.mp4
 ```
 4. **Vérifier la planche** : chaque plan colle à sa phrase, aucun inconnu en vedette, aucun plan qui tremble.
-Réf VALIDÉE : `<dossier>/style-lab/sans-visage/voixoff-difficile-v3.mp4`. Test moteur : `livrables/montage-voixoff-difficile-test/final.mp4` (v2, 32,7 s, 20 plans vidéo, 4 SFX, -14,1 LUFS ; v1 rejetée gardée en `final-v1.mp4`).
+Réf VALIDÉE : `<dossier>/style-lab/sans-visage/voixoff-difficile-v3.mp4`. Test moteur : `(exemple retiré)` (v2, 32,7 s, 20 plans vidéo, 4 SFX, -14,1 LUFS ; v1 rejetée gardée en `final-v1.mp4`).
 Limites : sous-titres jusqu'à 26 car/s quand la voix va vite (dérush moins serré si besoin) ; ciels / sable parfois brûlés (P99 251, plans bruts : `match_look.py --fix` possible) ; pas encore de cartons texte plein écran ni de mèmes.

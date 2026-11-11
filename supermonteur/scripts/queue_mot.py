@@ -1,9 +1,9 @@
-# Fin réelle d'un mot (22/10/2026, IMG_6799 v1 : « à un moment le mot est coupé, et à la fin aussi le mot est coupé »).
+# Fin réelle d'un mot (22/10/2026, RUSH v1 : « à un moment le mot est coupé, et à la fin aussi le mot est coupé »).
 # Partagé par derush.py (où couper / baisser la voix) et gardien.py (contrôle « Pas de mot coupé ») : une seule définition.
 #
 # Un mot ne s'arrête pas quand la voix forte s'arrête. Après la dernière note de voix il peut rester :
 #  - une voix douce qui traîne (« e » muet : « scrip-te », fin de voyelle) : suivie tant qu'elle reprend en moins de 0,30 s ;
-#  - une queue SOURDE collée (« x » de « Dreamax » 0,20 s, « s », « tre ») : gardée si elle dure 0,25 s au plus, sinon c'est
+#  - une queue SOURDE collée (« x » de « l’utilisateur » 0,20 s, « s », « tre ») : gardée si elle dure 0,25 s au plus, sinon c'est
 #    un souffle collé au mot (on garde alors 0,12 s de queue, le reste peut être baissé) ;
 #  - l'explosion d'un « t », « p », « k » après 30-90 ms de fermeture (silence) : sourde et brutale (+10 dB en 30 ms),
 #    gardée 0,25 s au plus. Une reprise douce (inspiration) ou voisée (le mot suivant) n'en est pas une.
@@ -12,7 +12,7 @@
 def fin_du_mot(db, voisee, q, floor, e, cap):
     """db : énergie par trame de 10 ms ; voisee(k) -> bool ; e : où la voix forte s'arrête (s) ; cap : limite dure (s)."""
     thr = floor + 15
-    # 23/10 (IMG_6850, Gardien « mot coupé » à 59,2 s sur la fin de « ça. ») : sur un rush calme, le seuil de voix douce (q - 4)
+    # 23/10 (RUSH, Gardien « mot coupé » à 59,2 s sur la fin de « ça. ») : sur un rush calme, le seuil de voix douce (q - 4)
     # tombe AU NIVEAU du bruit de la pièce (ici q = -44 dB, bruit = -47 dB), et ce bruit bourdonne (« voisé ») : la voix douce était
     # suivie dans le bourdonnement jusqu'à 0,6 s après le mot. Une voix douce doit rester 6 dB au-dessus du bruit de la pièce.
     doux = max(q - 4, floor + 6)

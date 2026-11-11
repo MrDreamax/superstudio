@@ -36,7 +36,7 @@ Le carrousel se fera dans l'interface **SuperCarrousel**, qui lit la DA de Super
 
 ## MAJ 22/10/2026 : nouveau modèle style Apple (validé par l’utilisateur)
 Remplace le tableau ci-dessous pour l’utilisateur : blanc, SF Pro, photo bord à bord + cheveux détourés qui dépassent, dessins sur cercle bleu clair, fin = 3 bulles iMessage. Branché dans le moteur le 22/10 : mettre `"style": "apple"` dans la description → `carrousel.py` appelle `scripts/apple.py` (rendu local par Chrome, **pas besoin d'Open Carrusel**, ~20 s pour 8 slides).
-Exemple complet : `exemples/exemple-apple.json` (copier, adapter). Types : `cover` (kicker, title, photo, note), `photo` (title, body ou steps ; `"pop": false` si la personne est petite dans l'image), `art` (title, body, steps, ou `cta` + `cta_q` + `cta_line` pour la fin en 3 bulles). Note manuscrite : `note` + `note_pos`.
+Exemple complet : `exemples/exemple-apple.json` (copier, adapter). Types : `cover` (kicker, title, photo, accent ; couverture « sujet géant » du 07/11, détourage `scripts/detoure.swift`), `photo` (title, body ou steps ; `"pop": false` si la personne est petite dans l'image), `art` (title, body, steps, ou `cta` + `cta_q` + `cta_line` pour la fin en 3 bulles). Note manuscrite : `note` + `note_pos`.
 Le détourage ne garde que la tête au-dessus de la photo (mains et bruit effacés). Vérifier quand même le haut de chaque slide photo en grand.
 Détail du style : `~/Documents/Brain/00-Moi/da-apple-livrables.md`.
 
@@ -50,7 +50,7 @@ Détail du style : `~/Documents/Brain/00-Moi/da-apple-livrables.md`.
 | Photos | VRAIES photos de l'utilisateur (dossier `photos` de marque.json), variées (plusieurs shootings), teintes naturelles, légère touche bleue dans les ombres (`prep.py`) |
 | Illustrations | 2D motion design dessinées en SVG (`art.py`) : fond blanc, grand cercle bleu très clair, aplats, 2 à 4 petits éléments déco |
 | Interdit | images générées par IA (Higgsfield ou autre) : refusées le 16/10, « trop IA ». Pas de @, pas de numéro de slide |
-| Couverture | photo + mot géant serif DERRIÈRE la tête + 1 ligne en majuscules, 7 mots max au total |
+| Couverture | **07/11/2026 « sujet géant »** (remède 1 d'Ayo, validée en 2 rounds) : fond blanc, titre 2 lignes à gauche, `"accent"` = le mot clé seul en bleu, tête détourée en très grand dont les cheveux frôlent le bas du titre, AUCUN bouton ni flèche. Photo cadrée BUSTE obligatoire (en pied → le moteur reprend l'ancienne couverture et le dit). 7 mots max. Modèle : `(exemple retiré)`. Ancienne : `"cover_style": "ancienne"` |
 | Slides | 1 idée par slide : titre serif + 1 phrase courte (ou liste 1-2-3 de 3 lignes courtes). Jamais de pavé |
 | Fin | « Commente MOT » + la ressource promise. Flèche de swipe partout sauf sur la dernière |
 
@@ -108,9 +108,11 @@ Corrige la description et relance.
 - Brain : 1 ligne en bas de `log.md` ; dans son fichier `actions` (00-Moi/marque.json ; vide : dis-le dans le chat) : valider le carrousel, vérifier que le mot-clé répond dans ManyChat, feu vert pour Metricool.
 - Ne publie et ne programme JAMAIS sans son feu vert explicite.
 - Une info absente du Brain : dis « je ne l'ai pas ». Ne l'invente pas.
-- En cas d'échec (photos introuvables, SSD débranché, rendu vide) : une ligne dans ~/Documents/Brain/04-Audits/erreurs-taches.md (date, tâche, erreur) et dis-le en une ligne.
+- En cas d'échec (photos introuvables, disque débranché, rendu vide) : une ligne dans ~/Documents/Brain/04-Audits/erreurs-taches.md (date, tâche, erreur) et dis-le en une ligne.
 
 ## Technique
 - Open Carrusel : `~/open-carrusel` (open source, MIT), patché pour le 3:4 et les vraies italiques. L'éditeur sur http://localhost:3210 permet à l'utilisateur de voir ou retoucher.
 - `prep.py` utilise le modèle de détourage du skill supermonteur (`~/.cache/supermonteur/rvm_mobilenetv3_fp32.onnx`). Le SSD doit être branché.
 - Porte cash : un carrousel apporte confiance et enregistrements, pas un deal sous 7 jours. Si l'utilisateur y passe plus d'une demi-journée, dis-le une fois (avec le chiffre de son fichier `actions` s'il en a un).
+
+- 06/11/2026 · Texte parasite derrière la personne (écran de projecteur) : ne JAMAIS le gommer lettre par lettre (taches, cheveux coupés, 3 tours ratés). Méthode qui marche : passer la photo une 1re fois dans le moteur, prendre `_sources/<clé>-fg.png` (détourage), poser le sujet sur un fond uni fait de la médiane de chaque ligne hors sujet et hors lettres, lissé en vertical (sigma 60), puis relancer avec cette image. Photo carrée de profil (1024 px) = visage trop zoomé : à éviter en slide photo.

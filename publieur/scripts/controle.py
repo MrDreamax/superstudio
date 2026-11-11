@@ -44,9 +44,10 @@ def controler(f):
         f"CTA « {cta} » dans le 1er commentaire : merci ou valeur à la place (règle du 17/10)")
     add(bool(ig.get("alt", "").strip()), "Texte alternatif rempli", "Texte alternatif manquant", "alerte")
     yt = f.get("youtube", {})
-    add(0 < len(yt.get("titre", "")) <= 40, "Titre YouTube sous 40 caractères", f"Titre YouTube : {len(yt.get('titre',''))} caractères, 40 max pour le voir en entier à l'accueil (règle du 01/11)")
+    pf = f.get("plateformes", ["youtube", "tiktok"])  # 09/11 : version Insta seule = pas de YT ni TikTok à contrôler
+    if "youtube" in pf: add(0 < len(yt.get("titre", "")) <= 40, "Titre YouTube sous 40 caractères", f"Titre YouTube : {len(yt.get('titre',''))} caractères, 40 max pour le voir en entier à l'accueil (règle du 01/11)")
     tk = f.get("tiktok", {}).get("legende", "")
-    add(0 < len(tk) <= 2200, "Légende TikTok prête", "Légende TikTok vide ou trop longue")
+    if "tiktok" in pf: add(0 < len(tk) <= 2200, "Légende TikTok prête", "Légende TikTok vide ou trop longue")
     tous = "\n".join([leg, ig.get("premier_commentaire", ""), yt.get("titre", ""), yt.get("description", ""), tk])
     ia = []
     if "—" in tous:

@@ -1,8 +1,8 @@
-"""29/10 CAM20065 écran coupé : pose les sons d'iPhone (sons.json : t en secondes du clip, src dans la bibliothèque Sons de son disque externe
+"""29/10 RUSH écran coupé : pose les sons d'iPhone (sons.json : t en secondes du clip, src dans la bibliothèque Sons de son disque externe
 ou dans ce dossier, db = gain, duree = coupé à n s) sur le son de la vidéo. python3 ajoute_sons.py entree.mp4 sortie.mp4 [duree_max]"""
 import json, os, subprocess, sys
 ICI = os.path.dirname(os.path.abspath(__file__))
-LIB = "/Volumes/son disque externe/1 - Contenu/1 - Bibliothèque/Sons"
+LIB = os.path.expanduser("~/Documents/Montage/SFX")
 src, out = sys.argv[1], sys.argv[2]
 fin = float(sys.argv[3]) if len(sys.argv) > 3 else 1e9
 S = [s for s in json.load(open(os.path.join(ICI, "sons.json"))) if s["t"] < fin]

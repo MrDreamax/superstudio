@@ -1,6 +1,6 @@
 # Cut Notes : retours image par image
 
-Outil de MyDreamax IA, créé le 13/10/2026. L'utilisateur regarde le rendu dans une page, tape un commentaire, la note s'accroche à l'image exacte. Claude lit les notes et corrige.
+Outil de Super Studio, créé le 13/10/2026. L'utilisateur regarde le rendu dans une page, tape un commentaire, la note s'accroche à l'image exacte. Claude lit les notes et corrige.
 Fichiers : `cut-notes.html` (page, relue ligne par ligne le 13/10 : aucun envoi hors Google Fonts), `review_copy.sh` (copie de revue).
 
 ## Quand

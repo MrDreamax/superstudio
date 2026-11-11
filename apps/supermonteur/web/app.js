@@ -348,7 +348,8 @@ function majTemps() {
 }
 vid.ontimeupdate = vid.onseeked = vid.onplay = vid.onpause = majTemps;
 const T0 = parseFloat(new URLSearchParams(location.search).get("t"));   // ?t=14 : ouvre la vidéo à cet instant
-vid.onloadedmetadata = () => { if (T0 >= 0 && !vid.dataset.t0) { vid.dataset.t0 = 1; vid.currentTime = T0; } majTemps(); if (R) ecranRetours(); };
+vid.onloadedmetadata = () => { vid.closest(".ph")?.classList.toggle("large", vid.videoWidth > vid.videoHeight);   // 09/11 RUSH : vidéo 16:9 montrée en entier, plus coupée dans le cadre de téléphone
+  if (T0 >= 0 && !vid.dataset.t0) { vid.dataset.t0 = 1; vid.currentTime = T0; } majTemps(); if (R) ecranRetours(); };
 $("#play").onclick = () => vid.paused ? vid.play() : vid.pause();
 $("#img-moins").onclick = () => { vid.pause(); vid.currentTime = Math.max(0, vid.currentTime - 1 / FPS); };
 $("#img-plus").onclick = () => { vid.pause(); vid.currentTime = Math.min(vid.duration, vid.currentTime + 1 / FPS); };

@@ -8,7 +8,7 @@ Mise en page MIX validée : split haut/bas par défaut, plein écran sur celui q
 plan.json -> "podcast": {"src": "cut169.mp4", "top": "L", "delogo": [x, y, w, h] | null, "segments": "cut169.segments.json"}
   src   = le passage dérushé en 16:9 (tuile gauche = L, tuile droite = R)
   top   = la tuile en haut du split (défaut L = l'hôte, à gauche dans les visios)
-  delogo = logo incrusté à effacer, en pixels de la source (ex. ancien logo MYDREAMAX : [24, 34, 266, 152])
+  delogo = logo incrusté à effacer, en pixels de la source (ex. ancien logo SUPER STUDIO : [24, 34, 266, 152])
   segments = cut.segments.json de derush.py : les pleins écrans démarrent sur une coupe quand elle est à < 0,15 s
 Les plein écrans sont décidés par plan.keywords (1re occurrence de chaque mot fort) ; avec un titre-question (pas de mots forts),
 par plan.podcast.full = [[start, end], ...] écrit à la main.
