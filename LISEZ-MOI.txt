@@ -19,7 +19,8 @@ AVANT DE COMMENCER : 4 OBLIGATOIRES + 1 CONSEILLÉ
    Puis dans Claude : Réglages > Connecteurs > Metricool.
 
 4. Les 100 musiques (OBLIGATOIRE pour les montages)
-   Pose le fichier 100-MUSIQUES.zip à côté de ce dossier. L'installation les range toute seule.
+   Mets le fichier 100-MUSIQUES.zip (lien envoyé à part) dans ton dossier Téléchargements, AVANT d'installer.
+   L'installation les range toute seule.
 
 5. Wispr Flow (CONSEILLÉ)
    wisprflow.ai : tu parles au lieu d'écrire. Tu dictes tes demandes à Claude.
