@@ -1,7 +1,7 @@
-# STYLE INTERVIEW (style 4 des 5 styles seuls, 26/10) = À PLUSIEURS : podcast, visio Zoom, split screen, débat (validé par l'utilisateur le 13/10, « nickel », ne plus y toucher)
+# STYLE INTERVIEW (style 4 des 5 styles seuls) = À PLUSIEURS : podcast, visio Zoom, split screen, débat (validé par l'utilisateur le, ne plus y toucher)
 
 Lu après `SKILL.md`.
-**Zones mortes (16/10)** : déjà conforme ; seul changement, les mots forts en plein écran (y 1 340) remontent à 1 337 px pour que les jambages (g, p, j) restent au-dessus de 1 480 px.
+**Zones mortes** : déjà conforme ; seul changement, les mots forts en plein écran (y 1 340) remontent à 1 337 px pour que les jambages (g, p, j) restent au-dessus de 1 480 px.
 
 Source : 2 personnes côte à côte en 16:9 (visio : tuile gauche L, tuile droite R). Mise en page **MIX** : split haut/bas par défaut (on voit la question ET la réaction), **plein écran sur celui qui parle pendant la phrase qui porte un mot fort** (2-3,5 s), jamais moins de 1,5 s de split entre deux pleins écrans. Sous-titres centrés sur la ligne de jonction en split, au niveau du col en plein écran. Pas de zoom (le changement de plan fait le rythme). Musique Epidemic sous les voix accordée au sujet (émotionnelle), SFX : aucun sur un sujet grave. Pas d'image générée. Échantillon validé : `<dossier>/style-lab/a-plusieurs/MIX_musique.mp4`.
 
@@ -20,7 +20,7 @@ python3 $S/podcast.py layout plan.json        # clip.mp4 9:16 + plan.cam / subY 
 node $S/build.mjs --plan plan.json --out index.html && npx --yes hyperframes@0.8.149 render . -q high
 python3 $S/mix.py plan.json renders/<x>.mp4 clip.mp4 final.mp4
 ```
-Hook automatique : si aucun mot fort avant 3 s, ouverture en plein écran sur celui qui pose la question (2-3 s, coupé sur une fin de mot), puis split pour voir l'autre réagir (score 13/10 : premier changement 8,3 s → 2,6 s).
-Détection testée le 13/10 : 12 phrases sur 12 justes sur 2 extraits (dont une reformulation de l'hôte pendant que l'invité sourit). Score = MOUVEMENT de la mâchoire, pas bouche ouverte (un sourire n'est pas de la parole).
+Hook automatique : si aucun mot fort avant 3 s, ouverture en plein écran sur celui qui pose la question (2-3 s, coupé sur une fin de mot), puis split pour voir l'autre réagir (score : premier changement 8,3 s → 2,6 s).
+Détection testée : 12 phrases sur 12 justes sur 2 extraits (dont une reformulation de l'hôte pendant que l'invité sourit). Score = MOUVEMENT de la mâchoire, pas bouche ouverte (un sourire n'est pas de la parole).
 Test complet : `<sorties>/montage-podcast-joseph-test/final.mp4` (23 s, -13,9 LUFS, 0 blanc > 0,4 s).
 Limites : visio 1080p en plein écran = un peu doux (tuile zoomée x1,8) ; webcam = noirs un peu gris (P1 ~14) ; débit visio rapide (sous-titres jusqu'à 23 car/s) ; pas encore de podcast filmé à 2 caméras séparées ni de 3 personnes et plus.

@@ -34,7 +34,13 @@ if [[ -f "$DEST" ]] && grep -q '<!-- PROFIL:DEBUT -->' "$DEST"; then
   if ! cmp -s "$OUT" "$DEST"; then backup "$DEST"; cp "$OUT" "$DEST"; fi
   rm -f "$BLOCK" "$OUT"; echo "Master prompt mis à jour (ton profil est intact)."
 elif [[ -f "$DEST" ]]; then
-  backup "$DEST"; cp "$NEW" "$DEST"; echo "Ancien CLAUDE.md sauvegardé dans $BK/.claude/CLAUDE.md (Bienvenue récupère ce qui compte)."
+  # CLAUDE.md perso sans balises : rien n'est perdu, il est gardé EN ENTIER dans « Qui je suis » (et sauvegardé).
+  backup "$DEST"; OLD="$(mktemp)"; OUT="$(mktemp)"
+  { echo "<!-- PROFIL:DEBUT -->"; echo "## Qui je suis (mes consignes d'avant Super Studio, gardées telles quelles)"; cat "$DEST"; echo; echo "<!-- PROFIL:FIN -->"; } > "$OLD"
+  awk -v bf="$OLD" '/<!-- PROFIL:DEBUT -->/ { while ((getline l < bf) > 0) print l; skip=1; next }
+    /<!-- PROFIL:FIN -->/ { skip=0; next } !skip { print }' "$NEW" > "$OUT"
+  cp "$OUT" "$DEST"; rm -f "$OLD" "$OUT"
+  echo "Ton ancien CLAUDE.md est gardé en entier dans « Qui je suis » (copie : $BK/.claude/CLAUDE.md)."
 else
   cp "$NEW" "$DEST"; echo "Master prompt installé."
 fi
@@ -58,8 +64,12 @@ done
 echo "$n skills installés."
 
 # ---------- 4. Le Brain ----------
-for dir in 02-Formations 03-Livres 08-Conseillers _outils; do mkdir -p "$BR/$dir"; cp -R "$ICI/Brain/$dir/." "$BR/$dir/"; done
-for f in README.md GUIDE.md GUIDE.html; do [[ -f "$ICI/Brain/$f" ]] && cp "$ICI/Brain/$f" "$BR/$f"; done
+# Fichiers du kit mis à jour ; un fichier qui change est d'abord sauvegardé ; les fichiers ajoutés par la personne restent.
+for dir in 02-Formations 03-Livres 08-Conseillers _outils 09-SOP _a-trier; do
+  [[ -d "$ICI/Brain/$dir" ]] || continue; mkdir -p "$BR/$dir"
+  rsync -a -b --backup-dir="$BK/Documents/Brain/$dir" "$ICI/Brain/$dir/" "$BR/$dir/"
+done
+for f in README.md GUIDE.md GUIDE.html; do [[ -f "$ICI/Brain/$f" ]] || continue; [[ -f "$BR/$f" ]] && ! cmp -s "$ICI/Brain/$f" "$BR/$f" && backup "$BR/$f"; cp "$ICI/Brain/$f" "$BR/$f"; done
 ( cd "$ICI/Brain"
   for p in 00-Moi 01-Projets 04-Audits 05-Decisions 06-Contenu 07-Clients hot.md log.md index.md; do
     [[ -e "$p" ]] || continue
@@ -87,7 +97,7 @@ TS="$(date +%Y%m%d-%H%M%S)"
 [[ -d "$DEST" ]] && backup "$DEST"
 mkdir -p "$DEST"
 # moteur remplacé ; fichiers du client protégés (exclus = ni copiés ni supprimés)
-rsync -a --delete \
+rsync -a \
   --exclude config.json --exclude retours-client.md --exclude broll_exclus.txt \
   --exclude 'da/*.json' --exclude ref/ \
   "$SRC/" "$DEST/"
@@ -107,7 +117,7 @@ if [[ -d "$PSRC" ]]; then
     backup "$PDEST"
   fi
   mkdir -p "$PDEST"
-  rsync -a --delete --exclude config.json --exclude retours-client.md "$PSRC/" "$PDEST/"
+  rsync -a --exclude config.json --exclude retours-client.md "$PSRC/" "$PDEST/"
   # 12/11 : réglages du Publieur créés une fois (avant : jamais créés, « Réglages introuvables »), reels lus dans le Monteur
   if [[ ! -f "$PDEST/config.json" ]]; then
     sed 's#"montages": "~/Documents/Montage/LIVRES"#"montages": "~/Documents/SuperApps/supermonteur/reels"#' "$PDEST/config.exemple-client.json" > "$PDEST/config.json"
@@ -122,20 +132,19 @@ if [[ -d "$CSRC" ]]; then
     backup "$CDEST"
   fi
   mkdir -p "$CDEST"
-  rsync -a --delete --exclude retours-client.md --exclude __pycache__ "$CSRC/" "$CDEST/"
+  rsync -a --exclude retours-client.md --exclude __pycache__ "$CSRC/" "$CDEST/"
   [[ -f "$CDEST/retours-client.md" ]] || printf '# Mes retours sur les carrousels (lus AVANT chaque carrousel)\nFormat : JJ/MM/AAAA · carrousel · ce qui n%sallait pas → règle\n\n' "'" > "$CDEST/retours-client.md"
 fi
 
-# Super et ses 4 outils : le code est remplacé, les données de la personne jamais touchées
+# Moteurs du Monteur et du Carrousel : le code est mis à jour (sauvegardé avant), rien de la personne n'est touché ni supprimé
 if [[ -d "$ASRC" ]]; then
+  if [[ -d "$ADEST" ]]; then mkdir -p "$BK/Documents/SuperApps"; rsync -a --exclude reels/ --exclude projets/ --exclude '*.log' "$ADEST/" "$BK/Documents/SuperApps/"; fi
   mkdir -p "$ADEST"
-  rsync -a --delete \
+  rsync -a \
     --exclude config.json --exclude /superda/da.json --exclude /superda/img/ --exclude /superda/historique/ --exclude /superda/inspiration/ \
-    --exclude demandes.jsonl --exclude /supermonteur/reels/ --exclude /supercarrousel/projets/ --exclude metricool.json \
+    --exclude demandes.jsonl --exclude /supermonteur/reels/ --exclude /supercarrousel/projets/ \
     --exclude '*.log' --exclude a-corriger.json --exclude feedback-retours.md --exclude .rendu.lock --exclude _outils/ \
-    --exclude preuves/ --exclude __pycache__ --exclude /super/ --exclude /ouvrir.command --exclude /ouvrir-super.sh \
-    --exclude ma-marque.md --exclude /superveille/enregistres/ --exclude /superveille/enregistres.json --exclude '/superveille/*.lock' \
-    --exclude /superveille/veilles/ --exclude /superveille/mes-notes/ --exclude '/superveille/tournage*.json' --exclude /superveille/reglages.json \
+    --exclude preuves/ --exclude __pycache__ \
     "$ASRC/" "$ADEST/"
   for a in "" supermonteur/ supercarrousel/; do
     [[ -f "$ADEST/${a}config.json" ]] || cp "$ADEST/${a}config.exemple.json" "$ADEST/${a}config.json"
@@ -178,7 +187,7 @@ fi
 # Scripteur : remplacé à chaque mise à jour (13/11 : plus d'appli Super, rien n'est supprimé chez la personne)
 for s in scripteur; do
   [[ -d "$HOME/.claude/skills/$s" ]] && backup "$HOME/.claude/skills/$s"
-  if [[ -d "$(dirname "$SRC")/$s" ]]; then mkdir -p "$HOME/.claude/skills/$s"; rsync -a --delete "$(dirname "$SRC")/$s/" "$HOME/.claude/skills/$s/"; fi
+  if [[ -d "$(dirname "$SRC")/$s" ]]; then mkdir -p "$HOME/.claude/skills/$s"; rsync -a --exclude config.json --exclude retours-client.md "$(dirname "$SRC")/$s/" "$HOME/.claude/skills/$s/"; fi
 done
 
 bash "$DEST/scripts/setup.sh"

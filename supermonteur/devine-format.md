@@ -1,10 +1,10 @@
 > **Chez un client : la question du style est REMPLACÉE par la question ouverte du bloc client de SKILL.md. Jamais de boutons de style ni de cases à cocher dans le chat.**
 
-# DEVINER LE FORMAT : « monte cette vidéo » = je devine, il confirme (26/10)
+# DEVINER LE FORMAT : « monte cette vidéo » = je devine, il confirme
 
-**02/11 : SuperMonteur devine et il confirme sur son 1er écran. Aucune question de style ni de cases dans le chat** (l’utilisateur : « ne propose pas à la fois le style dans Claude chat et dans SuperMonteur »). Les sections 3 et 3 bis ne servent que si SuperMonteur est impossible à ouvrir, et pour un client.
+**SuperMonteur devine et il confirme sur son 1er écran. Aucune question de style ni de cases dans le chat**. Les sections 3 et 3 bis ne servent que si SuperMonteur est impossible à ouvrir, et pour un client.
 
-Règle de l’utilisateur (26/10) : « Je dis toujours "monte cette vidéo" et c'est à toi d'en déduire le type de montage : "tu veux un montage tier list ?" ou "tu veux juste titre + sous-titre ?" ou "tu veux un split screen ?" ou "tu veux un montage animé ?" ou "c'est un montage FAQ simple ?" ».
+Règle de .
 Il ne nomme jamais le format. Ne jamais lui demander « quel style ? » à froid : je regarde, je devine, je propose.
 
 ## 1. Regarder (1 commande, ~1 min)
@@ -29,7 +29,7 @@ Question = ma devinette, dans ses mots : « Tu veux un montage tier list ? », �
 Options (4 max, la devinette en 1er avec « (Recommandé) ») : la devinette + les 2-3 autres plausibles pour CE rush. Chaque option dit en clair ce qu'il verra (« le tableau S/A/B/C se remplit au-dessus de ta tête »). Le reste passe par « Autre ».
 Une question pour le style, puis la question des cases (3 bis). L'ambiance et la musique se règlent ensuite comme d'habitude (cockpit).
 
-## 3 bis. Les cases à cocher du style (26/10, dans le chat, juste après le style)
+## 3 bis. Les cases à cocher du style (dans le chat, juste après le style)
 AskUserQuestion `multiSelect: true`, 1er bouton = « La totale (Recommandé) » (= tout coché). Il coche ce qu'il veut garder. **La musique n'est pas une case : toujours là.** Le style Autre n'a pas de cases.
 | Style | Cases |
 |---|---|
@@ -40,7 +40,7 @@ AskUserQuestion `multiSelect: true`, 1er bouton = « La totale (Recommandé) » 
 4 options max par question : au-delà (Dynamique), 2 questions dans le même appel (« Texte » : titre, sous-titres, mots géants, cartons ; « Images et son » : écran coupé, animations, B-rolls, bruitages), chacune avec « La totale » en 1er.
 Ses cases vont dans `plan.json` → `"cases": {...}` ; case décochée = le champ correspondant n'est pas écrit (pas de `title`, pas de `keywords`, `brolls: []`, `sfx: []`…). (Contrôle par le Gardien : pas encore codé.)
 
-## 4. Ce que chaque réponse lance : les 5 styles SEULS (26/10), tous avec musique
+## 4. Ce que chaque réponse lance : les 5 styles SEULS, tous avec musique
 | Ce qu'il choisit | Style | Recette |
 |---|---|---|
 | Face caméra (il parle seul, sujet à illustrer) | 1. Dynamique | `styles/face-cam.md` : mix split screen (cam + animation) / cam seule / carton dégradé / animation plein écran |
@@ -50,4 +50,4 @@ Ses cases vont dans `plan.json` → `"cases": {...}` ; case décochée = le cham
 | Autre chose (voix off, green screen, B-roll + texte, tableau blanc, style d'un créateur) | 5. Autre | voir la ligne « Autre » du tableau des styles dans SKILL.md |
 | Carrousel | pas un montage | skill `carrousel` |
 
-Selfie, clip, FAQ = Minimaliste ; démonstration = Dynamique ; fiction à 2 = Interview (26/10).
+Selfie, clip, FAQ = Minimaliste ; démonstration = Dynamique ; fiction à 2 = Interview.

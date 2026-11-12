@@ -547,11 +547,8 @@ def ouvrier():
 
 
 def metricool():
-    """Lecture seule. Le serveur ne parle pas à Metricool (c'est Claude, par le connecteur, getBrandSettings) : il lit
-    metricool.json, écrit par Claude. Absent ou « branche: false » = mode Télécharger."""
-    m = lire(os.path.join(APP, "metricool.json"), {}) or {}
-    return {"branche": bool(m.get("branche")), "compte": m.get("compte", ""), "verifie": m.get("verifie", ""),
-            "essai": reglages_apps.mode_essai(APP)}  # config.json "mode_essai": false = le bouton Publier publie pour de vrai
+    """Publication retirée des applis (Super Studio 2.0) : toujours le mode Télécharger. On publie dans le chat (Blotato)."""
+    return {"branche": False, "compte": "", "verifie": "", "essai": True}
 
 
 def legendes(d):
@@ -633,11 +630,11 @@ def titre_reel(d):
 
 
 def publieur():
-    """Dès qu'un reel a un publication.json « a_faire » (clic confirmé de l’utilisateur), Claude l'envoie à Metricool."""
+    """Dès qu'un reel a un publication.json « a_faire » (clic confirmé de l’utilisateur), rien ne part : la publication se fait dans le chat (Blotato)."""
     for r in os.listdir(REELS):   # un envoi coupé par un redémarrage du serveur : on ne sait pas ce qui est parti
         d = os.path.join(REELS, r)
         if os.path.isdir(d) and publier.etat(d).get("statut") == "en_cours":
-            publier._maj(d, statut="erreur", etape="", message="Envoi coupé (serveur relancé) : vérifie le planner Metricool avant de relancer.")
+            publier._maj(d, statut="erreur", etape="", message="Envoi coupé (serveur relancé) : publie depuis le chat avec Claude.")
     while True:
         try:
             for r in sorted(os.listdir(REELS)):

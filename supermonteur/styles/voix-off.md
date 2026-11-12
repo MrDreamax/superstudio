@@ -1,15 +1,15 @@
-# VOIX OFF (ex « Sans visage ») : voix off, objets, mèmes (validée par l'utilisateur le 14/10, v3, ne plus y toucher)
+# VOIX OFF (ex « Sans visage ») : voix off, objets, mèmes (validée par l'utilisateur v3, ne plus y toucher)
 
 Lu après `SKILL.md`.
-**Zones mortes (16/10)** : conforme tel quel (sous-titres à 1 150 px, rien d'autre à l'écran).
+**Zones mortes** : conforme tel quel (sous-titres à 1 150 px, rien d'autre à l'écran).
 
 La voix pilote, les images remplissent tout l'écran : **1 plan par idée (1-3,5 s, moyenne ~1,6 s), coupe franche en fin de phrase ou de mot**, poussée lente sur chaque plan (1,00 → 1,04), aucune tête qui parle.
-**Règles 14/10 (après le test v1) :**
+**Règles (après le test v1) :**
 - **AUCUN contenu généré par IA** (ni image, ni vidéo).
 - Que des B-rolls VIDÉO où on voit un VISAGE et de l'ACTION (surtout les 3 plans du hook) ; pas de photo fixe (sinon toujours animée, zoom ou dézoom léger).
 - Musique avec de l'ÉMOTION (triste ou motivante, engagée : ex. « Venturing through Time »).
-- 6-8 SFX sur 20-30 s (17/10, remplace 3-4) : impact d'ouverture, whoosh sur les grosses coupes, impact sur quelques mots forts, montée + frappe au tournant, frappe finale ; ≥ 1,5 s d'écart.
-- Musique ÉPIQUE QUI MONTE jusqu'à la dernière phrase (17/10), ~14 dB sous la voix. La vidéo finit quand la musique finit (jamais d'image muette à la fin).
+- 6-8 SFX sur 20-30 s (remplace 3-4) : impact d'ouverture, whoosh sur les grosses coupes, impact sur quelques mots forts, montée + frappe au tournant, frappe finale ; ≥ 1,5 s d'écart.
+- Musique ÉPIQUE QUI MONTE jusqu'à la dernière phrase, ~14 dB sous la voix. La vidéo finit quand la musique finit (jamais d'image muette à la fin).
 - Plans = SES vrais B-rolls (bibliothèque, ≥ 2024, stables, bruts) ; rien qui colle → Pexels (gratuit, usage Instagram OK, pas de mention ; vérifier que la personne n'est pas montrée sous un mauvais jour), jamais d'IA. Vérifier que la personne visible est bien l'utilisateur (l'index dit seulement « personne visible » ; plans bannis : `broll_exclus.txt`).
 - Sous-titres au centre-bas (y 1150) sur une bande sombre fondue (40 % max). SFX dans `plan.sfx` à partir du kit `config.json` (`{...kit[k], "at": t}`).
 

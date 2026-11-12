@@ -1282,7 +1282,7 @@ def fuseau():
 
 def ecrire_publication(ids):
     """Une DEMANDE pour le Publieur (rien n'est publié ici) : chaque contenu, ses fichiers, ses réseaux, son heure et les
-    données Metricool à envoyer. Reel d'essai = instagramData.type TRIAL_REEL (vérifié dans createScheduledPost le 22/10)."""
+    données réseau à envoyer."""
     cal, p, titre = calendrier(), ETAT["prog"], COCKPIT.get("titre", "")
     contenus, alertes = [], []
     for cid in [c for c in NOMS_C if c in ids]:
@@ -1296,15 +1296,15 @@ def ecrire_publication(ids):
                   "youtube": {"youtubeData": {"title": titre, "type": "short", "privacy": "public", "madeForKids": False,
                                               "notifySubscribers": False}}}
             x.update(reseaux=res, legende=COCKPIT.get("legende", ""), duree=round(duree(f), 1),
-                     gardien="✅" if gardien_ok(D) else "❌", metricool={r: md[r] for r in res})
+                     gardien="✅" if gardien_ok(D) else "❌", donnees_reseau={r: md[r] for r in res})
             if "tiktok" in res and duree(f) < 60:
                 alertes.append(f"TikTok : le reel dure {mmss(duree(f))}. Ta règle du 20/10 : plus de 60 s pour être payé par TikTok.")
         elif cid == "story":
-            x.update(reseaux=["instagram"], metricool={"instagram": {"instagramData": {"type": "STORY"}}})
+            x.update(reseaux=["instagram"], donnees_reseau={"instagram": {"instagramData": {"type": "STORY"}}})
         elif cid == "carrousel":
             n = len(COCKPIT["carrousel"]["slides"])
             x.update(reseaux=["instagram"], fichiers=[os.path.join(D, "carrousel", f"slide-{i}.png") for i in range(1, n + 1)],
-                     legende=COCKPIT["carrousel"].get("caption", ""), metricool={"instagram": {"instagramData": {"type": "POST"}}})
+                     legende=COCKPIT["carrousel"].get("caption", ""), donnees_reseau={"instagram": {"instagramData": {"type": "POST"}}})
             cta = next((s["cta"] for s in COCKPIT["carrousel"]["slides"] if s.get("cta")), None)
             if cta:
                 alertes.append(f"Carrousel : le mot {cta} doit répondre en DM (ManyChat) avant la publication.")
@@ -1313,11 +1313,11 @@ def ecrire_publication(ids):
             x.update(reseaux=["instagram"], legende=e.get("legende") or COCKPIT.get("legende", ""), duree=round(duree(f), 1),
                      gardien="✅" if gardien_ok(os.path.dirname(f)) else "❌", hook=e.get("title"),
                      musique=(musique_essai(e) or {}).get("titre", "sans musique"), sous_titres=style_essai(e)["nom"],
-                     metricool={"instagram": {"instagramData": {"type": "TRIAL_REEL"}}})
+                     donnees_reseau={"instagram": {"instagramData": {"type": "TRIAL_REEL"}}})
         contenus.append(x)
     ecrire("publication.json", {
-        "_doc": "Demande du cockpit : RIEN n'est programmé. Claude la fait passer par le Publieur (Metricool) seulement après un OK "
-                "dans le chat. metricool = les données réseau à envoyer à createScheduledPost pour chaque réseau.",
+        "_doc": "Demande du cockpit : RIEN n'est programmé. Claude la fait passer par le Publieur (Blotato) seulement après un OK "
+                "dans le chat. donnees_reseau = les données à envoyer pour chaque réseau.",
         "statut": "à valider dans le chat", "demande_le": time.strftime("%Y-%m-%d %H:%M"), "fuseau": fuseau(),
         "dossier": D, "contenus": contenus, "alertes": alertes,
         "note_claude": "Le Publieur dit « trial reel jamais par défaut » (règle d'avant le 22/10) : les reels d'essai du cockpit sont le "
@@ -1579,8 +1579,6 @@ class Page(BaseHTTPRequestHandler):
             return self.fichier(illus_svg(os.path.splitext(os.path.basename(u))[0]))
         if u == "/api/plan":   # pour Claude : le plan que « Fabriquer » enverrait au moteur (look, musique, hook)
             return self.json(plan_final())
-        if u == "/logo.png":
-            return self.fichier(os.path.join(ICI, "logo-stratosphere.png"))   # 23/10 : logo Stratosphère (avant : logo perso)
         self.send_error(404)
 
     def do_POST(self):

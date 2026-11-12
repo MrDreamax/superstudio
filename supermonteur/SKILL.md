@@ -17,19 +17,19 @@ Ce qui est installé : le moteur `~/Documents/SuperApps/supermonteur` (API `http
 
 
 
-**29/10/2026 : reels d'essai SUPPRIMÉS** (l’utilisateur : « tout ce qui est en lien avec les reels d'essai, tu peux tout supprimer, je n'utilise pas »). Je ne monte jamais de reel d'essai ni de 2e hook ; le Publieur n'envoie plus de TRIAL_REEL.
+**reels d'essai SUPPRIMÉS**. Je ne monte jamais de reel d'essai ni de 2e hook ; le Publieur n'envoie plus de TRIAL_REEL.
 
-**Maquette d'abord (19/10)** : tout NOUVEAU style ou design passe par 3 versions et 2 rounds avant d'exécuter (détail : `cahier-des-charges.md`). Un rush normal suit l'ordre rapide ci-dessous : le style se demande dans le chat, par une question ouverte (12/11, remplace la règle du 02/11).
+**Maquette d'abord** : tout NOUVEAU style ou design passe par 3 versions et 2 rounds avant d'exécuter (détail : `cahier-des-charges.md`). Un rush normal suit l'ordre rapide ci-dessous : le style se demande dans le chat, par une question ouverte (remplace la règle).
 
 # SUPERMONTEUR : rush → reel premium
 
-**Sommaire (26/10 : un seul Monteur).** Lire seulement le fichier du cas, au moment où il sert :
+**Sommaire (un seul Monteur).** Lire seulement le fichier du cas, au moment où il sert :
 - Rush court → reel : ce fichier + `styles/<style>.md`.
 - Vidéo longue (YouTube, live, call de groupe, conférence) → plusieurs reels : `video-longue.md`.
-- **Vidéo YouTube 16:9 entière (31/10, style theyo, plus autonome)** : `styles/youtube-theyo.md` + grille `note-10-youtube.md`.
+- **Vidéo YouTube 16:9 entière (style theyo, plus autonome)** : `styles/youtube-theyo.md` + grille `note-10-youtube.md`.
 - Rush + enregistrement iPad (dessin sur le mur) : `styles/tableau-mur.md`.
-- **Style horizontal, pour du vertical (01/11, validé, ex-« style soowei »)** : rush horizontal zoomé en 4:3 entre deux bandes noires, titre d'une ligne au-dessus, sous-titres sur l'image : `styles/horizontal.md` + `scripts/horizontal.py`. Pas de question de style.
-- **Rush horizontal en 16:9 sous-titré (09/11, SuperMonteur le fait seul)** : style Minimaliste sur un rush horizontal = dérush 1920x1080 + `serrer.py` + `scripts/soustitres169.py` (sous-titres en bas y=975, découpe auto aux bons endroits, champ `lignes` pour corriger le texte). Autre style sur un rush horizontal = message clair (style horizontal dans un chat). Retours sur un 16:9 = dans le chat (le correcteur auto ne sait que le 9:16).
+- **Style horizontal, pour du vertical (validé, ex-« style soowei »)** : rush horizontal zoomé en 4:3 entre deux bandes noires, titre d'une ligne au-dessus, sous-titres sur l'image : `styles/horizontal.md` + `scripts/horizontal.py`. Pas de question de style.
+- **Rush horizontal en 16:9 sous-titré (SuperMonteur le fait seul)** : style Minimaliste sur un rush horizontal = dérush 1920x1080 + `serrer.py` + `scripts/soustitres169.py` (sous-titres en bas y=975, découpe auto aux bons endroits, champ `lignes` pour corriger le texte). Autre style sur un rush horizontal = message clair (style horizontal dans un chat). Retours sur un 16:9 = dans le chat (le correcteur auto ne sait que le 9:16).
 - Client : `mode-client.md`.
 Interne (absent du kit client) : `video-longue.md` et `styles/tableau-mur*`. Fichier absent = dire en 1 ligne que ce mode n'est pas dans le kit.
 
@@ -55,10 +55,10 @@ Seulement des images qu'il accepte : ses interdits (shooting, look, période) so
 2. **`regles-experts.md`** (12 domaines d'experts sourcés). Partie A = à appliquer dans chaque plan ; parties B et C = seulement avec l'accord de l'utilisateur. Si un expert contredit `feedback.md`, l'utilisateur gagne.
 3. Chez un client (`config.json` → `client` rempli) : **`mode-client.md`** puis `retours-client.md` (SES retours passent avant tout).
 4. Après le brief : **UNIQUEMENT le fichier du style choisi** (ne pas lire les autres).
-5. Étape 8 : `note-10.md` (31/10 : 9/10 minimum, juge L'Œil Gemini). Modifier un script ou rendu cassé : `moteur.md`.
+5. Étape 8 : `note-10.md` (9/10 minimum, juge L'Œil Gemini). Modifier un script ou rendu cassé : `moteur.md`.
 
 
-**LES 5 STYLES, LES SEULS (26/10, dicté par l'utilisateur ; renommés le même jour : « c'est plus des formats mais des styles »).** On ne propose rien d'autre, toujours sous CES noms. **Les 5 ont TOUJOURS une musique** (26/10 : « ils ont tous une musique les vidéos »).
+**LES 5 STYLES, LES SEULS (dicté par l'utilisateur ; renommés le même jour).** On ne propose rien d'autre, toujours sous CES noms. **Les 5 ont TOUJOURS une musique**.
 
 | Style | Ce qu'on voit | Fichier |
 |---|---|---|
@@ -68,22 +68,22 @@ Seulement des images qu'il accepte : ses interdits (shooting, look, période) so
 | 4. Interview | MIX split screen (les 2 personnes) + plein écran sur celle qui parle (déjà établi) | `styles/a-plusieurs.md` |
 
 
-**13/11 : l'appli Super est RETIRÉE, tout passe par le chat Claude. Style Lab et Cut Notes font partie du montage :**
+**l'appli Super est RETIRÉE, tout passe par le chat Claude. Style Lab et Cut Notes font partie du montage :**
 - **Montage fini = Cut Notes s'ouvre TOUT SEUL, sans rien demander** (v1 comme chaque retouche) : `python3 outils/cut-notes/ouvre.py <dossier du reel>` (ou `--attendre` en arrière-plan si le montage tourne dans SuperMonteur : il rend la main au statut « retours »), puis dans le MÊME tour les 4 gestes listés en tête de `ouvre.py` (publier ou garder l'artifact du reel, envoyer review.mp4, écrire `review/current`, `Artifact open`). Le robot Monteur de la vitrine affiche « j'attends tes notes ». Dans le chat : 1 ligne + un seul bouton « Suivant ».
 - **« Suivant »** : `ArtifactData list notes` (avec `out_dir`) puis `python3 outils/cut-notes/ouvre.py <dossier> --notes <out_dir>` en arrière-plan : les notes deviennent des retours SuperMonteur, le correcteur ne retouche QUE les moments notés, et à la nouvelle version Cut Notes repart au tour suivant (mêmes 4 gestes, même artifact). Ensuite passer chaque note en `fixed` + `reply` (lu dans `retours.json`). 0 note ouverte = demander en 1 ligne s'il a laissé des retours, rien n'est validé.
    **Quand il clique « Suivant » dans le chat** : lire `etat.json` du reel. `statut` = `correction` : Claude corrige déjà, je ne relance rien. Sinon : `POST http://localhost:8801/api/suivant/<id>` (même effet que le bouton de l'écran), et l'ouvrier remonte la version suivante. Puis de nouveau un seul bouton « Suivant ». Validation et publication : boutons de l'écran. Consigne donnée dans sa demande (ex. un titre) : SuperMonteur ne la reçoit pas, je l'écris dans `plan.json` et je la monte à ce même « Suivant ».
-2. **Dérush** (`workflow.md`, étapes 1 à 3) → durée exacte et seconde de la punchline connues. **29/10 21h32 : Derush Lab RETIRÉ** (l’utilisateur : « enlève le Derush Lab de SuperMonteur et reviens comme c'était avant, parce que c'était ça, le problème ») : le dérush part direct au montage, dans SuperMonteur comme dans un chat. Ne plus lancer cockpit.py --lab avant de monter.
+2. **Dérush** (`workflow.md`, étapes 1 à 3) → durée exacte et seconde de la punchline connues. **Derush Lab RETIRÉ** : le dérush part direct au montage, dans SuperMonteur comme dans un chat. Ne plus lancer cockpit.py --lab avant de monter.
 3. **En même temps** : les B-rolls (seulement s'il en veut, choisis par moi, `brolls.md`) ET la musique (`musique.md`).
-**28/10 nuit : l'appli SuperMonteur est CODÉE** (écran 0 style → montage → retours → Publier, Ma DA en tiroir) : `~/Documents/SuperApps/supermonteur/` ; « corrige mes retours » = mode d'emploi `apps/supermonteur/CLAUDE.md`.
-4. **La pause = Cut Notes, ouvert tout seul (12/11, voir plus haut)** ; l'écran Retours de l'appli reste en secours (façon Cut Notes, Apple clair) : vidéo + retours accrochés à l'image (écrire ou dicter), « Corrigé ✓ ▶ Revoir », « Suivant : corrige mes retours » / « C'est parfait, on publie », « Ma DA » en tiroir, puis Publier (Metricool branché : 5 réseaux dont LinkedIn activés, Publier maintenant / Programmer / Juste télécharger ; pas branché : Télécharger seul). Les 5 styles ET leurs aperçus respectent la zone interdite d'Instagram (haut 270, bas 1480, côtés 65, 120 à droite sous 1100 px). Règles complètes : Brain `01-Projets/superda-supermonteur.md`.
-5. **Titre + sous-titres seuls (rien d'autre dans plan.json) : `python3 $S/express.py .`** (29/10, PAR DÉFAUT, validé par l’utilisateur) = même découpage des sous-titres, même mix, même Gardien, mais sans rendu Chrome : RUSH en 1 min 3 s au lieu de 6 min 9 s. Il sort en code 2 si le plan a autre chose -> monte.sh. SuperMonteur (monter.py) le choisit seul.
+**l'appli SuperMonteur est CODÉE** (écran 0 style → montage → retours → Publier, Ma DA en tiroir) : `~/Documents/SuperApps/supermonteur/` ; « corrige mes retours » = mode d'emploi `apps/supermonteur/CLAUDE.md`.
+4. **La pause = Cut Notes, ouvert tout seul (voir plus haut)** ; l'écran Retours de l'appli reste en secours (façon Cut Notes, Apple clair) : vidéo + retours accrochés à l'image (écrire ou dicter), « Corrigé ✓ ▶ Revoir », « Suivant : corrige mes retours » / « C'est parfait, on publie », « Ma DA » en tiroir, puis Publier (Metricool branché : 5 réseaux dont LinkedIn activés, Publier maintenant / Programmer / Juste télécharger ; pas branché : Télécharger seul). Les 5 styles ET leurs aperçus respectent la zone interdite d'Instagram (haut 270, bas 1480, côtés 65, 120 à droite sous 1100 px). Règles complètes : Brain `01-Projets/superda-supermonteur.md`.
+5. **Titre + sous-titres seuls (rien d'autre dans plan.json) : `python3 $S/express.py .`** (PAR DÉFAUT, validé par l’utilisateur) = même découpage des sous-titres, même mix, même Gardien, mais sans rendu Chrome : RUSH en 1 min 3 s au lieu de 6 min 9 s. Il sort en code 2 si le plan a autre chose -> monte.sh. SuperMonteur (monter.py) le choisit seul.
 6. **Validation** : la vidéo finale + la note /10. La publication se fait dans un autre chat (Le Publieur), pas dans le chat du montage. Les réparations d'outils aussi.
 
 ## Non négociable, tous les styles (détail : `cahier-des-charges.md`)
-- **Un rendu raté ne se garde pas (12/11).** Dès qu'un rendu est remplacé par un meilleur, l'ancien est effacé. On garde seulement le rush et le final validé. Pas de copies en double.
+- **Un rendu raté ne se garde pas.** Dès qu'un rendu est remplacé par un meilleur, l'ancien est effacé. On garde seulement le rush et le final validé. Pas de copies en double.
 - Images et vidéos générées par IA : JAMAIS, dans aucun style.
 - Zones mortes Instagram : `node $S/zones.mjs .` attendu « OK : 0 ».
-- Jamais de coupe au milieu d'une phrase. Cuts au ras de la voix entre deux phrases, queue du mot entière (30/10).
+- Jamais de coupe au milieu d'une phrase. Cuts au ras de la voix entre deux phrases, queue du mot entière.
 - Zéro silence audible, zéro micro-coupure, chaque plan ≥ 2 s ou phrase entière.
 - Jamais d'étalonnage ni de traitement du son du rush sans sa demande.
 - Le Gardien est BLOQUANT : `python3 $S/gardien.py .`, un seul ❌ = on corrige, JAMAIS on livre.
@@ -93,6 +93,6 @@ Seulement des images qu'il accepte : ses interdits (shooting, look, période) so
 
 **Après chaque reel : boucle feedback** (`workflow.md`, étape 9) : chaque retour = 1 ligne datée dans `feedback.md` et dans le carnet Brain `00-Moi/regles-agents/supermonteur.md`, le fichier de règles concerné corrigé pour qu'il n'y ait jamais deux versions, et une note mesurable = 1 contrôle de plus dans `gardien.py`.
 
-- 07/11 : `derush.py ... --plan` = calcule les plages seules (3 s, aucun rendu) pour tester un correctif. Les bords de prises suivent la VRAIE attaque mesurée du mot supprimé (jamais le temps Whisper) ; une phrase courte avec vraie voix n'est jamais retirée.
+- `derush.py ... --plan` = calcule les plages seules (3 s, aucun rendu) pour tester un correctif. Les bords de prises suivent la VRAIE attaque mesurée du mot supprimé (jamais le temps Whisper) ; une phrase courte avec vraie voix n'est jamais retirée.
 
-- 09/11 : **cartons d'arbitre** (variante du Comparatif, RUSH) : `"cartons"` dans plan.json = rangée de cases au-dessus de la tête, un carton rouge tombe à chaque « carton rouge », le vert en dernier, titre de l'élément dessous ; posé par `scripts/cartons.py` (lancé seul par monte.sh). Cadre d'origine (pas cadre.py) pour garder la place au-dessus de la tête.
+- **cartons d'arbitre** (variante du Comparatif, RUSH) : `"cartons"` dans plan.json = rangée de cases au-dessus de la tête, un carton rouge tombe à chaque « carton rouge », le vert en dernier, titre de l'élément dessous ; posé par `scripts/cartons.py` (lancé seul par monte.sh). Cadre d'origine (pas cadre.py) pour garder la place au-dessus de la tête.

@@ -1,6 +1,6 @@
 # Légendes Instagram : les règles des experts (version embarquée, sans Brain)
 
-Pour les machines qui n'ont pas la fiche experts dans leur Brain. Résumé de `Brain/02-Formations/experts-legendes-instagram.md` (12/10/2026). Sources primaires seulement : ce qui n'a pas de source est une hypothèse à tester.
+Pour les machines qui n'ont pas la fiche experts dans leur Brain. Résumé de `Brain/02-Formations/experts-legendes-instagram.md`. Sources primaires seulement : ce qui n'a pas de source est une hypothèse à tester.
 
 ## Les règles
 1. Instagram lit d'abord la légende, puis la vidéo, l'audio et les commentaires. (Mosseri chez Brock Johnson, youtube.com/watch?v=b_MGyd8TKdQ [16:11])
@@ -27,4 +27,4 @@ Pour les machines qui n'ont pas la fiche experts dans leur Brain. Résumé de `B
 ```
 
 ## Trial reels
-Un outil de TEST, pas de portée gratuite (Mosseri, youtube.com/watch?v=LRTPSyTB8o4 [01:44]). 28/10 : 1 essai par reel, avec le hook REFILMÉ et le même corps, 3 essais par jour max. Légende = même règle que le reel (1-2 phrases). L'ancienne règle (reposter un gagnant de plus d'1 mois, 2 éléments changés) ne vaut plus : un reel déjà posté remis en essai n'a « probablement aucune vue » (Brock Johnson, avril 2026).
+Un outil de TEST, pas de portée gratuite (Mosseri, youtube.com/watch?v=LRTPSyTB8o4 [01:44]). : 1 essai par reel, avec le hook REFILMÉ et le même corps, 3 essais par jour max. Légende = même règle que le reel (1-2 phrases). L'ancienne règle (reposter un gagnant de plus d'1 mois, 2 éléments changés) ne vaut plus : un reel déjà posté remis en essai n'a « probablement aucune vue » (Brock Johnson, avril 2026).

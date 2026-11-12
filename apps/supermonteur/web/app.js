@@ -398,14 +398,14 @@ async function ecranPublier() {
   const S = $("#pub-side");
   if (!M.branche) {
     // pas branché : AUCUNE possibilité de publier ni de programmer (maquette 3b)
-    S.innerHTML = `<h2>Télécharger</h2><p class="gris">Metricool n'est pas branché : tu télécharges la vidéo + ses 5 légendes (une par réseau) et tu postes toi-même.</p>
+    S.innerHTML = `<h2>Télécharger</h2><p class="gris">Pour publier sur tes réseaux, dis à Claude « Publie ce reel » ou « Programme ma semaine ». Ou télécharge la vidéo + ses légendes et poste toi-même.</p>
       <div class="end"><a class="now" href="/api/telecharger/${rid}" download>Télécharger</a></div>`;
     return;
   }
   const P = R.publication || {};
   if (["a_faire", "en_cours"].includes(P.statut)) {
-    // envoi en cours : Claude parle à Metricool ; on relit l'état toutes les 4 s
-    S.innerHTML = `<h2>Publier</h2><div class="pub-encours"><i class="spin"></i><div><b>Envoi en cours</b><br>${esc(P.etape || "Claude envoie à Metricool…")}</div></div>
+    // envoi en cours (plus utilisé : publication dans le chat) ; on relit l'état toutes les 4 s
+    S.innerHTML = `<h2>Publier</h2><div class="pub-encours"><i class="spin"></i><div><b>Envoi en cours</b><br>${esc(P.etape || "Claude envoie…")}</div></div>
       <p class="gris">Sur ${esc((P.reseaux || []).join(", "))}. Tu peux fermer cette page, ça continue.</p>`;
     clearTimeout(ecranPublier.k);
     ecranPublier.k = setTimeout(async () => { if (vueCourante !== "publier") return; R = await api(`/api/reel/${rid}`).catch(() => R); ecranPublier(); }, 4000);
@@ -414,14 +414,14 @@ async function ecranPublier() {
   const res = P.statut && P.statut !== "a_faire" ? `<div class="pub-res ${P.statut === "programme" ? "ok" : "ko"}">
       <b>${{programme: "Envoyé ✓", partiel: "Envoyé en partie", erreur: "Pas envoyé"}[P.statut] || esc(P.statut)}</b>
       ${P.heure ? ` · ${esc(String(P.heure).replace("T", " ").slice(0, 16))}` : ""}<br>${esc(P.message || "")}
-      ${(P.posts || []).map(x => `<a href="${esc(x.planner)}" target="_blank">Voir dans Metricool (${esc((x.reseaux || []).join(", "))})</a>`).join("")}
+      ${(P.posts || []).map(x => `<a href="${esc(x.planner)}" target="_blank">Voir la publication (${esc((x.reseaux || []).join(", "))})</a>`).join("")}
       ${(P.manque || []).length ? `<br>Pas parti : ${esc(P.manque.join(", "))}` : ""}</div>` : "";
   const deja = R.deja_publie ? `<p class="pub-deja">Déjà publié : ${esc(R.deja_publie)}</p>` : "";
   const dans = new Date(Date.now() + 864e5); dans.setHours(18, 0, 0, 0);
   const iso = new Date(dans - dans.getTimezoneOffset() * 6e4).toISOString().slice(0, 16);
   const R5 = ["Instagram", "TikTok", "YouTube Shorts", "Facebook", "LinkedIn"];
   S.innerHTML = `<h2>Publier</h2>
-    <div class="mc">✓ <span><b>Metricool branché</b>${M.compte ? " · compte " + esc(M.compte) : ""}</span></div>
+    <div class="mc">✓ <span><b>Publication branchée</b>${M.compte ? " · compte " + esc(M.compte) : ""}</span></div>
     ${res}${deja}
     <div class="nets">${R5.map(n => `<div class="net">${n}<button class="tg${PUB.off.has(n) ? " off" : ""}" data-n="${n}" aria-label="${n}"></button></div>`).join("")}</div>
     <div class="dt"><span>Programmer le</span><input type="datetime-local" id="quand" value="${PUB.quand || iso}"></div>

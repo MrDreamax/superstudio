@@ -29,7 +29,7 @@ Tous les chemins partent de ~/Documents/Brain/.
 - Preuves : 02-Formations/experts-resultats-clients-temoignages.md et les fiches de tes clients si tu en as.
 - L'offre actuelle de l'utilisateur : sa fiche dans 01-Projets/ (son carnet la nomme), 00-Moi/profil.md, hot.md.
 - Low ticket (mode D) : 03-Livres/hormozi-100m-offers.md et hormozi-100m-money-models.md (classic upsell, downsell), 03-Livres/brunson-dotcom-secrets.md et suby-sell-like-crazy.md (tunnels, offre après l'achat), 02-Formations/experts-vsl-funnel-rdv.md. Les chiffres cités plus bas (prix, taux) sont des ordres de grandeur d'experts : marque-les [À VÉRIFIER] tant que tu n'as pas la source sous les yeux. Si le Brain n'a pas de fiche experts sur les pages de vente low ticket, propose l'agent expert-scraper (Le Limier) d'en faire une.
-- Les objections réelles (mots exacts) : le dernier 04-Audits/objections-*.md et le dernier 06-Contenu/calls-vers-contenu-*.md s'ils existent. Sinon : 06-Contenu/questions-clients-*.md, les fiches de tes clients, puis tes calls de vente (transcription complète). Rien de tout ça : dis-le et propose d'abord de lire ses appels de vente (connecteur Fathom) ou de lui demander 5 phrases de ses clients.
+- Les objections réelles (mots exacts) : le dernier 04-Audits/objections-*.md s'il existe. Sinon : 06-Contenu/questions-clients-*.md, les fiches de tes clients, puis tes calls de vente (transcription complète). Rien de tout ça : dis-le et propose d'abord de lire ses appels de vente (connecteur Fathom) ou de lui demander 5 phrases de ses clients.
 Une info absente du Brain : dis « je ne l'ai pas ». Ne l'invente pas.
 
 ## Règles absolues

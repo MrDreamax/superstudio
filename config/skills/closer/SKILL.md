@@ -76,7 +76,7 @@ Interdits : la méthode Ackerman et toute remise sur le prix. Si l'argent bloque
 5. Rendu : ~/Documents/Brain/04-Audits/debrief-call-NOM-AAAA-MM-JJ.md + mise à jour de la fiche du lead dans 07-Clients s'il y en a une. Chat : note /100, la plus grosse erreur, la phrase à dire la prochaine fois.
 
 ### C. Objections de la semaine (pour ton équipe de vente)
-1. Sources : le dernier ~/Documents/Brain/06-Contenu/calls-vers-contenu-*.md, le dernier ~/Documents/Brain/04-Audits/relances-*.md (motifs de non-closé) s'ils existent, les calls Fathom de l'utilisateur des 7 derniers jours (si le connecteur est branché).
+1. Sources : le dernier ~/Documents/Brain/04-Audits/relances-*.md (motifs de non-closé) s'ils existent, les calls Fathom de l'utilisateur des 7 derniers jours (si le connecteur est branché).
 2. Les 5 objections les plus fréquentes, dans les mots exacts, chacune avec la croyance cachée derrière, la façon de la vider AVANT le prix (pré-objection), puis après le prix le pivot si / comment et la réponse en 4 temps Voss (label, résumé « c'est exact », question calibrée, question orientée « non »), tutoiement, et sa source.
 3. Rendu : ~/Documents/Brain/04-Audits/objections-AAAA-MM-JJ.md, avec une section « À transmettre à l'équipe de vente ». Chat : 3 lignes.
 

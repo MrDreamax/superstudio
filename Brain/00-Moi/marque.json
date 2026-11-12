@@ -12,5 +12,5 @@
     "clair": "#FFFFFF"
   },
   "polices": {"titre": "Archivo", "texte": "Inter"},
-  "_aide": "Rempli par le skill ma-marque (ou directeur-artistique). nom = pied de page des PDF. pseudo = @ affiché seulement si rempli. logo = chemin d'un PNG. Polices = Google Fonts."
+  "_aide": "Rempli par le skill ma-marque. nom = pied de page des PDF. pseudo = @ affiché seulement si rempli. logo = chemin d'un PNG. Polices = Google Fonts."
 }

@@ -17,7 +17,7 @@ description: Le Carrousel. Carrousel Instagram (1080x1440, nombre de slides libr
 
 # Le Carrousel : une grande idée, le moins de slides possible, la DA de la marque
 
-Modèle validé le 16/10/2026 après 5 versions refusées. Ne pas le redécider : l'appliquer.
+Modèle validé après 5 versions refusées. Ne pas le redécider : l'appliquer.
 Référence visuelle : la planche que nomme ton carnet (le carrousel validé).
 Référence technique : `exemples/exemple-v4.json` (le skill la reconstruit au pixel près).
 
@@ -28,32 +28,31 @@ Seulement des images qu'il accepte : ses interdits (shooting, look, période) so
 - Avant de commencer : lis `~/Documents/Brain/00-Moi/regles-agents/carrousel.md`. Ses règles passent AVANT ce fichier.
 - Si l'utilisateur corrige, note ou refuse ton travail (même en passant) : ajoute UNE ligne dans ce carnet, `JJ/MM/AAAA · correction · ce qui n'allait pas → règle`. Si elle contredit une ancienne, remplace l'ancienne. Dis-le en une ligne : « Noté dans mon carnet : ... ».
 
-## MAJ 26/10/2026 : SuperCarrousel (maquettes validées, CODÉ le 28/10/2026)
+## : SuperCarrousel (maquettes validées, CODÉ)
 > Section pour l'auteur : chez un client, le carrousel se fait dans le chat (bloc client en tête).
 **L'appli existe** : `~/Documents/SuperApps/supercarrousel/` (http://localhost:8797, lancer `bash .../apps/supercarrousel/lancer.sh` ; mode d'emploi côté Claude : son `README.md` et `python3 sc.py a-faire`). Pour l’utilisateur, un carrousel passe par elle : je lis ses demandes avec `sc.py`, j'écris la description, elle rend avec ce moteur.
-- 3 départs : **Un reel** (fichier OU lien Instagram / TikTok / YouTube : images + texte du reel, voir 3 bis) · **Un carrousel à reprendre** (lien d'un carrousel qui marche, 29/10 : FIDÈLE à son concept et son style : mise en page, couleurs, ordre, rythme ; on change SEULEMENT la police et les mots ; images : je les propose ou je les demande à l’utilisateur, slide par slide) · **Une idée** (sujet écrit ou dicté).
+- 3 départs : **Un reel** (fichier OU lien Instagram / TikTok / YouTube : images + texte du reel, voir 3 bis) · **Un carrousel à reprendre** (lien d'un carrousel qui marche, : FIDÈLE à son concept et son style : mise en page, couleurs, ordre, rythme ; on change SEULEMENT la police et les mots ; images : je les propose ou je les demande à l’utilisateur, slide par slide) · **Une idée** (sujet écrit ou dicté).
 - Je fabrique tout d'un coup (pas de validation du texte avant), les slides apparaissent une par une.
 - Puis écran de retours (une slide en grand, retour accroché à la slide, « Corrigé ✓ ▶ Revoir », « Suivant : corrige mes retours » / « C'est parfait, on publie ») ; « Ma DA » en tiroir.
-- Publier via Metricool sur 4 réseaux (Instagram, TikTok en mode photos, Facebook, LinkedIn en document), jamais YouTube ; sans Metricool = Télécharger seul (images + 4 légendes). Légende écrite par moi, une par réseau. Toujours son OK avant de publier.
-- **Plus d'alternance obligatoire photo / dessin** (26/10) : chaque slide prend le visuel qui sert son idée.
+- Publier : skill `publieur` (Blotato), après son OK, sur les réseaux qu'il a cochés. Légende écrite par moi, courte.
+- **Plus d'alternance obligatoire photo / dessin** : chaque slide prend le visuel qui sert son idée.
 - Pas de nombre de slides imposé. Jamais de ponctuation seule en fin de ligne.
 
-## MAJ 22/10/2026 : nouveau modèle style Apple (validé par l’utilisateur)
+## : nouveau modèle style Apple (validé par l’utilisateur)
 > Section pour l'auteur : chez un client, sa DA (`~/Documents/SuperApps/superda/da.json`) passe avant.
-Remplace le tableau ci-dessous pour l’utilisateur : blanc, SF Pro, photo bord à bord + cheveux détourés qui dépassent, dessins sur cercle bleu clair, fin = 3 bulles iMessage. Branché dans le moteur le 22/10 : mettre `"style": "apple"` dans la description → `carrousel.py` appelle `scripts/apple.py` (rendu local par Chrome, **pas besoin d'Open Carrusel**, ~20 s pour 8 slides).
-Exemple complet : `exemples/exemple-apple.json` (copier, adapter). Types : `cover` (kicker, title, photo, accent ; couverture « sujet géant » du 07/11, détourage `scripts/detoure.swift`), `photo` (title, body ou steps ; `"pop": false` si la personne est petite dans l'image), `list` (kicker, title, items = [{icon, t, d}] : liste à icônes, icônes dans `apple.py` ICONS), `art` (title, body, steps, ou `cta` + `cta_q` + `cta_line` pour la fin en 3 bulles). Note manuscrite : `note` + `note_pos`.
+Remplace le tableau ci-dessous pour l’utilisateur : blanc, SF Pro, photo bord à bord + cheveux détourés qui dépassent, dessins sur cercle bleu clair, fin = 3 bulles iMessage. Branché dans le moteur : mettre `"style": "apple"` dans la description → `carrousel.py` appelle `scripts/apple.py` (rendu local par Chrome, **pas besoin d'Open Carrusel**, ~20 s pour 8 slides).
+Exemple complet : `exemples/exemple-apple.json` (copier, adapter). Types : `cover` (kicker, title, photo, accent ; couverture « sujet géant » détourage `scripts/detoure.swift`), `photo` (title, body ou steps ; `"pop": false` si la personne est petite dans l'image), `list` (kicker, title, items = [{icon, t, d}] : liste à icônes, icônes dans `apple.py` ICONS), `art` (title, body, steps, ou `cta` + `cta_q` + `cta_line` pour la fin en 3 bulles). Note manuscrite : `note` + `note_pos`.
 Le détourage ne garde que la tête au-dessus de la photo (mains et bruit effacés). Vérifier quand même le haut de chaque slide photo en grand.
-Détail du style : `~/Documents/Brain/00-Moi/da-apple-livrables.md`.
 
 ## Le modèle (ce qui est validé)
 | Élément | Règle |
 |---|---|
-| Format | 3:4, 1080x1440, AUCUN nombre de slides imposé (12/11/2026, l’utilisateur : « enlève la règle des 8 slides, absolument »). 3 slides si 3 suffisent |
+| Format | 3:4, 1080x1440, AUCUN nombre de slides imposé. 3 slides si 3 suffisent |
 | Polices | Montserrat 700 majuscules (couverture, CTA) + Instrument Serif italique (titres), Montserrat 500 (phrases) |
-| Alternance | PAS obligatoire depuis le 26/10 : photo ou dessin selon l'idée de la slide (couverture = photo) |
+| Alternance | PAS obligatoire : photo ou dessin selon l'idée de la slide (couverture = photo) |
 | Illustrations | 2D motion design dessinées en SVG (`art.py`) : fond blanc, grand cercle bleu très clair, aplats, 2 à 4 petits éléments déco |
-| Interdit | images générées par IA (Higgsfield ou autre) : refusées le 16/10, « trop IA ». Pas de @, pas de numéro de slide |
-| Couverture | **07/11/2026 « sujet géant »** (remède 1 d'Ayo, validée en 2 rounds) : fond blanc, titre 2 lignes à gauche, `"accent"` = le mot clé seul en bleu, tête détourée en très grand dont les cheveux frôlent le bas du titre, AUCUN bouton ni flèche. Photo cadrée BUSTE obligatoire (en pied → le moteur reprend l'ancienne couverture et le dit). 7 mots max. Modèle : `(exemple retiré)`. Ancienne : `"cover_style": "ancienne"` |
+| Interdit | images générées par IA (Higgsfield ou autre) : refusées. Pas de @, pas de numéro de slide |
+| Couverture | **« sujet géant »** (remède 1 d'Ayo, validée en 2 rounds) : fond blanc, titre 2 lignes à gauche, `"accent"` = le mot clé seul en bleu, tête détourée en très grand dont les cheveux frôlent le bas du titre, AUCUN bouton ni flèche. Photo cadrée BUSTE obligatoire (en pied → le moteur reprend l'ancienne couverture et le dit). 7 mots max. Modèle : `(exemple retiré)`. Ancienne : `"cover_style": "ancienne"` |
 | Slides | 1 idée par slide : titre serif + 1 phrase courte (ou liste 1-2-3 de 3 lignes courtes). Jamais de pavé |
 | Fin | « Commente MOT » + la ressource promise. Flèche de swipe partout sauf sur la dernière |
 
@@ -74,7 +73,7 @@ Le sujet doit toucher un problème de la cible de sa stratégie (00-Moi/strategi
 - Chaque photo doit coller à SA slide (ex. preuve = scène devant une salle, posture = sourire en costume). Varie les shootings.
 - Couverture : la tête doit laisser de la place au-dessus (« tête y≈ » entre 300 et 450 dans la sortie de `prep.py`).
 
-### 3 bis. Pas de photos perso ? Les images viennent d'un reel (23/10/2026)
+### 3 bis. Pas de photos perso ? Les images viennent d'un reel
 La plupart des gens n'ont pas de shooting : le carrousel se fait depuis un reel déjà tourné.
 - Vidéo : le RUSH d'abord (avant montage, zéro texte sur l'image ; chez l’utilisateur `~/Documents/Montage/MONTAGES/<projet>/clip.mp4`, transcription `words.json` à côté). Le reel fini seulement s'il n'y a rien d'autre, et alors seulement des images sans texte sur le visage.
 - `python3 scripts/reel2frames.py <video> <out>/_reel --words <words.json>` (~30 s) : 16 images nettes prises entre deux mots (bouche au repos), étalées dans le temps, + `00-candidates.jpg` (planche numérotée) + `texte.txt` (la transcription).
@@ -85,7 +84,7 @@ Exemple réel : `~/Documents/Contenu/carrousels/2026-10-23-sans-teleprompteur/de
 
 ### 4. Les illustrations (4 slides)
 - `scripts/art.py` : `apples_grid` (tous pareils / `red_at` = celui qui est différent), `copies` (copier les gros comptes), `stairs` (3 étapes), `chart_up` (résultats, croissance), `chat` (DM, setting), `checklist` (erreurs, étapes), `camera` (tourner face caméra, le trac), `script_long` (script appris par cœur, barré).
-- Sujet nouveau : écris une nouvelle fonction dans `art.py` (mêmes couleurs, `frame()`, dessin entre y 80 et 820, 2 à 4 éléments `deco`) et ajoute-la à `ARTS` pour la réutiliser. Ou un fichier `.svg` à côté de la description (`"svg": "mon-dessin.svg"`).
+- Sujet nouveau : écris une nouvelle fonction dans `art.py` (mêmes couleurs, `frame`, dessin entre y 80 et 820, 2 à 4 éléments `deco`) et ajoute-la à `ARTS` pour la réutiliser. Ou un fichier `.svg` à côté de la description (`"svg": "mon-dessin.svg"`).
 
 ### 5. La description puis le montage
 - Lance Open Carrusel : `preview_start` avec `name: "open-carrusel"` (config dans le `.claude/launch.json` du dossier de travail). En dernier recours : `cd ~/open-carrusel && npm run dev -- -p 3210` en arrière-plan.
@@ -109,4 +108,4 @@ Corrige la description et relance.
 - `prep.py` utilise le modèle de détourage du skill supermonteur (`~/.cache/supermonteur/rvm_mobilenetv3_fp32.onnx`). Le SSD doit être branché.
 - Porte cash : un carrousel apporte confiance et enregistrements, pas un deal sous 7 jours. Si l'utilisateur y passe plus d'une demi-journée, dis-le une fois (avec le chiffre de son fichier `actions` s'il en a un).
 
-- 06/11/2026 · Texte parasite derrière la personne (écran de projecteur) : ne JAMAIS le gommer lettre par lettre (taches, cheveux coupés, 3 tours ratés). Méthode qui marche : passer la photo une 1re fois dans le moteur, prendre `_sources/<clé>-fg.png` (détourage), poser le sujet sur un fond uni fait de la médiane de chaque ligne hors sujet et hors lettres, lissé en vertical (sigma 60), puis relancer avec cette image. Photo carrée de profil (1024 px) = visage trop zoomé : à éviter en slide photo.
+- · Texte parasite derrière la personne (écran de projecteur) : ne JAMAIS le gommer lettre par lettre (taches, cheveux coupés, 3 tours ratés). Méthode qui marche : passer la photo une 1re fois dans le moteur, prendre `_sources/<clé>-fg.png` (détourage), poser le sujet sur un fond uni fait de la médiane de chaque ligne hors sujet et hors lettres, lissé en vertical (sigma 60), puis relancer avec cette image. Photo carrée de profil (1024 px) = visage trop zoomé : à éviter en slide photo.

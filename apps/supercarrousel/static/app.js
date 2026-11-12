@@ -335,7 +335,7 @@ function vuePublier(p) {
   $("pub-branche").hidden = !mc.branche;
   $("pub-dl-seul").hidden = mc.branche;
   if (mc.branche) {
-    $("compte").textContent = "compte " + (mc.compte || "Metricool");
+    $("compte").textContent = "compte " + (mc.compte || "Blotato");
     $("essai").hidden = !S.accueil.mode_essai;
     $("vrai").hidden = S.accueil.mode_essai;
     etatPublication(p);
@@ -359,10 +359,10 @@ function etatPublication(p) {
   const enCours = ["a_faire", "en_cours"].includes(P.statut);
   ["pub-now", "pub-prog"].forEach((id) => ($(id).disabled = enCours));
   let h = "";
-  if (enCours) h = `<div class="pub-encours"><i class="spin"></i><div><b>Envoi en cours</b><br>${esc(P.etape || "Claude envoie à Metricool…")}</div></div>`;
+  if (enCours) h = `<div class="pub-encours"><i class="spin"></i><div><b>Envoi en cours</b><br>${esc(P.etape || "Claude envoie…")}</div></div>`;
   else if (P.statut) h = `<div class="pub-res ${P.statut === "programme" ? "ok" : "ko"}"><b>${{ programme: "Envoyé ✓", partiel: "Envoyé en partie", erreur: "Pas envoyé" }[P.statut] || esc(P.statut)}</b>`
     + `${P.heure ? " · " + esc(String(P.heure).replace("T", " ").slice(0, 16)) : ""}<br>${esc(P.message || "")}`
-    + (P.posts || []).map((x) => `<a href="${esc(x.planner)}" target="_blank">Voir dans Metricool (${esc((x.reseaux || []).join(", "))})</a>`).join("")
+    + (P.posts || []).map((x) => `<a href="${esc(x.planner)}" target="_blank">Voir la publication (${esc((x.reseaux || []).join(", "))})</a>`).join("")
     + ((P.manque || []).length ? `<br>Pas parti : ${esc(P.manque.join(", "))}` : "") + `</div>`;
   if (p.deja_publie && !enCours) h += `<p class="pub-deja">Déjà publié : ${esc(p.deja_publie)}</p>`;
   e.innerHTML = h;

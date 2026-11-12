@@ -49,7 +49,7 @@ Règle de base : Claude prépare, toi tu décides. Rien n'est envoyé, publié o
 - **C'est quoi** : il monte ta vidéo brute en reel prêt à poster (coupes, sous-titres, musique).
 - **La phrase** : glisse ta vidéo dans le chat + « Monte cette vidéo »
 - **Ça te donne** : un reel monté en quelques minutes. Tu notes ce qui ne va pas, il corrige.
-- **Bon à savoir** : « Change mon style » ouvre Style Lab pour choisir ton look une fois pour toutes.
+- **Bon à savoir** : « Change mon style » ouvre Style Lab (ton choix de look) pour régler ton style une fois pour toutes.
 
 ### Le Carrousel
 - **C'est quoi** : il fait des carrousels Instagram (plusieurs images à faire défiler) avec tes vraies photos.
@@ -57,7 +57,7 @@ Règle de base : Claude prépare, toi tu décides. Rien n'est envoyé, publié o
 - **Ça te donne** : les images + la légende, prêtes à poster.
 
 ### Le Publieur
-- **C'est quoi** : il programme tes reels et carrousels sur tous tes réseaux (via Blotato).
+- **C'est quoi** : il programme tes reels et carrousels sur tous tes réseaux, via Blotato (un site qui publie partout).
 - **La phrase** : « Programme ma semaine » · « Publie ce reel maintenant »
 - **Ça te donne** : la légende, la bonne heure, tout part tout seul. Seulement après ton OK.
 - **Bonus** : « Quand quelqu'un commente GUIDE, envoie-lui mon guide » → il envoie ton cadeau en message privé tout seul. Il te demande le lien si tu ne l'as pas donné.
@@ -92,7 +92,7 @@ Règle de base : Claude prépare, toi tu décides. Rien n'est envoyé, publié o
 - **Ça te donne** : des textes prêts. Rien n'est publié sans toi.
 
 ### Le Funnel builder
-- **C'est quoi** : il monte ton tunnel de vente (commentaire → message → page → paiement) dans GoHighLevel.
+- **C'est quoi** : il monte ton tunnel de vente (le chemin jusqu'à l'achat : commentaire → message → page → paiement) dans GoHighLevel (ton logiciel de vente).
 - **La phrase** : « Monte mon tunnel »
 - **Ça te donne** : un tunnel qui marche, testé avant la mise en ligne.
 
@@ -107,7 +107,7 @@ Règle de base : Claude prépare, toi tu décides. Rien n'est envoyé, publié o
 - **Ça te donne** : des pubs prêtes à tourner. Il ne lance jamais de campagne.
 
 ### Le Pilote pub
-- **C'est quoi** : il lit tes pubs Meta et te dit lesquelles couper, garder ou pousser.
+- **C'est quoi** : il lit tes pubs Meta (Facebook et Instagram) et te dit lesquelles couper, garder ou pousser.
 - **La phrase** : « Quelles pubs couper ? »
 - **Ça te donne** : un tableau clair. Il ne touche jamais à tes campagnes.
 
@@ -146,7 +146,7 @@ Règle de base : Claude prépare, toi tu décides. Rien n'est envoyé, publié o
 ## Étape 4 : ton équipe
 
 ### La Team
-- **C'est quoi** : 13 experts virtuels qui débattent de ton idée.
+- **C'est quoi** : 13 agents (des experts virtuels : vente, pub, marketing, avocat du diable...) qui débattent de ton idée.
 - **La phrase** : « Mets la team sur [ton idée] »
 - **Ça te donne** : un verdict GO ou NO-GO, avec ce que tu n'as pas vu. À garder pour les grosses décisions.
 

@@ -21,7 +21,7 @@ Tous les chemins partent de ~/Documents/Brain/.
 - La marque : 01-Projets/<projet>-positionnement.md et 01-Projets/<projet>-offre.md (ou 00-Moi/positionnement.md). La voix : 00-Moi/voix-contenu.md ; la DA : 00-Moi/da.md et 00-Moi/marque.json.
 - Techniques : 03-Livres/hopkins-scientific-advertising.md, caples-tested-advertising-methods.md, ogilvy-on-advertising.md, halbert-boron-letters.md, schwartz-breakthrough-advertising.md, cialdini-influence.md, brunson-dotcom-secrets.md, hormozi-100m-offers.md. Pages et tunnels : 02-Formations/experts-vsl-funnel-rdv.md. Légendes et carrousels : 02-Formations/experts-copywriting-carrousels.md.
 - Pas de fiche experts sur les pages de vente low ticket ou sur les emails dans le Brain : dis-le et propose l'agent expert-scraper (Le Limier) d'en faire une avant d'écrire.
-- Mots exacts des clients : 06-Contenu/questions-clients-*.md et 06-Contenu/calls-vers-contenu-*.md s'ils existent, commentaires et DM. Un mot de client bat toujours une formule d'expert.
+- Mots exacts des clients : 06-Contenu/questions-clients-*.md s'ils existent, commentaires et DM. Un mot de client bat toujours une formule d'expert.
 - Exemple validé : celui que nomme ton carnet (une vraie page déjà validée), s'il y en a un.
 Une info absente du Brain : dis « je ne l'ai pas ». Ne l'invente pas.
 

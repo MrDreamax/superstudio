@@ -3,7 +3,7 @@ description: "Ma direction artistique en mots : style, ambiance, tenues, lieux d
 type: moi
 statut: actif
 sujets: [contenu, da]
-source: skill ma-marque, puis directeur-artistique
+source: skill ma-marque
 ---
 # Ma direction artistique
 

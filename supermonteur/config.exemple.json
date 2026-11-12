@@ -88,7 +88,5 @@
   "voice_lufs": -14,
   "voice_ref": "",
   "_voice_ref": "Facultatif : 30-40 s de la voix du client au micro (wav) = référence d'EQ de voix_propre.py.",
-  "higgsfield": true,
-  "_higgsfield": "Compte Higgsfield du client (MCP connecté dans SON Claude). Plafond : 20 crédits par reel, essais compris.",
   "livres": "~/Documents/Montage/LIVRES"
 }

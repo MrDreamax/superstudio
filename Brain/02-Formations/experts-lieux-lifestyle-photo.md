@@ -192,7 +192,7 @@ Critères du classement : cohérence avec ta marque, discrétion, coût, faisabi
 À éviter : un Airbnb « chic » présenté comme chez lui (Laura), voiture ou jet de location, penthouse la nuit, plage ou voyage de luxe si tu n'en parles jamais (Emily [0eNy8hQr1QU] [07:11]), Dubaï flashy pour une cible FR (Priestley, déjà dans le Brain).
 
 ### c) 6 lieux/événements pour croiser des clients (selon la section 5)
-1. **Squared** : candidature au mastermind infopreneuriat (12-13 janv. 2027, Chamonix) ou à Creator Economy (31 mars-1er avril 2027, Anglet) ; prix à demander à hello@squared.eu. Le plus proche de la cible.
+1. **Squared** : candidature au mastermind infopreneuriat (12-13 janv. 2027, Chamonix) ou à Creator Economy (31 mars-1er avril 2027, Anglet) ; prix sur demande (site de Squared). Le plus proche de la cible.
 2. **Go Entrepreneurs Paris** : 28-29 avril 2027, pour réseauter avec dirigeants et créateurs ; prix à vérifier.
 3. **Paris Creator Week** : 4-5 nov. 2026 ; créateurs et marques plus que des acheteurs de coaching ; prix à vérifier.
 4. **Learning Technologies France** : 20-21 janv. 2027, formateurs B2B ; entrée visiteur probablement par pré-inscription, coût non vérifié.

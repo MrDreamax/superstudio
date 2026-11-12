@@ -1,9 +1,9 @@
-# B-ROLL + TEXTE (TOUT VALIDÉ et FIGÉ par l'utilisateur le 16/10, v4 : ne plus y toucher sauf demande)
+# B-ROLL + TEXTE (TOUT VALIDÉ et FIGÉ par l'utilisateur v4 : ne plus y toucher sauf demande)
 
 Lu après `SKILL.md`. 5-7 s, 1 plan (2 max) où la personne est EN ACTION, du texte AU-DESSUS DE LA TÊTE, musique, zéro voix. Le spectateur lit pendant que la vidéo tourne en boucle (Meta compte les relectures dans le temps de visionnage). Format à vues (Ronny Mitchell : vues 10/10, cash 3/10 ; Modern Millie : 4 à 9 abonnés pour 1 000 vues) : pour un client qui veut de la portée. **Pour l'utilisateur lui-même, sa stratégie v2 dit non.** Fiches : Brain `02-Formations/experts-broll-texte.md` (montage) et `02-Formations/experts-copy-broll-texte.md` (copy, avec les décisions de l'utilisateur en tête).
 Pas de dérush, de sous-titres, de `build.mjs` ni de `mix.py` ici : tout passe par `brolltexte.py` (texte dessiné avec le Chrome de HyperFrames).
 
-## Règles 16/10
+## Règles
 - **Texte TOUJOURS au-dessus de la tête**, 2 lignes (3 MAX), chacune sur UNE ligne. Police de la DA en majuscules blanches ; le mot fort en serif italique (124 px seul sur sa ligne, 96 px s'il partage la ligne). Une ligne trop longue rétrécit jusqu'à 44 px, au-delà le script refuse (≈ 28 caractères max par ligne) : raccourcir.
 - **CTA facultatif** (la 3e ligne n'est pas forcément un CTA) ; s'il y en a un : **EN BAS**, séparé du texte (bas du bloc à 1 420 px).
 - **Jamais de ponctuation en fin de texte** (ni point, ni « ? », ni « ! ») : le script la retire de chaque ligne et du CTA, l'emoji final reste.
@@ -41,12 +41,11 @@ Lire `experts-copy-broll-texte.md` (décisions de l'utilisateur, règles §2 à 
 python3 $S/brolltexte.py plan.json      # place au-dessus de la tête + texte + CTA + musique -> final.mp4 + legende.txt (~30 s)
 ```
 4. Vérifier : planche à 1, 3 et 5 s (texte au-dessus de la tête à chaque instant, CTA hors des mains si possible, rien hors zone), `ebur128` ≈ -14 LUFS, début à 0 s, la fin enchaîne sur le début sans saut.
-Tests (16/10) : `<dossier>/style-lab/broll-texte/v4-E` (citation de Bezos, 8,4), `v4-A` (aide en commentaire, 8,6, voile auto sur le tableau), `v4-V` (valeur, 8,6, VALIDÉE, place rajoutée 140 px + voile) ; copy dans `copy-v4.md`.
+Tests : `<dossier>/style-lab/broll-texte/v4-E` (citation de Bezos, 8,4), `v4-A` (aide en commentaire, 8,6, voile auto sur le tableau), `v4-V` (valeur, 8,6, VALIDÉE, place rajoutée 140 px + voile) ; copy dans `copy-v4.md`.
 
-## Mode NUAGE (29/10/2026)
+## Mode NUAGE
 Texte au centre + plein de mots qui apparaissent un par un autour (réf « I'm a business owner but I'm also a… »).
 `"text": {"lines": [...], "words": [8 à 30], "accent": "#FFD60A"}` + `"sombre": 0.38`. Rendu natif dans brolltexte.py (scripts/nuage.mjs) :
 centre en casse normale, gras, tout en jaune ; mots en gras 800, éparpillés, jamais sur le visage ni sur le centre, de plus en plus vite.
-Validé par l’utilisateur le 29/10 après « police plus épaisse, tout jaune, comme l'original ».
-29/10 suite (l’utilisateur, « pour toutes les vidéos ») : TOUT en MAJUSCULES ; mots éparpillés au hasard, jamais en colonne ni en paquet ; zone Insta vérifiée sur l'encre (0 pixel dehors) ; points de suspension gardés en fin de texte du centre. Options : `"at"` (tous les mots d'un coup sur un temps fort) et `music.tempo` (accélérer légèrement).
-29/10 : avec une référence, `"slots": "ref/reference.mp4"` = places + rythme des mots copiés (nuage_ref.py). Métiers pertinents pour un coach solo seulement.
+Validé par l’utilisateur après « police plus épaisse, tout jaune, comme l'original ». suite (l’utilisateur, « pour toutes les vidéos ») : TOUT en MAJUSCULES ; mots éparpillés au hasard, jamais en colonne ni en paquet ; zone Insta vérifiée sur l'encre (0 pixel dehors) ; points de suspension gardés en fin de texte du centre. Options : `"at"` (tous les mots d'un coup sur un temps fort) et `music.tempo` (accélérer légèrement).
+avec une référence, `"slots": "ref/reference.mp4"` = places + rythme des mots copiés (nuage_ref.py). Métiers pertinents pour un coach solo seulement.

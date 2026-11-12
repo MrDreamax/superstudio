@@ -3,7 +3,6 @@
   python3 sc.py attendre             bloque jusqu'à la prochaine demande, puis l'affiche (à lancer avec Monitor)
   python3 sc.py ecrire <id> <fichier.json>   pose la description de la version suivante (le serveur la rend tout seul)
   python3 sc.py rendre <id>          rend la dernière version sans le serveur (secours)
-  python3 sc.py metricool oui|non [compte]   note le résultat de la vérification Metricool (lecture seule, getBrandSettings)
 
 La description = celle du skill carrousel (style Apple) : photos {nom: {src, fx, fy, zoom}}, slides [cover|photo|art],
 caption, plus :
@@ -140,10 +139,6 @@ def main():
     elif a[0] == "rendre":
         v = m.version_rendue(a[1]) or max(m.versions(a[1]))
         print(m.rendre(a[1], v, lambda i, n: print(f"slide {i}/{n}")), "slides")
-    elif a[0] == "metricool":
-        m.ecrire(os.path.join(m.ICI, "metricool.json"), {"branche": a[1] == "oui", "compte": a[2] if len(a) > 2 else "",
-                                                       "verifie_le": time.strftime("%Y-%m-%d %H:%M"), "verifie_ts": time.time()})
-        print("Metricool noté :", a[1])
     else:
         print(__doc__)
 

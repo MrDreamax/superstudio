@@ -239,10 +239,8 @@ def ouvrier():
 # ---------------------------------------------------------------- vues
 
 def metricool():
-    """Lecture seule : Claude écrit metricool.json après avoir vérifié le compte (getBrandSettings), sans rien publier."""
-    mc = m.lire(os.path.join(ICI, "metricool.json"), {})
-    frais = time.time() - mc.get("verifie_ts", 0) < 7 * 86400
-    return {"branche": bool(mc.get("branche")) and frais, "compte": mc.get("compte", ""), "verifie_le": mc.get("verifie_le", "")}
+    """Publication retirée des applis (Super Studio 2.0) : toujours le mode Télécharger. On publie dans le chat (Blotato)."""
+    return {"branche": False, "compte": "", "verifie_le": ""}
 
 
 def superda():
@@ -273,10 +271,10 @@ def mes_carrousels(n=8):
 
 
 def publieur():
-    """Dès qu'un carrousel a un publication.json « a_faire » (clic confirmé de l’utilisateur), Claude l'envoie à Metricool."""
+    """Dès qu'un carrousel a un publication.json « a_faire » (clic confirmé de l’utilisateur), rien ne part : la publication se fait dans le chat (Blotato)."""
     for pid in os.listdir(m.PROJETS):   # envoi coupé par un redémarrage : on ne sait pas ce qui est parti
         if os.path.isdir(m.chemin(pid)) and publier.etat(m.chemin(pid)).get("statut") == "en_cours":
-            publier._maj(m.chemin(pid), statut="erreur", etape="", message="Envoi coupé (serveur relancé) : vérifie le planner Metricool avant de relancer.")
+            publier._maj(m.chemin(pid), statut="erreur", etape="", message="Envoi coupé (serveur relancé) : publie depuis le chat avec Claude.")
     while True:
         try:
             for pid in sorted(os.listdir(m.PROJETS)):

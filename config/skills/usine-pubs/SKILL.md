@@ -22,7 +22,7 @@ Tous les chemins partent de ~/Documents/Brain/.
 - 02-Formations/experts-media-buying-meta.md : combien de créas, comment tester.
 - 02-Formations/regles-pub-meta.md : le manuel du Compliance (checklist en 10 questions, reformulations qui passent).
 - 02-Formations/experts-hooks-retention.md et 03-Livres/kane-hook-point.md : hooks.
-- **Les mots de tes clients** : le dernier 06-Contenu/calls-vers-contenu-*.md, sinon 06-Contenu/questions-clients-*.md et les DM ou commentaires que l'utilisateur te colle. Moins de 5 verbatims : dis-le et propose d'abord de lire ses appels de vente (connecteur Fathom) ou de lui demander 5 phrases de ses clients, plutôt que d'écrire des angles sans source.
+- **Les mots de tes clients** : 06-Contenu/questions-clients-*.md et les DM ou commentaires que l'utilisateur te colle. Moins de 5 verbatims : dis-le et propose d'abord de lire ses appels de vente (connecteur Fathom) ou de lui demander 5 phrases de ses clients, plutôt que d'écrire des angles sans source.
 - **Les résultats de tes pubs** (qui gagne, qui perd), dans cet ordre :
   1. Ton compte pub est branché via **Windsor** (windsor.ai : compte à créer, vérifie leur tarif sur leur site) : lis les pubs avec le connecteur « facebook », en lecture seule.
   2. Sinon, l'utilisateur colle un export d'Ads Manager (CSV) ou une capture : pub, dépense, prospects, appels réservés, ventes s'il les connaît.

@@ -1,7 +1,7 @@
 """Réglages communs des applis de Super (chez l'utilisateur, jamais dans le code).
 
     config.json (à côté de ce fichier) : créé par install.sh, rempli au 1er lancement, jamais écrasé par une mise à jour.
-    Metricool (id de marque, compte Instagram attendu) : lus dans les réglages du skill publieur (~/.claude/skills/publieur/config.json).
+    La publication se fait dans le chat (skill publieur, Blotato), plus depuis les applis.
 """
 import datetime
 import json
@@ -54,11 +54,9 @@ def mode_essai(appli_dir):
 
 
 def publieur():
-    """Réglages Metricool du skill publieur. Vides tant que le 1er lancement du Publieur n'est pas fait."""
+    """Réglages du skill publieur (registre, carnet). Gardé pour compatibilité ; la publication passe par le chat."""
     p = _lire(PUBLIEUR)
-    return {"brand": str(p.get("metricool_brand_id") or "").strip(),
-            "instagram": str(p.get("instagram_attendu") or "").strip().lstrip("@"),
-            "registre": os.path.expanduser(p.get("registre") or config()["registre"]),
+    return {"registre": os.path.expanduser(p.get("registre") or config()["registre"]),
             "carnet": os.path.expanduser(p.get("carnet") or "~/.claude/skills/publieur/retours-client.md")}
 
 

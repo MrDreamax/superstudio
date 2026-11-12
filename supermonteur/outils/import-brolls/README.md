@@ -1,4 +1,4 @@
-# Import de B-rolls depuis un dossier photos/vidéos (13/10/2026)
+# Import de B-rolls depuis un dossier photos/vidéos
 
 Utilisé pour importer SSD Photos/ -> ASSETS/B-ROLLS (+222). Ordre :
 1. inventaire_photos.py inv.json : date de tournage (métadonnée / mtime / birth, la plus ancienne), durée, format. Noms de dossiers en NFD sur son disque externe : toujours normaliser en NFC avant de comparer.

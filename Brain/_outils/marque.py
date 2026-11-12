@@ -1,6 +1,6 @@
 """La marque de l'utilisateur (couleurs, polices, logo, nom) pour tous les skills contenu.
 
-Lit ~/Documents/Brain/00-Moi/marque.json (rempli par le skill bienvenue ou directeur-artistique).
+Lit ~/Documents/Brain/00-Moi/marque.json (rempli par le skill bienvenue ou ma-marque).
 Fichier absent ou incomplet : valeurs neutres par défaut, rien ne casse.
 
 Dans un moteur de skill :
