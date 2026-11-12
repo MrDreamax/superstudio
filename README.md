@@ -3,11 +3,12 @@
 Le Scripteur, Le Monteur, Le Carrousel, Le Publieur. Tu filmes. Ils écrivent, montent, dessinent et publient.
 Tout tourne sur ton Mac, avec ton abonnement Claude.
 
-## Avant de commencer : 5 obligatoires + 2 conseillés
+## Avant de commencer : 6 obligatoires + 2 conseillés
 1. **Claude (obligatoire)** : l'app sur claude.ai/download, abonnement Pro ou plus (le gratuit n'ouvre pas l'onglet Code).
 2. **ElevenLabs (obligatoire)** : compte sur elevenlabs.io, formule Creator (il écoute tes vidéos pour les sous-titres). Crée une clé API. Après l'installation : copie-la, puis dis à Claude « Range ma clé ElevenLabs ».
 3. **Metricool (obligatoire pour publier)** : compte gratuit sur metricool.com, branche Instagram, TikTok, YouTube. Puis dans Claude : Réglages > Connecteurs > Metricool.
 4. **Les 100 musiques (obligatoire pour les montages)** : mets `100-MUSIQUES.zip` (lien envoyé à part) dans Téléchargements AVANT d'installer.
+4 bis. **Higgsfield (obligatoire pour publier, gratuit)** : compte gratuit sur higgsfield.ai, puis dans Claude : Réglages > Connecteurs > Higgsfield. Il sert seulement à mettre ta vidéo en ligne pour Metricool, tu n'y touches jamais.
 5. **Google Chrome (obligatoire pour les carrousels)** : google.com/chrome, il dessine les images.
 6. **Wispr Flow (conseillé)** : wisprflow.ai, tu dictes au lieu d'écrire.
 7. **Obsidian (conseillé)** : obsidian.md, gratuit. Ouvre `Documents/Brain` avec, pour lire ta mémoire comme un carnet.

@@ -4,7 +4,7 @@ Ton équipe de 4 robots : Le Scripteur, Le Monteur, Le Carrousel, Le Publieur.
 Tu filmes. Ils écrivent, montent, dessinent et publient.
 
 
-AVANT DE COMMENCER : 5 OBLIGATOIRES + 2 CONSEILLÉS
+AVANT DE COMMENCER : 6 OBLIGATOIRES + 2 CONSEILLÉS
 
 1. Claude (OBLIGATOIRE)
    Télécharge l'app : claude.ai/download
@@ -21,6 +21,10 @@ AVANT DE COMMENCER : 5 OBLIGATOIRES + 2 CONSEILLÉS
 4. Les 100 musiques (OBLIGATOIRE pour les montages)
    Mets le fichier 100-MUSIQUES.zip (lien envoyé à part) dans ton dossier Téléchargements, AVANT d'installer.
    L'installation les range toute seule.
+
+4 bis. Higgsfield (OBLIGATOIRE pour publier, gratuit)
+   Crée un compte gratuit sur higgsfield.ai, puis dans Claude : Réglages > Connecteurs > Higgsfield.
+   Il sert seulement à mettre ta vidéo en ligne pour Metricool. Tu n'y touches jamais.
 
 5. Google Chrome (OBLIGATOIRE pour les carrousels)
    google.com/chrome : il dessine les images de tes carrousels.

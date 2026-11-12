@@ -7,8 +7,13 @@ description: Le Publieur. Programme les reels déjà montés de l'utilisateur ou
 - **Mode essai** : lis `~/Documents/SuperApps/supermonteur/config.json`. `"mode_essai": true` (par défaut) = tu prépares tout (légende, cover, date) mais rien ne part : utilise `createScheduledPostForReview` (brouillon à valider dans Metricool) et dis-le en 1 ligne. La personne seule passe `mode_essai` à `false`, jamais toi.
 - **Réglages** : `~/.claude/skills/publieur/config.json` (créé à l'installation). `metricool_brand_id` ou `instagram_attendu` vides : remplis-les avec `getBrandSettings` (SA marque Metricool), une seule fois.
 - **Ses reels montés** : `~/Documents/SuperApps/supermonteur/reels/*/` dont `etat.json` a `statut` `valide` (ou `retours` s'il dit qu'il est bon), fichier `final.mp4`. Plus ceux qu'il glisse dans le chat. Jamais ailleurs.
+- **Cover** : la meilleure image du reel (une image du `final.mp4`). Jamais d'image IA.
+- **Mise en ligne** : Higgsfield (compte gratuit, connecteur dans Claude) sert SEULEMENT d'hébergeur : `media_upload` puis `python3 ~/Documents/SuperApps/heberger.py`, comme au § 6. Jamais de génération d'image ou de vidéo. Connecteur absent : dis en 1 ligne « Branche Higgsfield : Claude > Réglages > Connecteurs ».
 - Un seul OK pour le lot, jamais de publication sans ce OK. Respecte la limite de son plan Metricool : un refus de quota = dis-le, n'essaie pas de contourner.
-- Sa voix : `~/Documents/Brain/00-Moi/` s'il est rempli. Pas de maquette, pas de 3 versions : une légende courte par reel, sans ton IA, sans tiret cadratin.
+- **Légende optimisée** (méthode : `~/.claude/skills/publieur/regles-legendes.md` et `~/Documents/Brain/02-Formations/experts-legendes-instagram.md`) : **s'il y a un appel à l'action (dans la vidéo ou dans ses réglages), il est en 1re ligne**, puis l'accroche avec le mot-clé principal du sujet dès les premiers mots (Instagram le lit pour la recherche) ; sans appel à l'action, la 1re ligne = cette accroche. Puis 2 à 4 lignes courtes qui disent ce qu'on apprend. Sa voix (`~/Documents/Brain/00-Moi/` s'il est rempli), sans ton IA, sans tiret cadratin. Pas de maquette, pas de 3 versions.
+- **Hashtags** : 3 à 5, tous liés au sujet du reel (limite Instagram : 5), en fin de légende : 1 large de sa niche, 2 à 3 précis du sujet, 1 de sa ville ou sa langue si utile. Jamais de hashtag hors sujet ni de #fyp. TikTok : les mêmes. YouTube Shorts : 2 ou 3 dans le titre ou la description.
+- **Heure** : pour chaque réseau, `getBestTimeToPostByNetwork` sur SA marque, dans la semaine à venir ; 1 reel par créneau, jamais 2 le même jour sur le même réseau sauf s'il le demande. Il impose une heure : on la prend.
+- **« Publie maintenant »** : date = maintenant + 5 minutes (Metricool refuse une date passée), même légende optimisée, même OK.
 - Un fichier ou un skill cité plus bas qui n'existe pas chez lui : ignore-le.
 
 
@@ -26,6 +31,7 @@ P=~/.claude/skills/publieur/scripts
 Durée à annoncer : ~3 min par reel, ~20 min pour 7 reels. Coût : 0 crédit (pas de cover depuis le 22/10, hébergement gratuit).
 
 ## Photos et vidéos de l'utilisateur
+Seulement des images qu'il accepte : ses interdits (shooting, look, période) sont dans son carnet et passent avant tout. Vaut pour tout : site, carrousel, slides, montage, B-roll, cover, pub, référence Higgsfield.
 
 ## 0. Avant tout
 1. Lis les réglages de cette machine : `python3 -E $P/_config.py` (le `config.json` du skill = défauts du kit, écrasé clé par clé par `~/Documents/Brain/00-Moi/reglages/publieur.json` s'il existe). Plus bas, « `config.json` → X » = la valeur X de ces réglages (marque Metricool, comptes, dossiers, disque d'archive, DA). **`"client"` rempli = on est chez un client : lis `mode-client.md` tout de suite**, il passe avant ce fichier. `config.json` absent chez un client = 1er lancement (`mode-client.md`).
@@ -68,6 +74,7 @@ Ancienne règle du 22/10 :
 
 20/10 : proposer TROIS covers à choisir (3 photos de ses B-rolls vraiment différentes, ma recommandée en 1er, sur une planche + boutons). Il garde une. S'il dit « choisis » ou « libre arbitre », je choisis seul. Jamais de retouche IA lourde (19/10 : plus d'images générées) : la vraie photo, au plus un étalonnage naturel.
 1. `python3 -E $P/broll.py --mots "4 à 6 mots du sujet" --out <dossier>/broll` puis **regarde** `planche.jpg` (Read). Choisis la photo qui raconte le sujet (ex. formats vidéo → lui en train de se filmer, caméra au premier plan), visage net, visage dans le carré 3:4 du milieu. Tenue et lieu proches de la DA sombre de préférence. SSD absent → dis-le, pas de cover au hasard.
+2. Higgsfield (outils chargés en retard : refais un ToolSearch avant de dire que c'est bloqué) : `media_upload` → `curl -X PUT -H "Content-Type: image/png" -H "If-None-Match: *" --data-binary @photo` → `media_confirm` → `generate_image` avec `nano_banana_2`, `aspect_ratio 9:16`, `resolution 2k`, `count 2`, la photo en `image_references`, et CE prompt (17/10 : « trop IA » -> retouche NATURELLE, très légère teinte de la DA ; ne pas le réécrire) :
    > Edit this exact photo with a very light touch. Keep everything identical: same man, same face and identity, same expression, same pose and hands, same clothes, same car, same buildings, same sky, same framing, same time of day. Keep natural, realistic colors. Only a subtle grade: slightly deeper navy blue in the shadows and the sky, slightly warmer natural skin tone, a little more contrast and crisp eyes. Do not turn day into night, no heavy cinematic look, no artificial glow, no stylized colors. Natural photograph, true-to-life face, no text.
 
    Adapte seulement les éléments propres à la photo (« black t-shirt », « camera on its tripod », « window »).
@@ -102,6 +109,7 @@ Historique de toutes les vidéos terminées : `<config.json → archive_dir>/AAA
 3. Disque absent → le script sort en code 2 : on garde la ligne et on archive au prochain passage. Jamais de vidéo archivée avant d'être vraiment publiée.
 
 ## Ce que le Publieur ne fait jamais
+- Programmer ou publier sans le OK du lot. Toucher aux comptes perso (`comptes_interdits`). Chez un client : toucher au Metricool, au Higgsfield ou au disque du coach qui l'a installé.
 - Une promesse, un chiffre ou un résultat client qui n'est pas dans la vidéo.
 - Une cover qui n'est pas une image du reel (28/10 : toujours la meilleure image du reel). Et jamais une cover générée de zéro par IA.
 - Répondre aux commentaires ou aux DM (la relation reste humaine).
