@@ -9,14 +9,39 @@ Sort en erreur (« pas de visage ») si la tête n'est pas vue sur au moins la m
 build.mjs pose alors le mot devant, lisible, sans faire semblant de le passer derrière une tête absente (retour n2, 23/10).
 """
 import json, os, subprocess, sys
-import numpy as np
-import mediapipe as mp
-from mediapipe.tasks.python import vision, BaseOptions
 
 src, t0, t1 = sys.argv[1], float(sys.argv[2]), float(sys.argv[3])
 MOD = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "models", "face_landmarker.task")
 RVM = os.path.expanduser("~/.cache/supermonteur/rvm_mobilenetv3_fp32.onnx")
 W, H, FPS, WARM = 540, 960, 10, 0.5
+# 12/11 (chrono Minimaliste : 15,7 s sur 17 de composition, titre tenu 16 s = 164 images détourées) : 40 images au plus.
+# Plage courte (mot géant, <= 4 s) = 10 images/s comme avant ; plage longue (titre) = moins d'images/s, même médiane.
+FPS = float(os.environ.get("HEADTOP_FPS") or (10 if t1 - t0 <= 4 else max(0.5, 40 / (t1 - t0))))
+# même vidéo + même plage = même réponse : gardée dans headtop.cache.json à côté de la vidéo (chaque version la redemandait)
+_st = os.stat(src)
+CLE = f"{os.path.abspath(src)}|{_st.st_size}|{int(_st.st_mtime)}|{t0:.3f}|{t1:.3f}|{FPS:.2f}|{'--json' in sys.argv}"
+CACHE = os.path.join(os.path.dirname(os.path.abspath(src)), "headtop.cache.json")
+try:
+    _c = json.load(open(CACHE))
+except Exception:
+    _c = {}
+if CLE in _c and not os.environ.get("HEADTOP_FPS"):
+    if _c[CLE] is None: sys.exit("pas de visage")
+    print(_c[CLE]); sys.exit(0)
+
+
+def garder(v):
+    try:
+        c = json.load(open(CACHE)) if os.path.exists(CACHE) else {}
+        c[CLE] = v
+        json.dump(c, open(CACHE + ".tmp", "w")); os.replace(CACHE + ".tmp", CACHE)
+    except Exception:
+        pass
+
+
+import numpy as np   # après la mémoire : 1 s d'import évitée quand la réponse est déjà connue
+import mediapipe as mp
+from mediapipe.tasks.python import vision, BaseOptions
 a0 = max(0.0, t0 - WARM)   # comme matte.py : le détourage chauffe 0,5 s avant (contour stable)
 raw = subprocess.check_output(["ffmpeg", "-v", "error", "-ss", str(a0), "-t", str(max(t1 - a0, 0.2)), "-i", src,
                                "-vf", f"fps={FPS},scale={W}:{H}", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"])
@@ -57,10 +82,13 @@ for i, f in enumerate(fr):
     tops.append(y); cxs.append(cx); hws.append(hw)
 n = sum(1 for i in range(len(fr)) if a0 + i / FPS >= t0 - 1e-3)
 if not tops or vus < 0.5 * max(n, 1):
+    garder(None)
     sys.exit("pas de visage")
 k = 1920 / H
 if "--json" in sys.argv:
-    print(json.dumps({"top": int(round(np.median(tops) * k)), "cx": int(round(np.median(cxs) * k)),
-                      "hw": int(round(np.median(hws) * k)), "visage": round(vus / max(n, 1), 2)}))
+    out = json.dumps({"top": int(round(np.median(tops) * k)), "cx": int(round(np.median(cxs) * k)),
+                      "hw": int(round(np.median(hws) * k)), "visage": round(vus / max(n, 1), 2)})
 else:
-    print(int(round(np.median(tops) * k)))
+    out = str(int(round(np.median(tops) * k)))
+garder(out)
+print(out)

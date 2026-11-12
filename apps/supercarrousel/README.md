@@ -22,7 +22,7 @@ Le serveur lance lui-même Claude Code (`../ouvrier_claude.py`, Opus, outils lim
 Description = celle du skill carrousel (style Apple) + `name`, `legendes` {instagram, tiktok, facebook, linkedin}, `corrections` [{retour, ligne, slide}].
 
 ## La DA
-Lue dans `apps/superda/da.json` (contrat `da-schema.json`, clés `commun` + `carrousels`). Sans ce fichier : la DA actuelle du skill (style Apple). Modèles rendus : **Épuré** (moteur Apple du skill) et **Cinéma** (`modeles.py`). Collage, Carnet, Impact, Post texte : rendus en Épuré tant qu'ils ne sont pas codés.
+Lue dans `apps/superda/da.json` (contrat `da-schema.json`, clés `commun` + `carrousels`). Sans ce fichier : la DA actuelle du skill (style Apple). Modèles rendus : **Épuré** (moteur Apple du skill) et **Cinéma** (`modeles.py`). Depuis le 12/11/2026 : **Deux photos, Sous-titres, Bulles** (Infographie retirée le 12/11, jugée moche) (`modeles_bm.py`, repris des carrousels de Brian Mark, références dans `inspirations/brian-mark/`). Sans couleur de marque, ces 4 modèles prennent le bleu de la marque (blanc = invisible sur papier et bulles). Sous-titres : images de vidéo gardées entières. Collage, Carnet, Impact, Post texte : rendus en Épuré tant qu'ils ne sont pas codés.
 
 ## Fichiers
 `serveur.py` (HTTP + boucle de rendu, un rendu à la fois) · `moteur.py` (DA, typo, rendu slide par slide, Télécharger) · `modeles.py` (Cinéma) · `sc.py` (Claude) · `static/` (l'écran) · `projets/<id>/` (demande, versions, retours) · `preuves/` (captures du 28/10).

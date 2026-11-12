@@ -817,7 +817,7 @@ class H(BaseHTTPRequestHandler):
                 return self.envoyer(200, fiche(rid))
             if act == "monter":
                 if e.get("statut") in ("montage",): return self.envoyer(409, {"erreur": "déjà en cours"})
-                style = b.get("style") if b.get("style") in CASES else e.get("conseil", "Dynamique")
+                style = b.get("style") if b.get("style") in CASES else e.get("conseil", "Minimaliste")
                 # 29/10 : montage à reprendre pour CE reel (lien Instagram / TikTok / YouTube, ou vidéo glissée) ; la police reste la DA
                 ref, lien, fic = None, (b.get("lien") or "").strip(), os.path.basename(b.get("fichier") or "")
                 if lien:

@@ -292,6 +292,18 @@
         `<div style="position:absolute;left:0;right:0;${place === "bas" ? "bottom:0" : "top:0"};height:46%;background:${acc};padding:90px 80px;display:flex;align-items:center">
           <div style="${f1()}font-size:${cv.taille_titre * 0.95}px;line-height:.98;color:${txtc};text-transform:uppercase;letter-spacing:-1px">5 erreurs<br>qui ruinent<br>ton image</div></div>` +
         (da.commun.couleurs.touches ? `<div style="position:absolute;right:80px;${place === "bas" ? "bottom:70px" : "top:70px"};width:70px;height:70px;background:${da.commun.couleurs.touches}"></div>` : "");
+    } else if (modele === "duo" || modele === "soustitres") {
+      const st = modele === "soustitres", acc = da.commun.couleurs.accent || "#6CB4FF";
+      const ombre = st ? `<div style="position:absolute;left:0;right:0;bottom:0;height:380px;background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.78))"></div>` : "";
+      const moitie = (top, pos, txt) => `<div style="position:absolute;left:0;right:0;top:${top}px;height:717px;overflow:hidden">${photo("inset:0", pos)}${ombre}
+        <div style="position:absolute;left:70px;right:70px;bottom:${st ? 56 : 70}px;text-align:center;${f1()}font-size:${st ? 54 : 58}px;line-height:1.15;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,.7)">${txt}</div></div>`;
+      h = `<div style="position:absolute;inset:0;background:#0B0B0D"></div>` + moitie(0, "center 22%", `J’ai demandé des <span style="color:${acc}">clients</span>`) +
+        moitie(723, "center 45%", `La vie m’a donné des <span style="color:${acc}">refus</span>`);
+    } else if (modele === "bulles") {
+      const acc = da.commun.couleurs.accent || "#0A74BD";
+      const bul = (t, x) => `<div style="${f1()}font-size:52px;line-height:1.42;color:#0B0B0D"><span style="background:${x ? acc : "#fff"};color:${x ? "#fff" : "#0B0B0D"};padding:6px 18px;border-radius:12px;-webkit-box-decoration-break:clone;box-decoration-break:clone">${t}</span></div>`;
+      h = photo("inset:0", "center 30%") + `<div style="position:absolute;left:70px;right:70px;top:85px;display:flex;flex-direction:column;align-items:center;gap:26px;text-align:center">${bul("Tout le monde dit")}${bul("« L’argent ne fait pas<br>le bonheur »")}</div>
+        <div style="position:absolute;left:70px;right:70px;bottom:100px;display:flex;flex-direction:column;align-items:center;text-align:center">${bul("Je ne les croyais pas<br>avant d’en avoir", true)}</div>`;
     } else if (modele === "post_texte") {
       const c = couleursSlide(true);
       h = `<div style="position:absolute;inset:0;background:#FFFFFF"></div>

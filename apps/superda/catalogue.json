@@ -590,6 +590,21 @@
    "id": "post_texte",
    "nom": "Post texte",
    "desc": "comme un tweet : photo ronde, nom, texte"
+  },
+  {
+   "id": "duo",
+   "nom": "Deux photos",
+   "desc": "2 photos par slide, une phrase sur chacune"
+  },
+  {
+   "id": "soustitres",
+   "nom": "Sous-titres",
+   "desc": "2 images de ta vidéo, la phrase en sous-titre"
+  },
+  {
+   "id": "bulles",
+   "nom": "Bulles",
+   "desc": "photo plein cadre, texte en bulles blanches façon story"
   }
  ]
 }

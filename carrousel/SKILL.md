@@ -47,7 +47,7 @@ Détail du style : `~/Documents/Brain/00-Moi/da-apple-livrables.md`.
 | Ambiance | blanc + les couleurs de la marque (00-Moi/marque.json : `foncee` pour le texte, `principale` pour les accents). Appoint en petites touches : jaune #FFC845, corail #FF6B5B, menthe #2EC4A6, vert pomme |
 | Polices | Montserrat 700 majuscules (couverture, CTA) + Instrument Serif italique (titres), Montserrat 500 (phrases) |
 | Alternance | PAS obligatoire depuis le 26/10 : photo ou dessin selon l'idée de la slide (couverture = photo) |
-| Photos | VRAIES photos de l'utilisateur (dossier `photos` de marque.json), variées (plusieurs shootings), teintes naturelles, légère touche bleue dans les ombres (`prep.py`) |
+| Photos | VRAIES photos de l'utilisateur. Pour l’utilisateur : SEULEMENT la fiche `~/Documents/Montage/(exemple retiré)` (12/11/2026 : rien d'avant fin 2024, d'abord luxe + lunettes, puis les moins utilisées, jamais un HEIC). Sinon dossier `photos` de marque.json, variées (plusieurs shootings), teintes naturelles, légère touche bleue dans les ombres (`prep.py`) |
 | Illustrations | 2D motion design dessinées en SVG (`art.py`) : fond blanc, grand cercle bleu très clair, aplats, 2 à 4 petits éléments déco |
 | Interdit | images générées par IA (Higgsfield ou autre) : refusées le 16/10, « trop IA ». Pas de @, pas de numéro de slide |
 | Couverture | **07/11/2026 « sujet géant »** (remède 1 d'Ayo, validée en 2 rounds) : fond blanc, titre 2 lignes à gauche, `"accent"` = le mot clé seul en bleu, tête détourée en très grand dont les cheveux frôlent le bas du titre, AUCUN bouton ni flèche. Photo cadrée BUSTE obligatoire (en pied → le moteur reprend l'ancienne couverture et le dit). 7 mots max. Modèle : `(exemple retiré)`. Ancienne : `"cover_style": "ancienne"` |

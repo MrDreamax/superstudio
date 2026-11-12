@@ -124,6 +124,9 @@ def _regarder(D):
     # une question posée en 1re phrase, vidéo courte = FAQ = Minimaliste (devine-format.md : « FAQ = Minimaliste »)
     if conseil == "Dynamique" and P and W[P[0][1]]["text"].strip().endswith("?") and d < 90:
         conseil, pourquoi = "Minimaliste", "tu poses une question au début : format FAQ"
+    # 12/11 (l’utilisateur : « laisse tout le temps le style minimaliste pour tous les montages ») : Minimaliste par défaut, toujours.
+    # Le reste (images, cartons, zooms…) se demande dans Cut Notes ou au studio, jamais d'office.
+    conseil, pourquoi = "Minimaliste", "par défaut : toi + sous-titres ; demande le reste dans Cut Notes"
     etat(D, statut="choix", etape="", conseil=conseil, pourquoi=pourquoi, duree_rush=round(d, 1))
     preparer_prises(D)
 
@@ -449,7 +452,9 @@ def titre_auto(words):
             k = 0
             while k < len(mots) and len(" ".join(mots[:k + 1])) <= 48: k += 1
             faibles = {"le", "la", "les", "l", "un", "une", "des", "de", "du", "d", "à", "au", "aux", "et", "ou", "qui", "que", "qu",
-                       "ton", "ta", "tes", "votre", "vos", "mon", "ma", "mes", "son", "sa", "ses", "ce", "cette", "ces", "en", "pour", "sur", "dans", "avec"}
+                       "ton", "ta", "tes", "votre", "vos", "mon", "ma", "mes", "son", "sa", "ses", "ce", "cette", "ces", "en", "pour", "sur", "dans", "avec",
+                       # 12/11 (chrono-test : titre « …LE TEMPS DE SE ») : un pronom collé au verbe qui suit ne finit jamais un titre
+                       "se", "s", "me", "m", "te", "t", "ne", "n", "y", "je", "j", "tu", "il", "ils", "elle", "elles", "on", "nous", "vous", "lui", "leur", "est", "sont", "a", "ont", "comme"}
             while k > 3 and mots[k - 1].lower().strip("'’") in faibles: k -= 1
             mots = mots[:max(k, 3)]
     if mots: mots[0] = mots[0][:1].upper() + mots[0][1:]
@@ -667,7 +672,7 @@ def rallonge_60(D, rush, vf):
 
 def monter(D):
     e = lire(os.path.join(D, "etat.json"), {})
-    rid, rush, style, cases = e["id"], e["rush"], e.get("style", "Dynamique"), e.get("cases", {})
+    rid, rush, style, cases = e["id"], e["rush"], e.get("style", "Minimaliste"), e.get("cases", {})
     if e.get("muet") or not a_du_son(rush):
         return monter_broll(D, e)
     ref = {}
@@ -725,7 +730,7 @@ def suite(D, ref=None):
     """Après « Monter le reel » sous le Derush Lab : plan.json, montage v1 (ou la référence), rush renommé.
     Lancé seul (`monter.py suite`) par le serveur si le monter.py qui attendait n'existe plus (Mac redémarré)."""
     e = lire(os.path.join(D, "etat.json"), {})
-    rid, style, cases = e["id"], e.get("style", "Dynamique"), e.get("cases", {})
+    rid, style, cases = e["id"], e.get("style", "Minimaliste"), e.get("cases", {})
     try:
         etat(D, statut="montage", etape="J'écris le plan : titre, sous-titres, musique…")
         plan = plan_auto(D, rid, style, cases, lire(os.path.join(D, "words.json"))["words"])

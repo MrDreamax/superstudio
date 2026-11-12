@@ -31,6 +31,7 @@ sys.path.insert(0, SKILL)
 import apple  # noqa: E402  (moteur style Apple du skill carrousel)
 from art import BLUE, MIST, PALE, SKY, YELLOW  # noqa: E402
 import modeles  # noqa: E402  (modèles que le moteur ne fait pas encore : Cinéma)
+import modeles_bm  # noqa: E402  (4 modèles repris de Brian Mark, 12/11/2026)
 
 W, H = apple.W, apple.H
 RESEAUX = ["instagram", "tiktok", "facebook", "linkedin"]  # jamais YouTube (pas de carrousel)
@@ -58,7 +59,7 @@ DA_SKILL = {
 }
 
 MODELES = {"epure": "Épuré", "cinema": "Cinéma", "collage": "Collage", "carnet": "Carnet", "impact": "Impact",
-           "post_texte": "Post texte"}
+           "post_texte": "Post texte", **modeles_bm.MODELES_BM}
 
 
 def _fusion(base, haut):
@@ -140,7 +141,7 @@ def resume_da(da=None):
     }
 
 
-MODELES_CODES = {"epure", "cinema"}  # les autres (Collage, Carnet, Impact, Post texte) sortent en Épuré pour l'instant
+MODELES_CODES = {"epure", "cinema", *modeles_bm.MODELES_BM}  # les autres (Collage, Carnet, Impact, Post texte) sortent en Épuré pour l'instant
 
 
 def modele_rendu(da):
@@ -319,6 +320,11 @@ def _photo(p, nom, projet_dir, work):
     cle = hashlib.md5(json.dumps(p, sort_keys=True).encode()).hexdigest()[:12]
     cache = os.path.join(projet_dir, "_cache")
     os.makedirs(cache, exist_ok=True)
+    if p["src"].lower().endswith((".heic", ".heif")):  # photos iPhone : PIL ne lit pas le HEIC -> JPG par sips (intégré à macOS)
+        jpg = os.path.join(cache, cle + "-src.jpg")
+        if not os.path.exists(jpg):
+            subprocess.run(["sips", "-s", "format", "jpeg", "-s", "formatOptions", "92", p["src"], "--out", jpg], capture_output=True)
+        p = dict(p, src=jpg)
     if not os.path.exists(os.path.join(cache, cle + ".json")):
         head = apple.prep_photo(p, cle, cache)
         ecrire(os.path.join(cache, cle + ".json"), {"head": head})
@@ -381,6 +387,17 @@ def rendre(pid, v, sur_slide=None):
         if re.fullmatch(r"slide-\d+\.png", f):
             os.remove(os.path.join(vdir, f))
     heads = {nom: _photo(p, nom, pdir, work) for nom, p in desc.get("photos", {}).items()}
+    if modele_rendu(da) == "soustitres":  # images de vidéo : gardées entières (pas de recadrage 3:4 qui coupe le visage)
+        from PIL import Image, ImageOps
+        for nom, p in desc.get("photos", {}).items():
+            src = p["src"] if os.path.isabs(os.path.expanduser(p["src"])) else os.path.join(pdir, p["src"])
+            src = os.path.expanduser(src)
+            if src.lower().endswith((".heic", ".heif")):
+                continue  # photo iPhone (verticale) : la version préparée, centrée sur la tête, suffit
+            im = ImageOps.exif_transpose(Image.open(src))
+            if im.width > im.height:  # seulement les images couchées (vidéo) ; une photo debout garde le cadrage sur la tête
+                im.convert("RGB").save(os.path.join(work, nom + ".jpg"), quality=92)
+                heads[nom] = None
     fin = slides[-1] if slides else {}
     visages = ({nom: visage(work, nom) for nom in heads}
                if fin.get("cta") and da_photo_fin(da) and modele_rendu(da) == "cinema" else {})
@@ -388,7 +405,10 @@ def rendre(pid, v, sur_slide=None):
     extra = css_da(da)
     nuit = da["carrousels"]["dessins"].get("fond") == "nuit"
     for i, s in enumerate(slides, 1):
-        if modele == "cinema":
+        if modele in modeles_bm.MODELES_BM:
+            page = (modeles_bm.css(da, SUPERDA, modele) + modeles_bm.slide(typo_slide(s), i == n, {k: k for k in heads}, da, pdir, modele, heads)
+                    + "</body></html>")
+        elif modele == "cinema":
             page = (modeles.css_cinema(da, SUPERDA) + modeles.slide_cinema(typo_slide(s), i == n, {k: k for k in heads}, da, pdir, visages)
                     + "</body></html>")
         else:  # Épuré = le moteur Apple du skill tel quel, DA posée par-dessus
@@ -396,7 +416,12 @@ def rendre(pid, v, sur_slide=None):
             if nuit and s["type"] == "art":
                 corps = corps.replace('<div class="s">', '<div class="s nuit">', 1)
             page = apple.CSS + extra + corps + "</body></html>"
-        page = couleurs_da(page.replace("</body></html>", AJUSTE + "</body></html>"), da)
+        da_c = da
+        if modele in modeles_bm.MODELES_BM and not da["commun"]["couleurs"].get("accent"):
+            # « aucune couleur » = blanc sur ces modèles à fond clair (papier, bulles) : invisible -> bleu de la marque, comme l'aperçu validé
+            da_c = copy.deepcopy(da)
+            da_c["commun"]["couleurs"]["accent"] = BLUE
+        page = couleurs_da(page.replace("</body></html>", AJUSTE + "</body></html>"), da_c)
         hp = os.path.join(work, f"slide-{i}.html")
         open(hp, "w").write(page)
         capture(hp, os.path.join(vdir, f"slide-{i}.png"))

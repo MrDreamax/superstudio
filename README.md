@@ -1,13 +1,15 @@
-# Super : ta veille, ta DA, tes reels et tes carrousels, dans une seule appli
+# Super Studio : ton équipe de 4 robots pour tes reels
 
-Une fenêtre, 4 onglets. Tout tourne sur ton Mac, avec ton abonnement Claude.
+Le Scripteur, Le Monteur, Le Carrousel, Le Publieur. Tu filmes. Ils écrivent, montent, dessinent et publient.
+Tout tourne sur ton Mac, avec ton abonnement Claude.
 
-| Onglet | Ce qu'il fait |
-|---|---|
-| **Veille** | Lit les reels que tu enregistres sur Instagram. Tu coches, il traduit le script mot pour mot, ou reprend le format dans ta niche. |
-| **DA** | Ta direction artistique : polices, couleurs, tailles. Réglée une fois, les autres onglets la suivent. |
-| **Monteur** | Tu glisses ta vidéo, il monte le reel 9:16 (titre, sous-titres, musique). Tu cliques sur l'image pour tes retours, Claude corrige. |
-| **Carrousel** | Un carrousel Instagram depuis un reel, un lien ou une idée. Retours slide par slide, puis téléchargement. |
+## Avant de commencer : 4 obligatoires + 2 conseillés
+1. **Claude (obligatoire)** : l'app sur claude.ai/download, abonnement Pro ou plus (le gratuit n'ouvre pas l'onglet Code).
+2. **ElevenLabs (obligatoire)** : compte sur elevenlabs.io, formule Creator (il écoute tes vidéos pour les sous-titres). Crée une clé API, copie-la, puis double-clic sur `ranger-cle-elevenlabs.command`.
+3. **Metricool (obligatoire pour publier)** : compte gratuit sur metricool.com, branche Instagram, TikTok, YouTube. Puis dans Claude : Réglages > Connecteurs > Metricool.
+4. **Les 100 musiques (obligatoire pour les montages)** : mets `100-MUSIQUES.zip` (lien envoyé à part) dans Téléchargements AVANT d'installer.
+5. **Wispr Flow (conseillé)** : wisprflow.ai, tu dictes au lieu d'écrire.
+6. **Obsidian (conseillé)** : obsidian.md, gratuit. Ouvre `Documents/Brain` avec, pour lire ta mémoire comme un carnet.
 
 ## Installer (ou mettre à jour)
 1. Ouvre l'app Claude sur ton Mac, onglet **Code**.
@@ -17,18 +19,20 @@ Une fenêtre, 4 onglets. Tout tourne sur ton Mac, avec ton abonnement Claude.
 
 3. Clique « Autoriser » quand Claude le demande.
 
-À avoir avant : un Mac, Google Chrome et l'abonnement Claude Pro. Pour la musique : un compte Epidemic Sound (ou tes propres musiques).
+Ton Brain (ta mémoire, vide au départ) arrive dans `Documents/Brain`. Pour le remplir : « Pose-moi des questions pour remplir mon Brain ».
 
-## Ensuite
-- Double-clic sur `Documents/SuperApps/ouvrir.command`, ou écris dans Claude : « Ouvre Super ».
-- Super s'ouvre dans Chrome : http://localhost:8800
-- **Veille** : connecte-toi à Instagram dans Chrome. Au 1er lancement, ton Mac demande l'accès au trousseau pour Chrome : clique « Autoriser ». L'appli lit, elle n'écrit rien sur Instagram.
-- **Tes scripts à ta voix** : remplis `Documents/SuperApps/superveille/ma-marque.md`, ou demande à Claude de le faire avec toi.
-- **Publication en mode essai** : le bouton Publier ne publie rien tant que tu ne l'actives pas toi-même (`"mode_essai": false` dans `supermonteur/config.json` et `supercarrousel/config.json`, après avoir branché Metricool avec « Programme ma semaine »).
+## Monter une vidéo
+1. Glisse ton rush dans le chat Claude et écris : « Monte cette vidéo ».
+2. Claude te demande comment tu veux ton montage. Dis-le avec tes mots, glisse une vidéo de référence si tu en as une.
+3. La vidéo montée s'ouvre avec Cut Notes : tu notes ce qu'il faut changer, Claude corrige.
+4. Tout est bon ? Le Publieur la programme avec Metricool, seulement après ton OK.
+
+Pour voir les robots au travail : « Ouvre Super » dans Claude.
+**Publication en mode essai** : rien ne part tant que tu ne l'actives pas toi-même (`"mode_essai": false` dans `supermonteur/config.json` et `supercarrousel/config.json`).
 
 ## En option
-- **Recherche de reels viraux** (onglet Veille) : demande le connecteur Apify dans Claude.
-- **Scanner cerveau** (onglet Veille) : demande le connecteur Higgsfield dans Claude.
+- **Recherche de reels viraux** (Veille) : demande le connecteur Apify dans Claude.
+- **Scanner cerveau** (Veille) : demande le connecteur Higgsfield dans Claude.
 - Sans eux, tout le reste marche.
 
 ## Pour Claude (installation)

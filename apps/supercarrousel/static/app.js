@@ -51,7 +51,7 @@ function entete() {
     b.textContent = " · Version " + v + (valide ? " · validée ✓" : "");
     $("hd-titre").append(b);
   }
-  const mod = { epure: "Épuré", cinema: "Cinéma" }[p.modele_rendu] || (da && da.modele);
+  const mod = { epure: "Épuré", cinema: "Cinéma", duo: "Deux photos", soustitres: "Sous-titres", bulles: "Bulles" }[p.modele_rendu] || (da && da.modele);
   $("hd-modele").textContent = mod || "";
   $("hd-modele").hidden = !mod;
 }

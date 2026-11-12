@@ -59,8 +59,19 @@ def montrer(kind, pid):
     mod = m.chemin(pid, "_modele")
     if os.path.isdir(mod):
         print(f"   carrousel à reprendre : {mod}/ ({len(os.listdir(mod))} images) : FIDÈLE à son concept et son style (mise en page, couleurs, ordre, rythme) ; on change SEULEMENT la police (duo SuperDA) et les mots pour la cible ; images : les proposer ou les demander à l’utilisateur, slide par slide")
+    print(f"   PHOTOS DE L’UTILISATEUR : SEULEMENT celles de {PHOTOS} (fiche : lunettes, luxe, lieu, qualite, utilisations ; prêtes ; "
+          f"le HEIC marche aussi ; jamais une photo d'avant fin 2024 ni avec sa copine). La fiche est déjà classée (photos caméra où il est mis en valeur, Asie / Dubaï / Singapour, conférences, puis luxe, lunettes) : prends dans l'ordre, en sautant les plus utilisées ; "
+          f"jamais 2 fois la même photo dans un carrousel ; varie les lieux. (Images d'un reel déposé : OK, ce sont ses images.)")
     da = m.resume_da()
     print(f"   DA : {da['pastille']} (modèle rendu : {m.modele_rendu(m.lire_da())})")
+    mr = m.modele_rendu(m.lire_da())
+    if mr in m.modeles_bm.MODELES_BM:  # 4 modèles repris de Brian Mark : types de slide propres
+        print(f"   MODÈLE {m.MODELES[mr].upper()} : lis le haut de modeles_bm.py (types de slide) et les références "
+              f"inspirations/brian-mark/planche-*.jpg. Règles : texte JAMAIS sur le visage ni les mains (regarde chaque photo, "
+              f"règle y_haut / y_bas ou place) ; 1 à 2 mots clés en <em> (bleu) ; phrases courtes, une idée par moitié ; "
+              f"dernière slide = type fin avec cta.")
+        if mr == "soustitres":
+            print("   Sous-titres : les photos = 2 images DIFFÉRENTES du reel par slide (gestes ou cadrages qui changent), le texte = ses vraies phrases.")
     if kind == "corrections":
         v = m.version_rendue(pid)
         print(f"   version actuelle : {m.chemin(pid, f'v{v}', 'description.json')}")
@@ -72,13 +83,30 @@ def montrer(kind, pid):
         print(f"   -> écris v1 : python3 sc.py ecrire {pid} <fichier.json>  (méthode : skill carrousel étapes 1-2, 3 bis)")
 
 
+PHOTOS = os.path.expanduser("~/Documents/Montage/(exemple retiré)")
+
+
+def compter_photos(desc):
+    """Compte chaque photo de la fiche utilisée : la prochaine fois, Claude prend les moins utilisées (varier, 12/11/2026)."""
+    try:
+        fiche = json.load(open(PHOTOS))
+    except Exception:
+        return
+    srcs = {os.path.expanduser(p.get("src", "")) for p in desc.get("photos", {}).values()}
+    for x in fiche:
+        if x["src"] in srcs:
+            x["utilisations"] = x.get("utilisations", 0) + 1
+    json.dump(fiche, open(PHOTOS, "w"), ensure_ascii=False, indent=1)
+
+
 def ecrire(pid, fichier):
     desc = json.load(open(fichier))
     assert desc.get("slides"), "pas de slides"
     for s in desc["slides"]:
-        assert s.get("type") in ("cover", "photo", "art"), f"type inconnu : {s.get('type')}"
-        if s.get("photo"):
-            assert s["photo"] in desc.get("photos", {}), f"photo inconnue : {s['photo']}"
+        assert s.get("type") in ("cover", "photo", "art", "duo", "bulles", "fin"), f"type inconnu : {s.get('type')}"
+        for k in ("photo", "photo2"):  # photo2 = 2e image des modèles Deux photos / Sous-titres
+            if s.get(k):
+                assert s[k] in desc.get("photos", {}), f"photo inconnue : {s[k]}"
     for nom, p in desc.get("photos", {}).items():
         src = p["src"] if os.path.isabs(os.path.expanduser(p["src"])) else m.chemin(pid, p["src"])
         assert os.path.exists(os.path.expanduser(src)), f"photo introuvable : {src}"
@@ -86,6 +114,8 @@ def ecrire(pid, fichier):
     if m.etat(pid).get("statut") == "attente_texte" or not v:
         v = 0
     m.ecrire(m.chemin(pid, f"v{v + 1}", "description.json"), desc)
+    if v == 0:
+        compter_photos(desc)  # 1re version seulement : une correction ne compte pas 2 fois
     print(f"v{v + 1} posée : le serveur la rend (écran « Je fabrique »).")
 
 
