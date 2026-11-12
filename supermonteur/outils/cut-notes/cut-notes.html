@@ -122,11 +122,11 @@
   <header>
     <div class="mark">
       <h1>Cut Notes</h1>
-      <p>Pin notes to exact frames. Claude picks them up.</p>
+      <p>Mets ta vidéo en pause, écris ce qui ne va pas. Claude corrige.</p>
     </div>
     <div class="head-controls">
-      <span class="pill" id="modePill">Notes saved in this browser</span>
-      <label class="fps" for="fps">Frame rate
+      <span class="pill" id="modePill">Notes gardées dans ce navigateur</span>
+      <label class="fps" for="fps">Images/s
         <select id="fps">
           <option value="23.976">23.976</option>
           <option value="24">24</option>
@@ -138,7 +138,7 @@
           <option value="60">60</option>
         </select>
       </label>
-      <button class="btn" id="loadBtn" type="button">Load video</button>
+      <button class="btn" id="loadBtn" type="button">Ouvrir une vidéo</button>
       <input id="file" type="file" accept="video/*" hidden>
     </div>
   </header>
@@ -149,8 +149,8 @@
         <video id="video" playsinline preload="metadata" hidden></video>
         <div class="drop" id="drop">
           <div>
-            <strong id="dropTitle">Drop your render here</strong>
-            <span id="dropText">Or use Load video. It plays from your computer and is never uploaded anywhere.</span>
+            <strong id="dropTitle">Glisse ta vidéo ici</strong>
+            <span id="dropText">Ou clique sur « Ouvrir une vidéo ». Elle se lit sur ton ordinateur, rien n'est envoyé.</span>
           </div>
         </div>
       </div>
@@ -160,59 +160,59 @@
           <div class="marks" id="marks"></div>
         </div>
         <div class="row">
-          <button class="btn" id="back1" type="button" aria-label="Back one frame" disabled>◀︎ 1f</button>
-          <button class="btn" id="play" type="button" disabled>Play</button>
-          <button class="btn" id="fwd1" type="button" aria-label="Forward one frame" disabled>1f ▶︎</button>
+          <button class="btn" id="back1" type="button" aria-label="Une image en arrière" disabled>◀︎ 1 image</button>
+          <button class="btn" id="play" type="button" disabled>Lecture</button>
+          <button class="btn" id="fwd1" type="button" aria-label="Une image en avant" disabled>1 image ▶︎</button>
           <div class="tc"><span class="now" id="now">00:00:00:00</span> <span class="dur">/ <span id="dur">00:00:00:00</span></span></div>
           <div class="spacer"></div>
-          <span class="tc dur" id="frameNo">frame 0</span>
+          <span class="tc dur" id="frameNo">image 0</span>
         </div>
       </div>
       <div class="composer">
-        <div class="at">New note at <b id="noteAt">00:00:00:00</b></div>
-        <textarea id="noteInput" rows="2" placeholder="Just start typing. The note pins to this frame, so there's no need to write the time. Enter saves." disabled></textarea>
+        <div class="at">Note à <b id="noteAt">00:00:00:00</b></div>
+        <textarea id="noteInput" rows="2" placeholder="Écris ici (ou dicte). La note s'accroche à cette image : pas besoin d'écrire le temps. Entrée = envoyer." disabled></textarea>
         <div class="row"><button class="btn primary" id="saveNote" type="button" disabled>Envoyer la note</button><span class="toast" id="noteSaved" hidden>Note envoyée</span></div>
         <div class="keys">
-          <span><kbd>Space</kbd> play / pause</span>
-          <span><kbd>←</kbd> <kbd>→</kbd> one frame</span>
-          <span><kbd>Shift</kbd>+<kbd>←</kbd> <kbd>→</kbd> one second</span>
-          <span><kbd>N</kbd> or just type: new note</span>
-          <span><kbd>Enter</kbd> save, <kbd>Shift</kbd>+<kbd>Enter</kbd> new line, <kbd>Esc</kbd> cancel</span>
+          <span><kbd>Espace</kbd> lecture / pause</span>
+          <span><kbd>←</kbd> <kbd>→</kbd> une image</span>
+          <span><kbd>Maj</kbd>+<kbd>←</kbd> <kbd>→</kbd> une seconde</span>
+          <span><kbd>N</kbd> ou tape direct : nouvelle note</span>
+          <span><kbd>Entrée</kbd> envoyer, <kbd>Maj</kbd>+<kbd>Entrée</kbd> à la ligne, <kbd>Échap</kbd> annuler</span>
         </div>
       </div>
     </section>
 
     <aside aria-label="Notes">
       <div class="notes-head">
-        <h2>Notes<span class="count" id="count"></span></h2>
+        <h2>Tes notes<span class="count" id="count"></span></h2>
         <div class="row" id="headBtns">
-          <button class="btn quiet" id="clearBtn" type="button">Clear all</button>
-          <button class="btn" id="copyBtn" type="button">Copy for Claude</button>
+          <button class="btn quiet" id="clearBtn" type="button">Tout effacer</button>
+          <button class="btn" id="copyBtn" type="button">Copier pour Claude</button>
         </div>
       </div>
-      <div class="banner" id="banner">These are example notes. Load a video and they're replaced with yours.</div>
+      <div class="banner" id="banner">Ce sont des exemples. Ouvre une vidéo : ils laissent la place à tes notes.</div>
       <ol class="notes" id="list"></ol>
       <div class="notes-foot" id="doneFoot" hidden>
-        <button class="btn primary" id="doneBtn" type="button">I'm done reviewing</button>
-        <p id="doneText">When you're done, click this, then say "done" to Claude in your session.</p>
+        <button class="btn primary" id="doneBtn" type="button">J'ai fini mes notes</button>
+        <p id="doneText">Quand tu as fini, clique ici, puis écris « suivant » dans le chat Claude.</p>
       </div>
     </aside>
   </main>
 
-  <footer id="foot">Notes are saved in this browser, per video file. Nothing leaves your computer until you copy it.</footer>
+  <footer id="foot">Tes notes restent dans ce navigateur. Rien ne part tant que tu ne les copies pas.</footer>
 </div>
 
 <div class="sheet-wrap" id="sheetWrap" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
-    <h3 id="sheetTitle">Your notes for Claude</h3>
-    <p>Paste this into the Claude Code session where you're editing. Claude goes through each note, makes the change, and tells you what it did.</p>
-    <textarea id="out" readonly aria-label="Notes for Claude"></textarea>
+    <h3 id="sheetTitle">Tes notes pour Claude</h3>
+    <p>Colle ce texte dans le chat Claude. Il corrige chaque note et te dit ce qu'il a changé.</p>
+    <textarea id="out" readonly aria-label="Notes pour Claude"></textarea>
     <div class="row">
-      <label class="toggle" for="incDone"><input type="checkbox" id="incDone"> Include resolved notes</label>
+      <label class="toggle" for="incDone"><input type="checkbox" id="incDone"> Inclure les notes réglées</label>
       <div class="row">
-        <span class="toast" id="toast" hidden>Copied</span>
-        <button class="btn" id="closeSheet" type="button">Close</button>
-        <button class="btn primary" id="copyNow" type="button">Copy</button>
+        <span class="toast" id="toast" hidden>Copié</span>
+        <button class="btn" id="closeSheet" type="button">Fermer</button>
+        <button class="btn primary" id="copyNow" type="button">Copier</button>
       </div>
     </div>
   </div>
@@ -232,9 +232,9 @@
   const input = $("noteInput"), list = $("list"), fpsSel = $("fps");
 
   const EXAMPLES = [
-    { id: "e1", t: 3.4, text: "Cut his first sentence. Start on \"we nearly lost the company\".", status: "open" },
-    { id: "e2", t: 41.233, text: "Music is fighting his voice here. Drop it about 6dB until the line ends.", status: "open" },
-    { id: "e3", t: 78.667, text: "Hold on her face two more seconds after the answer. Don't cut on the full stop.", status: "fixed", reply: "Held 2s longer after her answer, cut on the next breath." },
+    { id: "e1", t: 3.4, text: "Coupe ma 1re phrase. Commence sur « on a failli tout perdre ».", status: "open" },
+    { id: "e2", t: 41.233, text: "La musique couvre ma voix ici. Baisse-la jusqu'à la fin de la phrase.", status: "open" },
+    { id: "e3", t: 78.667, text: "Reste 2 secondes de plus sur mon visage après la réponse.", status: "fixed", reply: "Gardé 2 s de plus, coupé à la respiration suivante." },
   ];
 
   let fps = 30, fileKey = null, fileName = "", notes = EXAMPLES.slice(), examples = true;
@@ -267,7 +267,7 @@
     updateBanner();
   }
   function loadFile(file) {
-    if (!file || !file.type.startsWith("video/")) { flagDrop("That file isn't a video. Try an MP4 or MOV export."); return; }
+    if (!file || !file.type.startsWith("video/")) { flagDrop("Ce fichier n'est pas une vidéo. Essaie un MP4 ou un MOV."); return; }
     if (video.src && video.src.startsWith("blob:")) URL.revokeObjectURL(video.src);
     video.src = URL.createObjectURL(file);
     fileName = file.name;
@@ -298,19 +298,19 @@
     $("dur").textContent = tc(video.duration || 0);
     tick(); render();
   });
-  video.addEventListener("error", () => { video.hidden = true; flagDrop("This browser can't play that file. Export an H.264 MP4 and try again."); });
+  video.addEventListener("error", () => { video.hidden = true; flagDrop("Ce navigateur ne lit pas ce fichier. Exporte un MP4 (H.264) et réessaie."); });
 
   // ---- transport ----
   function tick() {
     const t = video.currentTime || 0;
     $("now").textContent = tc(t);
-    $("frameNo").textContent = `frame ${frameOf(t)}`;
+    $("frameNo").textContent = `image ${frameOf(t)}`;
     if (pendingT === null) $("noteAt").textContent = tc(t);
     if (!scrub.matches(":active")) scrub.value = t;
   }
   function loop() { tick(); rafId = video.paused ? 0 : requestAnimationFrame(loop); }
   video.addEventListener("play", () => { $("play").textContent = "Pause"; if (!rafId) loop(); });
-  video.addEventListener("pause", () => { $("play").textContent = "Play"; tick(); });
+  video.addEventListener("pause", () => { $("play").textContent = "Lecture"; tick(); });
   video.addEventListener("seeked", tick);
   video.addEventListener("timeupdate", () => { if (video.paused) tick(); });
   const togglePlay = () => { if (!video.src) return; video.paused ? video.play().catch(() => {}) : video.pause(); };
@@ -366,7 +366,7 @@
   }
   function showProblem(e) {
     const b = $("banner"); b.hidden = false; b.className = "banner";
-    b.textContent = e && e.code === "quota_exceeded" ? "This review is full. Delete some old notes and try again." : "That note didn't save. Check your connection and try again.";
+    b.textContent = e && e.code === "quota_exceeded" ? "Plus de place. Efface de vieilles notes et réessaie." : "Cette note n'est pas partie. Vérifie ta connexion et réessaie.";
   }
 
   document.addEventListener("keydown", (e) => {
@@ -387,12 +387,12 @@
   function render() {
     const shown = visible().slice().sort((a, b) => a.t - b.t);
     const open = shown.filter((n) => !isClosed(n)).length;
-    $("count").textContent = shown.length ? `${open} open of ${shown.length}` : "";
+    $("count").textContent = shown.length ? `${open} à faire sur ${shown.length}` : "";
     list.innerHTML = "";
     if (!shown.length) {
       const li = document.createElement("li");
       li.className = "empty";
-      li.textContent = video.src ? "No notes yet. Pause anywhere and start typing." : "Load a video to start.";
+      li.textContent = video.src ? "Aucune note. Mets en pause où tu veux et écris." : "Ouvre une vidéo pour commencer.";
       list.appendChild(li);
     }
     const now = video.currentTime || 0;
@@ -401,13 +401,13 @@
       li.className = "note" + (isClosed(n) ? " closed" : "") + (Math.abs(n.t - now) < 0.5 / fps ? " active" : "");
       const chip = document.createElement("button");
       chip.className = "chip"; chip.type = "button"; chip.textContent = tc(n.t);
-      chip.title = "Jump to this frame";
+      chip.title = "Aller à cette image";
       chip.addEventListener("click", () => { if (!video.src) return; video.pause(); video.currentTime = n.t + 0.5 / fps; });
       li.appendChild(chip);
 
       if (editing === n.id) {
         const box = document.createElement("textarea");
-        box.className = "edit-box"; box.value = n.text; box.id = "edit-" + n.id; box.setAttribute("aria-label", "Edit note");
+        box.className = "edit-box"; box.value = n.text; box.id = "edit-" + n.id; box.setAttribute("aria-label", "Modifier la note");
         box.addEventListener("keydown", (e) => {
           if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); const v = box.value.trim(); editing = null; if (v && v !== n.text) patchNote(n, { text: v }); else render(); }
           if (e.key === "Escape") { editing = null; render(); }
@@ -422,7 +422,7 @@
       if (n.reply) {
         const r = document.createElement("div");
         r.className = "reply";
-        const who = document.createElement("b"); who.textContent = n.status === "fixed" ? "Fixed: " : "Claude: ";
+        const who = document.createElement("b"); who.textContent = n.status === "fixed" ? "Corrigé : " : "Claude : ";
         r.append(who, document.createTextNode(n.reply));
         li.appendChild(r);
       }
@@ -430,15 +430,15 @@
       if (confirming === n.id) {
         const c = document.createElement("div");
         c.className = "confirm";
-        c.append("Delete this note?", mk("Delete", () => { confirming = null; removeNote(n); }), mk("Keep", () => { confirming = null; render(); }));
+        c.append("Effacer cette note ?", mk("Effacer", () => { confirming = null; removeNote(n); }), mk("Garder", () => { confirming = null; render(); }));
         li.appendChild(c);
       } else if (!examples) {
         const a = document.createElement("div");
         a.className = "note-actions";
         a.append(
-          mk(isClosed(n) ? "Reopen" : "Resolve", () => patchNote(n, { status: isClosed(n) ? "open" : "resolved", done: false })),
-          mk("Edit", () => { editing = n.id; render(); }),
-          mk("Delete", () => { confirming = n.id; render(); }),
+          mk(isClosed(n) ? "Rouvrir" : "Réglé", () => patchNote(n, { status: isClosed(n) ? "open" : "resolved", done: false })),
+          mk("Modifier", () => { editing = n.id; render(); }),
+          mk("Effacer", () => { confirming = n.id; render(); }),
         );
         li.appendChild(a);
       }
@@ -451,7 +451,7 @@
   function mk(label, fn) { const b = document.createElement("button"); b.type = "button"; b.className = "btn quiet"; b.textContent = label; b.addEventListener("click", fn); return b; }
   function updateBanner() {
     const b = $("banner");
-    if (examples) { b.hidden = false; b.className = "banner"; b.textContent = db ? "Claude hasn't loaded a render yet. You can also drop the file in yourself." : "These are example notes. Load a video and they're replaced with yours."; return; }
+    if (examples) { b.hidden = false; b.className = "banner"; b.textContent = db ? "Claude hasn't loaded a render yet. You can also drop the file in yourself." : "Ce sont des exemples. Ouvre une vidéo : ils laissent la place à tes notes."; return; }
     b.hidden = true;
   }
 
@@ -463,9 +463,9 @@
     if (head.dataset.confirm) return;
     head.dataset.confirm = "1";
     const keep = [...head.children]; keep.forEach((el) => el.hidden = true);
-    const msg = document.createElement("span"); msg.className = "toggle"; msg.textContent = "Delete every note here?";
-    const yes = mk("Delete all", async () => { done(); for (const n of shown.slice()) await removeNote(n); render(); });
-    const no = mk("Keep", done);
+    const msg = document.createElement("span"); msg.className = "toggle"; msg.textContent = "Effacer toutes les notes ?";
+    const yes = mk("Tout effacer", async () => { done(); for (const n of shown.slice()) await removeNote(n); render(); });
+    const no = mk("Garder", done);
     head.append(msg, yes, no);
     function done() { [msg, yes, no].forEach((el) => el.remove()); keep.forEach((el) => el.hidden = false); delete head.dataset.confirm; }
   });
@@ -477,7 +477,7 @@
     const shown = visible();
     try {
       await db.doc("review/status").set({ state: "done", round, open: shown.filter((n) => !isClosed(n)).length, at: new Date().toISOString() });
-      $("doneText").textContent = `Round ${round} is marked done. Now say "done" to Claude in your session and it'll work through your notes.`;
+      $("doneText").textContent = `Tour ${round} terminé. Écris maintenant « suivant » dans le chat Claude : il corrige tes notes.`;
     } catch (e) { showProblem(e); }
   });
 
@@ -504,9 +504,9 @@
   $("sheetWrap").addEventListener("click", (e) => { if (e.target === $("sheetWrap")) closeSheet(); });
   $("copyNow").addEventListener("click", () => {
     const text = $("out").value;
-    const fallback = () => { $("out").focus(); $("out").select(); $("toast").textContent = "Selected. Press Cmd+C (Ctrl+C on Windows) to copy."; $("toast").hidden = false; };
+    const fallback = () => { $("out").focus(); $("out").select(); $("toast").textContent = "Sélectionné. Fais Cmd+C pour copier."; $("toast").hidden = false; };
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(() => { $("toast").textContent = "Copied. Paste it into your Claude session."; $("toast").hidden = false; }).catch(fallback);
+      navigator.clipboard.writeText(text).then(() => { $("toast").textContent = "Copié. Colle-le dans le chat Claude."; $("toast").hidden = false; }).catch(fallback);
     } else fallback();
   });
 
@@ -518,19 +518,19 @@
     if (!d) return;
     db = d;
     notes = []; allNotes = [];
-    $("modePill").textContent = "Notes go straight to Claude"; $("modePill").classList.add("live");
-    $("foot").textContent = "Notes are saved for Claude in this review. Your video only plays here.";
-    $("dropTitle").textContent = "Waiting for Claude's render";
-    $("dropText").textContent = "Claude loads the video here when it shares this review. You can also drop the file in yourself.";
+    $("modePill").textContent = "Tes notes partent direct à Claude"; $("modePill").classList.add("live");
+    $("foot").textContent = "Tes notes sont gardées pour Claude. Ta vidéo se lit seulement ici.";
+    $("dropTitle").textContent = "Claude charge ta vidéo…";
+    $("dropText").textContent = "Elle arrive toute seule ici. Tu peux aussi la glisser toi-même.";
     $("doneFoot").hidden = false;
     updateBanner();
     db.doc("review/current").onSnapshot((snap) => {
       const c = snap.exists ? snap.data() : null;
       if (!c) return;
-      if (typeof c.round === "number" && c.round !== round) { round = c.round; $("doneText").textContent = `When you're done, click this, then say "done" to Claude in your session.`; }
+      if (typeof c.round === "number" && c.round !== round) { round = c.round; $("doneText").textContent = `Quand tu as fini, clique ici, puis écris « suivant » dans le chat Claude.`; }
       if (c.fps && Number(c.fps) !== fps) { fps = Number(c.fps); fpsSel.value = String(c.fps); }
       if (c.name) fileName = String(c.name);
-      $("modePill").textContent = `Round ${round} · notes go straight to Claude`;
+      $("modePill").textContent = `Tour ${round} · tes notes partent direct à Claude`;
       if (c.src) loadRemote(String(c.src), c.name); else render();
     }, () => {});
     db.collection("notes").onSnapshot((snap) => {

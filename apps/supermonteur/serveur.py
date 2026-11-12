@@ -726,7 +726,7 @@ class H(BaseHTTPRequestHandler):
     # ------------------------------------------------------------------------------------------------------- GET
     def do_GET(self):
         u = urllib.parse.urlparse(self.path)
-        p = u.path
+        p = urllib.parse.unquote(u.path)  # 12/11 : dossiers avec accent (hookcorvée) arrivent en %C3%A9 -> décodés une fois ici pour toutes les routes
         try:
             if p in ("/", "/index.html"): return self.fichier(os.path.join(WEB, "index.html"))
             if p.startswith("/web/"): return self.fichier(os.path.join(WEB, os.path.basename(p)))
@@ -756,7 +756,7 @@ class H(BaseHTTPRequestHandler):
             m = re.fullmatch(r"/media/([\w-]+)/(.+)", p)
             if m:
                 d = D(m.group(1))
-                f = os.path.normpath(os.path.join(d, urllib.parse.unquote(m.group(2))))
+                f = os.path.normpath(os.path.join(d, m.group(2)))
                 if not f.startswith(d + os.sep): return self.envoyer(403, {"erreur": "non"})
                 return self.fichier(f)
             m = re.fullmatch(r"/api/telecharger/([\w-]+)", p)
@@ -782,7 +782,7 @@ class H(BaseHTTPRequestHandler):
 
     # ------------------------------------------------------------------------------------------------------ POST
     def do_POST(self):
-        p = urllib.parse.urlparse(self.path).path
+        p = urllib.parse.unquote(urllib.parse.urlparse(self.path).path)
         o = self.headers.get("Origin")  # serrure : seule la page SuperMonteur peut envoyer des ordres, pas un autre site
         if o and o not in (f"http://localhost:{PORT}", f"http://127.0.0.1:{PORT}"):
             return self.envoyer(403, {"erreur": "refusé"})

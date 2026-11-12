@@ -288,6 +288,18 @@ class H(BaseHTTPRequestHandler):
                 l = t.strip().split("\n", 1)
                 out.append({"titre": l[0].lstrip("# ").strip(), "texte": (l[1] if len(l) > 1 else "").strip(), "date": os.path.getmtime(f)})
             return self.envoyer(200, out)
+        if p == "/api/publies":   # 12/11 (l’utilisateur) : fiche du Publieur = historique de ce qui est déjà parti (publication.json des reels et carrousels)
+            out = []
+            for quoi, motif in (("reel", os.path.join(MONTAGES, "*", "publication.json")), ("carrousel", os.path.join(APPS, "supercarrousel", "projets", "*", "publication.json"))):
+                for pf in glob.glob(motif):
+                    try: e = json.load(open(pf, encoding="utf-8"))
+                    except Exception: continue
+                    if e.get("statut") not in ("programme", "publie"): continue
+                    out.append({"id": os.path.basename(os.path.dirname(pf)), "quoi": quoi, "titre": e.get("titre", ""), "reseaux": [x.strip() for x in (e.get("reseaux") or [])] if isinstance(e.get("reseaux"), list) else [x.strip() for x in str(e.get("reseaux") or "").replace(" et ", ",").split(",") if x.strip()],
+                                "date": e.get("fini_le") or e.get("demande_le") or __import__("datetime").datetime.fromtimestamp(os.path.getmtime(pf)).strftime("%Y-%m-%dT%H:%M:%S"), "heure": e.get("heure") or e.get("fini_le") or ""})
+            out.sort(key=lambda x: x["date"], reverse=True)
+            vus = set(); out = [x for x in out if not ((x["quoi"], x["id"]) in vus or vus.add((x["quoi"], x["id"])))]   # 1 ligne par contenu
+            return self.envoyer(200, out)
         if p.startswith("/x/"): return self.relais("GET")
         self.envoyer(404, {"erreur": "introuvable"})
 

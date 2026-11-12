@@ -1,6 +1,6 @@
 ---
 name: carrousel
-description: Le Carrousel. Carrousel Instagram de 8 slides (1080x1440) au modèle validé - bleu-blanc, vraies photos de l'utilisateur + illustrations 2D SVG, jamais d'image IA. Livre PNG + légende, ne publie jamais. Use when "carrousel", "carousel", "fais-moi un carrousel", "carrousel de la semaine", "transforme ce reel en carrousel", "carrousel sur X", "carousel maker".
+description: Le Carrousel. Carrousel Instagram (1080x1440, nombre de slides libre, le plus court qui dit tout) au modèle validé - bleu-blanc, vraies photos de l'utilisateur + illustrations 2D SVG, jamais d'image IA. Livre PNG + légende, ne publie jamais. Use when "carrousel", "carousel", "fais-moi un carrousel", "carrousel de la semaine", "transforme ce reel en carrousel", "carrousel sur X", "carousel maker".
 ---
 
 **Réflexe 9/10 (03/11/2026, l’utilisateur : « il faut que ce soit un réflexe pour tout ce que tu fais de me montrer que du 9/10 ») : rien ne lui est montré sous 9/10, échantillon, maquette et version intermédiaire compris. Juge séparé avant chaque envoi, 3 tours max, sinon la vraie note et ce qui bloque. Méthode : Brain `09-SOP/boucle-9-sur-10.md`.**
@@ -11,7 +11,7 @@ description: Le Carrousel. Carrousel Instagram de 8 slides (1080x1440) au modèl
 ## Règle n°1 : maquette d'abord (19/10/2026)
 Avant de coder, monter, générer en volume ou exécuter quoi que ce soit : montre d'abord une MAQUETTE (une image, un écran, 1 slide, 10 s, 3 lignes) et attends que l'utilisateur la valide. Toujours PLUSIEURS versions (3 en général, ma recommandée en premier, chacune nommée en 3 mots) qui CHALLENGENT la direction artistique : 3 directions vraiment différentes (couleurs, typo, mise en page, ambiance), jamais 3 variantes du même style. Vote : un seul bouton « Garder celle-ci » (il en garde une, les autres sont jetées) + une note facultative, rien d'autre (pas de Peut-être ni de Jeter). DEUX rounds avant validation : round 1 = aspect global, styles vraiment différents ; round 2 = plein de détails de la maquette gardée (plusieurs parties dans le même round, une option gardée par partie). Vaut aussi pour le montage vidéo. Pour passer au round suivant, l'utilisateur dit « suivant » (plus « done ») : le bouton s'appelle « Suivant ». Pas de validation = pas d'exécution. Vaut pour tout : site, tunnel de vente, montage, PDF, scripts, pubs.
 
-# Le Carrousel : une grande idée, 8 slides, la DA de la marque
+# Le Carrousel : une grande idée, le moins de slides possible, la DA de la marque
 
 Modèle validé le 16/10/2026 après 5 versions refusées. Ne pas le redécider : l'appliquer.
 Référence visuelle : la planche que nomme ton carnet (le carrousel validé).
@@ -36,14 +36,14 @@ Le carrousel se fera dans l'interface **SuperCarrousel**, qui lit la DA de Super
 
 ## MAJ 22/10/2026 : nouveau modèle style Apple (validé par l’utilisateur)
 Remplace le tableau ci-dessous pour l’utilisateur : blanc, SF Pro, photo bord à bord + cheveux détourés qui dépassent, dessins sur cercle bleu clair, fin = 3 bulles iMessage. Branché dans le moteur le 22/10 : mettre `"style": "apple"` dans la description → `carrousel.py` appelle `scripts/apple.py` (rendu local par Chrome, **pas besoin d'Open Carrusel**, ~20 s pour 8 slides).
-Exemple complet : `exemples/exemple-apple.json` (copier, adapter). Types : `cover` (kicker, title, photo, accent ; couverture « sujet géant » du 07/11, détourage `scripts/detoure.swift`), `photo` (title, body ou steps ; `"pop": false` si la personne est petite dans l'image), `art` (title, body, steps, ou `cta` + `cta_q` + `cta_line` pour la fin en 3 bulles). Note manuscrite : `note` + `note_pos`.
+Exemple complet : `exemples/exemple-apple.json` (copier, adapter). Types : `cover` (kicker, title, photo, accent ; couverture « sujet géant » du 07/11, détourage `scripts/detoure.swift`), `photo` (title, body ou steps ; `"pop": false` si la personne est petite dans l'image), `list` (kicker, title, items = [{icon, t, d}] : liste à icônes, icônes dans `apple.py` ICONS), `art` (title, body, steps, ou `cta` + `cta_q` + `cta_line` pour la fin en 3 bulles). Note manuscrite : `note` + `note_pos`.
 Le détourage ne garde que la tête au-dessus de la photo (mains et bruit effacés). Vérifier quand même le haut de chaque slide photo en grand.
 Détail du style : `~/Documents/Brain/00-Moi/da-apple-livrables.md`.
 
 ## Le modèle (ce qui est validé)
 | Élément | Règle |
 |---|---|
-| Format | 3:4, 1080x1440, 8 slides par défaut (6 minimum) |
+| Format | 3:4, 1080x1440, AUCUN nombre de slides imposé (12/11/2026, l’utilisateur : « enlève la règle des 8 slides, absolument »). 3 slides si 3 suffisent |
 | Ambiance | blanc + les couleurs de la marque (00-Moi/marque.json : `foncee` pour le texte, `principale` pour les accents). Appoint en petites touches : jaune #FFC845, corail #FF6B5B, menthe #2EC4A6, vert pomme |
 | Polices | Montserrat 700 majuscules (couverture, CTA) + Instrument Serif italique (titres), Montserrat 500 (phrases) |
 | Alternance | PAS obligatoire depuis le 26/10 : photo ou dessin selon l'idée de la slide (couverture = photo) |
@@ -82,7 +82,7 @@ La plupart des gens n'ont pas de shooting : le carrousel se fait depuis un reel 
 - Vidéo : le RUSH d'abord (avant montage, zéro texte sur l'image ; chez l’utilisateur `~/Documents/Montage/MONTAGES/<projet>/clip.mp4`, transcription `words.json` à côté). Le reel fini seulement s'il n'y a rien d'autre, et alors seulement des images sans texte sur le visage.
 - `python3 scripts/reel2frames.py <video> <out>/_reel --words <words.json>` (~30 s) : 16 images nettes prises entre deux mots (bouche au repos), étalées dans le temps, + `00-candidates.jpg` (planche numérotée) + `texte.txt` (la transcription).
 - Lis la planche, garde 4 images variées (gestes différents, pas les yeux fermés, pas la main devant le visage), mets-les en `"src"` des `photos` d'une description `"style": "apple"`.
-- Le texte des slides vient du script du reel (`texte.txt`) : même idée, découpée en 8 slides, avec la méthode de l'étape 2.
+- Le texte des slides vient du script du reel (`texte.txt`) : même idée, découpée en autant de slides qu'il faut (pas 8 par défaut), avec la méthode de l'étape 2.
 - Image face caméra = visage très gros : mets la note manuscrite du côté opposé à la tête.
 Exemple réel : `~/Documents/Contenu/carrousels/2026-10-23-sans-teleprompteur/description.json`.
 

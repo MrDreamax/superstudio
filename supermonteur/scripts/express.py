@@ -60,8 +60,10 @@ FONT = os.path.join("fonts", re.search(r'font-family:"Sub";src:url\("fonts/([^"]
 title = None
 if plan.get("title"):
     T = plan["title"]; ta, tb = times["htitle"]
-    l1 = re.search(r'<div class="ht1">(.*?)</div>', page)[1]; l2 = re.search(r'<div class="ht2">(.*?)</div>', page)[1]
-    st = {k: re.findall(rf"\.{k}\{{([^}}]*)\}}", page)[-1] for k in ("ht1", "ht2")}   # la DERNIÈRE règle gagne (comme le CSS)
+    # 12/11 (Fable 5.2 version B) : titre recollé sur 1 ligne par build.mjs (règle 11/11) = pas de div ht2 -> plantage. ht2 devient optionnelle.
+    l1 = re.search(r'<div class="ht1">(.*?)</div>', page)[1]; l2 = (re.search(r'<div class="ht2">(.*?)</div>', page) or [None, ""])[1]
+    _st = {k: re.findall(rf"\.{k}\{{([^}}]*)\}}", page) for k in ("ht1", "ht2")}
+    st = {k: (_st[k] or _st["ht1"])[-1] for k in ("ht1", "ht2")}   # la DERNIÈRE règle gagne (comme le CSS)
     num = lambda k, p, d=0: float((re.search(p, st[k]) or [None, d])[1])
     # 31/10 : police lue dans la règle CSS de la ligne, pas devinée (T1 / T2 n'existent qu'avec plan.typo : sans typo = plantage)
     fam = lambda k: re.search(r'font-family:"([^"]+)"', st[k])[1]

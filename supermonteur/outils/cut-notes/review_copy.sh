@@ -9,7 +9,7 @@ FPS=$(ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -of
 # 13 Mo * 8 / durée, moins 128 kb/s d'audio, plafonné à 4 Mb/s
 VB=$(awk -v d="$DUR" 'BEGIN { v = int(13*8*1024/d - 128); if (v > 4000) v = 4000; if (v < 300) v = 300; print v }')
 ffmpeg -y -v error -i "$IN" -vf "scale='if(gt(iw,ih),-2,720)':'if(gt(iw,ih),720,-2)'" \
-  -c:v libx264 -preset medium -b:v ${VB}k -maxrate $((VB*12/10))k -bufsize $((VB*2))k \
+  -c:v libx264 -preset veryfast -b:v ${VB}k -maxrate $((VB*12/10))k -bufsize $((VB*2))k \
   -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a 128k "$OUT"
 SIZE=$(stat -f%z "$OUT" 2>/dev/null || stat -c%s "$OUT")
 echo "$OUT $SIZE $FPS"

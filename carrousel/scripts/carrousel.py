@@ -135,7 +135,7 @@ def finish(spec, n):
     """Planche + légende + copie de la description dans le dossier de sortie."""
     out = os.path.expanduser(spec["out"])
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-start_number", "1", "-i", os.path.join(out, "slide-%d.png"),
-                    "-vf", f"scale=540:720,pad=556:736:8:8:color=0x888888,tile=4x{(n + 3) // 4}",
+                    "-vf", f"scale=540:720,pad=556:736:8:8:color=0x888888,tile={min(n, 4)}x{(n + 3) // 4}",  # 12/11/2026 : moins de 4 slides = pas de case noire vide
                     "-frames:v", "1", os.path.join(out, "00-planche.png")], check=True)
     with open(os.path.join(out, "legende.txt"), "w") as f:
         f.write(spec.get("caption", "") + "\n\n" + " ".join("#" + h for h in spec.get("hashtags", [])) + "\n")

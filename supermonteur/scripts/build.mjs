@@ -95,6 +95,7 @@ for (const w of W) { const k = norm(w.text); if (FIX[k] !== undefined) w.text = 
 const NB = { "zéro": 0, un: 1, une: 1, deux: 2, trois: 3, quatre: 4, cinq: 5, six: 6, sept: 7, huit: 8, neuf: 9, dix: 10, onze: 11,
   douze: 12, treize: 13, quatorze: 14, quinze: 15, seize: 16, vingt: 20, vingts: 20, trente: 30, quarante: 40, cinquante: 50,
   soixante: 60, cent: 100, cents: 100, mille: 1000 };
+// 12/11 (Pub 1 décor 2, juge : « 12000 » illisible) : à partir de 10 000, espace insécable des milliers (« 12 000 », « 15 000 »).
 const enChiffres = W => {
   const coupe = text => { const m = String(text).match(/^(.*?)([«»“”"….,!?;:]*)$/); return [m[1], m[2]]; };
   const parts = mot => mot.toLowerCase().replace("’", "'").split("-").filter(Boolean);
@@ -131,7 +132,7 @@ const enChiffres = W => {
     const article = n === 1 && seul.length === 1 && (seul[0] === "un" || seul[0] === "une");
     const neufFin = n === 1 && seul.length === 1 && seul[0] === "neuf" && /[.!?…]/.test(ponct);
     if (n && !article && !neufFin && !(n === 1 && seul.length === 1 && seul[0] === "et")) {
-      out.push({ ...W[i], e: W[j - 1].e, text: String(val) + ponct }); i = j;
+      out.push({ ...W[i], e: W[j - 1].e, text: (val >= 10000 ? String(val).replace(/\B(?=(\d{3})+(?!\d))/g, "\u00A0") : String(val)) + ponct }); i = j;
     } else { out.push(W[i]); i++; }
   }
   return out;

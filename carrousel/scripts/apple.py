@@ -7,6 +7,7 @@ Types de slide :
   cover : "kicker" (petit titre), "title", "photo", "accent" (mot clé en bleu) ; « sujet géant » du 07/11/2026,
           "cover_style": "ancienne" = photo bord à bord + cheveux qui dépassent (22/10)
   photo : "photo", "title", "body" | "steps" ; "pop": false = photo sans dépassement (sujet petit dans l'image)
+  list  : "kicker", "title", "items" [{"icon" (ICONS), "t", "d"}] ; "gap", "top", "title_size" (12/11/2026)
   art   : "art" (art.py) ou "svg", "title", "body" | "steps" | "cta" (+ "cta_q", "cta_line")
 Commun : "note" + "note_pos" ({"top":..,"left"|"right":..}) pour une note manuscrite de 3 à 5 mots.
 """
@@ -50,6 +51,10 @@ body{{margin:0;background:#fff;font-family:-apple-system,"SF Pro Display",system
 .b{{padding:22px 38px;max-width:780px}}
 .them{{align-self:flex-start;background:{GRAY};border-radius:40px 40px 40px 12px}}
 .me{{align-self:flex-end;background:#0A84FF;color:#fff;font-weight:600;border-radius:40px 40px 12px 40px}}
+.ic{{flex:0 0 120px;height:120px;border-radius:50%;background:#EAF3FB;color:{BLUE};display:flex;align-items:center;justify-content:center}}
+.li{{display:flex;gap:40px;align-items:center}}
+.li b{{display:block;font-size:48px;letter-spacing:-.025em;line-height:1.1}}
+.li span{{display:block;font-size:34px;color:{MUTE};margin-top:8px;line-height:1.25;letter-spacing:-.01em}}
 </style></head><body>"""
 
 
@@ -95,6 +100,22 @@ def photo_block(name, head, top, h, pop=True):
     if pop:  # le détourage ne sert qu'AU-DESSUS de la photo : dedans, la vraie photo reste intacte
         html += f'<div class="pop" style="height:{top}px"><img src="{name}-fg.png" style="top:{top - off}px"></div>'
     return html
+
+# Icônes au trait pour le type "list" (12/11/2026), dessinées dans un carré 48x48, trait bleu
+ICONS = {
+    "grille": '<rect x="7" y="7" width="14" height="14" rx="3"/><rect x="27" y="7" width="14" height="14" rx="3"/><rect x="7" y="27" width="14" height="14" rx="3"/><rect x="27" y="27" width="14" height="14" rx="3"/>',
+    "cible": '<circle cx="24" cy="24" r="17"/><circle cx="24" cy="24" r="10"/><circle cx="24" cy="24" r="3" fill="currentColor"/>',
+    "eclair": '<path d="M27 5 11 27h12l-3 16 17-23H25z" stroke-linejoin="round"/>',
+    "alerte": '<path d="M24 6 4 41h40z" stroke-linejoin="round"/><path d="M24 19v10"/><circle cx="24" cy="35" r="1.5" fill="currentColor"/>',
+    "bulle": '<path d="M8 10h32a3 3 0 0 1 3 3v18a3 3 0 0 1-3 3H20l-9 7v-7H8a3 3 0 0 1-3-3V13a3 3 0 0 1 3-3z" stroke-linejoin="round"/><path d="M15 20h18M15 26h11"/>',
+    "camera": '<rect x="4" y="13" width="28" height="22" rx="4"/><path d="m32 21 12-7v20l-12-7z" stroke-linejoin="round"/>',
+    "cadeau": '<rect x="6" y="18" width="36" height="24" rx="3"/><path d="M4 12h40v6H4zM24 12v30M24 12c-4-8-13-6-10 0M24 12c4-8 13-6 10 0"/>',
+}
+
+
+def icon(name):
+    return (f'<div class="ic"><svg viewBox="0 0 48 48" width="64" height="64" fill="none" stroke="currentColor" '
+            f'stroke-width="3.2" stroke-linecap="round">{ICONS[name]}</svg></div>')
 
 
 def text(s, size):
@@ -183,18 +204,31 @@ def slide(s, last, heads, spec_dir):
         pop = s.get("pop", True)  # sans dépassement (sujet petit dans l'image) : la photo part du haut de la slide
         inner = (photo_block(p, heads[p], 300 if pop else 0, 700 if pop else 1000, pop)
                  + f'<div class="ctr" style="position:absolute;left:60px;right:60px;top:{1050 if pop else 1060}px">{text(s, 92)}</div>')
+    elif t == "list":  # liste à icônes (12/11/2026) : kicker + titre en haut, puis une ligne par élément
+        kicker = f'<div class="k">{s["kicker"]}</div>' if s.get("kicker") else ""
+        rows = "".join(f'<div class="li">{icon(it["icon"])}<div><b>{it["t"]}</b>'
+                       + (f'<span>{it["d"]}</span>' if it.get("d") else "") + '</div></div>'
+                       for it in s["items"])
+        gap = s.get("gap", 56)
+        inner = (f'<div style="padding:{s.get("top", 120)}px 80px 0">{kicker}'
+                 f'<h2 class="t" style="font-size:{s.get("title_size", 96)}px;margin-top:18px">{s["title"]}</h2>'
+                 f'<div style="display:flex;flex-direction:column;gap:{gap}px;margin-top:80px">{rows}</div></div>')
     elif t == "art":
-        if s.get("svg"):
+        if s.get("photo") and s.get("cta"):  # 12/11/2026 : fin avec une vraie photo (conférence) au lieu d'un dessin
+            art = f'<div style="height:660px"></div>' + photo_block(s["photo"], heads[s["photo"]], 0, s.get("photo_h", 640), False)
+        elif s.get("svg"):
             art = open(os.path.join(spec_dir, os.path.expanduser(s["svg"]))).read()
         else:
             art = ARTS[s["art"]](**s.get("args", {}))
         if s.get("cta"):  # dernière slide : dessin plus petit + 3 bulles de message
-            art = art.replace('<svg class="art"', '<svg class="art" style="height:660px"', 1)
+            if not s.get("photo"):
+                art = art.replace('<svg class="art"', '<svg class="art" style="height:660px"', 1)
             q = s.get("cta_q", "Tu veux la ressource ?")
-            inner = (art + f'<div class="ctr">{text(s, 84)}</div>'
-                     f'<div class="chat" style="top:930px"><div class="b them">{q}</div><div class="b me">{s["cta"].upper()}</div>'
+            dy = s.get("cta_shift", 0)  # 12/11/2026 : descend titre + bulles quand le bas reste vide
+            inner = (f'<div style="height:{dy}px"></div>' + art + f'<div class="ctr">{text(s, 84)}</div>'
+                     f'<div class="chat" style="top:{930 + dy}px"><div class="b them">{q}</div><div class="b me">{s["cta"].upper()}</div>'
                      f'<div class="b them">{s.get("cta_line", "Envoyé en DM. Bonne lecture.")}</div></div>'
-                     f'<div class="note" style="top:1070px;left:110px">écris ça en commentaire →</div>')
+                     f'<div class="note" style="top:{1070 + dy}px;left:110px">écris ça en commentaire →</div>')
         else:
             inner = art + f'<div class="ctr" style="padding:0 60px">{text(s, 104)}</div>'
     else:

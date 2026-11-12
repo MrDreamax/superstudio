@@ -4,7 +4,7 @@ Outil de Super Studio, créé le 13/10/2026. L'utilisateur regarde le rendu dans
 Fichiers : `cut-notes.html` (page, relue ligne par ligne le 13/10 : aucun envoi hors Google Fonts), `review_copy.sh` (copie de revue).
 
 ## Quand
-Après chaque rendu à faire relire (étape 8 livrée), ou quand l'utilisateur dit « review ».
+**12/11 : AUTOMATIQUE, dès que le montage est fini (v1 et chaque retouche), sans rien demander** : `python3 ouvre.py <dossier du reel>` fait les étapes 1 et 3 (page + copie de revue + numéro de tour), puis Claude fait 2, 4 et `Artifact open`. Aussi quand l'utilisateur dit « review ». Page en français, il écrit « suivant » (plus « done »).
 
 ## Round 1
 1. Copier `cut-notes.html` dans le dossier du reel (l'outil Artifact ne publie que depuis le dossier de travail).
@@ -13,7 +13,10 @@ Après chaque rendu à faire relire (étape 8 livrée), ou quand l'utilisateur d
 4. Uploader `review.mp4` dans les assets de l'artifact (Artifact, `asset: true`), puis écrire le doc `review/current` (ArtifactData `set`) : `{"src": "<url de l'asset>", "name": "<nom>", "fps": <fps>, "round": 1}`.
 5. Vérifier : ArtifactData `get` de `review/current` + `list` de `notes`. Puis envoyer le lien à l'utilisateur en une ligne.
 
-## Quand l'utilisateur dit « done »
+## Quand l'utilisateur dit « suivant » (12/11 : chemin court)
+`ArtifactData list notes` avec `out_dir`, puis `python3 ouvre.py <dossier> --notes <out_dir>` : notes ouvertes du tour -> `/api/retour` + `/api/suivant` de SuperMonteur (le correcteur retouche seulement les moments notés), attente de la nouvelle version, nouvelle copie de revue, tour + 1. Puis upload + `review/current` + `Artifact open`, et chaque note en `fixed` avec la réponse lue dans `retours.json`. Pour l’utilisateur lui-même, la règle « plan avant modif » est remplacée par ce chemin (il note, on corrige).
+
+## Ancien chemin, à la main (« done »)
 1. Lire la collection `notes` (ArtifactData `list`), garder le round courant. Chaque note : `tc` (HH:MM:SS:FF), `t` (secondes), `text`, `status`.
 2. **Pour l'utilisateur** (règle du 13/10 : plan avant chaque modif) : montrer 1 ligne par note ouverte = ce que je vais changer, attendre son OK. **Pour un client** (process étape 3) : appliquer direct.
 3. Appliquer chaque note `open` par retouche ciblée (plan.json, remix audio, re-rendu). Ne toucher à RIEN d'autre.
