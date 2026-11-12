@@ -3,13 +3,16 @@ name: carrousel
 description: Le Carrousel. Carrousel Instagram (1080x1440, nombre de slides libre, le plus court qui dit tout) au modèle validé - bleu-blanc, vraies photos de l'utilisateur + illustrations 2D SVG, jamais d'image IA. Livre PNG + légende, ne publie jamais. Use when "carrousel", "carousel", "fais-moi un carrousel", "carrousel de la semaine", "transforme ce reel en carrousel", "carrousel sur X", "carousel maker".
 ---
 
-**Réflexe 9/10 (03/11/2026, l’utilisateur : « il faut que ce soit un réflexe pour tout ce que tu fais de me montrer que du 9/10 ») : rien ne lui est montré sous 9/10, échantillon, maquette et version intermédiaire compris. Juge séparé avant chaque envoi, 3 tours max, sinon la vraie note et ce qui bloque. Méthode : Brain `09-SOP/boucle-9-sur-10.md`.**
+## CHEZ TOI (client) : CE BLOC PASSE AVANT TOUT LE RESTE DE CE FICHIER
+- On fait le carrousel dans le chat, sans ouvrir d'appli avant. Rendu des images : Google Chrome doit être installé sur le Mac (google.com/chrome) ; absent = dis-le en 1 ligne avec ce lien.
+- Ses photos : celles qu'il glisse dans le chat, ou `~/Documents/Brain/00-Moi/photos/` s'il en a rangé. Jamais une photo inventée, jamais d'image IA.
+- Sa voix : `~/Documents/Brain/00-Moi/` s'il est rempli. Pas de veille, pas d'onglet SuperDA : sa DA est déjà réglée (`~/Documents/SuperApps/superda/da.json`).
+- Un fichier ou un skill cité plus bas qui n'existe pas chez lui : ignore-le.
 
-**RÈGLE 28/10/2026 : premier geste de toute demande de carrousel = ouvrir SuperCarrousel** (`bash ~/Documents/SuperApps/supercarrousel/lancer.sh` puis http://localhost:8797 dans le navigateur intégré), avant toute question.
 
 
-## Règle n°1 : maquette d'abord (19/10/2026)
-Avant de coder, monter, générer en volume ou exécuter quoi que ce soit : montre d'abord une MAQUETTE (une image, un écran, 1 slide, 10 s, 3 lignes) et attends que l'utilisateur la valide. Toujours PLUSIEURS versions (3 en général, ma recommandée en premier, chacune nommée en 3 mots) qui CHALLENGENT la direction artistique : 3 directions vraiment différentes (couleurs, typo, mise en page, ambiance), jamais 3 variantes du même style. Vote : un seul bouton « Garder celle-ci » (il en garde une, les autres sont jetées) + une note facultative, rien d'autre (pas de Peut-être ni de Jeter). DEUX rounds avant validation : round 1 = aspect global, styles vraiment différents ; round 2 = plein de détails de la maquette gardée (plusieurs parties dans le même round, une option gardée par partie). Vaut aussi pour le montage vidéo. Pour passer au round suivant, l'utilisateur dit « suivant » (plus « done ») : le bouton s'appelle « Suivant ». Pas de validation = pas d'exécution. Vaut pour tout : site, tunnel de vente, montage, PDF, scripts, pubs.
+
+
 
 # Le Carrousel : une grande idée, le moins de slides possible, la DA de la marque
 
@@ -25,8 +28,8 @@ Seulement des images qu'il accepte : ses interdits (shooting, look, période) so
 - Si l'utilisateur corrige, note ou refuse ton travail (même en passant) : ajoute UNE ligne dans ce carnet, `JJ/MM/AAAA · correction · ce qui n'allait pas → règle`. Si elle contredit une ancienne, remplace l'ancienne. Dis-le en une ligne : « Noté dans mon carnet : ... ».
 
 ## MAJ 26/10/2026 : SuperCarrousel (maquettes validées, CODÉ le 28/10/2026)
+> Section pour l'auteur : chez un client, le carrousel se fait dans le chat (bloc client en tête).
 **L'appli existe** : `~/Documents/SuperApps/supercarrousel/` (http://localhost:8797, lancer `bash .../apps/supercarrousel/lancer.sh` ; mode d'emploi côté Claude : son `README.md` et `python3 sc.py a-faire`). Pour l’utilisateur, un carrousel passe par elle : je lis ses demandes avec `sc.py`, j'écris la description, elle rend avec ce moteur.
-Le carrousel se fera dans l'interface **SuperCarrousel**, qui lit la DA de SuperDA (onglet Carrousels). Règles complètes : `~/Documents/Brain/01-Projets/superda-supermonteur.md`.
 - 3 départs : **Un reel** (fichier OU lien Instagram / TikTok / YouTube : images + texte du reel, voir 3 bis) · **Un carrousel à reprendre** (lien d'un carrousel qui marche, 29/10 : FIDÈLE à son concept et son style : mise en page, couleurs, ordre, rythme ; on change SEULEMENT la police et les mots ; images : je les propose ou je les demande à l’utilisateur, slide par slide) · **Une idée** (sujet écrit ou dicté).
 - Je fabrique tout d'un coup (pas de validation du texte avant), les slides apparaissent une par une.
 - Puis écran de retours (une slide en grand, retour accroché à la slide, « Corrigé ✓ ▶ Revoir », « Suivant : corrige mes retours » / « C'est parfait, on publie ») ; « Ma DA » en tiroir.
@@ -35,6 +38,7 @@ Le carrousel se fera dans l'interface **SuperCarrousel**, qui lit la DA de Super
 - Pas de nombre de slides imposé. Jamais de ponctuation seule en fin de ligne.
 
 ## MAJ 22/10/2026 : nouveau modèle style Apple (validé par l’utilisateur)
+> Section pour l'auteur : chez un client, sa DA (`~/Documents/SuperApps/superda/da.json`) passe avant.
 Remplace le tableau ci-dessous pour l’utilisateur : blanc, SF Pro, photo bord à bord + cheveux détourés qui dépassent, dessins sur cercle bleu clair, fin = 3 bulles iMessage. Branché dans le moteur le 22/10 : mettre `"style": "apple"` dans la description → `carrousel.py` appelle `scripts/apple.py` (rendu local par Chrome, **pas besoin d'Open Carrusel**, ~20 s pour 8 slides).
 Exemple complet : `exemples/exemple-apple.json` (copier, adapter). Types : `cover` (kicker, title, photo, accent ; couverture « sujet géant » du 07/11, détourage `scripts/detoure.swift`), `photo` (title, body ou steps ; `"pop": false` si la personne est petite dans l'image), `list` (kicker, title, items = [{icon, t, d}] : liste à icônes, icônes dans `apple.py` ICONS), `art` (title, body, steps, ou `cta` + `cta_q` + `cta_line` pour la fin en 3 bulles). Note manuscrite : `note` + `note_pos`.
 Le détourage ne garde que la tête au-dessus de la photo (mains et bruit effacés). Vérifier quand même le haut de chaque slide photo en grand.
@@ -44,10 +48,8 @@ Détail du style : `~/Documents/Brain/00-Moi/da-apple-livrables.md`.
 | Élément | Règle |
 |---|---|
 | Format | 3:4, 1080x1440, AUCUN nombre de slides imposé (12/11/2026, l’utilisateur : « enlève la règle des 8 slides, absolument »). 3 slides si 3 suffisent |
-| Ambiance | blanc + les couleurs de la marque (00-Moi/marque.json : `foncee` pour le texte, `principale` pour les accents). Appoint en petites touches : jaune #FFC845, corail #FF6B5B, menthe #2EC4A6, vert pomme |
 | Polices | Montserrat 700 majuscules (couverture, CTA) + Instrument Serif italique (titres), Montserrat 500 (phrases) |
 | Alternance | PAS obligatoire depuis le 26/10 : photo ou dessin selon l'idée de la slide (couverture = photo) |
-| Photos | VRAIES photos de l'utilisateur. Pour l’utilisateur : SEULEMENT la fiche `~/Documents/Montage/(exemple retiré)` (12/11/2026 : rien d'avant fin 2024, d'abord luxe + lunettes, puis les moins utilisées, jamais un HEIC). Sinon dossier `photos` de marque.json, variées (plusieurs shootings), teintes naturelles, légère touche bleue dans les ombres (`prep.py`) |
 | Illustrations | 2D motion design dessinées en SVG (`art.py`) : fond blanc, grand cercle bleu très clair, aplats, 2 à 4 petits éléments déco |
 | Interdit | images générées par IA (Higgsfield ou autre) : refusées le 16/10, « trop IA ». Pas de @, pas de numéro de slide |
 | Couverture | **07/11/2026 « sujet géant »** (remède 1 d'Ayo, validée en 2 rounds) : fond blanc, titre 2 lignes à gauche, `"accent"` = le mot clé seul en bleu, tête détourée en très grand dont les cheveux frôlent le bas du titre, AUCUN bouton ni flèche. Photo cadrée BUSTE obligatoire (en pied → le moteur reprend l'ancienne couverture et le dit). 7 mots max. Modèle : `(exemple retiré)`. Ancienne : `"cover_style": "ancienne"` |
@@ -57,21 +59,15 @@ Détail du style : `~/Documents/Brain/00-Moi/da-apple-livrables.md`.
 ## Étapes (⏱ ~25 min : annonce-le au début, dis le temps réel à la fin)
 
 ### 1. La grande idée (une seule par carrousel)
-Dans l'ordre : ce que l'utilisateur demande ; un sujet de la veille carrousels (`~/Documents/Brain/04-Audits/*veille-carrousels*.md`, on copie le sujet et la structure, jamais la posture) ; un script de reel validé (`06-Contenu/`) ; une vraie question de client (`06-Contenu/questions-clients-*.md`).
 Le sujet doit toucher un problème de la cible de sa stratégie (00-Moi/strategie-contenu.md, ou celle que nomme son carnet).
-Mot-clé de fin : un freebie qui EXISTE (sa stratégie ou son carnet les liste) ou son mot-clé (`mot_cle` de marque.json). N'invente jamais une ressource.
 
 ### 2. Le texte
-- Lis d'abord `~/Documents/Brain/02-Formations/experts-copywriting-carrousels.md` (méthode Chris Do AIDA + titre ROT, fil par « … ») et `~/Documents/Brain/00-Moi/voix-contenu.md`.
 - Couverture : écris 10 titres (Résultat, Objection ou Temps, chiffre si possible), garde le meilleur. Elle et la slide 2 doivent accrocher seules.
 - Chaque slide ouvre la suivante (« … », question, « mais »). Une slide de preuve vers la fin.
 - Preuves autorisées seulement : celles de son Brain (00-Moi/profil.md, son carnet) et des cas clients chiffrés SANS nom tirés du Brain. Rien d'inventé.
-- Voix : celle de 00-Moi/voix-contenu.md, zéro gros mot, aucun concurrent nommé.
-- Dernière passe : skill `anti-ia`.
 - Légende : 4 à 6 lignes qui prolongent (pas un copier-coller des slides), finit par le CTA. 5 hashtags max.
 
 ### 3. Les photos (4 slides)
-- Ses photos : le dossier `photos` de 00-Moi/marque.json (sinon ~/Documents/Contenu/medias/photos), rangé à plat, le mot-clé est dans le nom du fichier. Les mots-clés de ses shootings et ses interdits : dans son carnet.
 - Jamais : vie intime, photos où quelqu'un d'autre est au premier plan, portraits retouchés ou possiblement IA.
 - Planches pour choisir : `python3 scripts/planches.py <dossier_scratchpad> "<mot-clé 1>" "<mot-clé 2>"`, puis lis les planches.
 - Chaque photo doit coller à SA slide (ex. preuve = scène devant une salle, posture = sourire en costume). Varie les shootings.
@@ -91,7 +87,6 @@ Exemple réel : `~/Documents/Contenu/carrousels/2026-10-23-sans-teleprompteur/de
 - Sujet nouveau : écris une nouvelle fonction dans `art.py` (mêmes couleurs, `frame()`, dessin entre y 80 et 820, 2 à 4 éléments `deco`) et ajoute-la à `ARTS` pour la réutiliser. Ou un fichier `.svg` à côté de la description (`"svg": "mon-dessin.svg"`).
 
 ### 5. La description puis le montage
-- Copie `exemples/exemple-v4.json` dans le scratchpad, adapte : `photos` (source + recadrage), `slides`, `caption`, `hashtags`, `out` = `<sorties>/carrousels/AAAA-MM-JJ-<sujet>` (<sorties> = `sorties` de 00-Moi/marque.json, sinon ~/Documents/Contenu).
 - Lance Open Carrusel : `preview_start` avec `name: "open-carrusel"` (config dans le `.claude/launch.json` du dossier de travail). En dernier recours : `cd ~/open-carrusel && npm run dev -- -p 3210` en arrière-plan.
 - `python3 ~/.claude/skills/carrousel/scripts/carrousel.py <spec.json>` (SANS `-I` : les scripts s'importent entre eux). ~1 min. Il prépare les photos, monte, exporte les PNG, la planche, la légende et `spec.json`.
 
@@ -105,10 +100,8 @@ Corrige la description et relance.
 
 ### 7. Livrer
 - `SendUserFile` de la planche + 3 à 5 lignes : sujet, d'où il vient (veille, script…), ce qui reste à faire.
-- Brain : 1 ligne en bas de `log.md` ; dans son fichier `actions` (00-Moi/marque.json ; vide : dis-le dans le chat) : valider le carrousel, vérifier que le mot-clé répond dans ManyChat, feu vert pour Metricool.
 - Ne publie et ne programme JAMAIS sans son feu vert explicite.
 - Une info absente du Brain : dis « je ne l'ai pas ». Ne l'invente pas.
-- En cas d'échec (photos introuvables, disque débranché, rendu vide) : une ligne dans ~/Documents/Brain/04-Audits/erreurs-taches.md (date, tâche, erreur) et dis-le en une ligne.
 
 ## Technique
 - Open Carrusel : `~/open-carrusel` (open source, MIT), patché pour le 3:4 et les vraies italiques. L'éditeur sur http://localhost:3210 permet à l'utilisateur de voir ou retoucher.

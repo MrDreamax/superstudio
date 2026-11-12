@@ -3,12 +3,8 @@
 Lu quand on monte à la main, qu'on répare ou qu'un fichier de style cite une étape. Musique : `musique.md`. B-rolls : `brolls.md`. Cahier des charges : `cahier-des-charges.md`.
 
 ## Ordre rapide, texte complet des 2 premiers points
-1. **« Monte cette vidéo » = j'ouvre SuperMonteur, aucune question de style dans le chat (02/11, remplace la question du 26/10)** : le 1er écran devine le style et l'entoure, il choisit là-bas. Dans le chat, un seul bouton « Suivant » une fois ses retours faits (détail : `SKILL.md`, ordre rapide). Rien d'autre à demander au départ : DA = la sienne (`~/Documents/Brain/00-Moi/reglages/da-montage.json`, prise seule par le moteur), ambiance = choisie par moi d'après le sujet. Les questions du brief ci-dessous ne servent que pour un client.
 2. **Dérush** (ordre rapide, section 2) → durée exacte et seconde de la punchline connues. **29/10 21h32 : Derush Lab RETIRÉ** (l’utilisateur : « enlève le Derush Lab de SuperMonteur et reviens comme c'était avant, parce que c'était ça, le problème ») : le dérush part direct au montage, dans SuperMonteur comme dans un chat. Ne plus lancer cockpit.py --lab avant de monter.
 
-## 0. BRIEF AVANT TOUT MONTAGE (client : en boutons QCM via AskUserQuestion, option recommandée en 1er)
-Toujours premium. Ne monter qu'après les réponses. Rush de l'utilisateur : sauter ce brief, le style se choisit sur le 1er écran de SuperMonteur (02/11).
-1. **Style** : deviner d'abord avec `devine-format.md` (26/10), puis proposer parmi les 5 styles SEULS (Dynamique / Minimaliste / Comparatif / Interview / Autre, 4 boutons max, le reste via « Autre »). Le style Comparatif se décide au script (la vidéo doit être écrite pour). Un selfie se monte en Minimaliste (26/10, remplace la suppression du 16/10).
 2. **Face caméra = le style Dynamique** (26/10 ; avant : « UN SEUL style » du 19/10) : mix à équilibrer de split screen (face cam + animation), face cam seule, cartons plein écran en dégradé propre, animations plein écran, avec ses sous-titres. Aucune question de degré ; ne plus dire « high prod » ni « degré sous-titres ». « Minimaliste » = le nom du style 2 depuis le 26/10 (choisi par l'utilisateur, l'interdit du 19/10 est levé). Les variantes se tranchent en maquettes (round 1 = aspect global, round 2 = détails).
 3. **DA** : seulement chez un nouveau client (DA existante `da/<prenom>.json` / nouvelle DA). L'utilisateur = sa DA (`~/Documents/Brain/00-Moi/reglages/da-montage.json`), ne pas demander.
 6. **Ambiance et musique** : `musique.md`.

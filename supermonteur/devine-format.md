@@ -1,3 +1,5 @@
+> **Chez un client : la question du style est REMPLACÉE par la question ouverte du bloc client de SKILL.md. Jamais de boutons de style ni de cases à cocher dans le chat.**
+
 # DEVINER LE FORMAT : « monte cette vidéo » = je devine, il confirme (26/10)
 
 **02/11 : SuperMonteur devine et il confirme sur son 1er écran. Aucune question de style ni de cases dans le chat** (l’utilisateur : « ne propose pas à la fois le style dans Claude chat et dans SuperMonteur »). Les sections 3 et 3 bis ne servent que si SuperMonteur est impossible à ouvrir, et pour un client.

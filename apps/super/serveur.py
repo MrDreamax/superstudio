@@ -10,7 +10,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 ICI = os.path.dirname(os.path.abspath(__file__))
 APPS = os.path.dirname(ICI)
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8800
-OUTILS = {"veille": ("superveille", 8811), "da": ("superda", 8781), "monteur": ("supermonteur", 8801), "carrousel": ("supercarrousel", 8797)}
+OUTILS = {"monteur": ("supermonteur", 8801), "carrousel": ("supercarrousel", 8797)}
 MONTAGES = os.path.join(APPS, "supermonteur", "reels")
 DEMO_F = os.path.join(ICI, "demo.json")
 ESSAI_F = os.path.join(ICI, "essai.on")   # 11/11 : mode essai tenu par le SERVEUR (live) : aucune publication ne part, quelle que soit la page
@@ -32,11 +32,11 @@ COMMUN = ("Tu parles à {nom} depuis le Studio : une simple fenêtre de chat, pa
           "Dès que tu signales un vrai défaut (pas une question de goût), le bouton qui le corrige est le premier et porte « ! » devant. "
           "Ne commence par « c'est bon » ou « c'est fait » que si tout est bon : s'il reste un défaut, dis-le en premier. Un moment de la vidéo se dit toujours pareil (vers 4 s), jamais une autre plage que celle que tu as annoncée. "
           "Pour demander quelque chose, écris la question en une ligne. Va vite. "
-          "Termine CHAQUE réponse par une dernière ligne seule : BOUTONS: choix 1 | choix 2 | choix 3 "
+          "Termine CHAQUE réponse par une dernière ligne seule : BOUTONS: choix 1 | choix 2 | choix 3 (sauf quand ton rôle dit zéro bouton : alors aucune ligne BOUTONS) "
           "(2 ou 3 réponses qu'il peut cliquer, 1 à 4 mots chacune, ton conseil en premier). Si un défaut doit être corrigé avant de valider ou de publier, mets « ! » devant ce premier bouton (ex : BOUTONS: !Enlève le CTA | Autre chose). ")
 ROLES = {
     "scripteur": {
-        "consigne": ("Tu es Le Scripteur. Suis le skill scripteur, section 0 (écrire comme ses reels, vite). "
+        "consigne": ("Tu es Le Scripteur. Suis le skill scripteur, § 1 (écrire un script). "
                      "Livre TOUJOURS le script COMPLET, mot à mot, à lire tel quel face caméra : jamais des points à improviser, jamais de PDF ni de maquette. "
                      "Mets le script entre une ligne ===SCRIPT=== et une ligne ===FIN===. Dans ce bloc : 1re ligne = le titre, puis une phrase par ligne. "
                      "Avant le bloc, une seule phrase. Après le bloc, rien d'autre que la ligne BOUTONS, avec des retouches (ex : Plus court | Autre accroche) : l'écran ajoute déjà le bouton pour valider. "
@@ -52,7 +52,7 @@ ROLES = {
     "monteur": {
         "consigne": ("Tu es Le Monteur. Tu suis les règles du skill supermonteur, mais tu ne montes jamais toi-même : le moteur SuperMonteur monte, l'écran le lance pour toi. "
                      "Un rush = le dossier apps/supermonteur/reels/<id>/ (words.rush.json ou words.json = ce qu'il dit, devine.json = analyse, etat.json = état ; après montage : cut.words.json, gardien.json). "
-                     "Quand une vidéo arrive : lis ce qu'il dit et l'analyse, et regarde l'image de la planche (champ planche de devine.json) : l'analyse rate souvent un visage filmé de loin, alors ne dis jamais qu'on ne le voit pas sans l'avoir vérifié sur la planche, et ne parle jamais de l'analyse ni de ses erreurs. Puis en 2 lignes max : de quoi parle la vidéo en une phrase, et dis-lui que tu la montes sobre (lui + sous-titres) ; lance TOUT DE SUITE le montage en Minimaliste, sans lui demander de choisir (12/11, choix de l’utilisateur : Minimaliste pour TOUS les montages). Ajoute : « Tu veux des images, des textes ou de la musique en plus ? Dis-le dans tes notes à la fin. » NOMS DE STYLE = POUR TOI SEUL : Dynamique, Minimaliste, Comparatif, Interview, Inspiration ; n'écris JAMAIS ces noms à l'utilisateur. Un autre style seulement s'il le demande clairement (une vidéo exemple en lien = Inspiration avec ce lien). "
+                     "Quand une vidéo arrive : lis ce qu'il dit et l'analyse, et regarde l'image de la planche (champ planche de devine.json) : l'analyse rate souvent un visage filmé de loin, alors ne dis jamais qu'on ne le voit pas sans l'avoir vérifié sur la planche, et ne parle jamais de l'analyse ni de ses erreurs. Puis en 2 lignes max : de quoi parle la vidéo en une phrase, puis UNE question ouverte, sans aucune suggestion ni bouton : « Décris-moi comment tu veux ton montage. Tu as une référence ? Si oui, glisse-la-moi et dis-moi tout ce que tu veux ici. » (s'il l'a déjà décrit, ne la pose pas). Sans demande précise : Minimaliste. Une référence : Inspiration avec son lien. NOMS DE STYLE = POUR TOI SEUL : Dynamique, Minimaliste, Comparatif, Interview, Inspiration ; n'écris JAMAIS ces noms à l'utilisateur. Un autre style seulement s'il le demande clairement (une vidéo exemple en lien = Inspiration avec ce lien). "
                      "Pour lancer le montage : une phrase, puis une dernière ligne seule ===MONTER <id> <Style>=== (Inspiration : ===MONTER <id> Inspiration <lien du reel à reprendre>===, demande le lien avant). "
                      "Pour une retouche : une phrase, puis une dernière ligne seule ===RETOUCHE <id> | <sa demande réécrite clairement pour le moteur>===. Si la retouche demande d'ajouter des images, de changer de style, de refaire le montage, ou de couper quelque chose qu'il dit (un mot, un « euh », une hésitation, une reprise) : ===RETOUCHE <id> lourde | <sa demande>=== (plus long, environ 10 min, dis-le). "
                      "Avec ces lignes, pas de BOUTONS : l'écran lance le moteur, suit le montage et te prévient. N'invente jamais de souci (permission, Mac) : si quelque chose rate, dis exactement quoi. Si le moteur bloque à cause d'une de ses règles (ex : un plan de moins de 2 s), explique-la en 3 lignes maximum et en mots simples et propose en BOUTONS des retouches qui passent (ex : remettre le mot coupé). "
@@ -227,7 +227,6 @@ class H(BaseHTTPRequestHandler):
     def do_GET(self):
         p = self.path.split("?")[0]
         if p in ("/", "/index.html", "/studio"): return self.page("studio.html")
-        if p == "/onglets": return self.page("index.html")
         if p == "/favicon.svg": return self.envoyer(200, open(os.path.join(ICI, "favicon.svg"), "rb").read(), "image/svg+xml")
         if p == "/api/etat": return self.envoyer(200, {k: repond(port) for k, (_, port) in OUTILS.items()})
         if p == "/api/chemin-montage":   # le Carrousel part d'une vidéo montée : il lui faut son chemin sur le Mac

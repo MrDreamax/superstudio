@@ -15,7 +15,6 @@
 - [18/10] La musique colle-t-elle à l'ambiance du sujet avec une vraie mélodie et de l'émotion (cordes, piano, tension dark qui monte), pas une nappe plate ? Un conseil court ou un tuto simple ne veut pas d'épique.
 - [22/10] Y a-t-il des bruitages parasites (whoosh sur chaque coupe, clics, sons collés) ? Oui = défaut : seuls les gros événements ont un son.
 - [28/10] Si le reel a des b-rolls : montrent-ils exactement ce qui est dit, beaux, stables, sans filtre, premium (scène, costume, montre, hôtel), jamais du sport dans un reel business ? Non = défaut.
-- [19/10] Voit-on une image ou une vidéo générée par IA, ou une personne qui n'est pas l’utilisateur, ou l’utilisateur crâne rasé ou avec son ancien visage ? Oui = défaut.
 - [31/10] Le cadre est-il celui d'origine, sans zoom ajouté pour cacher un défaut, avec la tête bien cadrée et un plan vertical entier dans sa carte ? Non = défaut (« je suis trop zoomé »).
 - [27/10] Si un titre reste affiché, la tête touche-t-elle ou passe-t-elle sous le titre ? Oui = défaut.
 - [30/10] Y a-t-il du texte lisible dès la toute première image ? Si le reel a un titre, il doit être net dès l'image 0, sans fondu d'entrée.

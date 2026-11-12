@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Super : installe (ou met à jour) les skills supermonteur, publieur, carrousel, super et superveille + l'appli Super
-# et ses 4 outils : Veille, DA, Monteur, Carrousel (dans ~/Documents/SuperApps).
+# Super Studio : installe (ou met à jour) les skills supermonteur, publieur, carrousel, scripteur et super + Super Studio
+# et ses moteurs cachés : Monteur, Carrousel, DA (dans ~/Documents/SuperApps).
 # Usage : bash install.sh      (depuis le dossier dézippé). Relançable sans risque : c'est aussi la mise à jour.
 #
 # Ce que le script ne touche JAMAIS une fois installé (le dossier du client) :
@@ -57,6 +57,10 @@ if [[ -d "$PSRC" ]]; then
   fi
   mkdir -p "$PDEST"
   rsync -a --delete --exclude config.json --exclude retours-client.md "$PSRC/" "$PDEST/"
+  # 12/11 : réglages du Publieur créés une fois (avant : jamais créés, « Réglages introuvables »), reels lus dans le Monteur
+  if [[ ! -f "$PDEST/config.json" ]]; then
+    sed 's#"montages": "~/Documents/Montage/LIVRES"#"montages": "~/Documents/SuperApps/supermonteur/reels"#' "$PDEST/config.exemple-client.json" > "$PDEST/config.json"
+  fi
   [[ -f "$PDEST/retours-client.md" ]] || printf '# Mes retours sur la publication (lus AVANT chaque semaine, passent avant tout le reste)\nFormat : JJ/MM/AAAA · reel · problème → règle\n\n' > "$PDEST/retours-client.md"
   mkdir -p "$MONT/PUBLICATION"
 fi
@@ -84,7 +88,7 @@ if [[ -d "$ASRC" ]]; then
     --exclude ma-marque.md --exclude /superveille/enregistres/ --exclude /superveille/enregistres.json --exclude '/superveille/*.lock' \
     --exclude /superveille/veilles/ --exclude /superveille/mes-notes/ --exclude '/superveille/tournage*.json' --exclude /superveille/reglages.json \
     "$ASRC/" "$ADEST/"
-  for a in "" supermonteur/ supercarrousel/ superveille/; do
+  for a in "" supermonteur/ supercarrousel/; do
     [[ -f "$ADEST/${a}config.json" ]] || cp "$ADEST/${a}config.exemple.json" "$ADEST/${a}config.json"
   done
   [[ -f "$ADEST/superda/da.json" ]] || cp "$ADEST/superda/da.defaut.json" "$ADEST/superda/da.json"
@@ -117,14 +121,14 @@ if d.get("maj") == "2026-10-28T10:53:06+01:00" and duo.get("id") == "moderne":
     json.dump(d, open(p, "w"), ensure_ascii=False, indent=1)
     print("Police par défaut : SF Pro (duo Apple).")
 PYDA
-  [[ -f "$ADEST/superveille/ma-marque.md" ]] || cp "$ADEST/superveille/ma-marque.exemple.md" "$ADEST/superveille/ma-marque.md"
   mkdir -p "$ADEST/superda/img" "$MONT/MONTAGES" "$MONT/PUBLICATION"
   [[ -f "$ADEST/superda/img/frame.jpg" ]] || cp "$ASRC/superda/img/frame.jpg" "$ADEST/superda/img/frame.jpg"
   chmod +x "$ADEST"/*/lancer.sh "$ADEST/ouvrir.command" "$ADEST/ouvrir-super.sh" "$ADEST/superda/connecter-claude.command"
 fi
 
-# Skills super et superveille : remplacés à chaque mise à jour
-for s in super superveille; do
+# Skills super et scripteur : remplacés à chaque mise à jour (12/11 : la Veille est remplacée par Le Scripteur)
+rm -rf "$HOME/.claude/skills/superveille"
+for s in super scripteur; do
   if [[ -d "$(dirname "$SRC")/$s" ]]; then mkdir -p "$HOME/.claude/skills/$s"; rsync -a --delete "$(dirname "$SRC")/$s/" "$HOME/.claude/skills/$s/"; fi
 done
 
@@ -135,10 +139,10 @@ if [[ -f /System/Library/Fonts/SFNS.ttf ]]; then
 else
   echo "Attention : SF Pro introuvable sur ce Mac, le duo Apple utilisera une autre police."
 fi
-# SuperVeille : yt-dlp (télécharge les reels) et son module Python (lit les enregistrés Instagram)
+# Le Scripteur : yt-dlp (récupère une vidéo depuis un lien pour la transcrire)
 mkdir -p "$HOME/.local/bin"
-[[ -x "$HOME/.local/bin/yt-dlp" ]] || curl -fsSL https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_macos -o "$HOME/.local/bin/yt-dlp" && chmod +x "$HOME/.local/bin/yt-dlp" || echo "Attention : yt-dlp pas installé (SuperVeille)."
-/usr/bin/python3 -c "import yt_dlp" 2>/dev/null || /usr/bin/python3 -m pip install --user -q yt-dlp || echo "Attention : module yt-dlp pas installé (SuperVeille)."
+[[ -x "$HOME/.local/bin/yt-dlp" ]] || curl -fsSL https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_macos -o "$HOME/.local/bin/yt-dlp" && chmod +x "$HOME/.local/bin/yt-dlp" || echo "Attention : yt-dlp pas installé (liens de vidéos pour Le Scripteur)."
+/usr/bin/python3 -c "import yt_dlp" 2>/dev/null || /usr/bin/python3 -m pip install --user -q yt-dlp || echo "Attention : module yt-dlp pas installé (Le Scripteur)."
 # modules en plus pour les carrousels (lecture d'un reel, détourage)
 python3 -c "import scipy, cv2" 2>/dev/null || python3 -m pip install --user -q scipy opencv-python-headless || echo "Attention : scipy / opencv pas installés (carrousels depuis un reel)."
 # 1.7 (juge 1.6 : 1er démarrage du Carrousel = 188 s) : le tout 1er chargement de ces modules est long, on le fait ici
@@ -149,11 +153,12 @@ ICI="$(dirname "$SRC")"
 if [[ -d "$ICI/Brain" && ! -d "$HOME/Documents/Brain" ]]; then cp -R "$ICI/Brain" "$HOME/Documents/Brain"; echo "Brain installé dans Documents/Brain."; fi
 mkdir -p "$HOME/Documents/Montage"
 for z in "$ICI/100-MUSIQUES.zip" "$ICI/../100-MUSIQUES.zip" "$HOME/Downloads/100-MUSIQUES.zip"; do
-  if [[ -f "$z" && ! -d "$HOME/Documents/Montage/MUSIQUE" ]]; then echo "Installation des 100 musiques…"; unzip -q "$z" -d "$HOME/Documents/Montage" && echo "100 musiques installées dans Documents/Montage/MUSIQUE."; break; fi
+    # 12/11 : le dossier MUSIQUE existe déjà (mkdir plus haut) : on teste la présence de mp3, pas du dossier
+  if [[ -f "$z" && -z "$(find "$HOME/Documents/Montage/MUSIQUE" -name '*.mp3' -print -quit 2>/dev/null)" ]]; then echo "Installation des 100 musiques…"; unzip -q "$z" -d "$HOME/Documents/Montage" && echo "100 musiques installées dans Documents/Montage/MUSIQUE."; break; fi
 done
-[[ -d "$HOME/Documents/Montage/MUSIQUE" ]] || echo "Attention : pas encore de musiques. Mets 100-MUSIQUES.zip à côté de ce dossier et relance, ou pose tes mp3 dans Documents/Montage/MUSIQUE."
+[[ -n "$(find "$HOME/Documents/Montage/MUSIQUE" -name '*.mp3' -print -quit 2>/dev/null)" ]] || echo "Attention : pas encore de musiques. Mets 100-MUSIQUES.zip à côté de ce dossier et relance, ou pose tes mp3 dans Documents/Montage/MUSIQUE."
 # ElevenLabs obligatoire (transcription des rushs)
-security find-generic-password -s elevenlabs-api-key -w >/dev/null 2>&1 || echo "À FAIRE : clé ElevenLabs. Copie ta clé (elevenlabs.io), puis double-clic sur ranger-cle-elevenlabs.command."
-echo "Super installé (version $(cat "$DEST/VERSION")). Dans Claude, onglet Code : « Ouvre Super »."
-if [[ -d "$PDEST" ]]; then echo "Publieur installé. Dans Claude : « Programme ma semaine »."; fi
-if [[ -d "$ADEST" ]]; then echo "Super installé dans ~/Documents/SuperApps. Double-clic sur ouvrir.command (ou dans Claude : « Ouvre Super »). Publication en mode essai : rien ne part tant que tu ne l'actives pas."; fi
+security find-generic-password -s elevenlabs-api-key -w >/dev/null 2>&1 || echo "À FAIRE : clé ElevenLabs. Copie ta clé (elevenlabs.io), puis dis à Claude : « Range ma clé ElevenLabs »."
+echo "Super Studio installé (version $(cat "$DEST/VERSION"))."
+echo "Publication en mode essai : rien ne part tant que tu ne l'actives pas."
+B="$(dirname "$SRC")/BIENVENUE.md"; [[ -f "$B" ]] && { echo; cat "$B"; }
