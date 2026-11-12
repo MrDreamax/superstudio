@@ -1,0 +1,214 @@
+<!-- Modèle du Positionneur : exemple fictif (une coach sportive). Garde la structure et le style, remplace tout le contenu, mets les couleurs de la personne (00-Moi/marque.json). Le logo est appelé logo.png : renomme le logo de la personne ou change la balise img. -->
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Fiche positionnement</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.js"></script>
+<style>
+  @page { size:A4; margin:0; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  :root { --ink:#0B0B0B; --char:#232323; --mut:#6b6b6b; --gold:#DAAD55; --goldt:#B8913A; --card:#F6F5F2; --line:#E7E4DD; --red:#C2453B; }
+  body { font-family:Inter, -apple-system, sans-serif; color:var(--ink); background:#fff; }
+  .page { width:794px; height:1123px; padding:46px 52px 38px; position:relative; overflow:hidden; page-break-after:always; }
+  .page:last-child { page-break-after:auto; }
+  .brand { display:flex; align-items:center; gap:9px; font-family:Montserrat, sans-serif; font-size:10px; font-weight:700; letter-spacing:.26em; color:var(--goldt); }
+  .brand img { width:22px; height:22px; }
+  .brand span.r { margin-left:auto; color:var(--mut); letter-spacing:.12em; font-weight:600; }
+  h1 { font-size:42px; font-weight:800; letter-spacing:-.035em; line-height:1.02; margin-top:20px; }
+  .lead { font-size:16px; color:var(--mut); margin-top:8px; }
+  h2 { font-size:12px; font-weight:800; letter-spacing:.16em; margin:17px 0 8px; }
+  .t { display:inline-block; font-size:9px; font-weight:700; letter-spacing:.06em; border-radius:99px; padding:2px 7px; vertical-align:2px; margin-left:6px; white-space:nowrap; }
+  .t.c { background:#ECECEC; color:var(--char); }
+  .t.p { background:#FBF1DC; color:var(--goldt); }
+  .t.r { background:#FBE7E4; color:var(--red); }
+  .t.v { background:#EEF0F3; color:#56606e; }
+  .phrase { border-left:3px solid var(--gold); padding:4px 0 4px 14px; font-size:15px; line-height:1.45; margin-bottom:9px; }
+  .phrase b { font-size:11px; color:var(--goldt); letter-spacing:.1em; margin-right:6px; }
+  .tiles { display:grid; grid-template-columns:repeat(3, 1fr); gap:9px; }
+  .tile { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px 14px; }
+  .tile .k { font-size:10px; font-weight:700; letter-spacing:.14em; color:var(--mut); }
+  .tile .v { font-size:19px; font-weight:800; letter-spacing:-.02em; margin-top:5px; }
+  .eq { margin-top:14px; background:var(--ink); color:#fff; border-radius:16px; padding:16px 20px; display:flex; align-items:center; gap:20px; }
+  .eq .f { font-size:24px; font-weight:800; letter-spacing:-.02em; white-space:nowrap; }
+  .eq .f em { font-style:normal; color:var(--gold); }
+  .eq p { font-size:13px; color:#cfcfcf; line-height:1.45; }
+  svg.sk { display:block; width:100%; height:150px; margin-top:8px; font-family:Kalam, cursive; }
+  .meth { display:grid; grid-template-columns:repeat(3, 1fr); gap:9px; }
+  .meth div { border:1.5px solid var(--gold); border-radius:14px; padding:11px 13px; background:#FFFBF3; }
+  .meth b { font-size:16px; display:block; }
+  .meth span { font-size:12px; color:#3d3d3d; line-height:1.4; display:block; margin-top:3px; }
+  table.vs { width:100%; border-collapse:collapse; font-size:12.5px; }
+  table.vs th { text-align:left; font-size:10px; letter-spacing:.14em; color:var(--mut); padding:0 10px 6px 0; }
+  table.vs td { padding:6px 10px 6px 0; border-top:1px solid var(--line); vertical-align:top; line-height:1.35; }
+  table.vs td.bad { color:var(--mut); text-decoration:line-through; text-decoration-color:rgba(194,69,59,.55); width:50%; }
+  table.vs td.good { font-weight:600; }
+  .quote { font-family:Kalam, cursive; font-size:19px; color:var(--char); text-align:center; margin-top:12px; }
+  .quote small { display:block; font-family:Inter, sans-serif; font-size:10.5px; color:var(--mut); margin-top:2px; }
+  .cols { display:grid; grid-template-columns:1fr 1fr; gap:12px 22px; }
+  .flow { column-count:2; column-gap:22px; margin-top:14px; }
+  .flow > div { break-inside:avoid; margin-bottom:12px; }
+  .flow h3 { margin-top:0; }
+  .f2 h3 { font-size:11px; font-weight:800; letter-spacing:.12em; margin-bottom:5px; }
+  .f2 p, .f2 li { font-size:12px; line-height:1.42; color:#262626; }
+  .f2 ul { padding-left:15px; }
+  .f2 li { margin-bottom:2px; }
+  .box { border:1px solid var(--line); background:var(--card); border-radius:14px; padding:12px 14px; }
+  .tip { border:1.5px dashed var(--gold); border-radius:14px; padding:11px 14px; font-size:12.5px; line-height:1.45; }
+  .tip b { color:var(--goldt); letter-spacing:.1em; font-size:10.5px; display:block; margin-bottom:3px; }
+  .sum { background:var(--ink); color:#fff; border-radius:16px; padding:14px 18px; }
+  .sum b.h { color:var(--gold); font-size:10.5px; letter-spacing:.16em; display:block; margin-bottom:6px; }
+  .sum p { font-size:12.5px; line-height:1.55; color:#e6e6e6; }
+  .foot { position:absolute; left:52px; right:52px; bottom:24px; display:flex; justify-content:space-between; font-size:10px; color:var(--mut); }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 -->
+<div class="page">
+  <div class="brand"><img src="logo.png" alt="">TA MARQUE · FICHE POSITIONNEMENT<span class="r">V1 · DATE · LE POSITIONNEUR</span></div>
+  <h1>Des routines courtes.<br>Pas de régime.</h1>
+  <p class="lead">Ton positionnement en 2 pages. C’est ce que tes agents lisent avant de bosser.</p>
+
+  <h2>TA PHRASE <span class="t c">VALIDÉ</span></h2>
+  <div class="phrase">J’aide les femmes de 40 ans et plus à retrouver de l’énergie avec 3 séances de 20 minutes par semaine, sans salle de sport ni régime.</div>
+
+  <div class="tiles" style="margin-top:12px">
+    <div class="tile"><div class="k">TON MOT <span class="t c">CLIENT</span></div><div class="v">« 20 minutes »</div></div>
+    <div class="tile"><div class="k">TON ENNEMI <span class="t c">VALIDÉ</span></div><div class="v">les régimes yo-yo</div></div>
+    <div class="tile"><div class="k">TA CATÉGORIE <span class="t p">PROPOSÉ</span></div><div class="v">coaching sportif à domicile</div></div>
+  </div>
+
+  <div class="eq">
+    <div class="f">Ton énergie = un plan court <em>×</em> une routine tenable</div>
+    <p>Plan trop dur : elle abandonne au bout de 3 semaines. C’est l’effet yo-yo.<br>Plan court et tenable : elle continue, et ça se voit.</p>
+  </div>
+
+  <svg class="sk" id="sk" viewBox="0 0 690 150"></svg>
+
+  <h2>LA MÉTHODE MESURE · SIMPLIFIE · TIENS <span class="t c">VALIDÉ</span></h2>
+  <div class="meth">
+    <div><b>1 · Mesure</b><span>Un bilan simple de départ. Une seule fois.</span></div>
+    <div><b>2 · Simplifie</b><span>Un plan de 3 séances de 20 minutes, adapté à sa vie.</span></div>
+    <div><b>3 · Tiens</b><span>Un point chaque semaine pour ne pas lâcher.</span></div>
+  </div>
+
+  <h2>LA MAUVAISE FAÇON · LA BONNE</h2>
+  <table class="vs">
+    <tr><th>CE QUE FAIT TA CLIENTE AUJOURD’HUI</th><th>AVEC TA MÉTHODE</th></tr>
+    <tr><td class="bad">Elle suit un programme trop dur : elle abandonne.</td><td class="good">Un plan court qu’elle peut tenir.</td></tr>
+    <tr><td class="bad">Elle fait tout seule, sans retour.</td><td class="good">Un point chaque semaine.</td></tr>
+    <tr><td class="bad">Elle culpabilise après chaque écart.</td><td class="good">Un plan qui prévoit les semaines chargées.</td></tr>
+    <tr><td class="bad">Elle copie des vidéos au hasard.</td><td class="good">Un plan écrit pour elle.</td></tr>
+  </table>
+
+  <div class="quote">« S’adresser à tout le monde, c’est s’adresser à personne. »<small>La règle : 1 client, 1 offre, 1 plateforme</small></div>
+  <div class="foot"><span>Étiquettes : VALIDÉ ou CLIENT = tu l’as dit · PROPOSÉ = à valider · À REMPLIR = manque · À VÉRIFIER = estimation</span><span>1/2</span></div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page f2">
+  <div class="brand"><img src="logo.png" alt="">TA MARQUE · LA FICHE<span class="r">LUE PAR TES AGENTS</span></div>
+
+  <div class="cols" style="margin-top:14px">
+    <div class="box">
+      <h3>TA CLIENTE · « LA REVENANTE » <span class="t c">VALIDÉ</span></h3>
+      <p>Elle a 40 ans ou plus, un emploi du temps chargé et déjà plusieurs programmes abandonnés. Elle veut retrouver de l’énergie, pas perdre 10 kilos en un mois. Elle ne veut plus se sentir coupable. Elle cherche un plan simple, qui tient dans sa semaine.</p>
+    </div>
+    <div class="box">
+      <h3>POURQUOI ELLE ACHÈTE MAINTENANT <span class="t c">CLIENT</span></h3>
+      <ul><li>Elle est fatiguée dès le matin.</li><li>Elle a peur d’abandonner encore.</li><li>Elle veut un plan qui tient en 20 minutes.</li></ul>
+      <h3 style="margin-top:8px">PAS POUR ELLE <span class="t p">PROPOSÉ</span></h3>
+      <ul><li>Celle qui veut un résultat en 2 semaines.</li><li>Celle qui refuse de bouger 3 fois par semaine.</li><li>Celle qui cherche un régime strict.</li></ul>
+    </div>
+
+  </div>
+
+  <div class="flow">
+    <div>
+      <h3>CE QU’ELLE FERA SANS TOI <span class="t p">PROPOSÉ</span></h3>
+      <ul><li>Rien, comme avant.</li><li>Des vidéos gratuites en vrac.</li><li>Un abonnement en salle qu’elle n’utilise pas.</li><li>Un régime de plus.</li></ul>
+      </div>
+    <div>
+      <h3>SES MOTS EXACTS <span class="t r">À REMPLIR</span></h3>
+      <p>Aucun mot de cliente pour l’instant. À récolter : 10 vrais commentaires ou DM.</p>
+      </div>
+    <div>
+      <h3>TEST DU MARCHÉ (HORMOZI) <span class="t v">À VÉRIFIER</span></h3>
+      <p>Douleur 4/5 · Argent 4/5 · Facile à trouver 4/5 · En croissance 3/5 = <b>15/20</b></p>
+    </div>
+    <div>
+      <h3>CE QUI TE REND DIFFÉRENTE → ET ALORS ? <span class="t p">PROPOSÉ</span></h3>
+      <ul>
+        <li>Séances de 20 minutes seulement → <b>elle les tient dans une semaine chargée.</b></li>
+        <li>Un point chaque semaine → <b>elle ne se sent jamais seule.</b></li>
+        <li>Aucun matériel → <b>elle commence dès ce soir, chez elle.</b></li>
+      </ul>
+      </div>
+    <div>
+      <h3>TON CLAIM <span class="t p">PROPOSÉ</span></h3>
+      <p>« Le coaching sportif pensé pour les semaines chargées. »</p>
+      </div>
+    <div>
+      <h3>PREUVES À CONSTRUIRE EN 90 JOURS <span class="t r">À REMPLIR</span></h3>
+      <ul><li>1 cliente filmée qui suit le plan pendant 4 semaines.</li><li>10 clientes, 3 témoignages écrits avec accord.</li><li>Une série « Ma semaine type » en reels.</li></ul>
+    </div>
+
+    <div>
+      <h3>TON MESSAGE EN 3 PHRASES (STORYBRAND) <span class="t p">PROPOSÉ</span></h3>
+      <p>Tu veux retrouver de l’énergie sans bouleverser ta vie. Mais les programmes trop durs te font abandonner. Je te donne un plan de 20 minutes, 3 fois par semaine, et un point chaque semaine pour tenir.</p>
+      </div>
+    <div>
+      <h3>TA BIO INSTA <span class="t p">PROPOSÉ</span></h3>
+      <p>J’aide les femmes de 40+ à retrouver de l’énergie<br>Plan de 20 min, 3 fois par semaine<br>DM PLAN pour recevoir ta 1re séance</p>
+      </div>
+    <div>
+      <h3>TON TON <span class="t c">CLIENT</span></h3>
+      <p>Tu, pas vous. Tes mots : énergie, routine, 20 minutes.<br>Interdits : chiffres de perte de poids, «&nbsp;corps de rêve&nbsp;», «&nbsp;résultats garantis&nbsp;».</p>
+    </div>
+    <div>
+      <h3>TES 3 PILIERS DE CONTENU <span class="t p">PROPOSÉ</span></h3>
+      <ul>
+        <li><b>Valeur (tu)</b> : pourquoi tu abandonnes après 3 semaines · une séance de 20 minutes · quoi faire une semaine chargée.</li>
+        <li><b>Connexion (je)</b> : pourquoi j’ai arrêté les régimes · ma semaine type · mes ratés.</li>
+        <li><b>Vente (il)</b> : la cliente qui tient depuis 4 semaines · une séance filmée · le plan écrit pour elle.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cols" style="margin-top:4px">
+    <div class="tip"><b>PRO TIP</b>Ta cliente a déjà essayé des programmes. Ne lui vends pas du sport. Vends-lui la fin de l’abandon.</div>
+    <div class="tip" style="border-color:#E3B4AE"><b style="color:var(--red)">TES DEVOIRS</b>1. Fais suivre le plan par 1 cliente, filmée avec son accord. 2. Récolte 10 vrais mots de clientes. 3. Crée la 1re séance gratuite derrière le mot PLAN. 4. Choisis le compte Insta qui portera ce message.</div>
+  </div>
+
+  <div class="sum" style="margin-top:14px">
+    <b class="h">SI TU NE LIS QUE ÇA</b>
+    <p>Ta cliente : la revenante. Ton mot : 20 minutes. Ton ennemi : les régimes yo-yo.<br>Ta promesse : un plan de 20 minutes, 3 fois par semaine, qui se tient.<br>Statut : une thèse à tester 30 jours. On mesure les commentaires PLAN, les clics vers la page et les ventes.</p>
+  </div>
+  <div class="foot"><span>Méthode : Hormozi, April Dunford, Ries et Trout, Seth Godin, Blair Enns, Donald Miller (Brain 03-Livres/experts-positionnement)</span><span>2/2</span></div>
+</div>
+
+<script>
+document.fonts.ready.then(() => {
+  const svg = document.getElementById('sk'), rc = rough.svg(svg), NS = 'http://www.w3.org/2000/svg';
+  const INK = '#232323', GOLD = '#B8913A', RED = '#C2453B';
+  const txt = (x, y, s, size, color, w = 700) => { const t = document.createElementNS(NS, 'text'); t.setAttribute('x', x); t.setAttribute('y', y); t.setAttribute('font-size', size); t.setAttribute('text-anchor', 'middle'); t.setAttribute('font-weight', w); t.style.fill = color; t.textContent = s; svg.appendChild(t); };
+  const box = (x, y, w, h, o) => svg.appendChild(rc.rectangle(x, y, w, h, Object.assign({ stroke:INK, strokeWidth:2, roughness:1.1 }, o)));
+  const arrow = (x1, y1, x2, y2, c) => { svg.appendChild(rc.line(x1, y1, x2, y2, { stroke:c, strokeWidth:2, roughness:1 })); const a = Math.atan2(y2 - y1, x2 - x1), L = 10; svg.appendChild(rc.line(x2, y2, x2 - L * Math.cos(a - .45), y2 - L * Math.sin(a - .45), { stroke:c, strokeWidth:2 })); svg.appendChild(rc.line(x2, y2, x2 - L * Math.cos(a + .45), y2 - L * Math.sin(a + .45), { stroke:c, strokeWidth:2 })); };
+  const row = (y, label, steps, c, last) => {
+    txt(40, y + 32, label, 15, c);
+    steps.forEach((s, i) => {
+      const x = 92 + i * 205, w = 168;
+      const end = i === steps.length - 1;
+      box(x, y, w, 56, end ? { stroke:c, fill: last, fillStyle:'solid' } : {});
+      txt(x + w / 2, y + 35, s, 18, end ? c : INK);
+      if (!end) arrow(x + w + 4, y + 28, x + 205 - 6, y + 28, INK);
+    });
+  };
+  row(6, 'AVANT', ['un régime strict', 'trop dur', 'l’abandon'], RED, '#FBE7E4');
+  row(84, 'APRÈS', ['un plan court', '3 × 20 minutes', 'de l’énergie'], GOLD, '#FBF1DC');
+});
+</script>
+</body>
+</html>

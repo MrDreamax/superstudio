@@ -1,0 +1,79 @@
+---
+name: logiciels
+description: Installe en un clic les logiciels gratuits du système (Obsidian pour voir le second cerveau, Wispr Flow pour dicter au lieu de taper, Chrome + Claude in Chrome, yt-dlp pour lire YouTube, le pack contenu pour les scripts, montages, carrousels et slides, et en bonus Fathom et Canva), puis les règle. Use from the bienvenue skill, or when "installe les logiciels", "installe Obsidian", "installe Wispr", "dictée vocale", "quels logiciels", "ouvre mon cerveau dans Obsidian", "installe le pack contenu", ou quand un skill contenu dit qu'il manque ffmpeg, Chrome ou un module Python.
+---
+
+# Logiciels : le système complet, en un clic
+
+Vérifié sur les sites officiels le 14/10/2026. Si un lien ou un nom ne marche plus : va voir le site officiel, ne devine pas.
+
+## 1. Regarder ce qui est déjà là
+- Mac : `ls /Applications`, `command -v brew`, `command -v yt-dlp || ls ~/.local/bin/yt-dlp`.
+- Windows : `winget list` (PowerShell).
+Ne propose pas ce qui est déjà installé.
+
+## 2. Demander (AskUserQuestion, 2 questions, multiSelect)
+**« Les essentiels : j'installe lesquels ? »** (tout coché = recommandé)
+- **Obsidian (Recommandé)** : ton second cerveau devient visible, comme un wiki (liens, carte). Gratuit, sans compte.
+- **Wispr Flow (Recommandé)** : tu parles au lieu de taper, dans toutes les apps. Gratuit jusqu'à 2 000 mots/semaine. Compte à créer.
+- **Chrome + Claude in Chrome** : je peux utiliser ton navigateur pour toi (remplir, chercher, cliquer). Gratuit (l'extension demande un forfait Claude payant).
+- **Outil YouTube (yt-dlp)** : invisible, il me permet de lire les vidéos YouTube pour les skills. Gratuit, 37 Mo.
+
+**« Tu crées du contenu ? »** (seulement si « Créer du contenu » est coché dans le profil, ou si un skill contenu le demande)
+- **Pack contenu (Recommandé)** : invisible, il fait tourner le Scripteur, le Monteur, le Carrousel, les Slides et le Publieur (PDF, montage, sous-titres). Gratuit, environ 1 Go (ffmpeg + modules Python + modèles de transcription téléchargés au 1er montage).
+- **Pas maintenant**
+
+**« Des bonus ? »**
+- **Fathom** : enregistre, transcrit et résume tes visios (Zoom, Meet, Teams). Gratuit et illimité. Compte à créer (avec une adresse Gmail ou Outlook perso, il faut une visio prévue dans les 7 jours).
+- **Canva** : créer visuels, présentations, posts. Gratuit (5 Go, 20 usages d'IA). Compte à créer.
+- **Rien d'autre**
+
+Le choix vaut accord pour télécharger ces logiciels depuis leurs sites officiels. Annonce en une ligne le poids total (Wispr ~300 Mo, Chrome ~280 Mo, Canva ~230 Mo) et la durée (2 à 10 minutes selon la connexion).
+
+## 3. Installer
+| Logiciel | Mac (Homebrew) | Windows (winget) | Lien officiel |
+|---|---|---|---|
+| Obsidian | `brew install --cask obsidian` | `Obsidian.Obsidian` | obsidian.md/download |
+| Wispr Flow | `brew install --cask wispr-flow` | `WisprFlow.WisprFlow` | wisprflow.ai/downloads |
+| Chrome | `brew install --cask google-chrome` | `Google.Chrome` | google.com/chrome |
+| yt-dlp | `brew install yt-dlp` | `yt-dlp.yt-dlp` | github.com/yt-dlp/yt-dlp |
+| uv (pour `tuto-vers-agent`) | `curl -LsSf https://astral.sh/uv/install.sh \| sh` (sans mot de passe, va dans ~/.local/bin) | `astral-sh.uv` | docs.astral.sh/uv |
+| Fathom | `brew install --cask fathom` | `Fathom.Fathom` | fathom.video/download |
+| Canva | `brew install --cask canva` | `Canva.Canva` | canva.com/download |
+
+**Mac avec Homebrew** : une seule commande `brew install --cask <les apps choisies>` (+ `brew install yt-dlp`).
+
+**Mac sans Homebrew** (cas le plus courant) : n'installe pas Homebrew (il demande le mot de passe). Pour chaque app :
+- `curl -fL -o /tmp/<app>.dmg "<lien>"`, puis `hdiutil attach -nobrowse -quiet /tmp/<app>.dmg`, copie le `.app` du volume monté dans `/Applications` (`cp -R`), `hdiutil detach`, supprime le .dmg.
+- Liens directs officiels :
+  - Chrome : `https://dl.google.com/chrome/mac/universal/stable/GGRO/googlechrome.dmg`
+  - Obsidian : le `.dmg` de la dernière release (`curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest`, champ `browser_download_url` qui finit par `.dmg`)
+  - Canva : `https://www.canva.com/download/mac/universal/canva-desktop` (redirige vers le .dmg)
+  - Wispr Flow et Fathom : pas de lien direct stable (testé le 14/10/2026 : la page renvoie du HTML). Ouvre `https://wisprflow.ai/downloads` ou `https://fathom.video/download/macos` et dis : « Clique sur le bouton de téléchargement Mac, ouvre le fichier et glisse l'app dans Applications. »
+- yt-dlp : `mkdir -p ~/.local/bin && curl -fL -o ~/.local/bin/yt-dlp https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_macos && chmod +x ~/.local/bin/yt-dlp`, puis `~/.local/bin/yt-dlp --version`.
+
+**Windows** : `winget install --id <ID> -e`. winget demande d'accepter les conditions des logiciels : montre-le à la personne et demande son accord une fois pour toutes avant d'ajouter `--accept-package-agreements --accept-source-agreements`. Sans winget : ouvre le lien officiel.
+
+**Pack contenu** (Mac ; Windows : mêmes modules avec `py -m pip`, ffmpeg par `winget install --id Gyan.FFmpeg -e`) :
+- Chrome (voir plus haut) : obligatoire, les moteurs s'en servent pour fabriquer les PDF et les images.
+- ffmpeg : `brew install ffmpeg`. Sans Homebrew : télécharge le binaire statique officiel (liens sur ffmpeg.org/download.html, section macOS), place `ffmpeg` et `ffprobe` dans `~/.local/bin`, `chmod +x`, puis `~/.local/bin/ffmpeg -version`.
+- Node.js (le monteur s'en sert pour le rendu et le contrôle des zones) : `node --version`. Mac avec Homebrew : `brew install node`. Sans Homebrew : prends le nom exact de l'archive dans `https://nodejs.org/dist/latest-v22.x/SHASUMS256.txt` (`node-v22.X.Y-darwin-arm64.tar.xz` sur Mac Apple, `darwin-x64` sur Mac Intel, `uname -m` pour savoir), puis `mkdir -p ~/.local/node && curl -sL https://nodejs.org/dist/latest-v22.x/<archive> | tar xJ -C ~/.local/node --strip-components=1` (le setup du monteur y cherche déjà Node), et `~/.local/node/bin/node --version`. Windows : `winget install --id OpenJS.NodeJS.LTS -e`.
+- Python 3 : `python3 --version`. Absent sur Mac : `xcode-select --install` (la personne clique « Installer », 5 min).
+- Modules : `python3 -m pip install --user pymupdf pillow numpy onnxruntime faster-whisper`. Teste : `python3 -c "import fitz, PIL, numpy, faster_whisper"`.
+- Montage : `bash ~/.claude/skills/supermonteur/scripts/setup.sh` (Mac/Linux, ou Git Bash sous Windows) ajoute mediapipe, le Chrome de rendu et le modèle de détourage, puis dit « SETUP OK » ou ce qui manque encore (Node, ffmpeg). À lancer une fois, après les points ci-dessus.
+- Comptes payants, facultatifs (ne rien acheter, juste le dire en 1 ligne si la personne demande) : Blotato (publication sur tous les réseaux + réponses automatiques en DM, ~29 $/mois, blotato.com), Epidemic Sound (musique), ElevenLabs (transcription des rushs, elevenlabs.io), Apify (lecture de comptes Instagram). Chaque skill marche sans, en mode plus manuel.
+
+Un échec ? Trouve la cause (réseau, place disque, droits), corrige, réessaie une fois. Sinon ouvre la page officielle et donne l'action en une ligne.
+
+## 4. Régler (après chaque installation)
+- **Obsidian** : enregistre le Brain comme coffre AVANT le premier lancement, si Obsidian n'est pas ouvert. Fichier : Mac `~/Library/Application Support/obsidian/obsidian.json`, Windows `%APPDATA%\obsidian\obsidian.json`. Format : `{"vaults":{"<16 caractères hexadécimaux au hasard>":{"path":"<chemin absolu du Brain>","ts":<heure en millisecondes>,"open":true}}}`. Si le fichier existe : ajoute l'entrée sans rien effacer, et retire `"open":true` des autres. Puis ouvre Obsidian. Si le Brain ne s'affiche pas : « Au démarrage d'Obsidian, clique Open folder as vault > Open, choisis Documents > Brain, puis Open. »
+- **Wispr Flow** : ouvre l'app. Action de la personne en une ligne : « Connecte-toi (Google ou mail), autorise le micro et l'accessibilité. Ensuite, maintiens Fn (Mac) ou Ctrl+Win (Windows) et parle : le texte s'écrit là où est ton curseur. »
+- **Chrome + Claude in Chrome** : ouvre `https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn` dans Chrome. Action : « Clique Add to Chrome, connecte-toi avec ton compte Claude, épingle l'extension. Vérifie que l'éditeur est Anthropic. » Puis dans l'app Claude : Settings > Connectors > Claude in Chrome, l'activer.
+- **yt-dlp** : rien à faire. Teste `yt-dlp --version` (ou `~/.local/bin/yt-dlp --version`).
+- **Fathom** : ouvre `https://fathom.video`. Action : « Crée ton compte et connecte ton agenda : il rejoindra tes visios tout seul. »
+- **Canva** : ouvre l'app. Action : « Connecte-toi ou crée ton compte. »
+- **Pack contenu** : rien à régler. Preuve : `python3 ~/.claude/skills/scripteur/scripts/build.py ~/.claude/skills/scripteur/exemples/echantillon-lot.json ~/Documents/Contenu/scripts/test/` sort un PDF, et `ffmpeg -version` répond.
+
+## 5. Vérifier, puis dire
+Vérifie chaque app (`ls /Applications/<App>.app` ou `winget list`). Note dans `~/Documents/Brain/00-Moi/profil.md`, section « Mes outils », la liste installée avec la date.
+Message final, 1 ligne par app : « ✓ Obsidian : ton cerveau est dedans » · « ✓ Wispr Flow : reste à te connecter (1 min) » · « ✗ Canva : lien à cliquer : ... ». Rien d'autre.

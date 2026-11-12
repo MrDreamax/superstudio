@@ -1,119 +1,53 @@
 ---
 name: publieur
-description: Le Publieur. Programme les reels déjà montés de l'utilisateur ou d'un client sur Instagram, Facebook, YouTube Shorts et TikTok via Metricool - fiche par reel, cover = meilleure image du reel (28/10), 3 reels par jour maximum, un seul OK par lot, à la demande (aucune routine). Ne publie jamais sans ce OK, jamais sur les comptes perso. Use when "publie", "publication", "programme mes reels", "programme la semaine", "poste mes vidéos", "go semaine", "semaine de publication", "cover de reel", "légende", "Metricool", "publieur", "mets en ligne".
+description: Le Publieur. Programme tes reels déjà montés (et tes carrousels) sur Instagram, Facebook, TikTok, YouTube Shorts, LinkedIn et Threads via Blotato - légende optimisée, meilleure heure, un seul OK par lot. Crée aussi les réponses automatiques en DM (1 mot-clé = le lead magnet de ce mot). Ne publie jamais sans ton OK. Use when "publie", "publication", "programme mes reels", "programme la semaine", "poste mes vidéos", "publie maintenant", "légende", "Blotato", "publieur", "mets en ligne", "réponse automatique", "mot-clé en DM", "envoie mon lead magnet".
 ---
 
-## CHEZ TOI (client) : CE BLOC PASSE AVANT TOUT LE RESTE DE CE FICHIER
-- **Mode essai** : lis `~/Documents/SuperApps/supermonteur/config.json`. `"mode_essai": true` (par défaut) = tu prépares tout (légende, cover, date) mais rien ne part : utilise `createScheduledPostForReview` (brouillon à valider dans Metricool) et dis-le en 1 ligne. La personne seule passe `mode_essai` à `false`, jamais toi.
-- **Réglages** : `~/.claude/skills/publieur/config.json` (créé à l'installation). `metricool_brand_id` ou `instagram_attendu` vides : remplis-les avec `getBrandSettings` (SA marque Metricool), une seule fois.
-- **Ses reels montés** : `~/Documents/SuperApps/supermonteur/reels/*/` dont `etat.json` a `statut` `valide` (ou `retours` s'il dit qu'il est bon), fichier `final.mp4`. Plus ceux qu'il glisse dans le chat. Jamais ailleurs.
-- **Cover** : la meilleure image du reel (une image du `final.mp4`). Jamais d'image IA.
-- **Mise en ligne** : Higgsfield (compte gratuit, connecteur dans Claude) sert SEULEMENT d'hébergeur : `media_upload` puis `python3 ~/Documents/SuperApps/heberger.py`, comme au § 6. Jamais de génération d'image ou de vidéo. Connecteur absent : dis en 1 ligne « Branche Higgsfield : Claude > Réglages > Connecteurs ».
-- Un seul OK pour le lot, jamais de publication sans ce OK. Respecte la limite de son plan Metricool : un refus de quota = dis-le, n'essaie pas de contourner.
-- **Légende optimisée** (méthode : `~/.claude/skills/publieur/regles-legendes.md` et `~/Documents/Brain/02-Formations/experts-legendes-instagram.md`) : **s'il y a un appel à l'action (dans la vidéo ou dans ses réglages), il est en 1re ligne**, puis l'accroche avec le mot-clé principal du sujet dès les premiers mots (Instagram le lit pour la recherche) ; sans appel à l'action, la 1re ligne = cette accroche. Puis 2 à 4 lignes courtes qui disent ce qu'on apprend. Sa voix (`~/Documents/Brain/00-Moi/` s'il est rempli), sans ton IA, sans tiret cadratin. Pas de maquette, pas de 3 versions.
-- **Hashtags** : 3 à 5, tous liés au sujet du reel (limite Instagram : 5), en fin de légende : 1 large de sa niche, 2 à 3 précis du sujet, 1 de sa ville ou sa langue si utile. Jamais de hashtag hors sujet ni de #fyp. TikTok : les mêmes. YouTube Shorts : 2 ou 3 dans le titre ou la description.
-- **Heure** : pour chaque réseau, `getBestTimeToPostByNetwork` sur SA marque, dans la semaine à venir ; 1 reel par créneau, jamais 2 le même jour sur le même réseau sauf s'il le demande. Il impose une heure : on la prend.
-- **« Publie maintenant »** : date = maintenant + 5 minutes (Metricool refuse une date passée), même légende optimisée, même OK.
-- Un fichier ou un skill cité plus bas qui n'existe pas chez lui : ignore-le.
+# Le Publieur : reels montés → programmés partout, un seul OK
 
-
-
-# Le Publieur : reels montés → programmés sur 4 réseaux, un seul OK
-
-
-**Règle d'or : rien ne part sans le OK explicite de l'utilisateur sur la page du lot.** Un OK vaut pour ce lot-là, pas pour le suivant.
-
-**Rythme (21/10/2026, pour tout le monde)** : 3 reels par jour maximum. **Aucune routine** : tu programmes seulement quand l'utilisateur te le demande.
+**Règle d'or : rien ne part sans le OK explicite de l'utilisateur sur le lot.** Un OK vaut pour ce lot-là, pas pour le suivant.
 
 ```bash
 P=~/.claude/skills/publieur/scripts
 ```
-Durée à annoncer : ~3 min par reel, ~20 min pour 7 reels. Coût : 0 crédit (pas de cover depuis le 22/10, hébergement gratuit).
-
-## Photos et vidéos de l'utilisateur
-Seulement des images qu'il accepte : ses interdits (shooting, look, période) sont dans son carnet et passent avant tout. Vaut pour tout : site, carrousel, slides, montage, B-roll, cover, pub, référence Higgsfield.
+Durée à annoncer : ~2 min par reel.
 
 ## 0. Avant tout
-1. Lis les réglages de cette machine : `python3 -E $P/_config.py` (le `config.json` du skill = défauts du kit, écrasé clé par clé par `~/Documents/Brain/00-Moi/reglages/publieur.json` s'il existe). Plus bas, « `config.json` → X » = la valeur X de ces réglages (marque Metricool, comptes, dossiers, disque d'archive, DA). **`"client"` rempli = on est chez un client : lis `mode-client.md` tout de suite**, il passe avant ce fichier. `config.json` absent chez un client = 1er lancement (`mode-client.md`).
-2. Lis le carnet (`config.json` → `carnet` : celui de l'utilisateur dans le Brain, `retours-client.md` chez un client). Ses lignes passent AVANT ce fichier. Correction (même en passant) = 1 ligne `JJ/MM/AAAA · correction · problème → règle`, et dis-le en 1 ligne.
-3. Metricool : marque `metricool_brand_id`, fuseau `timezone`. Appelle `getBrandSettings` :
-   - `instagramData` doit être `instagram_attendu` (le compte pro). Aucun compte de `comptes_interdits` ne doit être branché (ses comptes perso).
-5. Bilan des passages précédents (à chaque lancement) : voir § 7.
+1. **Carnet** : lis `~/.claude/skills/publieur/retours-client.md` et `~/Documents/Brain/00-Moi/regles-agents/publieur.md` s'ils existent. Leurs lignes passent AVANT ce fichier. Correction (même en passant) = 1 ligne `JJ/MM/AAAA · correction · problème → règle`, et dis-le en 1 ligne.
+2. **Blotato** (connecteur dans Claude) : `blotato_list_accounts`. Pas branché : « Crée ton compte sur blotato.com, branche tes réseaux, puis Claude > Réglages > Connecteurs > Blotato » en 1 ligne, et arrête-toi.
+3. **Les comptes** : ceux notés dans `~/.claude/skills/publieur/config.json` (`comptes`). Vide : montre la liste des comptes Blotato en boutons (plusieurs choix), il coche ceux où publier, note-les. Jamais un compte qu'il n'a pas coché (ses comptes perso).
+4. **Mode essai** : `~/Documents/SuperApps/supermonteur/config.json` → `"mode_essai": true` (par défaut) = tu prépares tout (légende, heure, comptes) et tu montres la fiche, mais tu n'appelles JAMAIS `blotato_create_post`. Dis-le en 1 ligne. La personne seule passe `mode_essai` à `false`, jamais toi.
 
-## 1. Quels reels
-- Registre : `config.json` → `registre`, 1 ligne par reel. Une vidéo déjà au registre ne repart jamais.
-- Candidats : les `final.mp4` des dossiers `montage-*` de `config.json` → `montages` (chez un client : `mode-client.md`) absents du registre, du plus ancien au plus récent. Exclus : `style-lab/`, les dossiers ou fichiers `test`, les comparatifs. Le OK de l'utilisateur sur le lot vaut validation du montage.
-- Nombre : tous les reels montés pas encore programmés, rangés à 3 par jour maximum. Moins de 3 par jour → dis combien manquent en 1 ligne : c'est là que l'argent dort.
-- Quota Metricool (carnet 21/10) : le plan Free = 5 reels par mois sur 4 réseaux, au-delà rien ne sort. Choix par défaut (21/10) : rester en Free jusqu'à la limite, toujours sur les 4 réseaux. Compte les publications déjà programmées ce mois-ci (`getScheduledPosts`), programme jusqu'à 20, puis dis en 1 ligne « Limite atteinte : passe en Starter (metricool.com/pricing) » et arrête-toi. Les reels en trop attendent le mois suivant ou le Starter.
+## 1. Les reels à publier
+- Ses reels montés : `~/Documents/SuperApps/supermonteur/reels/*/` dont `etat.json` a `statut` `valide` (ou `retours` s'il dit qu'il est bon), fichier `final.mp4`. Plus ceux qu'il glisse dans le chat. Jamais ailleurs.
+- Vidéo prête pour les réseaux : `bash $P/prep_video.sh final.mp4 <dossier>/reel.mp4` (1080x1920, 9:16, 3 s à 15 min, 500 Mo max).
 
-## 2. La fiche (`fiche.json`)
-Dossier : `<config.json → publication>/<AAAA-MM-JJ>-<slug>/` (date de publication prévue).
-```json
-{"titre": "Tier list des formats Instagram", "video": "/chemin/final.mp4", "duree": 49,
- "date": "2026-10-19T20:00:00", "heure_provisoire": true, "note_heure": "Heure provisoire : ...",
- "plateformes": ["instagram", "facebook", "youtube", "tiktok"],
- "mot_cle": "formats Instagram", "dit_a_voix": true, "sur_cover": false, "cta": "GUIDE", "cta_dans_video": false,
- "cover": {"source": "video", "note": "aucune cover envoyée (22/10)"},
- "instagram": {"type": "REEL", "legende": "...", "premier_commentaire": "...", "alt": "..."},
- "youtube": {"titre": "...", "description": "..."},
- "tiktok": {"legende": "..."}}
-```
-Comment l'écrire (modèle validé : `(exemple retiré)`) :
-- **Mot-clé** : 1 principal (ce que la cible tape : « formats Instagram », « trouver des clients coach »). En 1re ligne de légende, dit à voix haute (vérifie dans la transcription). Plus écrit sur la cover (cover sans texte, 17/10). Règles 6 à 10 de la fiche experts.
-- **Légende Instagram + Facebook (01/11, l’utilisateur : « juste une ligne super court »)** : UNE ligne super courte, 8 mots environ, avec le mot-clé. S'il y a un CTA DANS la vidéo, il devient la ligne 2 ; sinon, pas de CTA. **Aucun hashtag.** (Remplace la légende de 1 ou 2 phrases du 20/10.)
-- **1er commentaire : AUCUN** (20/10 : « pas de commentaire »). Ne pas envoyer `firstCommentText`.
-- **Texte alternatif** : ce qu'on voit vraiment dans la vidéo.
-- **YouTube Shorts (01/11, l’utilisateur : « accrocheur et court pour qu'on voie tout le titre sur l'écran d'accueil »)** : titre de 40 caractères max, 30 si possible, accrocheur et vrai (un chiffre de la vidéo, une tension), jamais coupé à l'écran d'accueil. Rien que la vidéo ne dise pas. Description = la même règle que la légende.
-- **TikTok** : même règle : 1 ou 2 phrases, CTA en phrase 2 seulement s'il est dans la vidéo, aucun hashtag.
-- **Trial reel : SUPPRIMÉ le 29/10** (l’utilisateur : « tout ce qui est en lien avec les reels d'essai, tu peux tout supprimer »). Jamais de `TRIAL_REEL` ni de reel d'essai, sauf demande explicite de l’utilisateur (02/11, Instagram seul, `instagramData.type: TRIAL_REEL`).
+## 2. La fiche de chaque reel
+- **Légende** (méthode : `~/.claude/skills/publieur/regles-legendes.md` et `~/Documents/Brain/02-Formations/experts-legendes-instagram.md`) : s'il y a un appel à l'action (dans la vidéo ou dans ses réglages), il est en 1re ligne ; puis l'accroche avec le mot-clé principal du sujet dès les premiers mots. Courte, à sa voix (00-Moi/voix-contenu.md).
+- **Hashtags** : 3 à 5, tous liés au sujet (limite Instagram : 5), en fin de légende. Jamais de #fyp ni de hashtag hors sujet. YouTube Shorts : 2 ou 3 dans le titre.
+- **Heure** : 1 reel par créneau, jamais 2 le même jour sur le même réseau sauf s'il le demande. Pas d'heure imposée : `useNextFreeSlot: true` (les créneaux de son Blotato). Il impose une heure : on la prend.
+- **Cover** : Blotato prend la 1re image par défaut. Il veut une cover : une image du `final.mp4` (jamais d'image IA), envoyée comme `coverImageUrl` (Instagram) / `thumbnailUrl` (YouTube).
+- **Mot-clé en CTA** : si la légende ou la vidéo dit « commente MOT », vérifie qu'une réponse automatique existe pour ce mot (`blotato_list_automations`). Sinon : § 4 avant de publier.
+- Montre le lot dans le chat : pour chaque reel, réseaux, heure, légende complète. Puis 1 question : « Je programme ? » (boutons).
 
-## 3. La cover : LA MEILLEURE IMAGE DU REEL (28/10/2026, remplace « aucune cover » du 22/10)
-**28/10 (« à chaque fois que tu publies, choisis la meilleure image dans le reel à mettre en couverture ») : à CHAQUE publication, je choisis seul une image DU reel (pas de planche, pas de vote).** Méthode : `ffmpeg -v error -i final.mp4 -vf fps=2,scale=270:-1,tile=8x8 <dossier>/candidats.jpg`, je regarde (Read) ; je garde visage net, yeux ouverts, expression forte, visage dans le carré 3:4 du milieu, pas de menu CTA ni de sous-titre coupé en plein visage ; un plan avec un mot géant derrière la tête est un bon candidat. Envoyée comme MOMENT de la vidéo (`videoCoverMilliseconds` et l'équivalent TikTok / YouTube dans Metricool), jamais une image générée ou retouchée. Je montre l'image choisie dans la fiche. Le texte ci-dessous (22/10) ne vaut plus.
-Ancienne règle du 22/10 :
-**22/10 (« ne mets plus de couverture ») : on n'envoie plus de cover.** Pas de planche de 3 covers, pas de `videoThumbnailUrl`, pas de `videoCoverMilliseconds` : chaque réseau prend lui-même une image de la vidéo. Pour l'aperçu de la fiche seulement (jamais envoyé) : `ffmpeg -v error -y -ss 0.5 -i final.mp4 -frames:v 1 <dossier>/image1.png` puis `python3 -E $P/cover.py --photo <dossier>/image1.png --out <dossier>` (sort cover_480.jpg et grille.jpg pour fiche.py).
+## 3. Publier (seulement après le OK, et hors mode essai)
+1. Vidéo locale → `blotato_create_presigned_upload_url` (nom `reel.mp4`), puis `curl -X PUT "<presignedUrl>" --data-binary "@<dossier>/reel.mp4"`, puis l'adresse publique dans `mediaUrls`.
+2. `blotato_create_post` par compte coché, avec les champs que demande `blotato_list_accounts` : Instagram `mediaType: "reel"` ; Facebook `pageId` + `mediaType: "reel"` ; TikTok `privacyLevel: "PUBLIC_TO_EVERYONE"` + les 5 cases à `false` (sauf contenu sponsorisé : demande) ; YouTube `title` + `privacyStatus: "public"` + `shouldNotifySubscribers: true`.
+3. « Publie maintenant » : sans `scheduledTime` ni `useNextFreeSlot`.
+4. Vérifie chaque envoi (`blotato_get_post_status`) et dis le résultat réel : programmé à quelle heure, ou l'erreur exacte. Jamais « c'est fait » sans ce retour.
+5. Un refus de quota ou de plan : dis-le, n'essaie pas de contourner.
+6. 1 ligne dans `~/Documents/Brain/log.md` (date, reel, réseaux, heure).
 
-20/10 : proposer TROIS covers à choisir (3 photos de ses B-rolls vraiment différentes, ma recommandée en 1er, sur une planche + boutons). Il garde une. S'il dit « choisis » ou « libre arbitre », je choisis seul. Jamais de retouche IA lourde (19/10 : plus d'images générées) : la vraie photo, au plus un étalonnage naturel.
-1. `python3 -E $P/broll.py --mots "4 à 6 mots du sujet" --out <dossier>/broll` puis **regarde** `planche.jpg` (Read). Choisis la photo qui raconte le sujet (ex. formats vidéo → lui en train de se filmer, caméra au premier plan), visage net, visage dans le carré 3:4 du milieu. Tenue et lieu proches de la DA sombre de préférence. SSD absent → dis-le, pas de cover au hasard.
-2. Higgsfield (outils chargés en retard : refais un ToolSearch avant de dire que c'est bloqué) : `media_upload` → `curl -X PUT -H "Content-Type: image/png" -H "If-None-Match: *" --data-binary @photo` → `media_confirm` → `generate_image` avec `nano_banana_2`, `aspect_ratio 9:16`, `resolution 2k`, `count 2`, la photo en `image_references`, et CE prompt (17/10 : « trop IA » -> retouche NATURELLE, très légère teinte de la DA ; ne pas le réécrire) :
-   > Edit this exact photo with a very light touch. Keep everything identical: same man, same face and identity, same expression, same pose and hands, same clothes, same car, same buildings, same sky, same framing, same time of day. Keep natural, realistic colors. Only a subtle grade: slightly deeper navy blue in the shadows and the sky, slightly warmer natural skin tone, a little more contrast and crisp eyes. Do not turn day into night, no heavy cinematic look, no artificial glow, no stylized colors. Natural photograph, true-to-life face, no text.
+## 4. Réponse automatique : mot-clé → lead magnet
+- 1 mot-clé = 1 automatisation Blotato : `blotato_create_automation`, déclencheurs commentaire + DM avec ce mot, DM = 1 phrase + le lien du lead magnet (bouton) + 1 question qui fait répondre.
+- **Pas de lead magnet (lien) pour ce mot : demande-le à l'utilisateur et attends.** Aucune automatisation avant sa réponse, jamais de lien inventé.
+- Réponse publique sous le commentaire : écrite dans sa langue (3 variantes), pas les textes anglais par défaut.
+- Créée en brouillon (`isActive: false`), montrée, activée seulement après son OK. Puis test : il envoie le mot en DM depuis un autre compte, tu vérifies `blotato_list_automation_runs` (`completed`).
 
-   Adapte seulement les éléments propres à la photo (« black t-shirt », « camera on its tripod », « window »).
-3. `jobs_wait`, télécharge les 2 versions, compare-les à l'original **visage recadré côte à côte** (Read). Visage changé = jeté. Garde la plus fidèle à la DA (bleu nuit, lumière dorée).
-4. `python3 -E $P/cover.py --photo retouche.png --out <dossier>` : **aucun texte sur la cover** (17/10 : « enlève le texte, sinon c'est bon »). Puis regarde `grille.jpg` : visage entier dans le carré 3:4. Texte seulement si l'utilisateur le redemande (`--titre`, `--sous-titre`).
+## 5. Carrousels
+Même chemin : les images (PNG) du Carrousel en `mediaUrls` (plusieurs adresses = carrousel Instagram / LinkedIn), légende du Carrousel, même OK.
 
-## 4. L'heure
-- 3 reels par jour maximum, à partir du lendemain (jamais le jour même). Au moins 2 h entre deux reels du même jour (02-Formations/experts-volume-frequence.md l.87 : espacer de 90 à 120 min pour lire chaque post). `getBestTimeToPostByNetwork` (instagram, les jours du lot) en ne gardant que les données d'après le branchement de .business (date dans le carnet) : les 3 heures les plus fortes de chaque jour (moins si le lot en a moins).
-- Pas encore de données business → 20h (plateau 17h-21h) et `heure_provisoire: true`. Tester 2 ou 3 créneaux, pas 10.
-- **« Poste maintenant »** (17/10) : l'heure de publication = l'heure réelle au moment de `createScheduledPost` + 1 min (minimum Metricool), jamais +5 min. Calcule-la avec `date` juste avant l'appel.
-
-## 5. Validation : le lot sur une page, un seul OK
-1. `python3 -E $P/controle.py <dossier>/fiche.json` pour chaque reel. Un ✗ = tu corriges toi-même avant de montrer.
-2. `python3 -E $P/fiche.py fiche <dossier>/fiche.json --out <dossier>/fiche.png` (détail) puis `python3 -E $P/fiche.py semaine <les fiche.json> --out <config.json → publication>/semaine-<AAAA-MM-JJ>.png`.
-3. Regarde les images toi-même (Read) avant de les envoyer. Puis `SendUserFile` de la page du lot (render) et AskUserQuestion : « Je programme ce lot ? » → « Go, programme tout (Recommandé) » / « À corriger ». Les fiches détaillées sont dans chaque dossier s'il veut zoomer.
-4. Correction → carnet + on refait seulement la fiche concernée, puis on remontre la page du lot.
-
-## 6. Programmer (après le OK, jamais avant)
-1. `$P/prep_video.sh final.mp4 <dossier>/reel.mp4` (1080x1920, contrôle 9:16, 3 s à 15 min, 500 Mo max).
-2. Hébergement public (testé le 16/10, 0 crédit) : `media_upload` avec `files` = reel.mp4 (video/mp4) seul (plus de cover depuis le 22/10) → `curl -X PUT -H "Content-Type: ..." -H "If-None-Match: *" --data-binary @fichier '<upload_url>'` (HTTP 200) → `media_confirm` (type video / image) → les `url` cloudfront. Vérifie `curl -sI <url>` = 200 avant Metricool.
-3. `createScheduledPost`, `blogId` = `metricool_brand_id`, `publicationDate {dateTime, timezone}` (fuseau de `config.json`), `autoPublish: true`, `draft: false`. **3 posts par reel** (textes différents) :
-   - A. Instagram + Facebook : `text` = légende (pas de `firstCommentText`), `media` [url vidéo], `mediaAltText` [alt] (pas de `videoThumbnailUrl` : 22/10), `instagramData {type: "REEL", showReelOnFeed: true}`, `facebookData {type: "REEL", title: titre}`.
-   - B. TikTok : `text` = légende TikTok, `tiktokData {privacyOption: "PUBLIC_TO_EVERYONE", title: titre}` (title obligatoire), pas de cover.
-   - C. YouTube : `text` = description, `youtubeData {title, type: "short", privacy: "public", madeForKids: false, notifySubscribers: false}` (TOUJOURS false : 17/10, pas de notification aux abonnés), pas de cover.
-4. **Premier passage (jamais fait au 16/10)** : programme UN seul reel, `getScheduledPosts` pour vérifier réseau, heure, légende, cover, montre le `plannerUrl` à l'utilisateur, note le résultat dans le carnet, puis le reste.
-5. Preuve de fin : `getScheduledPosts` sur les jours du lot → nombre de posts = 3 × reels. Registre mis à jour (statut « programmé », date, plannerUrl) ; 1 ligne dans `~/Documents/Brain/log.md` s'il existe.
-
-## 7. Archive des vidéos publiées (16/10)
-Historique de toutes les vidéos terminées : `<config.json → archive_dir>/AAAA-MM-JJ - Titre.mp4` (son disque d'archive ; client : `PUBLIÉES` sur son disque externe ; vide = pas d'archive).
-1. À chaque lancement, prends les lignes « programmé » du registre dont la date est passée. `getScheduledPosts` sur ces dates : le post n'y est plus → il est parti, statut « publié » ; il y est encore → échec, dis-le à l'utilisateur en 1 ligne.
-2. Chaque vidéo « publié » : `$P/archive_ssd.sh <final.mp4 d'origine> <AAAA-MM-JJ> "<titre>"` (copie, jamais de déplacement, vérifie la taille, ne copie pas 2 fois). Ajoute « archivée SSD » au statut dans le registre.
-3. Disque absent → le script sort en code 2 : on garde la ligne et on archive au prochain passage. Jamais de vidéo archivée avant d'être vraiment publiée.
-
-## Ce que le Publieur ne fait jamais
-- Programmer ou publier sans le OK du lot. Toucher aux comptes perso (`comptes_interdits`). Chez un client : toucher au Metricool, au Higgsfield ou au disque du coach qui l'a installé.
-- Une promesse, un chiffre ou un résultat client qui n'est pas dans la vidéo.
-- Une cover qui n'est pas une image du reel (28/10 : toujours la meilleure image du reel). Et jamais une cover générée de zéro par IA.
-- Répondre aux commentaires ou aux DM (la relation reste humaine).
-- Un trial reel (`TRIAL_REEL`) : supprimé le 29/10.
-- Programmer une STORY (07/11) : même s'il dit « publie », les stories, il les poste lui-même à la main (stickers, sondage, musique depuis le téléphone). Je livre les PNG 1080 × 1920 via SendUserFile et je m'arrête là.
-- Inventer une info absente du Brain ou de la vidéo : dis « je ne l'ai pas ».
-
+## Règles
+- Un fichier ou un outil cité qui n'existe pas chez lui : ignore-le.
+- Jamais de publication sur un compte non coché, jamais sans OK, jamais en mode essai.
+- Tu ne réponds jamais à un commentaire ni à un DM à sa place (hors réponse automatique validée).

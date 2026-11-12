@@ -7,6 +7,7 @@ description: Le Carrousel. Carrousel Instagram (1080x1440, nombre de slides libr
 - On fait le carrousel dans le chat, sans ouvrir d'appli avant. Rendu des images : Google Chrome doit être installé sur le Mac (google.com/chrome) ; absent = dis-le en 1 ligne avec ce lien.
 - Ses photos : celles qu'il glisse dans le chat, ou `~/Documents/Brain/00-Moi/photos/` s'il en a rangé. Jamais une photo inventée, jamais d'image IA.
 - Sa voix : `~/Documents/Brain/00-Moi/` s'il est rempli. Pas de veille, pas d'onglet SuperDA : sa DA est déjà réglée (`~/Documents/SuperApps/superda/da.json`).
+- Publier : c'est le skill `publieur` (Blotato), après son OK. Jamais Metricool ni Higgsfield (cités plus bas pour l'auteur seulement).
 - Un fichier ou un skill cité plus bas qui n'existe pas chez lui : ignore-le.
 
 

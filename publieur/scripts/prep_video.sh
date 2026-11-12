@@ -1,5 +1,5 @@
 #!/bin/bash
-# Prépare la vidéo pour Metricool : 1080x1920 H.264 + AAC, départ rapide, et contrôle les limites (Reels : 9:16, 3 s à 15 min, 500 Mo max).
+# Prépare la vidéo pour les réseaux : 1080x1920 H.264 + AAC, départ rapide, et contrôle les limites (Reels : 9:16, 3 s à 15 min, 500 Mo max).
 # Usage : prep_video.sh final.mp4 sortie.mp4
 set -e
 IN="$1"; OUT="$2"
