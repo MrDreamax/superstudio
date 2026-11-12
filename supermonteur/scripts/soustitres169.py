@@ -1,16 +1,16 @@
-"""Vidéo 16:9 sous-titrée (09/11/2026, RUSH : l’utilisateur « répare-le » = SuperMonteur doit monter seul un rush horizontal).
-Recette validée sur RUSH (01/11) et RUSH (09/11, juge 9/10) : rush dérushé en 1920x1080, sous-titres SF Pro 50 px,
-blancs avec halo sombre, EN BAS de l'image (centre du texte y=975, l’utilisateur 09/11 : « sous-titrage plus bas pour du format horizontal »),
+"""Vidéo 16:9 sous-titrée (RUSH : l’utilisateur « répare-le » = SuperMonteur doit monter seul un rush horizontal).
+Recette validée sur RUSH et RUSH (juge 9/10) : rush dérushé en 1920x1080, sous-titres SF Pro 50 px,
+blancs avec halo sombre, EN BAS de l'image (centre du texte y=975, 
 voix intacte à -14 LUFS (mix_youtube.py), musique seulement si plan.json en a une.
 
-  python3 soustitres169.py <dossier>      (lit plan.json : cam, words, lignes facultatif, music facultatif ; écrit final.mp4)
+  python3 soustitres169.py <dossier> (lit plan.json : cam, words, lignes facultatif, music facultatif ; écrit final.mp4)
 
 plan.json :
   "format": "16:9", "cam": "clip.mp4", "words": "words.json",
-  "lignes": ["félicitations, tu es bien inscrit", ...]   facultatif : texte à l'écran, mot pour mot dans l'ordre (sinon découpe auto)
-  "music": {"src": "...", "from": 12.0}                   facultatif
+  "lignes": ["félicitations, tu es bien inscrit", ...] facultatif : texte à l'écran, mot pour mot dans l'ordre (sinon découpe auto)
+  "music": {"src": "...", "from": 12.0} facultatif
 Découpe auto : une ligne <= 38 caractères, coupée en fin de phrase, sinon après une virgule, jamais un bloc < 0,6 s
-(Œil 01/11 : bloc trop bref = illisible). Minuscule en début de phrase, point final retiré (style validé).
+(Œil : bloc trop bref = illisible). Minuscule en début de phrase, point final retiré (style validé).
 """
 import json, os, re, subprocess, sys, unicodedata
 from PIL import Image, ImageDraw, ImageFilter, ImageFont

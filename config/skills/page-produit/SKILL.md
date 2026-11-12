@@ -90,4 +90,4 @@ Lance aussi `anti-vibecode` (scanner, s'il est installé) et `anti-ia` sur le te
 5. Chat : l'image de la page, ce qui a changé, ce qui reste à décider, ce que l'avocat doit lire. Brain : 1 ligne dans `01-Projets/<projet>.md` et `log.md`.
 
 ## D'où vient ce skill
-Règles reformulées, aucun texte recopié, depuis `livrables/marque-femmes-45/synthese-skills-design.md`, lue le 02/11/2026 : taste-skill (Leonxlnx, MIT), ui-ux-pro-max-skill (nextlevelbuilder, MIT), marketingskills (Corey Haines, MIT), frontend-design (Anthropic, Apache 2.0). Écartés : scripts de ces dépôts (non lancés), conseils verre/Aurora pour l'e-commerce, pré-cochage et rareté sans réserve. Usage interne : relire les licences avant de le mettre dans un kit vendu.
+Règles reformulées, aucun texte recopié, depuis une synthèse de skills de design : taste-skill (Leonxlnx, MIT), ui-ux-pro-max-skill (nextlevelbuilder, MIT), marketingskills (Corey Haines, MIT), frontend-design (Anthropic, Apache 2.0). Écartés : scripts de ces dépôts (non lancés), conseils verre/Aurora pour l'e-commerce, pré-cochage et rareté sans réserve. Usage interne : relire les licences avant de le mettre dans un kit vendu.

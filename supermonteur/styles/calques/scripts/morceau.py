@@ -1,4 +1,4 @@
-"""Retoucher seulement la FIN (ou toute partie après un cut) d'un reel Calques, sans tout re-rendre (10/11/2026, RUSH :
+"""Retoucher seulement la FIN (ou toute partie après un cut) d'un reel Calques, sans tout re-rendre (RUSH :
 l’utilisateur « pourquoi aussi long pour modifier la fin ? » : changer 1 s à la fin = 25 min avant, ~3 min avec ce script).
   python3 morceau.py plan.json DEPUIS ANCIEN_FINAL.mp4 ANCIEN_MASQUE.mp4
 DEPUIS = seconde d'un CUT (début d'une prise) ; tout ce qui est avant est repris tel quel de l'ancien final et de l'ancien

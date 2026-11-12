@@ -1,11 +1,10 @@
-"""Fin basse (09/11/2026, l’utilisateur : « à la fin des vidéos, termine toujours avec une intonation basse. Il faut que la vidéo
-se termine quand je dis une phrase avec un point. Et que l'intonation soit vers le bas »).
+"""Fin basse 
 
 Mesure la mélodie de la voix (librosa pyin) sur la fin de chaque phrase : hauteur des 0,5 dernières secondes de voix
 comparée à la hauteur médiane de la phrase. Chute >= 8 % = fin basse.
 
-    python3 fin_basse.py <video> <words.json>              # contrôle la FIN de la vidéo (code 1 si pas bonne)
-    python3 fin_basse.py <video> <words.json> --candidats [--de s --a s]  # liste toutes les fins de phrase possibles avec leur chute
+    python3 fin_basse.py <video> <words.json> # contrôle la FIN de la vidéo (code 1 si pas bonne)
+    python3 fin_basse.py <video> <words.json> --candidats [--de s --a s] # liste toutes les fins de phrase possibles avec leur chute
 words.json = {"words": [{"text", "start", "end"}]} dans les temps de la vidéo (cut.words.json, words.json du rush...).
 """
 import json, subprocess, sys, tempfile, os
@@ -40,7 +39,7 @@ def chute(video, mots):
         return None, med, None
     f = np.median(fin[-max(3, len(fin) // 2):])   # la toute fin de la dernière syllabe voisée
     plancher = np.percentile(f0[ok], 20)
-    # 09/11 (« par le business », 98 Hz, phrase de 135 à 97 Hz) : une phrase qui DESCEND jusqu'à son plancher est une fin basse,
+    #  (« par le business », 98 Hz, phrase de 135 à 97 Hz) : une phrase qui DESCEND jusqu'à son plancher est une fin basse,
     # même si la chute finale est douce. Sinon chute >= 8 % sous la médiane.
     return (min(f / med, SEUIL) if f <= plancher * 1.03 else f / med), med, f
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""FAMILLE « MONTAGE VIRAL » (16/10/2026) : le tableau vit AU-DESSUS DE LA TÊTE, la face cam reste visible dessous.
+"""FAMILLE « MONTAGE VIRAL » : le tableau vit AU-DESSUS DE LA TÊTE, la face cam reste visible dessous.
 Formats (même zone, même fondu) : comparaison en T (« t », validé version A), mauvais / bien / excellent (« mbe »), tier list (« tier »).
 
   python3 $S/viral.py layout plan.json   # AVANT build.mjs : place au-dessus de la tête (fondu si la tête est trop haute)
@@ -12,7 +12,7 @@ plan.viral.mbe = {"title": {...}, "cards": [{"label": "MAUVAIS", "at", "text"?, 
                   "win": {"at", "card"?}}   cartes de gauche à droite (ordre où il les montre), chacune sur SON mot
 plan.viral.tier = {"title": {...}, "rows"?: ["S","A","B","C","D"], "items": [{"text": "Podcast", "at": <mot du format>, "to": "S",
                    "land": <mot de la lettre>}, ...]}   le format grossit au centre quand il est nommé, file dans sa rangée sur la lettre
-Règles validées (Style Lab 16/10) :
+Règles validées (Style Lab ) :
 - Place : haut de la tête visé à 720 px (5e centile = quand elle est la plus haute). Trop haute -> la cam descend, le mur
   du haut est prolongé (bande au-dessus de la tête, étirée + floutée) et la cam fond dedans sur 260 px. Validé « fondu ».
 - Garde-fou sous-titres : sous le menton (menton + 0,41 x visage) et haut des sous-titres <= 1400 px (zone cachée par
@@ -78,7 +78,7 @@ def layout(plan_path):
               f"[a]crop=1080:{band}:0:0,scale=1080:{S + FADE},boxblur=28:2,eq=brightness=-0.05,pad=1080:1920:0:0:black[bg];"
               f"[b]format=rgba[c];[1:v]format=gray,scale=1080:1920[m];[c][m]alphamerge[fg];"
               f"[bg][fg]overlay=0:{S}:shortest=1,format=yuv420p[v]")
-        # masque à la cadence du rush + durée exacte (16/10 : masque à 25 i/s par défaut sur un rush à 30 i/s
+        # masque à la cadence du rush + durée exacte ( : masque à 25 i/s par défaut sur un rush à 30 i/s
         # = alphamerge qui s'arrête 1,6 s avant la fin, image noire à la fin du reel)
         fps, dur = subprocess.check_output(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
                                             "stream=r_frame_rate:format=duration", "-of", "default=nw=1:nk=1", src]).decode().split()[:2]
@@ -107,7 +107,7 @@ JS_HELPERS = [
     'function TIN(s,t,d){tl.fromTo(s,{opacity:0,y:18,filter:"blur(8px)"},{opacity:1,y:0,filter:"blur(0px)",duration:d||.45,ease:"power3.out",immediateRender:false},t);}',
     'function DRAW(s,t,d){tl.fromTo(s,{strokeDashoffset:1},{strokeDashoffset:0,duration:d||.35,ease:"power2.inOut",autoRound:false,immediateRender:false},t);}',
 ]
-# Zones mortes Instagram (16/10, TOUS les montages, choix « zone organique ») : rien de texte ni d'animé au-dessus de
+# Zones mortes Instagram (TOUS les montages, choix « zone organique ») : rien de texte ni d'animé au-dessus de
 # 270 px (14 %, Meta Ads Guide Reels) ni à moins de 65 px des bords (6 %). Le voile (décor) peut déborder.
 TOP, X0, X1 = 270, 65, 1015
 SHADOW = "text-shadow:0 3px 18px rgba(0,0,0,.65),0 0 2px rgba(0,0,0,.5)"
@@ -195,7 +195,7 @@ def build_t(spec, Z, SERIF, MONT):
 
 def build_mbe(spec, Z, SERIF, MONT):
     """mauvais / bien / excellent : 3 cartes côte à côte, de gauche à droite, chacune sur son mot (son doigt).
-    Carte = pastille couleur + IMAGE (img, 16/10) ou icône tracée + petit texte serif dessous."""
+    Carte = pastille couleur + IMAGE (img, ) ou icône tracée + petit texte serif dessous."""
     H = Z - TOP
     s, e = (30, 62) if H >= 420 else (24, 50)
     css, body, js, tt = common(Z, spec["title"], s, e)
@@ -244,16 +244,16 @@ def build_mbe(spec, Z, SERIF, MONT):
 def build_tier(spec, Z, SERIF, MONT):
     """tier list : rangées S..D ; chaque élément grossit au CENTRE quand il est nommé (at), puis file dans sa rangée sur la
     LETTRE (land) (logique KimShota/Editable refaite en GSAP, sans rebond). Élément = icône (img, fond transparent) + nom DANS
-    la tuile (label, Montserrat) (16/10 : « des logos ou des petites images, pas du texte » puis « le texte dans
+    la tuile (label, Montserrat) (« des logos ou des petites images, pas du texte » puis « le texte dans
     l'icône, même police que le montage ») ; emoji possible ; texte seul seulement en secours (pastille)."""
     Z = min(Z, 900)
     rows = spec.get("rows", ["S", "A", "B", "C", "D"])
     RC = spec.get("colors", {"S": "#E5534B", "A": "#F08C3A", "B": "#E8C547", "C": "#6DBE6A", "D": "#4F9BFF", "F": "#8E8E93"})
     H = Z - TOP
     items = spec["items"]
-    hide = spec.get("title_hide", False)  # 26/10 : le titre reste au-dessus du tableau toute la vidéo (16/10 : effacé)
+    hide = spec.get("title_hide", False)  # le titre reste au-dessus du tableau toute la vidéo (effacé)
     if hide:
-        # title.size = [sans, serif] en px : hook plus fort (17/10, tier list v3 : [96, 110])
+        # title.size = [sans, serif] en px : hook plus fort (tier list v3 : [96, 110])
         s, e = spec["title"].get("size") or ((34, 76) if H >= 400 else (28, 60))
         tt0 = s * 1.25 + e * 1.05
         css, body, js, tt = common(Z, spec["title"], s, e, TOP + (H - tt0) / 2)
@@ -331,7 +331,7 @@ def build_tier(spec, Z, SERIF, MONT):
     cx, cy = 540, rtop + (Z - rtop) / 2
     for k, it in enumerate(items):
         x, y, w, h = pos[k]
-        if it.get("img") and it.get("label"):   # icône + nom DANS la tuile, en Montserrat (16/10 : cohérence DA)
+        if it.get("img") and it.get("label"):   # icône + nom DANS la tuile, en Montserrat (cohérence DA)
             words = it["label"].replace("-", "- ").split()
             lines = [it["label"]]
             if len(it["label"]) > 11 and len(words) > 1:   # 2 lignes équilibrées
@@ -352,7 +352,7 @@ def build_tier(spec, Z, SERIF, MONT):
         body.append(f'<div class="{cls}" id="tk{k}" style="left:{x:.0f}px;top:{y:.0f}px;width:{w:.0f}px;height:{h:.0f}px;{extra}">{inner_html}</div>')
         dx, dy = cx - (x + w / 2), cy - (y + h / 2)
         at, fly = it["at"], max(it["land"], it["at"] + 0.35)
-        # x/y aussi dans le « to » du 1er tween : sinon GSAP ne les pose pas (bug 16/10 : l'élément grossissait dans sa case)
+        # x/y aussi dans le « to » du 1er tween : sinon GSAP ne les pose pas (bug : l'élément grossissait dans sa case)
         js.append(f'tl.fromTo("#tk{k}",{{opacity:0,x:{dx:.0f},y:{dy:.0f},scale:{big * .75:.2f},filter:"blur(8px)"}},{{opacity:1,x:{dx:.0f},y:{dy:.0f},scale:{big:.2f},filter:"blur(0px)",duration:.3,ease:"power3.out",immediateRender:false}},{at:.2f});')
         js.append(f'tl.fromTo("#tk{k}",{{x:{dx:.0f},y:{dy:.0f},scale:{big:.2f}}},{{x:0,y:0,scale:1,duration:.42,ease:"power3.inOut",immediateRender:false}},{fly:.2f});')
         ri = rows.index(it["to"])

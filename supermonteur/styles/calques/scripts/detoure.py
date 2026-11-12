@@ -1,4 +1,4 @@
-"""Style Calques (09/11) : détoure TOUT l'extrait une fois (Robust Video Matting, même modèle que matte.py) et l'écrit en
+"""Style Calques : détoure TOUT l'extrait une fois (Robust Video Matting, même modèle que matte.py) et l'écrit en
 vidéo grise 540x960 (blanc = toi). Le rendu relit ce masque à chaque essai au lieu de recalculer.
   python3 detoure.py clip.mp4 DEBUT FIN masque.mp4
 """

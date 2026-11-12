@@ -1,4 +1,4 @@
-"""L'Œil (31/10/2026, méthode theyo) : Gemini regarde la vidéo EN ENTIER et la note. Claude ne voit que des images isolées, Gemini voit
+"""L'Œil (méthode theyo) : Gemini regarde la vidéo EN ENTIER et la note. Claude ne voit que des images isolées, Gemini voit
 le rythme, les coupes, le son. Le juge n'est jamais celui qui a monté.
   python3 oeil_gemini.py <video.mp4 | lien YouTube> [--grille grille.md] [--prompt "texte libre"] [--sortie oeil-gemini.json] [--modele gemini-3.1-pro-preview] [--regles regles-oeil.md | --regles non]
 Sans --prompt : rend le JSON {note, criteres, a_corriger, verdict} sur la grille (défaut : note-10-youtube.md en 16:9, note-10.md en vertical). Avec --prompt : réponse libre.
@@ -26,7 +26,7 @@ if not grille:   # 16:9 = grille YouTube, vertical = grille reel
         larg = int(w) > int(h)
     grille = os.path.join(S, "..", "note-10-youtube.md" if larg else "note-10.md")
 prompt_libre, sortie = opt("--prompt"), opt("--sortie")
-regles = opt("--regles", "non" if "youtube" in grille else os.path.join(S, "..", "regles-oeil.md"))   # goûts de l’utilisateur sur les reels, tirés de ses retours (calibrage 31/10)
+regles = opt("--regles", "non" if "youtube" in grille else os.path.join(S, "..", "regles-oeil.md"))   # goûts de l’utilisateur sur les reels, tirés de ses retours (calibrage)
 
 try: client = reglages.config().get("client")
 except Exception: client = None

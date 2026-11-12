@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Cut Notes AUTOMATIQUE (12/11, l’utilisateur : « dès que le monteur a fini de monter, il faut ouvrir Cut Notes automatiquement »).
+"""Cut Notes AUTOMATIQUE 
 Lancé SEUL juste après chaque montage (v1 comme retouche), sans rien demander.
 
-  python3 ouvre.py <dossier du reel> [--video final.mp4]          -> juste après un montage fini
-  python3 ouvre.py <dossier du reel> --attendre                  -> lancé en arrière-plan quand le montage tourne dans
+  python3 ouvre.py <dossier du reel> [--video final.mp4] -> juste après un montage fini
+  python3 ouvre.py <dossier du reel> --attendre -> lancé en arrière-plan quand le montage tourne dans
                                                                     SuperMonteur : attend statut « retours », puis pareil
-  python3 ouvre.py <dossier du reel> --notes <dossier json>      -> à « suivant » : les notes Cut Notes (ArtifactData list
+  python3 ouvre.py <dossier du reel> --notes <dossier json> -> à « suivant » : les notes Cut Notes (ArtifactData list
         notes, out_dir) deviennent des retours SuperMonteur (/api/retour + /api/suivant : le correcteur ne retouche QUE les
         moments notés), on attend la nouvelle version, puis nouvelle copie de revue + round + 1 (même artifact).
 
@@ -13,12 +13,12 @@ Fait : copie de revue 720p (review.mp4, < 15 Mo), page cut-notes.html dans le do
 que sous ~/Documents/Montage), numéro de round (+1 à chaque passage), robot Monteur de la vitrine
 « J'attends tes notes ».
 Affiche une ligne JSON : {html, review, fps, nom, round, url}. Puis Claude, dans le même tour :
-  1. url vide  -> Artifact publish html (capabilities {"db": {}, "user": {}, "assets": {}}, icône video),
+  1. url vide -> Artifact publish html (capabilities {"db": {}, "user": {}, "assets": {}}, icône video),
                   écrire l'URL dans <dossier>/cut-notes.url
      url remplie -> on garde le MÊME artifact (1 artifact par vidéo)
-  2. Artifact publish url + file_path review + asset: true  -> id/url de l'asset
+  2. Artifact publish url + file_path review + asset: true -> id/url de l'asset
   3. ArtifactData set review/current = {"src": <url asset>, "name": nom, "fps": fps, "round": round}
-  4. Artifact open url  (la page s'ouvre toute seule chez lui)
+  4. Artifact open url (la page s'ouvre toute seule chez lui)
 Quand il écrit « suivant » : CUT-NOTES.md, section « Quand l'utilisateur dit suivant ».
 """
 import argparse, glob, json, os, re, shutil, subprocess, sys, time, urllib.request

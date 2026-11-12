@@ -1,13 +1,9 @@
-"""SuperMonteur : l'écran « Tes images pour ce reel » (29/10/2026, maquettes reprise-r1 A + reprise-r2 B validées).
+"""SuperMonteur : l'écran « Tes images pour ce reel » (maquettes reprise-r1 A + reprise-r2 B validées). Entre la préparation de ref/ (monter.preparer_ref) et le montage par Claude (monter.pousser_ref) :
 
-l’utilisateur : « lorsqu'on veut reprendre le montage de quelqu'un, on est d'abord fidèle à son concept, son style, et nous on vient
-juste mettre notre police. Tu peux me proposer ou me demander quelles sont les images ou les b-rolls à mettre. »
-Entre la préparation de ref/ (monter.preparer_ref) et le montage par Claude (monter.pousser_ref) :
-
-  choisir(D, e)       découpe la référence en plans, Claude (Sonnet) propose 3 de ses b-rolls par plan à illustrer
-                      -> images.json + statut "images" (l'écran attend l’utilisateur). False = rien à choisir : on monte direct.
+  choisir(D, e) découpe la référence en plans, Claude (Sonnet) propose 3 de ses b-rolls par plan à illustrer
+                      -> images.json + statut "images"(l'écran attend l’utilisateur). False = rien à choisir : on monte direct.
   perso(D, n, chemin) sa vidéo glissée sur le plan n : ajoutée aux choix et choisie.
-  consigne(D)         les images choisies, en texte, pour le retour automatique que Claude suit au montage.
+  consigne(D) les images choisies, en texte, pour le retour automatique que Claude suit au montage.
 """
 import csv, glob, hashlib, json, os, re, subprocess, sys
 

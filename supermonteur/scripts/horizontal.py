@@ -1,8 +1,8 @@
-"""Style horizontal, pour du vertical (01/11, réf. SooWei Goh, validé par l’utilisateur : « nickel », publié) : rush horizontal en format court, image zoomée en 4:3 comme SooWei (02/11) entre deux bandes noires,
-sous-titres blancs en minuscules SF Pro sur l'image (02/11), B-rolls de vie, musique continue, sans titre ni SFX. Recette : styles/horizontal.md.
-  python3 horizontal.py derush <rush>   (dans le dossier du reel : plages.json + words.rush.json -> cut.mp4, cut.segments.json, cut.words.json)
-  python3 horizontal.py teaser      (champ teaser de horizontal.json -> met le meilleur moment en ouverture dans cut.mp4, à lancer une fois avant le rendu)
-  python3 horizontal.py             (horizontal.json -> final.mp4, plan.json pour le Gardien, ~20 s)
+"""Style horizontal, pour du vertical (réf. SooWei Goh, validé par publié) : rush horizontal en format court, image zoomée en 4:3 comme SooWei entre deux bandes noires,
+sous-titres blancs en minuscules SF Pro sur l'image, B-rolls de vie, musique continue, sans titre ni SFX. Recette : styles/horizontal.md.
+  python3 horizontal.py derush <rush> (dans le dossier du reel : plages.json + words.rush.json -> cut.mp4, cut.segments.json, cut.words.json)
+  python3 horizontal.py teaser (champ teaser de horizontal.json -> met le meilleur moment en ouverture dans cut.mp4, à lancer une fois avant le rendu)
+  python3 horizontal.py (horizontal.json -> final.mp4, plan.json pour le Gardien, ~20 s)
 horizontal.json = {"titre": "3 erreurs qui tuent tes reels", "jaune": ["3 erreurs"], "musique": "In This Shirt.mp3", "debut": 9.21, "ecart": 15, "lignes": [["voici mon conseil", 5], ...],
   "brolls": [{"src": "09-SOCIAL/x.mp4", "from": 1.0, "de": "texte d'une ligne", "a": {"coupe": 1, "decale": 0.3}}, ...]}
 teaser = {"de": "voici", "a": "trois erreurs", "lignes": [["voici les erreurs", 4], ["qui tuent tes reels", 5]]} : de / a = mots exacts de la transcription.
@@ -15,13 +15,13 @@ W, H, FPS = 1920, 1080, 30
 CW, CH = 1080, 1920
 S = os.path.dirname(os.path.abspath(__file__))
 FONT = os.path.join(os.path.dirname(S), "fonts", "SF-Pro.ttf")
-IMG_H, IMG_Y = 810, 555                             # 02/11 : image zoomée en 4:3, 1080x810 centrée, mesurée sur son reel
-SIZE, POIDS, Y = 56, 500, 1095                      # 02/11 : sur l'image, sous le menton même penché vers la caméra, ombre légère comme lui ; 40 fin essayé puis refusé le 02/11
+IMG_H, IMG_Y = 810, 555                             # image zoomée en 4:3, 1080x810 centrée, mesurée sur son reel
+SIZE, POIDS, Y = 56, 500, 1095                      # sur l'image, sous le menton même penché vers la caméra, ombre légère comme lui ; 40 fin essayé puis refusé
 MAX_MOTS = 4
 FAIBLES = set("le la les l' de du des d' un une à au aux et ou mais que qui qu' ce cette ces ma mon mes ta ton tes sa son ses en dans sur pour par avec je j' tu il elle on nous vous ils elles ne n' se si quand très plus c'est j'ai t'es parce alors puis pas bon près dès".split())
 LIES = {"in fine", "parce que", "alors que", "ultra viral", "tout le", "le monde", "de monde", "la vente", "la confiance", "la preuve", "viens voir", "pas du", "du tout"}
-T_COULEUR = (255, 214, 10, 255)                     # 02/11 : titre jaune, validé par l’utilisateur
-T_SIZE, T_POIDS, T_Y, T_LARGE = 76, 700, 424, 840   # 02/11 : titre d'une ligne dans la bande du haut, 131 px au-dessus de l'image, 840 px centrés
+T_COULEUR = (255, 214, 10, 255)                     # titre jaune, validé par l’utilisateur
+T_SIZE, T_POIDS, T_Y, T_LARGE = 76, 700, 424, 840   # titre d'une ligne dans la bande du haut, 131 px au-dessus de l'image, 840 px centrés
 sys.path.insert(0, S)
 from reglages import config
 
@@ -34,7 +34,7 @@ if sys.argv[1:2] == ["derush"]:
     print(moteur, len(w), "mots :", " ".join(x["text"].strip() for x in w))
     sys.exit()
 
-if sys.argv[1:2] == ["teaser"]:   # 02/11 : le meilleur moment en ouverture, coupe sèche, puis la vidéo. Relançable : repart toujours de cut sans teaser.
+if sys.argv[1:2] == ["teaser"]:   # le meilleur moment en ouverture, coupe sèche, puis la vidéo. Relançable : repart toujours de cut sans teaser.
     T_ = json.load(open("horizontal.json"))["teaser"]
     for x in ("cut.mp4", "cut.words.json", "cut.segments.json"):
         if not os.path.exists("sans-teaser." + x): shutil.copy2(x, "sans-teaser." + x)
@@ -74,7 +74,7 @@ def police(taille, poids):
     p.set_variation_by_axes([poids if a["name"] in (b"Weight", "Weight") else a["default"] for a in p.get_variation_axes()])
     return p
 f = police(SIZE, POIDS)
-titre = (C.get("titre") or "").strip().upper()   # 02/11 (l’utilisateur : « mets toujours le titre en majuscule »)
+titre = (C.get("titre") or "").strip().upper()
 t_f = police(T_SIZE, T_POIDS)
 while titre and t_f.getlength(titre) > T_LARGE: t_f = police(t_f.size - 2, T_POIDS)   # toujours sur une seule ligne
 def calque(txt, p):
@@ -84,7 +84,7 @@ def calque(txt, p):
         img.putalpha(masque.filter(ImageFilter.GaussianBlur(7)).point(lambda v: int(v * .85)))   # ombre noire légère, pas de contour
         img.paste((255, 255, 255, 255), mask=masque)
         ligne = txt.replace("\u00a0", " ")
-        for cle in C.get("jaune", []):   # 02/11 : chiffre clé en jaune, comme le titre
+        for cle in C.get("jaune", []):   # chiffre clé en jaune, comme le titre
             if cle in ligne:
                 x = (CW - f.getlength(ligne)) / 2 + f.getlength(ligne[:ligne.index(cle)])
                 m2 = Image.new("L", (CW, CH), 0); ImageDraw.Draw(m2).text((x, Y), cle, font=f, fill=255, anchor="lm")
@@ -104,7 +104,7 @@ for txt, n in LIGNES:
         u, v = k + i * n // q, k + (i + 1) * n // q - 1
         flux.append((m, mots[u]["start"], mots[max(u, v)]["end"], i == q - 1))
     k += n
-def cout(i, j):   # 02/11 : coupe au sens : jamais finir sur un petit mot ni couper une expression, couper de préférence en fin de ligne ou sur une pause
+def cout(i, j):   # coupe au sens : jamais finir sur un petit mot ni couper une expression, couper de préférence en fin de ligne ou sur une pause
     d, c = flux[j][2] - flux[i][1], 1
     fin_ligne = flux[j][3]
     if not fin_ligne and flux[j][0].lower().strip(",") in FAIBLES: c += 6
@@ -166,7 +166,7 @@ subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-y"] + entrees + ["-filter
     "-c:v", "h264_videotoolbox", "-profile:v", "high", "-b:v", "14M", "-color_range", "tv", "-colorspace", "bt709", "-color_primaries", "bt709",
     "-color_trc", "bt709", "-t", f"{fin:.3f}", "horizontal/rendu.mp4"], check=True)
 
-# voix intacte, musique continue, départ sec + 6 dB pendant 2,5 s (28/10), basses allégées pour le téléphone
+# voix intacte, musique continue, départ sec + 6 dB pendant 2,5 s, basses allégées pour le téléphone
 subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-ss", str(C.get("debut", 0)), "-t", f"{fin + .5:.2f}", "-i", MUSIQUE, "-af",
     "bass=g=-6:f=150,volume='if(lt(t,2.5),2,if(lt(t,4.5),2-(t-2.5)/2,1))':eval=frame", "horizontal/musique.wav"], check=True)
 subprocess.run(["python3", f"{S}/mix_youtube.py", "horizontal/rendu.mp4", "cut.mp4", "final.mp4", "--musique", "horizontal/musique.wav", "--ecart", str(C.get("ecart", 15))], check=True)

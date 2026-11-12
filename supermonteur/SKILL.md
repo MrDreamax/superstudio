@@ -4,7 +4,7 @@ description: Le Monteur. Monte ta vidéo brute en reel 9:16 prêt à poster (cou
 ---
 
 ## CHEZ TOI (client) : CE BLOC PASSE AVANT TOUT LE RESTE DE CE FICHIER ET DE workflow.md
-Ce qui est installé : le moteur `~/Documents/SuperApps/supermonteur` (API `http://localhost:8801`), Cut Notes, Style Lab, les 100 musiques (`~/Documents/Montage/MUSIQUE`). Pas de Higgsfield, pas d'Epidemic Sound, jamais d'image ni de vidéo IA. Un fichier cité plus bas qui n'existe pas chez lui (Brain de l'auteur, références, archives) : ignore-le.
+Ce qui est installé : le moteur `~/Documents/SuperApps/supermonteur` (API `http://localhost:8801`), Cut Notes, Style Lab, les 100 musiques (`~/Documents/Montage/MUSIQUE`). Pas d'Epidemic Sound, jamais d'image ni de vidéo IA. Un fichier cité plus bas qui n'existe pas chez lui (Brain de l'auteur, références, archives) : ignore-le.
 1. **Rush + « Monte cette vidéo »** : `bash ~/Documents/SuperApps/supermonteur/lancer.sh` (démarre le moteur s'il dort), puis `curl -s -X POST localhost:8801/api/nouveau -H 'Content-Type: application/json' -d '{"rush": "<chemin du rush>"}'` (réponse = la fiche, son `id`).
 2. **UNE question ouverte**, si la personne n'a pas déjà décrit le montage voulu : « Décris-moi comment tu veux ton montage. Tu as une référence ? Si oui, glisse-la-moi et dis-moi tout ce que tu veux ici. » Zéro suggestion, zéro bouton, zéro liste de styles.
 3. **Sa réponse → le style** (noms pour toi seul, jamais écrits à la personne) : rien de précis = `Minimaliste` (défaut) ; des images, du rythme, des cartons = `Dynamique` ; une comparaison = `Comparatif` ; une discussion à deux = `Interview` ; une référence = `Inspiration` + `"lien"` (lien Instagram, TikTok, YouTube).
@@ -48,7 +48,7 @@ Dossiers : `<dossier>` = `dossier` de `~/Documents/Brain/00-Moi/marque.json` (si
 Annoncer la durée au lancement et à la fin (titre + sous-titres : ~1 min ; avec rendu : 2 à 3 min pour 1 min de vidéo).
 
 ## Photos et vidéos de l'utilisateur
-Seulement des images qu'il accepte : ses interdits (shooting, look, période) sont dans `feedback.md` et passent avant tout ; dans la bibliothèque B-roll, la période exclue des réglages (`brolls_periode_exclue`) est écartée par `scripts/broll_tri.py`. Vaut pour tout : site, carrousel, slides, montage, B-roll, cover, pub, référence Higgsfield.
+Seulement des images qu'il accepte : ses interdits (shooting, look, période) sont dans `feedback.md` et passent avant tout ; dans la bibliothèque B-roll, la période exclue des réglages (`brolls_periode_exclue`) est écartée par `scripts/broll_tri.py`. Vaut pour tout : site, carrousel, slides, montage, B-roll, cover, pub.
 
 ## Ordre de lecture (dans le dossier du skill)
 1. **`feedback.md`** = le SEUL carnet des retours de l'utilisateur. Il passe avant le reste ; si deux lignes se contredisent, la plus RÉCENTE gagne.
@@ -75,7 +75,7 @@ Seulement des images qu'il accepte : ses interdits (shooting, look, période) so
 2. **Dérush** (`workflow.md`, étapes 1 à 3) → durée exacte et seconde de la punchline connues. **Derush Lab RETIRÉ** : le dérush part direct au montage, dans SuperMonteur comme dans un chat. Ne plus lancer cockpit.py --lab avant de monter.
 3. **En même temps** : les B-rolls (seulement s'il en veut, choisis par moi, `brolls.md`) ET la musique (`musique.md`).
 **l'appli SuperMonteur est CODÉE** (écran 0 style → montage → retours → Publier, Ma DA en tiroir) : `~/Documents/SuperApps/supermonteur/` ; « corrige mes retours » = mode d'emploi `apps/supermonteur/CLAUDE.md`.
-4. **La pause = Cut Notes, ouvert tout seul (voir plus haut)** ; l'écran Retours de l'appli reste en secours (façon Cut Notes, Apple clair) : vidéo + retours accrochés à l'image (écrire ou dicter), « Corrigé ✓ ▶ Revoir », « Suivant : corrige mes retours » / « C'est parfait, on publie », « Ma DA » en tiroir, puis Publier (Metricool branché : 5 réseaux dont LinkedIn activés, Publier maintenant / Programmer / Juste télécharger ; pas branché : Télécharger seul). Les 5 styles ET leurs aperçus respectent la zone interdite d'Instagram (haut 270, bas 1480, côtés 65, 120 à droite sous 1100 px). Règles complètes : Brain `01-Projets/superda-supermonteur.md`.
+4. **La pause = Cut Notes, ouvert tout seul (voir plus haut)** ; l'écran Retours de l'appli reste en secours (façon Cut Notes, Apple clair) : vidéo + retours accrochés à l'image (écrire ou dicter), « Corrigé ✓ ▶ Revoir », « Suivant : corrige mes retours » / « C'est parfait, on publie », « Ma DA » en tiroir, puis Télécharger (la publication se fait dans le chat avec le Publieur). Les 5 styles ET leurs aperçus respectent la zone interdite d'Instagram (haut 270, bas 1480, côtés 65, 120 à droite sous 1100 px). Règles complètes : Brain `01-Projets/superda-supermonteur.md`.
 5. **Titre + sous-titres seuls (rien d'autre dans plan.json) : `python3 $S/express.py .`** (PAR DÉFAUT, validé par l’utilisateur) = même découpage des sous-titres, même mix, même Gardien, mais sans rendu Chrome : RUSH en 1 min 3 s au lieu de 6 min 9 s. Il sort en code 2 si le plan a autre chose -> monte.sh. SuperMonteur (monter.py) le choisit seul.
 6. **Validation** : la vidéo finale + la note /10. La publication se fait dans un autre chat (Le Publieur), pas dans le chat du montage. Les réparations d'outils aussi.
 

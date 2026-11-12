@@ -1,4 +1,4 @@
-"""Kit SFX du client au 1er lancement (étape 1.4 du process client ; codé le 25/10/2026) : 1 son Epidemic par clé de
+"""Kit SFX du client au 1er lancement (étape 1.4 du process client ; codé ) : 1 son Epidemic par clé de
 config.json "sfx", rangé dans ~/Documents/Montage/SFX/<clé>.wav. Les sons viennent du compte Epidemic DU CLIENT (connecteur
 Epidemic de SON Claude, licence à son nom), jamais de celui de l'utilisateur.
   python3 kit_sfx.py liste                 -> pour chaque clé : présent ou pas, terme à chercher, durée max (ms)
@@ -9,13 +9,13 @@ Epidemic de SON Claude, licence à son nom), jamais de celui de l'utilisateur.
   python3 kit_sfx.py libre <clé> --pose [n] -> pose le n-ième (1 par défaut) ; « libre manque --pose » = toutes les clés ⬜
 Côté Claude, pour chaque clé manquante : SearchSoundEffects {query: {term}, filter: {duration: {max}}, first: 5}
 -> écouter les titres / tags, prendre le 1er qui colle -> DownloadSoundEffect {id, options: {fileType: "WAV"}} -> pose.
-Sans compte Epidemic (26/10) : « libre ». Openverse = 5 M de sons, sans clé ; on ne prend QUE du CC0 (aucun crédit, pub Meta OK).
+Sans compte Epidemic : « libre ». Openverse = 5 M de sons, sans clé ; on ne prend QUE du CC0 (aucun crédit, pub Meta OK).
 Limite sans clé : 20 recherches/min, 200/jour. Ne pas mettre category=sound_effect (0 résultat).
   python3 kit_sfx.py fabrique <clé> [<id>] -> fabrique le son en code avec earshot (FABRIQUE ci-dessous, ou l'id donné) et le pose
   python3 kit_sfx.py fabrique manque|tout  -> toutes les clés ⬜ (ou toutes) ; le pic du son est noté dans _kit.json (pic_s)
 """
 import json, os, subprocess, sys, tempfile, urllib.parse, urllib.request
-import reglages  # mêmes sons que mix.py : config.json du kit écrasé par les réglages de CETTE machine (28/10 : lisait le kit seul -> faux 0/12)
+import reglages  # mêmes sons que mix.py : config.json du kit écrasé par les réglages de CETTE machine (lisait le kit seul -> faux 0/12)
 
 CFG = reglages.config()
 SFX = CFG.get("sfx") or {}
@@ -28,7 +28,7 @@ CHERCHE = {
     "subdrop": ("sub drop boom", 3000), "tick": ("clock tick", 1000), "sheet": ("paper swoosh", 1500),
     "type": ("keyboard typing", 4000), "publish": ("pop", 800), "riser": ("riser dark low", 6000),
 }
-# son earshot par clé (« fabrique », 26/10) : choisis à l'oreille contre le kit de la maison. Liste : earshot sfx list
+# son earshot par clé (« fabrique ») : choisis à l'oreille contre le kit de la maison. Liste : earshot sfx list
 EARSHOT = os.path.expanduser("~/.local/earshot/.venv/bin/earshot")
 FABRIQUE = {
     "number": "whoosh_fast/heavy", "list": "whoosh_fast/tight", "bullet": "click/soft", "broll": "whoosh_fast/sleeve",

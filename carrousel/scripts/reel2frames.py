@@ -1,4 +1,4 @@
-"""Sort d'un reel les meilleures images pour un carrousel, quand l'utilisateur n'a pas de photos perso (23/10/2026).
+"""Sort d'un reel les meilleures images pour un carrousel, quand l'utilisateur n'a pas de photos perso.
   python3 reel2frames.py <video> <dossier_sortie> [--words words.json] [--n 16]
 <video> : le RUSH d'abord (vidéo avant montage, zéro texte sur l'image, ex. montages/<projet>/clip.mp4) ;
 le reel fini seulement s'il n'y a rien d'autre (choisir alors des images sans texte sur le visage).

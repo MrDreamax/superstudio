@@ -12,7 +12,7 @@ Pas de question de degré ni de « Sobre / Dynamique » : le dosage se décide �
 ```bash
 python3 $S/univers_check.py fiche clip.mp4      # univers.json + univers.jpg : palette, couleur de la lumière, noirs / hautes lumières, cadre
 ```
-Compléter `univers.json` à l'œil (source de lumière, espace, ligne, forme), remplir `plan.colors` depuis la palette, mettre la lumière dans chaque prompt Higgsfield. `python3 $S/lookstats.py clip.mp4 --face` = mesure seule (bornes : noirs P1 1-8, P99 ≤ 235, néon < 0,5 %).
+Compléter `univers.json` à l'œil (source de lumière, espace, ligne, forme), remplir `plan.colors` depuis la palette, noter la lumière pour choisir des plans qui collent. `python3 $S/lookstats.py clip.mp4 --face` = mesure seule (bornes : noirs P1 1-8, P99 ≤ 235, néon < 0,5 %).
 
 ## 4. Champs plan.json (en plus des champs communs de SKILL.md)
 ```json
@@ -79,6 +79,5 @@ Planches 1 i/s côte à côte + `analyse_ref.py` sur les deux (coupes, débit, S
 - **B-rolls enchaînés** : fondu 0,3 s entre eux (pas 3 coupes sèches). Début / fin de B-roll calés sur les coupes du dérush : automatique (build.mjs lit cut.segments.json).
 - **« Mes comptes sont passés de ça à ça »** : captures du VRAI profil au-dessus de la tête (Apify instagram-profile-scraper : photo, abonnés, publications), avant puis après, chacune ≥ 1,2 s.
 - **Concept nommé (effet Médicis…)** : motion design plein écran qui l'explique (ex. 2 cercles qui se croisent), choc calé sur le mot et la frappe de la musique, titre lisible ~2 s.
-- (OBSOLÈTE IA interdite) **Images générées** (Higgsfield) : dans l'univers de la vidéo (nuit, bleu nuit, rouge de l'événement), jamais un plein jour gris ; voile sombre en haut si les sous-titres tombent sur un ciel clair.
 - **Visage très proche** (selfie voiture) : `subY` ~380 (au-dessus de la tête) ; les sous-titres s'effacent seuls sous chiffres, mots géants et captures.
 - **Durée demandée > 1 min** : garder la signature (« l’utilisateur »), `fin_musique: false`, fin de musique recalée à la main.

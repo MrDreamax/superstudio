@@ -1,8 +1,8 @@
-"""Fin propre du plan (11/11/2026) : aucun bout minuscule de face cam en fin de vidéo, aucun plein écran après la fin.
+"""Fin propre du plan : aucun bout minuscule de face cam en fin de vidéo, aucun plein écran après la fin.
 
   python3 fin_propre.py plan.json        (lancé par monte.sh AVANT les B-rolls, donc avant le Gardien)
 
-Pourquoi : le 10/11 (studio Super, « Pas le temps de filmer » v4), un B-roll prolongé « jusqu'à la toute fin » finissait à
+Pourquoi : (studio Super, « Pas le temps de filmer » v4), un B-roll prolongé « jusqu'à la toute fin » finissait à
 17,79 s sur une vidéo de 17,3 s, et le Gardien a bloqué la version : « Plans >= 2 s : [(17.68, 0.11)] ». Aucun humain ni
 Claude ne doit calculer la fin au centième près : c'est le moteur qui la cale.
 
@@ -11,7 +11,7 @@ Règles (même durée que build.mjs : min(plan.duration, durée de la face cam -
  1. Un plein écran (B-roll, carton, liste, preuve) ou une capture incrustée qui commence dans les 0,3 dernières secondes = retiré.
  2. Un plein écran qui finit après la fin de la vidéo = coupé à la fin.
  3. Si le dernier plein écran laisse moins de 2 s de face cam en fin de vidéo, il est prolongé jusqu'à la fin (fusion dans
-    le plan voisin). Sauf si ce bout contient une phrase entière (la règle du Gardien l'accepte, 29/10).
+    le plan voisin). Sauf si ce bout contient une phrase entière (la règle du Gardien l'accepte, ).
 Le Gardien n'est pas touché : il contrôle toujours tout, le plan lui arrive juste propre.
 """
 import json, os, subprocess, sys
@@ -30,7 +30,7 @@ if not cam_dur:
 dur = round(min(plan.get("duration") or cam_dur, cam_dur - 0.04), 3)
 
 # 0 : cut.segments.json (ce que le Gardien lit pour les coupes) dont la dernière plage finit APRÈS la fin réelle du rush :
-# ancien derush.py (avant le 11/11) qui ajoutait sa traîne sans regarder la fin du rush. La vidéo (clip) est juste, seul le
+# ancien derush.py qui ajoutait sa traîne sans regarder la fin du rush. La vidéo (clip) est juste, seul le
 # fichier ment : on ramène cette fin à la fin réelle du rush (image ET son). Rien d'autre n'est touché ; un autre écart reste
 # au Gardien (« Coupes à jour »), qui bloque.
 sp, vp = os.path.join(D, "cut.segments.json"), os.path.join(D, "cut.voice.json")

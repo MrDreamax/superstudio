@@ -9,7 +9,7 @@
       -> copie chaque B-roll choisi (plan.brolls[].src absolu + from) dans broll/ : coupé, recadré 1080x1920, 30 i/s.
   python3 broll.py search mot1 mot2 ...
       -> 12 plans de la bibliothèque (config.json : brolls_index), 1 seul par geste (colonne action).
-         Ordre (20/10, 2e plainte « toujours les mêmes ») : mots qui collent > vidéo caméra avant photo avant téléphone
+         Ordre (2e plainte « toujours les mêmes ») : mots qui collent > vidéo caméra avant photo avant téléphone
          > vertical (un plan horizontal recadré en 9:16 est flou) > JAMAIS MONTÉ d'abord (broll_utilises.csv)
          > rang « beau » (broll_tri.csv) > tirage au sort,
          différent à chaque reel (graine = dossier du reel). Avant : tri fixe « vertical puis le plus long » = les 12
@@ -17,13 +17,13 @@
          plus ; --tout pour les revoir. Bibliothèque modifiée ? relancer scripts/broll_tri.py (ne mesure que les nouveaux).
   python3 broll.py recents [3]
       -> les plans déjà montés dans les 3 derniers reels (broll_utilises.csv) : search ne les propose plus.
-         20/10 (Titanic) : « tu me recommandes toujours les mêmes b-rolls, il y a une redondance : varie, change ».
+         (Titanic) : « tu me recommandes toujours les mêmes b-rolls, il y a une redondance : varie, change ».
          search --deja-vus = les remettre (seulement si la bibliothèque n'a rien d'autre qui colle).
   python3 broll.py steady fichier.mp4 2.5
-      -> le passage de 2,5 s le plus STABLE du fichier (13/10 : « toujours des plans stables en b-roll »).
+      -> le passage de 2,5 s le plus STABLE du fichier (« toujours des plans stables en b-roll »).
          Tremblement = déplacement de l'image d'une image à l'autre (px, image de 270 px de large).
          Bon : moyenne <= 1,2 et pic <= 6 (son monteur : 0 à 1,4). prep l'utilise tout seul si "from": "auto".
-B-rolls BRUTS : jamais de filtre ni d'étalonnage créatif (13/10 : « filtres bizarres, super moche »).
+B-rolls BRUTS : jamais de filtre ni d'étalonnage créatif (« filtres bizarres, super moche »).
 """
 import csv, json, os, sys
 
@@ -56,7 +56,7 @@ def slots(plan_p, words_p, density):
     print(json.dumps(out, ensure_ascii=False, indent=1))
 
 RANG = {"beau": 0, "ok": 1}                                   # dans les vidéos caméra
-GROUPE = {"photo": 1, "telephone": 2}                         # 0 = vidéo caméra ; « plans téléphone moches » (19/10) en dernier
+GROUPE = {"photo": 1, "telephone": 2}                         # 0 = vidéo caméra ; « plans téléphone moches » en dernier
 def rangs():
     p = os.path.join(HERE, "broll_tri.csv")                   # écrit par scripts/broll_tri.py
     return {r["fichier"]: r["rang"] for r in csv.DictReader(open(p, encoding="utf-8"))} if os.path.exists(p) else {}
@@ -73,7 +73,7 @@ def search(terms):
     terms = [t for t in terms if t not in ("--deja-vus", "--tout")]
     vus = {} if deja else {**recents(), **en_cours()}
     tri, nb, graine, ecartes = rangs(), usages(), os.path.basename(os.getcwd()), 0
-    themes = themes_recents()   # 28/10 : {thème: nb de plans montés dans les 3 derniers reels + montages en cours}
+    themes = themes_recents()   # {thème: nb de plans montés dans les 3 derniers reels + montages en cours}
     alea = lambda f_: hashlib.md5((graine + f_).encode()).hexdigest()   # même ordre pendant un montage, autre ordre au suivant
     p = CFG.get("brolls_index")
     if not p or not os.path.exists(p):
@@ -81,21 +81,21 @@ def search(terms):
     terms = [t.lower() for t in terms]
     rows, mini = [], CFG.get("brolls_min_date", "")
     passe = any(t.startswith(PASSE) for t in terms)
-    ex = os.path.join(HERE, "broll_exclus.txt")   # plans où la personne N'EST PAS l'utilisateur (ex. un ami, 14/10)
+    ex = os.path.join(HERE, "broll_exclus.txt")   # plans où la personne N'EST PAS l'utilisateur (ex. un ami)
     exclus = {l.split("#")[0].strip() for l in open(ex, encoding="utf-8")} - {""} if os.path.exists(ex) else set()
     for r in csv.DictReader(open(p, encoding="utf-8")):
         if r.get("action") in exclus: continue
-        if r.get("fichier") in vus: continue                       # 20/10 : déjà monté dans un des 3 derniers reels -> on varie
+        if r.get("fichier") in vus: continue                       # déjà monté dans un des 3 derniers reels -> on varie
         rang = tri.get(r.get("fichier"), "ok")
         if rang == "ecarte" and not tout: ecartes += 1; continue   # tremble, flou, refusé par l'utilisateur (broll_tri.csv)
         if mini and r.get("date_tournage", "") < mini: continue   # tourné trop tôt (ancien visage) ou non daté
         if r.get("usage") == "souvenir" and not passe: continue   # photo de jeunesse : seulement quand il parle de son passé
-        if r.get("theme") == "SPORT" and not any(t.startswith(("sport", "muscu", "salle", "boxe", "entrain")) for t in terms): continue   # 28/10 : « nan pas de sport stp » (reel business) ; seulement si on cherche « sport »
+        if r.get("theme") == "SPORT" and not any(t.startswith(("sport", "muscu", "salle", "boxe", "entrain")) for t in terms): continue   # « nan pas de sport stp » (reel business) ; seulement si on cherche « sport »
         hay = " ".join([r.get("theme", ""), r.get("action", ""), r.get("lieu", ""), r.get("tenue", ""), r.get("usage", "")]).lower()
         score = sum(t in hay for t in terms)
         if score and (r.get("qualite", "ok") == "ok" or r.get("usage") == "souvenir"):   # vieille photo = qualité moyenne normale
             f_ = r.get("fichier")
-            # 28/10 (RUSH : « pourquoi tu reprends toujours les mêmes brolls alors qu'il y en a plein ») : ses vidéos parlent
+            # ses vidéos parlent
             # d'IA et de travail, le score de mots envoyait toujours dans TRAVAIL (« toi devant l'ordi » à chaque reel). Tout plan
             # qui colle compte pareil (score plafonné à 1), puis le THÈME le moins vu récemment passe devant (luxe, ville, sport...).
             rows.append(((-min(score, 1), themes.get(r.get("theme", ""), 0), r.get("date_tournage", "") < RECENT, GROUPE.get(rang, 0), r.get("orientation") != "V", nb.get(f_, 0), -score, RANG.get(rang, 1), alea(f_)),
@@ -105,7 +105,7 @@ def search(terms):
     for row in rows:                                           # 1 plan par geste : pas 3 fois « joue aux échecs »
         if row[4].get("action") in gestes: continue
         th = row[4].get("theme", "")
-        if par_theme.get(th, 0) >= 3: continue                 # 28/10 : 3 plans max par thème dans la liste, pour voir d'autres univers
+        if par_theme.get(th, 0) >= 3: continue                 # 3 plans max par thème dans la liste, pour voir d'autres univers
         par_theme[th] = par_theme.get(th, 0) + 1
         gestes.add(row[4].get("action")); pick.append(row)
         if len(pick) == 12: break
@@ -115,7 +115,7 @@ def search(terms):
     if vus: print(f"({len(vus)} plans des 3 derniers reels écartés pour varier : broll.py recents ; --deja-vus pour les remettre)")
     if ecartes: print(f"({ecartes} plans écartés par le tri : tremblent, flous ou refusés ; --tout pour les revoir)")
     if not tri: print("(tri de la bibliothèque absent : lancer scripts/broll_tri.py)")
-    if not rows: print("Rien d'adapté." + (" -> générer avec Higgsfield." if CFG.get("higgsfield") else " (Higgsfield désactivé : pas de B-roll ici.)"))
+    if not rows: print("Rien d'adapté : un plan de la personne, une vraie capture ou un motion design à la place (jamais d'image IA).")
 
 USED = os.path.join(HERE, "broll_utilises.csv")   # date,reel,fichier,from,duree : 1 ligne par plan monté (prep l'écrit)
 def recents(n=3):
@@ -127,12 +127,11 @@ def recents(n=3):
         if r["reel"] not in reels: reels.append(r["reel"])
     last = set(reels[-n:])
     return {r["fichier"]: r["reel"] for r in rows if r["reel"] in last}
-# 28/10 : « moi qui tiens un livre, j'étais un peu trop jeune et différent, prends plus récent » -> plans de moins d'un an d'abord
+# « moi qui tiens un livre, j'étais un peu trop jeune et différent, prends plus récent » -> plans de moins d'un an d'abord
 import datetime as _dt
 RECENT = (_dt.date.today() - _dt.timedelta(days=365)).isoformat()
 def en_cours(heures=48):
-    """{fichier: reel} des B-rolls déjà posés dans les plan.json des AUTRES montages des 48 dernières heures.
-    28/10 : deux chats en parallèle (RUSH et RUSH) ont pris le même plan MacBook, car le journal n'est écrit qu'au
+    """{fichier: reel} des B-rolls déjà posés dans les plan.json des AUTRES montages des 48 dernières heures. : deux chats en parallèle (RUSH et RUSH) ont pris le même plan MacBook, car le journal n'est écrit qu'au
     montage (prep). Un plan posé dans un plan.json est réservé dès qu'il y est."""
     import glob, time
     ici, out = os.path.abspath(os.getcwd()), {}
@@ -203,15 +202,15 @@ def prep(plan_p):
             if b.get("from") == "auto": b["from"], m, pk = steady(b["src"], du)
             else: d_ = shakes(b["src"], b.get("from", 0), du); m, pk = d_.mean(), d_.max()
             print(f"  tremblement {m:.2f} px/img, pic {pk:.1f}" + ("  <-- INSTABLE : prendre un autre passage (from auto) ou un autre plan" if m > SHAKE_MAX or pk > PEAK_MAX else "  (stable)"))
-            # 28/10 (RUSH v2 : image FIGÉE à 21 s) : plan de 4 s posé sur 4,17 s, rien ne le voyait. Bloquant.
+            #  (RUSH v2 : image FIGÉE à 21 s) : plan de 4 s posé sur 4,17 s, rien ne le voyait. Bloquant.
             long_ = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", b["src"]]))
             if long_ - float(b.get("from", 0)) < du - 0.02:
                 sys.exit(f"B-ROLL TROP COURT : {os.path.basename(b['src'])} a {long_ - float(b.get('from', 0)):.2f} s utiles pour {du:.2f} s à l'écran "
                          f"({b['start']} -> {b['end']}). Raccourcir le plan ou prendre un autre B-roll.")
         src_cut, ss = b["src"], b.get("from", 0)
-        # 20/10 (Titanic) : un B-roll iPhone HDR (HLG, BT.2020 10 bits) faisait passer tout le rendu HyperFrames en « HDR
+        #  (Titanic) : un B-roll iPhone HDR (HLG, BT.2020 10 bits) faisait passer tout le rendu HyperFrames en « HDR
         # layered composite » : mot géant et chiffres cachés derrière la tête, sortie HEVC 10 bits. Tout B-roll HDR est
-        # converti en SDR bt709 par la conversion Apple (avconvert, la plus naturelle des 4 testées le 16/10) avant la coupe.
+        # converti en SDR bt709 par la conversion Apple (avconvert, la plus naturelle des 4 testées) avant la coupe.
         if not img and hdr(b["src"]):
             src_cut = os.path.join(d, "broll", f"_sdr{i}.mov")
             subprocess.check_call(["avconvert", "-p", "Preset3840x2160", "-s", b["src"], "-o", src_cut, "--replace",
@@ -221,7 +220,7 @@ def prep(plan_p):
             print(f"  HDR -> SDR (avconvert) : {os.path.basename(b['src'])}")
         cmd = ["ffmpeg", "-y", "-v", "error"] + ([] if img else ["-ss", str(ss)]) + ["-i", src_cut]
         cmd += ["-vf", vf.replace(",fps=30", "") if img else vf] + (["-frames:v", "1", "-q:v", "2"] if img else
-               # 20/10 (« Mode difficile » v4 : 0,13 s d'écran NOIR à 33,8 s) : build.mjs fait chevaucher les pleins écrans enchaînés
+               #  (« Mode difficile » v4 : 0,13 s d'écran NOIR à 33,8 s) : build.mjs fait chevaucher les pleins écrans enchaînés
                # (B-roll qui démarre 0,35 s plus tôt sous un carton, ou qui se prolonge 0,35 s sous le suivant) : marge de 0,9 s en fin.
                ["-t", f"{b['end'] - b['start'] + 0.9:.2f}", "-an", "-c:v", "libx264", "-crf", "18", "-preset", "fast",
                 "-pix_fmt", "yuv420p", "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709"])

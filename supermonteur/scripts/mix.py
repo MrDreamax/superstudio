@@ -2,23 +2,23 @@
 dont le PIC tombe pile sur l'événement.
   python3 mix.py plan.json render.mp4 voice.mp4 final.mp4
 plan.json :
-  "music": {"src", "from", "target"}  target = niveau voulu SOUS la voix (défaut config "music_target_lufs" = -31, 13/10).
+  "music": {"src", "from", "target"}  target = niveau voulu SOUS la voix (défaut config "music_target_lufs" = -31, ).
      Le script mesure CHAQUE segment après ducking et recale tout seul son niveau (lufs = point de départ, ±1 LU).
-     ou une LISTE de segments quand le sujet / l'ambiance / le plan change (13/10) :
+     ou une LISTE de segments quand le sujet / l'ambiance / le plan change :
      [{"src", "from", "start": 0, "end": 14.9, "lufs", "emotion": "tension"},
       {"src", "from", "start": 14.9, "end": 36.8, "transition": "douce" | "sec", "emotion": "espoir"}]
      douce = fondu enchaîné 1,5 s centré sur start ; sec = coupe nette + impact sur start. "fin": "naturelle" = pas de long
      fondu de sortie (morceau déjà coupé à la bonne durée par Epidemic EditRecording).
-  "silences": [{"to": 8.30}]  -> UN SEUL par reel (13/10 : « ne pas abuser de l'effet de silence »).
+  "silences": [{"to": 8.30}]  -> UN SEUL par reel (« ne pas abuser de l'effet de silence »).
      "to" = début du mot punchline. "from" se cale tout seul sur la frontière de mot >= 0,4 s avant (jamais au milieu d'un mot).
      Riser qui monte et se coupe net sur "from" -> musique coupée sec (voix seule) -> retour + impact pile sur "to".
      (ancien format "music": {"silences": [...]} encore lu)
   "sfx": [{"src", "at", "volume"}]  -> facultatif : sinon SFX auto.
-  "music_zones": [{"from": 3.6, "to": 6.4, "db": -4}]  -> 11/11 (studio Super : note « baisse la musique ici » à 5 s qui baissait
+  "music_zones": [{"from": 3.6, "to": 6.4, "db": -4}]  -> (studio Super : note « baisse la musique ici » à 5 s qui baissait
      TOUTE la vidéo) : la musique change de db SEULEMENT entre from et to (rampes de 0,3 s autour), le reste ne bouge pas.
      Posé APRÈS la mesure : le recalage au niveau cible ne le compense pas.
 SFX auto : seulement les gros événements (config.json "sfx_auto", par priorité : hook, silence, plein écran, chiffre, CTA),
-jamais deux à moins de "sfx_gap" s (1,5) : le moins prioritaire saute. Pas de clic, frappe ni whoosh de B-roll (« parasites », 13/10).
+jamais deux à moins de "sfx_gap" s (1,5) : le moins prioritaire saute. Pas de clic, frappe ni whoosh de B-roll (« parasites », ).
 cues.json (écrit par build.mjs à côté de plan.json) : sons des blocs hook / mots géants / preuves / CTA, filtrés pareil.
 Calage (guide OPUS) : swoosh, riser, aspiration = PIC sur l'événement ; impact, clic, frappe = DÉBUT sur l'événement ("align": "start").
 """
@@ -36,7 +36,7 @@ dur = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", 
 m = plan.get("music")
 segs = [] if not m else (m if isinstance(m, list) else [dict(m, start=0, end=dur)])
 XF = 1.5   # fondu enchaîné d'une transition douce
-# Garde-fou « fin naturelle » (16/10, tier list : musique coupée net) : « naturelle » = fondu de 0,15 s, valable SEULEMENT
+# Garde-fou « fin naturelle » (tier list : musique coupée net) : « naturelle » = fondu de 0,15 s, valable SEULEMENT
 # si le morceau finit vraiment là (edit Epidemic à la bonne durée). S'il continue après la vidéo, fondu de sortie normal.
 if segs and segs[-1].get("fin") == "naturelle":
     _s = segs[-1]
@@ -51,13 +51,13 @@ if segs and segs[-1].get("fin") == "naturelle":
 sil = plan.get("silences") or ((m or {}).get("silences", []) if isinstance(m, dict) else [])
 if len(sil) > 1:
     main = [z for z in sil if z.get("main")] or sil[:1]
-    print(f"!! {len(sil)} silences demandés -> 1 seul gardé (to={main[0]['to']}) : règle 13/10")
+    print(f"!! {len(sil)} silences demandés -> 1 seul gardé (to={main[0]['to']}) : règle ")
     sil = main[:1]
 words_p = plan.get("words") and os.path.join(here, plan["words"])
 W = json.load(open(words_p)) if words_p and os.path.exists(words_p) else []
 W = W.get("words", W) if isinstance(W, dict) else W
 
-# --- LA VIDÉO FINIT QUAND LA MUSIQUE FINIT (17/10, voix off : « à la fin il n'y a plus de musique et la vidéo continue
+# --- LA VIDÉO FINIT QUAND LA MUSIQUE FINIT (, voix off : « à la fin il n'y a plus de musique et la vidéo continue
 # de tourner ») : on mesure la fin réelle de la musique (dernier instant à moins de 20 dB de son niveau des 6 dernières s, seuil 20 dB) ;
 # si elle s'arrête > 0,4 s avant la fin, la vidéo est coupée 0,25 s après (jamais avant la fin de la voix + 0,3 s). ---
 def music_end():
@@ -89,7 +89,7 @@ for z in list(sil):
             prev = [w["end"] for w in W if w["end"] <= z["to"] + 0.01]
             z["from"] = prev[-1] if prev else z["to"] - 0.8
     z.setdefault("from", z["to"] - 0.8)
-    # 13/10 : 0,5 s de musique coupée sous la voix = « trop court, on ne sent pas l'impact ». Pas de vraie pause = pas de silence.
+    # 0,5 s de musique coupée sous la voix = « trop court, on ne sent pas l'impact ». Pas de vraie pause = pas de silence.
     if z["to"] - z["from"] < 0.6:
         print(f"!! pas de vraie pause avant la punchline ({z['to'] - z['from']:.2f} s < 0,6 s) : silence ABANDONNÉ. "
               "Garder la pause au dérush (derush.py --pause) ou la marquer au tournage.")
@@ -103,7 +103,7 @@ def peak(src):
     i = max(range(len(a)), key=lambda k: abs(a[k]))
     return i / 8000
 
-# 28/10 : un son du kit introuvable (disque débranché ?) = alerte, jamais un reel sans bruitage en silence
+# un son du kit introuvable (disque débranché ?) = alerte, jamais un reel sans bruitage en silence
 _manque = [k for k, v in CFG.get("sfx", {}).items() if not os.path.exists(v["src"])]
 if _manque:
     print(f"ALERTE SONS : {len(CFG['sfx']) - len(_manque)}/{len(CFG['sfx'])} trouvés, manque {', '.join(_manque)} (SSD branché ?)")
@@ -116,7 +116,7 @@ if "sfx" not in plan:
     ev = [("number", n["start"] + 0.05, {}) for n in plan.get("numbers", [])] + [("list", l["start"], {}) for l in plan.get("lists", [])]
     ev += [("bullet", t, {}) for t in (plan.get("bullets") or {}).get("at", [])]
     ev += [("broll", b["start"], {}) for b in plan.get("brolls", [])]
-    ev += [("broll", n["start"], {}) for n in plan.get("inserts", [])]   # whoosh b-roll / insert : COUPÉ par défaut ("broll" retiré de sfx_auto, choix 13/10)
+    ev += [("broll", n["start"], {}) for n in plan.get("inserts", [])]   # whoosh b-roll / insert : COUPÉ par défaut ("broll" retiré de sfx_auto)
     for z in sil:
         ev += [("riser", z["from"], {"cut_at_peak": True, "solo": True})]
         if z.get("hit", True): ev += [("impact", z["to"], {"dur": 1.6})]
@@ -142,7 +142,7 @@ def gate(sil):
 
 DUCK_KINDS = {"impact", "subdrop", "list", "sheet"}
 def duck(sfx):
-    """Experts 13/10 (Murch : 2,5 couches max) : la musique s'efface de 5 dB autour d'un GROS effet (impact, sub drop,
+    """Experts (Murch : 2,5 couches max) : la musique s'efface de 5 dB autour d'un GROS effet (impact, sub drop,
     plein écran, CTA), de 0,15 s avant à 1 s après, puis revient en 0,4 s. 3 couches max : voix + musique + 1 effet."""
     ev = [x["at"] for x in sfx if x.get("kind") in DUCK_KINDS or x.get("duck")]
     if not ev: return ""
@@ -172,14 +172,14 @@ def graph():
             fi = XF if douce_in else ((0.03 if INTRO else 0.6) if i == 0 else 0.03)
             fo = XF if douce_out else (0.03 if i + 1 < len(segs) else (0.15 if s.get("fin") == "naturelle" else 1.2))
             inp += ["-ss", str(s.get("from", 0)), "-i", s["src"]]
-            # creux de -4 dB vers 1,2 kHz : la musique laisse la place à la voix au lieu de seulement baisser (Curtis Judd, 13/10)
+            # creux de -4 dB vers 1,2 kHz : la musique laisse la place à la voix au lieu de seulement baisser (Curtis Judd)
             # fondus à puissance constante (qsin) : un fondu enchaîné linéaire de 2 morceaux perd 3 dB au milieu (Epidemic)
             ms = round(t0 * 1000)
-            # LRA 6 (et plus 11) : 16/10, « il n'y a pas de musique » sur Dreams of Us (passages calmes à -35 dB) : la musique est
+            # LRA 6 (et plus 11) :, « il n'y a pas de musique » sur Dreams of Us (passages calmes à -35 dB) : la musique est
             # resserrée pour rester audible du début à la fin, au lieu de disparaître sous la voix dans ses creux
             f.append(f"[{n}:a]atrim=0:{t1 - t0:.3f},asetpts=PTS-STARTPTS,loudnorm=I={s['lufs']}:TP=-3:LRA={s.get('lra', 6)},"
                      f"equalizer=f=1200:width_type=q:width=0.45:g=-4,"
-                     f"bass=g=-6:f=120,"   # 28/10 (PHONE) : basses -6 dB, inaudibles sur téléphone et elles mangent la place de la voix
+                     f"bass=g=-6:f=120,"   #  (PHONE) : basses -6 dB, inaudibles sur téléphone et elles mangent la place de la voix
                      f"aformat=sample_rates=48000:channel_layouts=stereo,afade=t=in:d={fi}:curve=qsin,"
                      f"afade=t=out:st={max(0, t1 - t0 - fo):.3f}:d={fo}:curve=qsin,adelay={ms}|{ms}[m{i}]")
             parts.append(f"[m{i}]"); n += 1
@@ -201,12 +201,12 @@ def graph():
         f.append(f"[{n}:a]{cut}volume={s.get('volume', 0.3) * SFXG:.4f},aformat=sample_rates=48000:channel_layouts=stereo,adelay={ms}|{ms}[s{i}]")
         mix.append(f"[s{i}]"); n += 1
     # Plafond -2 dBTP (limiteur à -2,3 dB : l'encodage AAC remonte la crête de ~0,1-0,3 dB) (EBU Tech 3344 : Instagram ré-encode, à -1 une crête peut saturer après coup) ; suréchantillonné x4 pour
-    # attraper les crêtes ENTRE les échantillons. level=0 : sinon alimiter REMONTE tout jusqu'à 0 dBFS (bug 13/10).
+    # attraper les crêtes ENTRE les échantillons. level=0 : sinon alimiter REMONTE tout jusqu'à 0 dBFS (bug).
     boost, env = "", []
     if INTRO and segs:   # musique plus forte au début puis redescente (voir INTRO plus bas), appliquée APRÈS le recalage par morceau
         g, h, r = 10 ** (INTRO.get("db", 4) / 20), INTRO.get("dur", 2.0), INTRO.get("ramp", 2.0)
         env.append(f"volume='if(lt(t,{h}),{g:.4f},if(lt(t,{h + r}),{g:.4f}+(1-{g:.4f})*(t-{h})/{r},1))':eval=frame")
-    if ZONES and segs:   # 11/11 : changement LOCAL du niveau de la musique (note posée à un moment précis)
+    if ZONES and segs:   # changement LOCAL du niveau de la musique (note posée à un moment précis)
         env.append("volume='" + "*".join(f"(1-{1 - 10 ** (z['db'] / 20):.4f}*clip(min((t-{z['from'] - ZR:.3f})/{ZR},({z['to'] + ZR:.3f}-t)/{ZR}),0,1))"
                                          for z in ZONES) + "':eval=frame")
     if env: boost = "[mus]" + ",".join(env) + "[musi];"
@@ -215,11 +215,11 @@ def graph():
     return inp, f, n_music_inp
 
 def measure(inp, f, n_music_inp):
-    """Niveau RÉEL de chaque segment de musique une fois baissée sous la voix (13/10 : mesurer CHAQUE segment)."""
+    """Niveau RÉEL de chaque segment de musique une fois baissée sous la voix (mesurer CHAQUE segment)."""
     g = ";".join([f[0]] + [x for x in f if ("[mraw]" in x or "[mus]" in x or x.endswith(tuple(f"[m{i}]" for i in range(len(segs)))))
                            and "[a]" not in x]) + ";[vo]anullsink;[mus]ebur128[o]"
     # le gate du silence est AVANT le sidechain : placé après, ffmpeg 6.0 ne propage plus la fin du flux.
-    # ebur128 (et pas anull) en sortie : avec anull, ffmpeg 6 se bloque sur ce graphe (asplit -> anullsink + sidechain), testé 13/10
+    # ebur128 (et pas anull) en sortie : avec anull, ffmpeg 6 se bloque sur ce graphe (asplit -> anullsink + sidechain)
     tmp = out + ".musique.wav"
     r = subprocess.run(["ffmpeg", "-nostdin", "-y", "-v", "error", *inp[:n_music_inp], "-filter_complex", g, "-map", "[o]",
                         "-t", f"{dur:.3f}", tmp], capture_output=True, text=True, timeout=300)
@@ -232,21 +232,21 @@ def measure(inp, f, n_music_inp):
         hits = [l for l in e.splitlines() if " I:" in l]
         v = float(hits[-1].split()[1]) if hits else None
         res.append(v if v is not None and v > -69 else None)
-    os.remove(tmp)   # 28/10 PHONE : mesure au-dessus de 200 Hz = ce qu'un téléphone joue (un highpass dans le graphe de mesure bloque ffmpeg 6)
+    os.remove(tmp)   #  PHONE : mesure au-dessus de 200 Hz = ce qu'un téléphone joue (un highpass dans le graphe de mesure bloque ffmpeg 6)
     return res
 
 PEAKS = {}
-# 28/10 PHONE (RUSH v5 : « on n'entend pas trop la musique, surtout au début ») : Sweet Dreams slowed = 84 % de son énergie
+#  PHONE (RUSH v5 : « on n'entend pas trop la musique, surtout au début ») : Sweet Dreams slowed = 84 % de son énergie
 # sous 150 Hz. Un haut-parleur de téléphone ne joue rien sous ~200 Hz : mesurée pleine bande, la musique était « OK à -29 »
 # et pourtant inaudible sur iPhone. La cible (target) se mesure maintenant au-dessus de 200 Hz (ce qu'on entend vraiment),
 # et les basses de la musique sont baissées de 6 dB (elles ne servent pas sur téléphone et brouillent la voix au casque).
-# 28/10 (RUSH v3 : « au début le son de la musique n'est pas assez fort… commencer par un petit impact, augmenter légèrement
+#  (RUSH v3 : « au début le son de la musique n'est pas assez fort… commencer par un petit impact, augmenter légèrement
 # le son de la musique au début puis la réduire après ») : la musique démarrait en fondu de 0,6 s et baissait déjà sous la voix
 # (1er mot à 0,1 s). music.intro = {"db": 4, "dur": 2.0, "ramp": 2.0} : départ sec, +db pendant dur secondes, puis retour à la
 # cible en ramp secondes. Le niveau mesuré (cible -29) reste celui de tout le morceau ; l'impact se met dans plan.sfx
 # (kind "impact-intro" : la musique ne s'efface pas dessous, contrairement à "impact").
-# 28/10 (l’utilisateur, « oui, partout ») : ce début est le DÉFAUT de tous les reels. "intro": false dans music pour l'enlever.
-# 28/10 suite : « l'impact n'est pas nécessaire, trouve le moment de la musique qui a de l'impact » -> pas de bruitage par défaut
+#  (l’utilisateur, « oui, partout ») : ce début est le DÉFAUT de tous les reels. "intro": false dans music pour l'enlever.
+#  suite : « l'impact n'est pas nécessaire, trouve le moment de la musique qui a de l'impact » -> pas de bruitage par défaut
 # ("impact": true pour le remettre) ; music.from se pose sur un temps fort du morceau (scripts/attaque.py le trouve).
 _i = segs[0].get("intro", True) if segs else False
 INTRO = None if _i is False else ({"db": 6, "dur": 2.5, "ramp": 2.0} | (_i if isinstance(_i, dict) else {}))
@@ -254,19 +254,19 @@ _imp = CFG.get("sfx", {}).get("impact")
 if INTRO and INTRO.get("impact", False) and _imp and os.path.exists(_imp["src"]) \
         and not any(x.get("at", 9) < 0.3 for x in plan.get("sfx", [])):
     plan["sfx"] = [dict(_imp, at=0.0, kind="impact-intro", align="start", dur=1.6, volume=0.5)] + list(plan.get("sfx", []))
-    print("début : petit impact à 0 s + musique +%g dB pendant %g s (défaut 28/10)" % (INTRO["db"], INTRO["dur"]))
+    print("début : petit impact à 0 s + musique +%g dB pendant %g s (défaut )" % (INTRO["db"], INTRO["dur"]))
 ZR = 0.3   # rampe d'entrée / sortie d'une zone locale (s)
 ZONES = [dict(z, db=max(-30.0, min(12.0, float(z.get("db", 0))))) for z in (plan.get("music_zones") or [])
          if isinstance(z, dict) and float(z.get("to", 0)) > float(z.get("from", 0)) and float(z.get("db", 0))]
 for z in ZONES: print(f"musique {z['db']:+g} dB seulement de {z['from']:.2f} à {z['to']:.2f} s (zone locale)")
 LIM_DB = -2.3   # plafond du limiteur ; abaissé tout seul si l'AAC fait remonter la crête (voir boucle finale)
 inp, f, n_music_inp = graph()
-# 03/11 (RUSH : mix de 21 s au calme, 109 à 139 s Mac chargé) : une version qui ne change ni la voix ni la musique (titre,
+#  (RUSH : mix de 21 s au calme, 109 à 139 s Mac chargé) : une version qui ne change ni la voix ni la musique (titre,
 # sous-titres) reprend les niveaux trouvés au mix d'avant au lieu de refaire 2 ou 3 passes de mesure. La clé = le graphe de
 # mesure exact + taille et date de chaque fichier son (la vidéo rendue n'y entre pas : elle est muette). La mesure étant
 # déterministe, le résultat est le même au réglage près. Un changement = mesure complète, comme avant.
 _sig = lambda a: f"{a}|{os.path.getsize(a)}|{int(os.path.getmtime(a))}" if os.path.isfile(a) else a
-CLE_MIX = json.dumps([[_sig(a) for a in inp[2:]], f[:-1], dur], ensure_ascii=False)   # 11/11 : la dernière ligne (intro, zones locales, limiteur) est après la mesure
+CLE_MIX = json.dumps([[_sig(a) for a in inp[2:]], f[:-1], dur], ensure_ascii=False)   # la dernière ligne (intro, zones locales, limiteur) est après la mesure
 MEMO_MIX = os.path.join(here, "mix-niveaux.json")
 try: _memo = json.load(open(MEMO_MIX))
 except Exception: _memo = {}
@@ -291,13 +291,13 @@ if segs:
         print(f"musique {i + 1} : {os.path.basename(s['src'])} {s.get('start', 0):.1f}-{s.get('end', dur):.1f} s · sous la voix {g} LUFS "
               f"(cible {tg}, réglage lufs {s['lufs']})" + (f" ({s.get('transition', 'douce')})" if i else "")
               + (f" · {s['emotion']}" if s.get("emotion") else "") + verdict)
-# Boucle de crête (13/10, voix off DIFFICILE) : le mix sortait à -2,3 dBTP pile mais l'AAC le remontait à -1,2 (+1,1 dB sur une
+# Boucle de crête (voix off DIFFICILE) : le mix sortait à -2,3 dBTP pile mais l'AAC le remontait à -1,2 (+1,1 dB sur une
 # musique très percussive, pas 0,1-0,3 comme prévu). On MESURE après encodage et on rabaisse le limiteur de l'excès, 3 essais max.
 for essai in range(3):
-    # écran noir au départ (16/10 : « la toute première seconde, c'est toujours un écran noir ») : le rendu HyperFrames commence
+    # écran noir au départ (« la toute première seconde, c'est toujours un écran noir ») : le rendu HyperFrames commence
     # à 0,021 s avec une « edit list » vide devant ; Chrome l'ignore mais AVFoundation (QuickTime, iPhone, Instagram) ne trouve AUCUNE
     # image à 0 s. On recale la vidéo à 0 (setts) + faststart (moov en tête). Vérifié : image à 0,00 s, segment unique.
-    # 17/10 (VSL David « ça bug ») : « setts=ts=... » met pts = dts sur chaque image -> avec des B-frames, iPhone/QuickTime affichent
+    #  (VSL David « ça bug ») : « setts=ts=... » met pts = dts sur chaque image -> avec des B-frames, iPhone/QuickTime affichent
     # les images dans l'ordre de décodage (82 % dans le désordre = saccades), ffmpeg/Chrome ne le voient pas. pts et dts recalés à part,
     # et PAS de -use_editlist 0 (sinon dts négatif décalé -> 1re image à 0,067 s). Vérifié AVFoundation : 0 image dans le désordre, image à 0 s.
     subprocess.check_call(["ffmpeg", "-nostdin", "-y", "-v", "error", *inp, "-filter_complex", ";".join(f), "-map", "0:v", "-map", "[a]",
@@ -314,7 +314,7 @@ print(f"{out} : voix{' + musique' if segs else ''} + {len(plan.get('sfx', []))} 
 if p_ is not None:
     print(f"final : {i_} LUFS, crête vraie {p_} dBTP" + ("  <- crête trop haute (> -2)" if p_ > -2.0 else "  OK"))
 
-# 28/10 (l’utilisateur : « il faut bien varier les musiques en fonction de l'ambiance et pas toujours réutiliser les mêmes ») :
+
 # carnet des musiques montées, 1 ligne par reel (le dernier mix du dossier gagne). Lu par le Gardien (musique d'un des
 # 3 reels précédents = bloquant) et par musiques.py (liste du dossier music_reels, jamais utilisées d'abord).
 if segs and "/tmp/" not in os.path.abspath(out):

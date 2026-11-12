@@ -1,4 +1,4 @@
-"""Famille « Sans visage » (voix off, B-roll + texte, objets, mèmes) : une voix + un plan par phrase -> reel 9:16 (13/10).
+"""Famille « Sans visage » (voix off, B-roll + texte, objets, mèmes) : une voix + un plan par phrase -> reel 9:16.
 La voix pilote, les images remplissent tout l'écran : 1 plan par idée (1-3,5 s), coupe franche sur la fin de phrase,
 poussée lente sur chaque plan (jamais figé), B-rolls BRUTS et STABLES (broll.py steady), aucune tête qui parle.
 
@@ -47,7 +47,7 @@ def build(plan_p):
             cmd = ["ffmpeg", "-v", "error", "-y", "-loop", "1", "-framerate", "30", "-t", f"{d:.3f}", "-i", b["src"],
                    "-vf", f"scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,{move},fps=30,format=yuv420p"]
         else:
-            b["src"] = sdr(b["src"], here)   # 25/10 : plan iPhone HDR -> SDR avant la coupe
+            b["src"] = sdr(b["src"], here)   # plan iPhone HDR -> SDR avant la coupe
             fr = b.get("from", "auto")
             if fr == "auto":
                 o = subprocess.check_output(["python3", os.path.join(HERE, "broll.py"), "steady", b["src"], f"{d:.2f}"]).decode()
@@ -64,7 +64,7 @@ def build(plan_p):
     lst = os.path.join(here, "vo", "list.txt")
     open(lst, "w").write("".join(f"file '{p}'\n" for p in parts))
     clip = os.path.join(here, "clip.mp4")
-    # bande sombre fondue derrière les sous-titres (test 13/10 : illisibles sur plage, resto, table claire). 40 % max au centre,
+    # bande sombre fondue derrière les sous-titres (test : illisibles sur plage, resto, table claire). 40 % max au centre,
     # gaussienne de ~200 px : les plans restent bruts (aucun étalonnage), seule la zone du texte est assombrie. "band": 0 = sans.
     suby, band = P.get("subY", SUBY), vo.get("band", 0.4)
     vf = (f"[0:v]null[v]" if not band else

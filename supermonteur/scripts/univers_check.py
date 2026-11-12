@@ -56,7 +56,7 @@ def fiche(cam):
     print(f"univers.json : palette {' '.join(c['hex'] for c in u['couleur']['palette'])} · lumière {temp} · noirs {R['p1']} · "
           f"médiane {R['p50']} · hautes lumières {R['p99']}")
     print("À compléter à l'œil (univers.jpg) : source de lumière, espace, ligne, forme, mouvement, rythme. "
-          "Puis : plan.colors depuis la palette, lumière dans chaque prompt Higgsfield.")
+          "Puis : plan.colors depuis la palette, lumière notée pour choisir des plans qui collent.")
 
 
 def check(plan_p):

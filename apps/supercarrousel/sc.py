@@ -86,7 +86,7 @@ PHOTOS = os.path.expanduser("~/Documents/Montage/(exemple retiré)")
 
 
 def compter_photos(desc):
-    """Compte chaque photo de la fiche utilisée : la prochaine fois, Claude prend les moins utilisées (varier, 12/11/2026)."""
+    """Compte chaque photo de la fiche utilisée : la prochaine fois, Claude prend les moins utilisées (varier, )."""
     try:
         fiche = json.load(open(PHOTOS))
     except Exception:

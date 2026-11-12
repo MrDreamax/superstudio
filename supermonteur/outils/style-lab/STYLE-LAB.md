@@ -1,8 +1,8 @@
 # Style Lab client : la DA de montage choisie sur SA 1re rush (1 seul tour)
 
 Quand : 1er lancement chez un client (`mode-client.md`), après les connecteurs et `setup.sh`. Le client vote sur de vrais rendus de lui, ça écrit `da/<prenom>.json` tout seul.
-Durée : ~25 min dont ~10 min de rendu (8 variantes). Coût : ~1 crédit Higgsfield (4 images), 4 musiques Epidemic sur SON compte.
-5 sections, 1 seule variable par carte : **Ton ambiance** (4 images de lui), **Tes polices** (4 couples), **Ta couleur** (2 de son rush + sa marque + bleu maison), **Ta musique** (4 émotions), **Ton rythme** (posé / nerveux).
+Durée : ~25 min dont ~10 min de rendu (8 variantes). Coût : 0 crédit (aucune image générée), musiques de sa bibliothèque.
+5 sections, 1 seule variable par carte : **Ton ambiance** (4 vraies photos de lui, facultatif), **Tes polices** (4 couples), **Ta couleur** (2 de son rush + sa marque + bleu maison), **Ta musique** (4 émotions), **Ton rythme** (posé / nerveux).
 Le reste est réglé par la maison et ne se vote pas : sous-titres au col, mot fort seul à l'écran, zones mortes Insta, musique émotionnelle Epidemic, zéro néon / chrome.
 
 ## 1. Matière (dossier `~/Documents/Montage/STYLE-LAB/`)

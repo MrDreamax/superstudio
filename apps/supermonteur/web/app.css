@@ -1,4 +1,4 @@
-/* SuperMonteur : reprise fidèle des maquettes validées le 26/10 ((exemple retiré), Apple clair) */
+/* SuperMonteur : reprise fidèle des maquettes validées ((exemple retiré), Apple clair) */
 @font-face{font-family:Inter;src:url(/fonts/Inter.ttf)}
 @font-face{font-family:Mont;src:url(/fonts/Montserrat.ttf)}
 @font-face{font-family:Serif;src:url(/fonts/InstrumentSerif-Italic.ttf);font-style:italic}
@@ -170,21 +170,21 @@ input{font:inherit;color:inherit}
 .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--texte);color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,.25);max-width:90vw}
 .erreur{display:inline-block;background:#FFF1F0;border:1px solid #FFD2CE;color:#A1271C;border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.45}
 
-/* « Tes reels » : une vignette par reel, le titre en gras, puis rush · date et version (28/10) */
+/* « Tes reels » : une vignette par reel, le titre en gras, puis rush · date et version */
 .liste .grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:16px 14px}
 .liste .grille a{display:flex;flex-direction:column;align-items:stretch;gap:2px;background:none;border:0;padding:0;border-radius:0}
 .liste .grille img,.liste .grille .vide{width:100%;aspect-ratio:9/16;object-fit:cover;border-radius:12px;background:#E8E8ED;display:block;margin-bottom:6px;box-shadow:0 6px 14px rgba(0,0,0,.12);transition:transform .25s}
 .liste .grille a:hover img{transform:translateY(-2px)}
 .liste .grille b{font-size:13px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .liste .grille span{font-size:11.5px}
-/* supprimer un projet en 2 clics (29/10) */
+/* supprimer un projet en 2 clics */
 .liste .rc{position:relative}
 .liste .suppr{position:absolute;top:6px;right:6px;min-width:26px;height:26px;padding:0 8px;border:0;border-radius:13px;background:rgba(0,0,0,.55);color:#fff;font-family:inherit;font-weight:600;font-size:15px;line-height:26px;cursor:pointer;opacity:0;transition:opacity .2s,background .2s}
 .liste .rc:hover .suppr,.liste .suppr.arme,.liste .suppr:focus-visible{opacity:1}
 .liste .suppr.arme{font-size:12px}
 @media (hover:none){.liste .suppr{opacity:1}}
 .tiroir .propre{margin:0;padding:10px 16px;background:#EAF3FF;color:#1D4E89;font-size:12.5px;line-height:1.4;border-bottom:1px solid #D6E6FB;flex:none}
-/* publication réelle (28/10) */
+/* publication réelle */
 .arme{background:#C2363B!important;color:#fff!important}
 .pub-encours{display:flex;gap:12px;align-items:center;background:#EAF3FF;border-radius:12px;padding:14px;font-size:14px;line-height:1.4;color:#1D4E89}
 .spin{flex:none;width:20px;height:20px;border-radius:50%;border:2.5px solid #B9D6FF;border-top-color:var(--bleu);animation:tourne 1s linear infinite}
@@ -197,7 +197,7 @@ input{font:inherit;color:inherit}
 .ref-info{font-size:12.5px;line-height:1.4;color:#7A4B00;background:#FFF6E5;border-radius:10px;padding:8px 12px;margin:0}
 .pub-deja{font-size:12.5px;color:#9A6200;background:#FFF6E5;border-radius:10px;padding:8px 12px;margin:0}
 
-/* Écran « Tes images pour ce reel » (29/10, reprise fidèle : reprise-r1 A + reprise-r2 B) */
+/* Écran « Tes images pour ce reel » (reprise fidèle : reprise-r1 A + reprise-r2 B) */
 .im-main{align-items:stretch;padding:22px 30px}
 .im-hd p{max-width:640px}
 .im-liste{display:flex;flex-direction:column;gap:10px;padding-bottom:20px}
@@ -233,7 +233,7 @@ input{font:inherit;color:inherit}
 .im-plan.im-fixe{flex-direction:row;align-items:center;gap:12px;padding:8px 14px}
 .im-plan.im-fixe .im-r{flex:1}.im-plan.im-fixe .im-refimg{width:30px;border-radius:6px}
 
-/* Écran « Ton dérush » (29/10) : la barre + le Derush Lab en grand */
+/* Écran « Ton dérush » : la barre + le Derush Lab en grand */
 .dr{display:flex;flex-direction:column}
 .dr[hidden]{display:none}
 .dr-bar{display:flex;align-items:center;gap:16px;padding:12px 24px;background:#fff;border-bottom:1px solid var(--ligne);flex:none}
@@ -245,7 +245,7 @@ input{font:inherit;color:inherit}
 #dr-lab{flex:1;width:100%;border:0;min-height:0;background:var(--fond)}
 @media (max-width:700px){.dr-bar{padding:10px 16px;flex-wrap:wrap}.dr-bar .go{margin-left:0;width:100%}}
 
-/* 29/10 format étroit (navigateur intégré ~800 px, Super en onglet) : barre de lecture sur 1 ligne, vitesse toujours visible */
+/* format étroit (navigateur intégré ~800 px, Super en onglet) : barre de lecture sur 1 ligne, vitesse toujours visible */
 .ctl{container-type:inline-size}
 .row{white-space:nowrap}
 .tc{white-space:nowrap}

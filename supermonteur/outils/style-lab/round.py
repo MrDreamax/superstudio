@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Style Lab client (16/10) : au 1er lancement, le client choisit SA DA de montage en UN tour, sur SA 1re rush.
-5 sections, 1 seule variable par carte : DA visuelle (4 images Higgsfield avec son visage), polices (4), couleur (4),
+"""Style Lab client : au 1er lancement, le client choisit SA DA de montage en UN tour, sur SA 1re rush.
+5 sections, 1 seule variable par carte : DA visuelle (4 photos réelles de la personne, facultatif), polices (4), couleur (4),
 musique (4, à l'oreille), rythme (posé / nerveux). Il vote Garder / Peut-être / Jeter dans la page Style Lab,
 puis `lock` écrit da/<prenom>.json tout seul.
 
@@ -26,10 +26,10 @@ S = os.path.join(SKILL, "scripts")
 ENV = dict(os.environ, PATH=os.path.expanduser("~/.local/bin") + ":" + os.path.expanduser("~/.local/node/bin") + ":" + os.environ.get("PATH", ""))
 HF = ["npx", "--yes", "hyperframes@0.8.149"]
 SCALES = json.load(open(os.path.join(SKILL, "fonts", "scales.json")))
-# police étroite = sous-titres qui paraissent petits à 52 px : on compense la taille (mesuré sur la planche du 16/10)
+# police étroite = sous-titres qui paraissent petits à 52 px : on compense la taille (mesuré sur la planche)
 SCALES = {**SCALES, "BebasNeue-Regular.ttf": 1.35}
 
-# 4 couples de polices libres (OFL), le 1er = la maison (Montserrat + Instrument Serif, validé au Style Lab le 13/10)
+# 4 couples de polices libres (OFL), le 1er = la maison (Montserrat + Instrument Serif, validé au Style Lab)
 FONTS = [("Montserrat.ttf", "InstrumentSerif-Italic.ttf", "Montserrat + Instrument Serif", "Sobre et premium, celle de la maison."),
          ("Poppins-SemiBold.ttf", "PlayfairDisplay-Italic.ttf", "Poppins + Playfair", "Rond et chaleureux, serif élégante."),
          ("Inter.ttf", "DMSerifDisplay-Italic.ttf", "Inter + DM Serif", "Net et moderne, serif qui claque."),
@@ -76,7 +76,7 @@ def palette(c):
 
 
 def rush_colors(clip, a, b):
-    """Les 2 teintes saturées qui dominent le rush (décor, lumière), peau écartée. Univers = le RUSH (13/10)."""
+    """Les 2 teintes saturées qui dominent le rush (décor, lumière), peau écartée. Univers = le RUSH."""
     from PIL import Image
     tmp = tempfile.mkdtemp()
     sh(["ffmpeg", "-v", "error", "-ss", str(a), "-to", str(b), "-i", clip, "-vf", "fps=0.8,scale=160:-1", os.path.join(tmp, "f%02d.png")])
@@ -183,11 +183,11 @@ def build(a):
         cards.append({"id": cid, "section": sec, "label": label, "desc": desc, "kind": "image" if img else "video",
                       "file_full": img or os.path.join(d, "full.mp4"), "file_preview": img or os.path.join(d, "preview.mp4"), "sound": sound, "meta": meta})
 
-    # 1. DA visuelle (images Higgsfield faites avant, avec son visage)
+    # 1. DA visuelle (photos réelles de la personne, données avec --da-images ; facultatif)
     for i, im in enumerate(a.da_images or []):
         lab = (a.da_labels.split("|") if a.da_labels else DA_LABELS)[i]
         dst = os.path.join(out, f"da-{i + 1}" + os.path.splitext(im)[1]); shutil.copy(im, dst)
-        card(f"da-{'abcd'[i]}", "da", lab, "Toi, dans cette ambiance. Elle guide les visuels générés et le décor des cartons.", None,
+        card(f"da-{'abcd'[i]}", "da", lab, "Toi, dans cette ambiance. Elle guide le décor des cartons et le choix de tes plans.", None,
              {"ambiance": lab, "image_ref": dst}, img=dst)
     # base = polices maison + 1re couleur + posé + 1re musique : sert aux polices A, couleur A, musique A, rythme posé
     base = make(out, "base", cfg, base_da(a.client, F0, P0, R0), MUS[0])
@@ -253,8 +253,7 @@ def build(a):
 DEFAULT_DA = {"nom": "", "ambiance": "", "rythme": "posé premium", "fonts": {"sans": "Montserrat.ttf", "serif": "InstrumentSerif-Italic.ttf"},
               "colors": {"text": "#FFFFFF", "accent": "#2F74FF", "list": ["#161D2F", "#0E1220", "#0B0B0D"], "halo": "0,0,0", "glow": "0,0,0"},
               "music": [], "legende": {"tu_vous": "tu", "emojis": "1 max", "cta": "Commente MOT"},
-              "broll": {"principal": "ses vrais plans (bibliothèque), bruts, stables",
-                        "prompt_higgsfield": "isolated single object, true real-world colors and shape (use a reference image of the real object), lit to match the scene of the rush: {lumiere_rush}, soft realistic shadow, plain flat background for cut-out, photorealistic, no text"}}
+              "broll": {"principal": "ses vrais plans (bibliothèque), bruts, stables"}}
 
 
 def lock(a):
@@ -292,7 +291,6 @@ def lock(a):
         ref = os.path.join(os.path.dirname(os.path.abspath(out)), f"{a.client}-ref" + os.path.splitext(m["da"]["image_ref"])[1])
         shutil.copy(m["da"]["image_ref"], ref)
         da["image_ref"] = os.path.relpath(ref, SKILL) if ref.startswith(SKILL + os.sep) else ref
-        da["broll"]["prompt_higgsfield"] = da["broll"]["prompt_higgsfield"].replace("photorealistic", f"photorealistic, mood: {m['da']['ambiance']}", 1)
     if "polices" in m: da["fonts"] = m["polices"]["fonts"]; da["subSize"] = m["polices"]["subSize"]
     if "couleur" in m: da["colors"] = m["couleur"]["colors"]
     if "musique" in m: da["music"] = m["musique"]["music"]; da["_music_ref"] = m["musique"]["music_ref"]

@@ -9,7 +9,7 @@ Lu quand on monte à la main, qu'on répare ou qu'un fichier de style cite une �
 3. **DA** : seulement chez un nouveau client (DA existante `da/<prenom>.json` / nouvelle DA). L'utilisateur = sa DA (`~/Documents/Brain/00-Moi/reglages/da-montage.json`), ne pas demander.
 6. **Ambiance et musique** : `musique.md`.
 - **Format** : 9:16 pour un reel, ne pas poser la question. Vidéo YouTube : 16:9, `styles/youtube-theyo.md` (remplace « 16:9 pas géré »).
-- **Images et vidéos générées par IA : JAMAIS** (après la voix off Kling). Ni Higgsfield, ni Kling, ni Seedance, ni Nano Banana, ni GPT Image, dans AUCUN style, même si un fichier de style en parle encore. Ses vrais plans d'abord ; rien qui colle → Pexels (vérifier la personne), ou pas de B-roll.
+- **Images et vidéos générées par IA : JAMAIS**. Ni Higgsfield, ni Kling, ni Seedance, ni Nano Banana, ni GPT Image, dans AUCUN style, même si un fichier de style en parle encore. Ses vrais plans d'abord ; rien qui colle → Pexels (vérifier la personne), ou pas de B-roll.
 
 ## Workflow commun (le fichier du style dit quelles étapes il change)
 Un dossier par reel, tout se lance depuis ce dossier.

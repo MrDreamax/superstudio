@@ -1,13 +1,12 @@
-"""Style « Apple » des carrousels (validé par l’utilisateur le 22/10/2026, 2 rounds), appelé par carrousel.py quand
+"""Style « Apple » des carrousels (validé par l’utilisateur 2 rounds), appelé par carrousel.py quand
 la description contient "style": "apple". Rendu en local avec Chrome (pas besoin d'Open Carrusel).
   Fond blanc, titres SF Pro gras serrés, sous-titre gris, notes manuscrites Kalam couleur principale.
   Photo BORD À BORD (touche les bords gauche et droit) ; la personne détourée dépasse au-dessus : seulement les cheveux.
   Dessins sur le cercle clair d'art.py. Dernière slide : 3 bulles de message (question / MOT / réponse).
 Types de slide :
-  cover : "kicker" (petit titre), "title", "photo", "accent" (mot clé en bleu) ; « sujet géant » du 07/11/2026,
-          "cover_style": "ancienne" = photo bord à bord + cheveux qui dépassent (22/10)
+  cover : "kicker" (petit titre), "title", "photo", "accent" (mot clé en bleu) ; « sujet géant » "cover_style": "ancienne" = photo bord à bord + cheveux qui dépassent
   photo : "photo", "title", "body" | "steps" ; "pop": false = photo sans dépassement (sujet petit dans l'image)
-  list  : "kicker", "title", "items" [{"icon" (ICONS), "t", "d"}] ; "gap", "top", "title_size" (12/11/2026)
+  list  : "kicker", "title", "items" [{"icon" (ICONS), "t", "d"}] ; "gap", "top", "title_size"
   art   : "art" (art.py) ou "svg", "title", "body" | "steps" | "cta" (+ "cta_q", "cta_line")
 Commun : "note" + "note_pos" ({"top":..,"left"|"right":..}) pour une note manuscrite de 3 à 5 mots.
 """
@@ -25,7 +24,7 @@ from art import ARTS, BLUE
 W, H = 1080, 1440
 MODEL = os.path.expanduser("~/.cache/supermonteur/rvm_mobilenetv3_fp32.onnx")  # modèle du skill supermonteur
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-HAIR = 110  # pixels de cheveux qui dépassent au-dessus de la photo (choix de l’utilisateur : « jusqu'aux cheveux »)
+HAIR = 110  # pixels de cheveux qui dépassent au-dessus de la photo (choix de)
 INK, MUTE, GRAY = "#1D1D1F", "#6E6E73", "#E9E9EB"
 
 CSS = f"""<!doctype html><html lang="fr"><head><meta charset="utf-8">
@@ -101,7 +100,7 @@ def photo_block(name, head, top, h, pop=True):
         html += f'<div class="pop" style="height:{top}px"><img src="{name}-fg.png" style="top:{top - off}px"></div>'
     return html
 
-# Icônes au trait pour le type "list" (12/11/2026), dessinées dans un carré 48x48, trait bleu
+# Icônes au trait pour le type "list", dessinées dans un carré 48x48, trait bleu
 ICONS = {
     "grille": '<rect x="7" y="7" width="14" height="14" rx="3"/><rect x="27" y="7" width="14" height="14" rx="3"/><rect x="7" y="27" width="14" height="14" rx="3"/><rect x="27" y="27" width="14" height="14" rx="3"/>',
     "cible": '<circle cx="24" cy="24" r="17"/><circle cx="24" cy="24" r="10"/><circle cx="24" cy="24" r="3" fill="currentColor"/>',
@@ -135,7 +134,7 @@ def note(s):
     return f'<div class="note" style="{pos}">{s["note"]}</div>'
 
 
-# ---- Couverture « sujet géant » (remède 1 d'Ayo, VALIDÉE par l’utilisateur le 07/11/2026, 2 rounds) ----
+# ---- Couverture « sujet géant » (remède 1 d'Ayo, VALIDÉE par l’utilisateur 2 rounds) ----
 # Fond blanc, titre à gauche 2 lignes 165 px, seul le mot "accent" en bleu, tête détourée en très grand dont les
 # cheveux frôlent le bas du titre, ombre douce, aucun bouton. Modèle : (exemple retiré)
 COVERS = {}
@@ -192,7 +191,7 @@ def slide(s, last, heads, spec_dir):
     t = s["type"]
     geant = cover_geant(s) if t == "cover" and s.get("cover_style") != "ancienne" else None
     if geant:
-        inner, arrow = geant, ""  # validée le 07/11/2026 : pas de flèche ni de bouton sur la couverture
+        inner, arrow = geant, ""  # validée : pas de flèche ni de bouton sur la couverture
     elif t == "cover":
         p = s["photo"]
         kicker = f'<div class="k">{s["kicker"]}</div>' if s.get("kicker") else ""
@@ -204,7 +203,7 @@ def slide(s, last, heads, spec_dir):
         pop = s.get("pop", True)  # sans dépassement (sujet petit dans l'image) : la photo part du haut de la slide
         inner = (photo_block(p, heads[p], 300 if pop else 0, 700 if pop else 1000, pop)
                  + f'<div class="ctr" style="position:absolute;left:60px;right:60px;top:{1050 if pop else 1060}px">{text(s, 92)}</div>')
-    elif t == "list":  # liste à icônes (12/11/2026) : kicker + titre en haut, puis une ligne par élément
+    elif t == "list":  # liste à icônes : kicker + titre en haut, puis une ligne par élément
         kicker = f'<div class="k">{s["kicker"]}</div>' if s.get("kicker") else ""
         rows = "".join(f'<div class="li">{icon(it["icon"])}<div><b>{it["t"]}</b>'
                        + (f'<span>{it["d"]}</span>' if it.get("d") else "") + '</div></div>'
@@ -214,7 +213,7 @@ def slide(s, last, heads, spec_dir):
                  f'<h2 class="t" style="font-size:{s.get("title_size", 96)}px;margin-top:18px">{s["title"]}</h2>'
                  f'<div style="display:flex;flex-direction:column;gap:{gap}px;margin-top:80px">{rows}</div></div>')
     elif t == "art":
-        if s.get("photo") and s.get("cta"):  # 12/11/2026 : fin avec une vraie photo (conférence) au lieu d'un dessin
+        if s.get("photo") and s.get("cta"):  # fin avec une vraie photo (conférence) au lieu d'un dessin
             art = f'<div style="height:660px"></div>' + photo_block(s["photo"], heads[s["photo"]], 0, s.get("photo_h", 640), False)
         elif s.get("svg"):
             art = open(os.path.join(spec_dir, os.path.expanduser(s["svg"]))).read()
@@ -224,7 +223,7 @@ def slide(s, last, heads, spec_dir):
             if not s.get("photo"):
                 art = art.replace('<svg class="art"', '<svg class="art" style="height:660px"', 1)
             q = s.get("cta_q", "Tu veux la ressource ?")
-            dy = s.get("cta_shift", 0)  # 12/11/2026 : descend titre + bulles quand le bas reste vide
+            dy = s.get("cta_shift", 0)  # descend titre + bulles quand le bas reste vide
             inner = (f'<div style="height:{dy}px"></div>' + art + f'<div class="ctr">{text(s, 84)}</div>'
                      f'<div class="chat" style="top:{930 + dy}px"><div class="b them">{q}</div><div class="b me">{s["cta"].upper()}</div>'
                      f'<div class="b them">{s.get("cta_line", "Envoyé en DM. Bonne lecture.")}</div></div>'

@@ -1,4 +1,4 @@
-"""Contrôle d'une rush AVANT le montage (étape 2 du process client, 13/10 ; codé le 25/10/2026). Feu tricolore :
+"""Contrôle d'une rush AVANT le montage (étape 2 du process client, ; codé ). Feu tricolore :
   🟢 VERT   = on monte tel quel.
   🟠 ORANGE = on répare (débruitage + volume, recadrage, lumière légère ; JAMAIS de stabilisation) et on prévient en 1 ligne.
   🔴 ROUGE  = on refuse, avec 1 ligne pour refaire. Rare : seulement quand aucun montage ne peut sauver la rush.
@@ -7,8 +7,8 @@
     --apply  si ORANGE : écrit <out>/rush_repare.mp4 (la rush d'origine n'est jamais modifiée) ; à monter à la place de la rush
     --rapide sans la parole (pas de transcription)
 Code de sortie : 0 vert, 1 orange, 2 rouge. Mesures : lookstats.py (lumière, netteté, visage), transcribe.py (parole).
-Seuils calés le 25/10 sur les rushes iPhone de l'utilisateur (RUSH, RUSH = vert) et sur des copies abîmées exprès
-(floue, sombre, bruitée, couchée, sans voix). Rush intouchable (23/10) : chez l'utilisateur on ne répare rien, le contrôle sert au client.
+Seuils calés sur les rushes iPhone de l'utilisateur (RUSH, RUSH = vert) et sur des copies abîmées exprès
+(floue, sombre, bruitée, couchée, sans voix). Rush intouchable : chez l'utilisateur on ne répare rien, le contrôle sert au client.
 """
 import json, os, re, subprocess, sys
 import numpy as np

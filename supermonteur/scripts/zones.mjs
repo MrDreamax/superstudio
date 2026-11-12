@@ -1,4 +1,4 @@
-// Contrôle des zones mortes Instagram (16/10, choix « zone organique ») sur un montage HyperFrames :
+// Contrôle des zones mortes Instagram (choix « zone organique ») sur un montage HyperFrames :
 // ouvre index.html, avance la timeline pas à pas et liste chaque texte (encre réelle des lettres) ou élément animé visible
 // qui sort de la zone sûre : haut 270 px, bas 1480 px, côtés 65 px, sous-titres entre 120 et 960 px. Fonds, voiles, vidéos,
 // pages plein cadre et plaques de décor (feuille CTA, clavier) ont le droit de déborder.
@@ -10,7 +10,7 @@ import { join, extname } from "node:path";
 import { createRequire } from "node:module";
 import { readdirSync } from "node:fs";
 import { homedir } from "node:os";
-const NPX = join(homedir(), ".npm", "_npx"), CH = [join(homedir(), ".cache", "hyperframes", "chrome", "chrome-headless-shell"), join(homedir(), ".cache", "puppeteer", "chrome-headless-shell")];   // 0.8 range Chrome dans ~/.cache/hyperframes, 0.6 dans ~/.cache/puppeteer (25/10)
+const NPX = join(homedir(), ".npm", "_npx"), CH = [join(homedir(), ".cache", "hyperframes", "chrome", "chrome-headless-shell"), join(homedir(), ".cache", "puppeteer", "chrome-headless-shell")];   // 0.8 range Chrome dans ~/.cache/hyperframes, 0.6 dans ~/.cache/puppeteer
 const mod = existsSync(NPX) && readdirSync(NPX).map(d => join(NPX, d, "node_modules")).find(d => existsSync(join(d, "hyperframes")) && existsSync(join(d, "puppeteer-core")));
 if (!mod) { console.log("puppeteer-core introuvable : lancer une fois « npx --yes hyperframes@0.8.149 snapshot » puis recommencer"); process.exit(1); }
 const require = createRequire(mod + "/");
@@ -41,7 +41,7 @@ for (let t = t0; t <= t1 + 1e-6; t += step) {
     const T = 270, B = 1480, L = 65, R = 1015, out = [];
     const cv = (window.__zcv = window.__zcv || document.createElement("canvas").getContext("2d"));
     // décor autorisé à déborder : fonds, voiles, vidéos, images plein cadre (pages/articles qui défilent), feuille CTA (fond)
-    // 21/10 (RUSH) : htitle = le VOILE du titre-question (fond dégradé pleine largeur) ; ses textes .ht1 / .ht2 restent contrôlés en 1)
+    // (RUSH) : htitle = le VOILE du titre-question (fond dégradé pleine largeur) ; ses textes .ht1 / .ht2 restent contrôlés en 1)
     const DECOR = /^(mo|mo-led|moimg|moi-page|moi-cover|clip|fg|mo-fgw|vign|camwrap|punch|root|sheet|kbbg|ctam|veil|tveil|voile|bg|band|bande|crme|inp|kb|htitle|ctm-ring|ctm-rip|ctm-arrow|ctm-veil|ctm-tap)$/;
     const op = el => { let o = 1; for (let e = el; e && e.nodeType === 1; e = e.parentElement) { const s = getComputedStyle(e); if (s.display === "none" || s.visibility === "hidden") return 0; o *= +s.opacity; } return o; };
     const clipBox = el => { // intersection avec les parents overflow:hidden + l'écran

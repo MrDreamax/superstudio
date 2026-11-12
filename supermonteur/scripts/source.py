@@ -1,4 +1,4 @@
-"""Famille « Toi + une source » (green screen, réaction, démonstration) : face cam + ce qu'on montre -> reel 9:16 (13/10).
+"""Famille « Toi + une source » (green screen, réaction, démonstration) : face cam + ce qu'on montre -> reel 9:16.
 Face cam plein écran quand on parle (hook, conclusion, CTA) ; pendant chaque passage « source », la source remplit le fond et
 La personne reste à l'écran selon la mise en page :
   greenscreen = la personne détourée en bas au centre devant la source (le format « green screen » d'Instagram / TikTok)
@@ -19,7 +19,7 @@ plan.json -> "source": {"cam": "cam.mp4", "layout": "greenscreen", "items": [
   REACT : {"src": "web/clip.mp4", "start", "end", "fit": true, "credit": "Source - Windsor.ai (YouTube)", "pre": "delogo=..."}
      = quelques secondes d'une vidéo du web (droit de courte citation : bref, commenté, source affichée), muette, en haut ; lui détouré devant.
   MOTION DESIGN : {"src": "@motion", "start", "end", "type": "dm", ...} = bloc animé HyperFrames (build.mjs) derrière lui, zéro visage.
-  "push": 0.05 = image d'illustration (Higgsfield, fond BLANC/CLAIR, sujet en haut) qui avance doucement au lieu de défiler.
+  "push": 0.05 = image fixe (photo réelle de la personne ou vraie capture, sujet en haut) qui avance doucement au lieu de défiler.
   greenscreen lit fg_0.webm (matte.py sur toute la cam) : lancé tout seul s'il manque (~10 s par seconde de vidéo).
 """
 import json, os, subprocess, sys
@@ -36,9 +36,9 @@ def dur_of(p):
 
 def src_chain(it, d, h=1920):
     """Entrée ffmpeg + filtre qui donne la source en 1080 x h pour la durée d (capture qui défile ou vidéo recadrée)."""
-    if it["src"].lower().endswith(IMG) and it.get("push"):   # illustration (image Higgsfield) : poussée lente + ZOOM marqué (14/10)
+    if it["src"].lower().endswith(IMG) and it.get("push"):   # image fixe (photo réelle ou capture) : poussée lente + zoom marqué
         # "punch": [moment 0-1, zoom final, cy 0-1] = vers ce moment, zoom rapide (0,35 s, smoothstep) vers le point cy (sujet en haut)
-        # 14/10 (v4) : zoom ou dézoom PROGRESSIF seulement, jamais de zoom brusque -> "punch" ignoré
+        # zoom ou dézoom PROGRESSIF seulement, jamais de zoom brusque -> "punch" ignoré
         cy = it.get("cy", 0.3)
         pu = it["push"]
         z = f"(1+{pu}*t/{d:.3f})" if pu > 0 else f"(1+{-pu}*(1-t/{d:.3f}))"   # push < 0 = dézoom (part serré, s'élargit)
@@ -51,8 +51,8 @@ def src_chain(it, d, h=1920):
         return (["-loop", "1", "-framerate", "30", "-t", f"{d:.3f}", "-i", it["src"]],
                 f"scale=1080:-2,crop=1080:{h}:0:'min(ih-{h},{y0}+({y1}-{y0})*{ease})',fps=30")
     fr = it.get("from", 0)
-    if it.get("fit"):   # REACT (14/10) : vidéo 16:9 du web en entier en haut, fond = elle-même floutée, source citée, SANS son
-        top = it.get("top", 330)   # zones mortes Insta (16/10) : crédit à top - 56 = 274 px, dans la zone sûre (avant 230 = crédit à 174 px)
+    if it.get("fit"):   # REACT : vidéo 16:9 du web en entier en haut, fond = elle-même floutée, source citée, SANS son
+        top = it.get("top", 330)   # zones mortes Insta : crédit à top - 56 = 274 px, dans la zone sûre (avant 230 = crédit à 174 px)
         pre = it.get("pre", "")   # ex. "delogo=x=4:y=770:w=280:h=300," pour flouter une bulle webcam (pas de 2e visage)
         font = os.path.join(os.path.dirname(HERE), "fonts", "Montserrat.ttf")
         credit = it.get("credit", "")
@@ -66,7 +66,7 @@ def src_chain(it, d, h=1920):
         o = subprocess.check_output(["python3", os.path.join(HERE, "broll.py"), "steady", it["src"], f"{d:.2f}"]).decode()
         fr = float(re.search(r"from ([\d.]+)s", o).group(1))
     zoom = ""
-    if it.get("push"):   # B-roll derrière le détourage : poussée marquée pour garder le mouvement (14/10)
+    if it.get("push"):   # B-roll derrière le détourage : poussée marquée pour garder le mouvement
         z = f"(1+{it['push']}*t/{d:.3f})"
         zoom = (f",scale=w='trunc(1080*{z}/2)*2':h='trunc({h}*{z}/2)*2':eval=frame:flags=lanczos,"
                 f"crop=1080:{h}:'(iw-1080)/2':'(ih-{h})/2'")
@@ -96,7 +96,7 @@ def render_span(here, cam, fg, a, b, kind, it, layout, out, face_y, band_y=None,
         sin, sf = src_chain(it, d)
         fw, fh = int(1080 * GS_SCALE) // 2 * 2, int(1920 * GS_SCALE) // 2 * 2
         # PAS de -ss sur la vidéo détourée : un saut dans un webm VP9 + transparence rend la 1re image SANS alpha
-        # (rectangle noir, vu le 14/10 à 36,45 s) -> on décode depuis le début et on coupe à l'image près (trim)
+        #  (rectangle noir, vuà 36,45 s) -> on décode depuis le début et on coupe à l'image près (trim)
         cmd = sin + ["-c:v", "libvpx-vp9", "-i", fg, "-filter_complex",
                      f"[0:v]{sf}[bg];[1:v]trim=start={a - fg_off:.3f}:duration={d:.3f},setpts=PTS-STARTPTS,fps=30,"
                      f"scale={fw}:{fh}:flags=lanczos,format=yuva420p[p];"
@@ -118,8 +118,8 @@ def render_span(here, cam, fg, a, b, kind, it, layout, out, face_y, band_y=None,
                               f"geq=lum='lum(X,Y)':cb='cb(X,Y)':cr='cr(X,Y)':a='255*lte(hypot(X-{r / 2},Y-{r / 2}),{r / 2 - 2})'[c];"
                               f"color=white:s={r + 12}x{r + 12}:r=30,format=yuva420p,geq=lum=255:cb=128:cr=128:"
                               f"a='255*lte(hypot(X-{(r + 12) / 2},Y-{(r + 12) / 2}),{(r + 12) / 2 - 1})'[ring];"
-                              f"[bg][ring]overlay=65:{1440 - r - 6}:shortest=1[b1];[b1][c]overlay=71:{1440 - r}:shortest=1,format=yuv420p[v]"]   # bulle à 65 px du bord (zones mortes 16/10)
-    if False and band_y is not None and kind != "face":   # (14/10) bande retirée : traînée grise sur fond blanc -> ombre renforcée côté build.mjs (zone "light")
+                              f"[bg][ring]overlay=65:{1440 - r - 6}:shortest=1[b1];[b1][c]overlay=71:{1440 - r}:shortest=1,format=yuv420p[v]"]   # bulle à 65 px du bord (zones mortes)
+    if False and band_y is not None and kind != "face":   #  bande retirée : traînée grise sur fond blanc -> ombre renforcée côté build.mjs (zone "light")
         fc = cmd[cmd.index("-filter_complex") + 1].replace("format=yuv420p[v]", "format=yuv420p[v0]")
         fc += (f";color=black:s=1080x1920:r=30,format=rgba,geq=r=0:g=0:b=0:a='115*exp(-pow((Y-{band_y + 45})/170,2))'[g];"
                f"[v0][g]overlay=0:0:shortest=1,format=yuv420p[v]")
@@ -197,7 +197,7 @@ def layout(plan_p, layout_override=None, a0=None, b0=None, out_name="clip.mp4", 
             it2["y0"], it2["y1"] = y0 + (y1 - y0) * e(a - it["start"]), y0 + (y1 - y0) * e(b - it["start"])
         if it2 and not it2["src"].lower().endswith(IMG) and a0 is not None: it2["from"] = it.get("from", 0) + (a - it["start"])
         if it2 and lay == "greenscreen" and it2["src"].lower().endswith(IMG) and not it2.get("solo"):
-            it2["_html"] = True   # défilement / zoom dans HyperFrames : ffmpeg bouge au pixel entier = saccades (14/10 : « pas fluide »)
+            it2["_html"] = True   # défilement / zoom dans HyperFrames : ffmpeg bouge au pixel entier = saccades (« pas fluide »)
         if it2 and it2.get("zoom"):
             it2["_hd"] = os.path.join(here, S.get("cam_hd", S["cam"]))
             it2["_k"] = int(subprocess.check_output(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width",
@@ -220,7 +220,7 @@ def layout(plan_p, layout_override=None, a0=None, b0=None, out_name="clip.mp4", 
             subprocess.run(["ffmpeg", "-v", "error", "-y", "-c:v", "libvpx-vp9", "-i", fg, "-vf",
                             f"trim=start={a - fg_off:.3f}:duration={b - a:.3f},setpts=PTS-STARTPTS,fps=30", "-c:v", "libvpx-vp9",
                             "-pix_fmt", "yuva420p", "-b:v", "6M", "-auto-alt-ref", "0", "-deadline", "realtime", "-cpu-used", "8", "-row-mt", "1",
-                            "-an", os.path.join(here, name)], check=True)   # VP9 « realtime » : 10 segments en ~1 min au lieu de 10+ (14/10)
+                            "-an", os.path.join(here, name)], check=True)   # VP9 « realtime » : 10 segments en ~1 min au lieu de 10+
             blk = {k2: v for k2, v in it.items() if k2 != "src"} if it["src"] == "@motion" else dict(it, type="img")
             mo.append(dict(blk, start=round(a, 3), end=round(b, 3), fg=name, scale=GS_SCALE))
         P["motion"] = mo

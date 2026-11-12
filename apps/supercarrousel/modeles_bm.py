@@ -1,5 +1,4 @@
-"""4 modèles repris des carrousels de Brian Mark (@therealbrianmark, récupérés le 12/11/2026,
-références dans inspirations/brian-mark/). Notre DA (duo de polices, accent), nos vraies photos, jamais d'image IA.
+"""4 modèles repris des carrousels de Brian Mark (@therealbrianmark, récupérés références dans inspirations/brian-mark/). Notre DA (duo de polices, accent), nos vraies photos, jamais d'image IA.
 
 - duo        : chaque slide = 2 photos l'une sur l'autre, une phrase sur chacune (« J'ai demandé… / La vie m'a donné… »)
 - soustitres : 2 images d'une même vidéo l'une sur l'autre, la phrase en sous-titre en bas de chaque image
@@ -20,7 +19,7 @@ import apple
 from art import ARTS, BLUE, NAVY
 
 W, H = apple.W, apple.H
-MODELES_BM = {"duo": "Deux photos", "soustitres": "Sous-titres", "bulles": "Bulles"}  # Infographie retirée le 12/11 (« c'est moche »)
+MODELES_BM = {"duo": "Deux photos", "soustitres": "Sous-titres", "bulles": "Bulles"}  # Infographie retirée (« c'est moche »)
 CONDENSEE = "Oswald"  # gros titres de l'infographie (police condensée, dans superda/fonts)
 
 
@@ -156,7 +155,7 @@ def slide(s, last, photos, da, spec_dir, modele, heads=None):
                     f'<div class="ik" style="font-size:36px;margin-top:20px">Écris en commentaire</div>'
                     f'<div class="it" style="font-size:210px;line-height:1">{mot}</div>'
                     f'<div class="ik" style="font-size:36px;margin-top:10px">et je te l’envoie</div></div>{moi}</div>')
-        # 12/11 (l’utilisateur : « cohérence du CTA avec les autres images ») : la dernière slide garde la forme du modèle
+        # la dernière slide garde la forme du modèle
         appel = f'Écris <em class="motcta">{mot}</em> en commentaire'
         if modele == "bulles":
             return slide(dict(s, type="bulles", blocs=[s.get("title", "")], blocs_bas=[appel], gros=[1], bleu=[1]),

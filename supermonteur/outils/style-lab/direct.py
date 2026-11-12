@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
-"""Style Lab DIRECT (11/11) : tout le style (sous-titres + titre) réglé en direct sur UNE page, zéro rendu.
-La page passe le rush une fois et dessine sous-titres et titre par-dessus (mêmes px, polices et ombres que build.mjs).
-l’utilisateur : « 40 minutes pour configurer Style Lab, c'est trop long ». Préparation ~1 min.
+"""Style Lab DIRECT : tout le style (sous-titres + titre) réglé en direct sur UNE page, zéro rendu.
+La page passe le rush une fois et dessine sous-titres et titre par-dessus (mêmes px, polices et ombres que build.mjs). Préparation ~1 min.
 
   1) python3 direct.py prep --clip clip.mp4 --words words.json --start 0 --end 14.6 --keyword faux \\
-        --title "La fin des|infopreneurs ?" --title-end 4.5 --suby 1340 --out <dossier SOUS ~/Documents/Montage>
+        --title "La fin des|infopreneurs ?"--title-end 4.5 --suby 1340 --out <dossier SOUS ~/Documents/Montage>
      -> <out>/clip.mp4 (720p, son), <out>/fonts/*.ttf, <out>/data.json
   2) Publier <out>/style-lab-direct.html (capabilities db + user + assets), uploader clip.mp4 + fonts/*.ttf en assets.
-  3) python3 direct.py page --out <out> --assets assets.json   (assets.json = {"clip.mp4": id, "Montserrat.ttf": id, ...})
+  3) python3 direct.py page --out <out> --assets assets.json (assets.json = {"clip.mp4": id, "Montserrat.ttf": id, ...})
      -> réécrit style-lab-direct.html avec les ids, republier le même fichier.
   4) Quand il écrit « suivant » : ArtifactData list `submissions` -> la plus récente = ses choix (champ `choix`).
 """
@@ -15,7 +14,7 @@ import argparse, json, os, re, shutil, subprocess, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SKILL = os.path.dirname(os.path.dirname(HERE))
-FONTS = ["Montserrat.ttf", "Anton-Regular.ttf", "LilitaOne-Regular.ttf", "Cinzel.ttf", "SpaceGrotesk.ttf", "InstrumentSerif-Italic.ttf"]   # 11/11 : 5 polices les plus différentes + serif du mot fort
+FONTS = ["Montserrat.ttf", "Anton-Regular.ttf", "LilitaOne-Regular.ttf", "Cinzel.ttf", "SpaceGrotesk.ttf", "InstrumentSerif-Italic.ttf"]   # 5 polices les plus différentes + serif du mot fort
 
 
 def prep(a):
@@ -36,7 +35,7 @@ def prep(a):
         if M and (re.match(r"^['’-]", w["w"]) or re.match(r"^[.,!?…;:%]+$", w["w"])):
             M[-1]["w"] += w["w"].replace("’", "'"); M[-1]["e"] = w["e"]
         else: M.append(w)
-    # 11/11 : haut des cheveux pendant le titre (même mesure que build.mjs) -> la page remonte le titre s'il touche la tête
+    # haut des cheveux pendant le titre (même mesure que build.mjs) -> la page remonte le titre s'il touche la tête
     try:
         ht = float(subprocess.run(["python3", os.path.join(SKILL, "scripts", "headtop.py"), a.clip, str(a.start), str(a.start + a.title_end)],
                                   capture_output=True, text=True, check=True).stdout.strip())

@@ -1,13 +1,9 @@
-"""Écrans noirs HOOK 1 / HOOK 2 / HOOK 3 / BODY entre les parties d'un dérush de pub (06/11/2026, RUSH).
-
-l’utilisateur : « pour chaque montage y'a 2 ou 3 hooks, est-ce que tu peux les conserver dans un même rush et les séparer par un
-écran noir avec écrit : hook 1, hook 2, hook 3, body ».
+"""Écrans noirs HOOK 1 / HOOK 2 / HOOK 3 / BODY entre les parties d'un dérush de pub (RUSH). 
 Une seule vidéo par script : [HOOK 1] hook 1 [HOOK 2] hook 2 ([HOOK 3] hook 3) [BODY] corps.
 Écran = fond noir, texte blanc centré en MAJUSCULES, police Outfit SemiBold, 1 s, silence. Image du rush intouchable
 (aucun étalonnage), mêmes taille / cadence / plage de couleurs que le clip.
 
-  python3 ecrans_hooks.py <clip dérushé.mp4> <words.json du clip> <sortie.mp4> --parts "début hook 1|début hook 2|...|début body"
-  python3 ecrans_hooks.py <clip> <words.json> <sortie.mp4> --temps 0,8.0,14.4,21.3
+  python3 ecrans_hooks.py <clip dérushé.mp4> <words.json du clip> <sortie.mp4> --parts "début hook 1|début hook 2|...|début body"python3 ecrans_hooks.py <clip> <words.json> <sortie.mp4> --temps 0,8.0,14.4,21.3
 
 --parts : les premiers mots de chaque partie (dans l'ordre, la DERNIÈRE = le body), cherchés dans words.json (sans accents,
 majuscules ni ponctuation). --temps : secondes du clip où commence chaque partie. Chaque coupe tombe au creux du son

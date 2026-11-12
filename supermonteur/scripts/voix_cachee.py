@@ -1,4 +1,4 @@
-"""Voix cachée (09/11/2026, l’utilisateur : « je dis deux fois Tony Robbins », « un mot répété en double », « quelques euh ») :
+"""Voix cachée « un mot répété en double », « quelques euh ») :
 ElevenLabs gomme les euh, faux départs et mots doublés. Ce script cherche la voix DANS les blancs entre deux mots transcrits.
 
     python3 voix_cachee.py <video ou rush> <words.json> [--de s --a s]

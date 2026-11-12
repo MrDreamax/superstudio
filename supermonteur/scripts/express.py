@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Monteur EXPRESS (29/10/2026) : titre + sous-titres + musique, SANS le rendu HyperFrames.
+"""Monteur EXPRESS : titre + sous-titres + musique, SANS le rendu HyperFrames.
   python3 express.py <dossier du reel>        (plan.json prêt, dérush fait : clip.mp4 + words.json, comme pour monte.sh)
 Pourquoi : RUSH (style Minimaliste) = 6 min de machine par version, dont 5 min de rendu Chrome image par image pour
 un titre fixe et des sous-titres. Ici : build.mjs garde le découpage et la place de chaque sous-titre (mêmes règles),
@@ -20,13 +20,13 @@ def run(cmd, log):
     return r.returncode
 
 plan = json.load(open("plan.json"))
-EN_TROP = [k for k in ("brolls", "bigwords", "numbers", "motions", "lists", "proofs", "inserts", "silences", "keywords", "cta", "ctaMenu", "mini", "zooms", "cartons")   # 09/11 : cartons = cartons.py dans monte.sh ; 30/10 : mini et zooms oubliés = cartons perdus sans alerte (RUSH)
+EN_TROP = [k for k in ("brolls", "bigwords", "numbers", "motions", "lists", "proofs", "inserts", "silences", "keywords", "cta", "ctaMenu", "mini", "zooms", "cartons")   # cartons = cartons.py dans monte.sh ; : mini et zooms oubliés = cartons perdus sans alerte (RUSH)
            if plan.get(k)]
 if EN_TROP: stop(f"ce plan a {', '.join(EN_TROP)} : pas un montage express, lancer monte.sh", 2)
 W, H, FPS = 1080, 1920, 30
 os.environ["PATH"] = f"{os.path.expanduser('~/.local/bin')}:{os.path.expanduser('~/.local/node/bin')}:{os.environ['PATH']}"
 
-# 11/11 : même fin propre que monte.sh (coupes d'un ancien dérush qui finissaient après le rush), avant le Gardien
+# même fin propre que monte.sh (coupes d'un ancien dérush qui finissaient après le rush), avant le Gardien
 r_ = subprocess.run(["python3", f"{S}/fin_propre.py", "plan.json"], capture_output=True, text=True)
 print(r_.stdout.strip()) if r_.stdout.strip() else None
 if r_.returncode: stop("fin_propre.py : " + (r_.stderr.strip().splitlines() or ["?"])[-1])
@@ -50,8 +50,8 @@ SUBTRACK = float(css(r'\.cap\{[^}]*?font-size:\d+px;line-height:[\d.]+;letter-sp
 caps = []
 for cls, cid, top, txt in re.findall(r'<div class="(cap[^"]*)" id="(c[\d_]+)"(?: style="top:(\d+)px")?>(.*?)</div>', page):
     if "<" in re.sub(r'<span style="color:#[0-9A-Fa-f]{6}">[^<]*</span>', "", txt): stop(f"sous-titre {cid} avec mot fort ({txt}) : lancer monte.sh", 2)
-    a, b = times[cid]; caps.append((a, b, txt, int(top or SUBY)))   # 11/11 : txt garde les <span> de plan.couleurs
-# 29/10 (RUSH écran coupé, sous-titres sur l'animation claire) : la couleur de plan.typo.sub (CSS .cap) est suivie ;
+    a, b = times[cid]; caps.append((a, b, txt, int(top or SUBY)))   # txt garde les <span> de plan.couleurs
+#  (RUSH écran coupé, sous-titres sur l'animation claire) : la couleur de plan.typo.sub (CSS .cap) est suivie ;
 # une couleur foncée n'a pas d'ombre (l'ombre noire floute le texte foncé). Avant : toujours blanc.
 _col = re.search(r"\.cap\{font-weight:[^}]*?color:(#[0-9A-Fa-f]{6})", page)
 SUBCOL = tuple(int(_col[1][i:i + 2], 16) for i in (1, 3, 5)) if _col else (255, 255, 255)
@@ -60,18 +60,18 @@ FONT = os.path.join("fonts", re.search(r'font-family:"Sub";src:url\("fonts/([^"]
 title = None
 if plan.get("title"):
     T = plan["title"]; ta, tb = times["htitle"]
-    # 12/11 (Fable 5.2 version B) : titre recollé sur 1 ligne par build.mjs (règle 11/11) = pas de div ht2 -> plantage. ht2 devient optionnelle.
+    #  (Fable 5.2 version B) : titre recollé sur 1 ligne par build.mjs (règle) = pas de div ht2 -> plantage. ht2 devient optionnelle.
     l1 = re.search(r'<div class="ht1">(.*?)</div>', page)[1]; l2 = (re.search(r'<div class="ht2">(.*?)</div>', page) or [None, ""])[1]
     _st = {k: re.findall(rf"\.{k}\{{([^}}]*)\}}", page) for k in ("ht1", "ht2")}
     st = {k: (_st[k] or _st["ht1"])[-1] for k in ("ht1", "ht2")}   # la DERNIÈRE règle gagne (comme le CSS)
     num = lambda k, p, d=0: float((re.search(p, st[k]) or [None, d])[1])
-    # 31/10 : police lue dans la règle CSS de la ligne, pas devinée (T1 / T2 n'existent qu'avec plan.typo : sans typo = plantage)
+    # police lue dans la règle CSS de la ligne, pas devinée (T1 / T2 n'existent qu'avec plan.typo : sans typo = plantage)
     fam = lambda k: re.search(r'font-family:"([^"]+)"', st[k])[1]
     tf = lambda k: os.path.join("fonts", re.search(rf'font-family:"{fam(k)}";src:url\("fonts/([^"]+)"', page)[1])
     coul = lambda k: (re.search(r"color:(#\w+)", st[k]) or [None, "#FFFFFF"])[1]   # sans couleur : celle de .htitle, blanc
     box = re.search(r'id="htitle" style="top:(\d+)px[^"]*"><div style="display:inline-block;background:([^;]+);border-radius:(\d+)px;padding:(\d+)px (\d+)px (\d+)px', page)
     pad_top = int(css(r"\.htitle\{[^}]*?padding:(\d+)px", 30))
-    MAJ = lambda k, t: t.upper() if "text-transform:uppercase" in st[k] else t   # 30/10 : titre en majuscules (typo caps) perdu en express
+    MAJ = lambda k, t: t.upper() if "text-transform:uppercase" in st[k] else t   # titre en majuscules (typo caps) perdu en express
     forte = 'class="htitle onlight"' in page or (plan.get("typo") or {}).get("shadow") == "forte"
     ombre = [(3, 0, .95), (8, 2, .85), (34, 0, .7), (70, 0, .45)] if forte else [(26, 4, .55), (3, 1, .35)]
     title = dict(ombre=ombre, a=ta, b=tb, top=int(box[1]) + pad_top if box else int(T.get("top", 250)), box=box,
@@ -79,7 +79,7 @@ if plan.get("title"):
                          num("ht1", r"letter-spacing:([\d.]+)px"), int(num("ht1", r"font-weight:(\d+)", 700)), coul("ht1")),
                         (MAJ("ht2", html.unescape(l2)), tf("ht2"), num("ht2", r"font-size:(\d+)px"), num("ht2", r"line-height:([\d.]+)", 1.1),
                          num("ht2", r"letter-spacing:([\d.]+)px"), int(num("ht2", r"font-weight:(\d+)", 400)), coul("ht2"))])
-    # 05/11 (RUSH « L'antiviralité ? » sur une ligne) : une ligne vide gardait sa hauteur = encadré blanc trop haut, texte collé en haut
+    #  (RUSH « L'antiviralité ? » sur une ligne) : une ligne vide gardait sa hauteur = encadré blanc trop haut, texte collé en haut
     title["lines"] = [l for l in title["lines"] if l[0].strip()] or title["lines"][:1]
 print(f"{len(caps)} sous-titres · titre {'oui' if title else 'non'} · police {os.path.basename(FONT)} {SUBSIZE} px · y {SUBY}")
 
@@ -100,7 +100,7 @@ def baseline(top, size, lh, f):
     asc, desc = f.getmetrics(); return top + (size * lh - (asc + desc)) / 2 + asc
 
 def mots_colores(raw):
-    """11/11 : « LIVE » en <span style="color:#FFD60A"> (plan.couleurs) -> [(mot, couleur ou None)]."""
+    """« LIVE » en <span style="color:#FFD60A"> (plan.couleurs) -> [(mot, couleur ou None)]."""
     out = []
     for m in re.finditer(r'<span style="color:(#[0-9A-Fa-f]{6})">([^<]*)</span>|([^<]+)', raw):
         col = tuple(int(m[1][i:i + 2], 16) for i in (1, 3, 5)) if m[1] else None
@@ -116,11 +116,11 @@ def calque_sous_titre(img, raw, top):
         if cur and largeur(essai, f, SUBTRACK) > W - 240: lignes.append(cur); cur = m
         else: cur = essai
     lignes.append(cur)
-    # 03/11 (RUSH : 50 s de dessin) : tout se dessine dans une bande de 80 px autour du texte, plus sur l'écran entier :
+    #  (RUSH : 50 s de dessin) : tout se dessine dans une bande de 80 px autour du texte, plus sur l'écran entier :
     # le flou (portée ~30 px) n'atteint jamais le bord de la bande, donc même image au pixel près, ~8 x moins de calcul
     y0 = max(0, int(top) - 80); y1 = min(H, int(top + len(lignes) * SUBSIZE * lh) + 80)
     texte = Image.new("L", (W, y1 - y0), 0); dt = ImageDraw.Draw(texte)
-    masques = {}   # couleur -> masque des seuls mots de cette couleur (11/11)
+    masques = {}   # couleur -> masque des seuls mots de cette couleur
     k = 0
     for i, l in enumerate(lignes):
         x0, base = (W - largeur(l, f, SUBTRACK)) / 2, baseline(top + i * SUBSIZE * lh, SUBSIZE, lh, f) - y0
@@ -153,12 +153,12 @@ def calque_titre(img):
         k = 4; m = Image.new("L", (int(bw * k), int(bh * k)), 0)
         ImageDraw.Draw(m).rounded_rectangle([0, 0, bw * k - 1, bh * k - 1], radius=int(box[3]) * k, fill=255)
         m = m.resize((round(bw), round(bh)), Image.LANCZOS)
-        # 30/10 : la boîte peut être translucide (rgba du CSS, que Pillow ne lit pas) : l'opacité passe dans le masque
+        # la boîte peut être translucide (rgba du CSS, que Pillow ne lit pas) : l'opacité passe dans le masque
         rgba = re.fullmatch(r"rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d.]+)\s*\)", box[2].strip())
         if rgba: m = m.point(lambda v, a=float(rgba[4]): int(v * a))
         c = Image.new("RGBA", m.size, tuple(int(rgba[i]) for i in (1, 2, 3)) if rgba else box[2].strip()); c.putalpha(m)
         img.alpha_composite(c, (round(x0), round(y0)))
-    # 29/10 (RUSH, l’utilisateur : « avec de l'ombre pour améliorer la lisibilité ») : l'ombre du titre comme le CSS de build.mjs
+    #  (RUSH) : l'ombre du titre comme le CSS de build.mjs
     # (.htitle douce ; onlight / typo.shadow "forte" = ombre forte en 4 couches). Avant : titre express sans aucune ombre.
     if not box:
         masque = Image.new("L", (W, H), 0); dm = ImageDraw.Draw(masque); y = y0 + pt
@@ -186,7 +186,7 @@ for i, (a, b) in enumerate(zip(bornes, bornes[1:])):
     tit = bool(title and title["a"] <= mid < title["b"])
     cle = (tuple((c[2], c[3]) for c in on), tit)
     if cle not in vu:
-        # 03/11 : le titre (4 flous sur tout l'écran) se dessine UNE fois, puis chaque état part d'une copie
+        # le titre (4 flous sur tout l'écran) se dessine UNE fois, puis chaque état part d'une copie
         if tit and not TITRE_SEUL: TITRE_SEUL.append(Image.new("RGBA", (W, H), (0, 0, 0, 0))); calque_titre(TITRE_SEUL[0])
         img = TITRE_SEUL[0].copy() if tit else Image.new("RGBA", (W, H), (0, 0, 0, 0))
         for c in on: calque_sous_titre(img, c[2], c[3])
@@ -200,7 +200,7 @@ print(f"{len(vu)} images de calque pour {len(liste)} moments")
 etape("Rendu express (puce vidéo du Mac)")
 os.makedirs("renders", exist_ok=True)
 R = f"renders/express_{time.strftime('%Y-%m-%d_%H-%M-%S')}.mp4"
-# couleurs : on garde la plage et l'espace de la source (19/10 piège 1), décodage au processeur (piège 2 : image verte)
+# couleurs : on garde la plage et l'espace de la source (piège 1), décodage au processeur (piège 2 : image verte)
 if run(["ffmpeg", "-nostdin", "-y", "-v", "error", "-i", plan.get("cam", "clip.mp4"),
         "-f", "concat", "-safe", "0", "-i", "express/calques.txt",
         "-filter_complex", f"[1:v]fps={FPS},format=rgba[o];[0:v][o]overlay=0:0:eof_action=pass:format=auto,format=yuv420p[v]",
@@ -210,7 +210,7 @@ if run(["ffmpeg", "-nostdin", "-y", "-v", "error", "-i", plan.get("cam", "clip.m
 
 etape("Mix")
 if run(["python3", f"{S}/mix.py", "plan.json", R, plan.get("cam", "clip.mp4"), "final.mp4"], "mix.log"): stop("mix.py (voir mix.log)")
-# 09/11 (disque plein : 20 Go d'anciens rendus) : on garde seulement le dernier rendu, final.mp4 est déjà fait
+#  (disque plein : 20 Go d'anciens rendus) : on garde seulement le dernier rendu, final.mp4 est déjà fait
 for vieux in glob.glob("renders/express_*.mp4"):
     if os.path.abspath(vieux) != os.path.abspath(R):
         try: os.remove(vieux)
@@ -222,7 +222,7 @@ G = run(["python3", f"{S}/gardien.py", "."], "gardien.log")
 print("\n".join(l for l in open("gardien.log").read().splitlines() if "❌" in l or "GARDIEN" in l))
 subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", "final.mp4", "-vf", "fps=1,scale=144:-1,tile=10x7", "-frames:v", "1", "planche.jpg"])
 if G: stop("le Gardien final bloque : NE PAS LIVRER")
-subprocess.Popen(["python3", f"{S}/oeil_gemini.py", "final.mp4", "--sortie", "oeil-gemini.json"], stdout=open("oeil-gemini.log", "w"), stderr=subprocess.STDOUT, start_new_session=True)   # 31/10 : Gemini juge à côté, ne bloque pas la livraison
+subprocess.Popen(["python3", f"{S}/oeil_gemini.py", "final.mp4", "--sortie", "oeil-gemini.json"], stdout=open("oeil-gemini.log", "w"), stderr=subprocess.STDOUT, start_new_session=True)   # Gemini juge à côté, ne bloque pas la livraison
 fd = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", "final.mp4"]))
 t = time.time() - T0
 print(f"✅ final.mp4 ({fd:.2f} s) en {int(t // 60)} min {int(t % 60)} s · planche.jpg")

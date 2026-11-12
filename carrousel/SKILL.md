@@ -7,7 +7,7 @@ description: Le Carrousel. Carrousel Instagram (1080x1440, nombre de slides libr
 - On fait le carrousel dans le chat, sans ouvrir d'appli avant. Rendu des images : Google Chrome doit être installé sur le Mac (google.com/chrome) ; absent = dis-le en 1 ligne avec ce lien.
 - Ses photos : celles qu'il glisse dans le chat, ou `~/Documents/Brain/00-Moi/photos/` s'il en a rangé. Jamais une photo inventée, jamais d'image IA.
 - Sa voix : `~/Documents/Brain/00-Moi/` s'il est rempli. Pas de veille, pas d'onglet SuperDA : sa DA est déjà réglée (`~/Documents/SuperApps/superda/da.json`).
-- Publier : c'est le skill `publieur` (Blotato), après son OK. Jamais Metricool ni Higgsfield (cités plus bas pour l'auteur seulement).
+- Publier : c'est le skill `publieur` (Blotato), après son OK.
 - Un fichier ou un skill cité plus bas qui n'existe pas chez lui : ignore-le.
 
 
@@ -22,7 +22,7 @@ Référence visuelle : la planche que nomme ton carnet (le carrousel validé).
 Référence technique : `exemples/exemple-v4.json` (le skill la reconstruit au pixel près).
 
 ## Photos et vidéos de l'utilisateur
-Seulement des images qu'il accepte : ses interdits (shooting, look, période) sont dans son carnet et passent avant tout. Vaut pour tout : site, carrousel, slides, montage, B-roll, cover, pub, référence Higgsfield.
+Seulement des images qu'il accepte : ses interdits (shooting, look, période) sont dans son carnet et passent avant tout. Vaut pour tout : site, carrousel, slides, montage, B-roll, cover, pub.
 
 ## Carnet d'apprentissage
 - Avant de commencer : lis `~/Documents/Brain/00-Moi/regles-agents/carrousel.md`. Ses règles passent AVANT ce fichier.
@@ -51,7 +51,7 @@ Le détourage ne garde que la tête au-dessus de la photo (mains et bruit effac�
 | Polices | Montserrat 700 majuscules (couverture, CTA) + Instrument Serif italique (titres), Montserrat 500 (phrases) |
 | Alternance | PAS obligatoire : photo ou dessin selon l'idée de la slide (couverture = photo) |
 | Illustrations | 2D motion design dessinées en SVG (`art.py`) : fond blanc, grand cercle bleu très clair, aplats, 2 à 4 petits éléments déco |
-| Interdit | images générées par IA (Higgsfield ou autre) : refusées. Pas de @, pas de numéro de slide |
+| Interdit | images générées par IA, quel que soit l'outil. Pas de @, pas de numéro de slide |
 | Couverture | **« sujet géant »** (remède 1 d'Ayo, validée en 2 rounds) : fond blanc, titre 2 lignes à gauche, `"accent"` = le mot clé seul en bleu, tête détourée en très grand dont les cheveux frôlent le bas du titre, AUCUN bouton ni flèche. Photo cadrée BUSTE obligatoire (en pied → le moteur reprend l'ancienne couverture et le dit). 7 mots max. Modèle : `(exemple retiré)`. Ancienne : `"cover_style": "ancienne"` |
 | Slides | 1 idée par slide : titre serif + 1 phrase courte (ou liste 1-2-3 de 3 lignes courtes). Jamais de pavé |
 | Fin | « Commente MOT » + la ressource promise. Flèche de swipe partout sauf sur la dernière |

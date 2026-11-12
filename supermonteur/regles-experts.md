@@ -20,7 +20,7 @@ Détail, sources et minutages : Brain `02-Formations/experts-<domaine>.md` (mont
 10. Une seule montée par reel : la punchline (riser + silence + impact au même endroit) (→ : la musique ne se coupe jamais, « on dirait un bug » ; la montée finit sur une frappe de la musique). Événements visuels par tranche de 10 s : ≤ 2, ≤ 3, ≤ 4 au pic, ≤ 2 à la fin. Block [P], plafonds [H]
 
 ### Direction artistique, couleur, cadrage
-11. **Fiche univers AVANT tout visuel**, tirée du RUSH : les 7 composantes de Bruce Block (espace, ligne, forme, couleur, ton, mouvement, rythme) + la source de lumière (côté, couleur, dureté). Elle remplit `plan.colors` et la lumière des prompts Higgsfield. Block, Deakins [P]
+11. **Fiche univers AVANT tout visuel**, tirée du RUSH : les 7 composantes de Bruce Block (espace, ligne, forme, couleur, ton, mouvement, rythme) + la source de lumière (côté, couleur, dureté). Elle remplit `plan.colors` et guide le choix des plans. Block, Deakins [P]
 12. Test "5 sur 7" sur chaque ajout : il partage au moins 5 composantes avec le rush. Il peut contraster sur UNE seule, exprès (l'accent). Sinon on jette. Block [P], seuil [H]
 13. Test "sortir de la vidéo" sur chaque ajout : d'où vient sa lumière ? Est-il dans CETTE pièce ? Sert-il la phrase ? Un seul non = retiré. Deakins [P]
 14. Palette : 3 teintes dominantes max (prises sur le rush) + 1 accent. Ombre portée d'un insert du côté opposé à la source de lumière. Deakins [P]

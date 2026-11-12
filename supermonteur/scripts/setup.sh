@@ -2,7 +2,7 @@
 # Vérifie / installe ce qu'il faut (une seule fois par machine). Ne casse rien si c'est déjà là.
 export PATH="$HOME/.local/bin:$HOME/.local/node/bin:$PATH"
 ok=1
-# Il manque un outil = 1 ligne d'action, sources officielles seulement (vérifiées le 25/10/2026) :
+# Il manque un outil = 1 ligne d'action, sources officielles seulement (vérifiées) :
 # node = nodejs.org (bouton « macOS Installateur (.pkg) ») ; ffmpeg = Homebrew (brew.sh, macOS 15 et plus) ou, avant macOS 15,
 # les binaires Intel d'evermeet.cx, seul lien macOS de ffmpeg.org/download.html.
 command -v node >/dev/null || { echo "MANQUE node : ouvre https://nodejs.org/fr/download, clique « macOS Installateur (.pkg) », double-clic sur le fichier, puis relance ce setup"; ok=0; }

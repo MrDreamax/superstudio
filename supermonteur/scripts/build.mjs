@@ -2,14 +2,14 @@
 /**
  * supermonteur : face cam -> compo HyperFrames (à lancer dans le dossier du projet, à côté de plan.json).
  *   node build.mjs --plan plan.json --out index.html
- * plan.json : couleurs? ([{mot, couleur, ecrit, start, end}] : un mot du sous-titre en couleur, même avec un titre ; 11/11), da? (DA de la personne, défaut : celle de l'utilisateur, ~/Documents/Brain/00-Moi/reglages/da-montage.json), cam, words, duration?, keywords (mots en serif italique), numbers (chiffres derrière la tête, fg = détourage),
+ * plan.json : couleurs? ([{mot, couleur, ecrit, start, end}] : un mot du sous-titre en couleur, même avec un titre), da? (DA de la personne, défaut : celle de l'utilisateur, ~/Documents/Brain/00-Moi/reglages/da-montage.json), cam, words, duration?, keywords (mots en serif italique), numbers (chiffres derrière la tête, fg = détourage),
  *             lists (cartons plein écran), bullets (pastilles 1-2-3), brolls (plans de coupe plein écran),
  *             inserts (images sur-mesure incrustées par-dessus la cam : {src, start, end, pos: top|center, w}),
  *             hook (ouverture : bandes noires qui s'écartent + viseur REC), bigwords (mot géant serif derrière la tête),
  *             proofs (pleins écrans preuve : curve | clock | dashboard), cta (feuille de commentaires « commente MOT »).
  * Écrit aussi cues.json (sons des nouveaux blocs) que mix.py lit tout seul.
  */
-// Zones mortes Instagram (16/10, TOUS les montages, choix « zone organique ») : aucun texte ni élément animé
+// Zones mortes Instagram (TOUS les montages, choix « zone organique ») : aucun texte ni élément animé
 // au-dessus de 270 px (14 %, Meta Ads Guide Reels), à moins de 65 px des bords (6 %), sous 1480 px (pseudo + légende),
 // ni à droite des sous-titres là où sont les boutons (sous-titres entre 120 et 960 px). Fonds et décors peuvent déborder.
 // Contrôle après chaque montage : node scripts/zones.mjs <dossier> (0 élément attendu).
@@ -21,14 +21,14 @@ import { execFileSync } from "node:child_process";
 const SKILL = dirname(dirname(fileURLToPath(import.meta.url)));
 const args = Object.fromEntries(process.argv.slice(2).reduce((a, v, i, arr) => (v.startsWith("--") && a.push([v.slice(2), arr[i + 1]]), a), []));
 const plan = JSON.parse(readFileSync(args.plan, "utf8"));
-// 11/11 (l’utilisateur : « ne mets jamais de mots forts, enlève les mots forts ») : plus aucun mot fort, quel que soit le style
+// plus aucun mot fort, quel que soit le style
 // ou l'outil qui a écrit le plan (express, viral, voix off, podcast…). Coupé ici, à l'entrée, pour toutes les vidéos.
-if ((plan.keywords || []).length) console.log(`mots forts retirés (règle du 11/11) : ${plan.keywords.join(", ")}`);
+if ((plan.keywords || []).length) console.log(`mots forts retirés (règle maison) : ${plan.keywords.join(", ")}`);
 plan.keywords = [];
-// 11/11 (l’utilisateur : « ne mets jamais de ponctuation, de virgules ou de points en fin de ligne de sous-titrage ») :
+
 // TOUTE ponctuation en fin de mot est retirée (… ?! ; : » compris, avant : un seul signe), donc jamais en fin de ligne.
 const FINP = /[\s.,!?…;:«»"“”]+$/u;
-// 11/11 (précision de l’utilisateur) : à l'AFFICHAGE, on garde « … » « ? » ; on enlève virgule, point, point-virgule, « ! » ;
+// (précision de l’utilisateur) : à l'AFFICHAGE, on garde « … » « ? » ; on enlève virgule, point, point-virgule, « ! » ;
 // « : » reste seulement si une citation suit (mot suivant qui commence par « ou "). FINP (tout retirer) sert aux comparaisons de mots.
 const FINS = (t, nxt) => { let r = String(t).replace(/[\s,;!]+$/u, ""); if (!/(\.\.\.|…)$/.test(r)) r = r.replace(/[\s,;.!]+$/u, "");
   if (/:$/.test(r) && !(nxt && /^[«"“]/.test(String(nxt).trim()))) r = r.replace(/[\s:]+$/u, ""); return r; };
@@ -43,7 +43,7 @@ const DA_DEF = (() => {
   if (c && existsSync(join(SKILL, "da", c + ".json"))) return join(SKILL, "da", c + ".json");
   return existsSync(join(REG, "da-montage.json")) ? join(REG, "da-montage.json") : join(SKILL, "da", "exemple.json");
 })();
-// 25/10 (test kit 1.3, faux client) : une DA client incomplète (sans "colors" ni "fonts") faisait planter le build ;
+// (test kit 1.3, faux client) : une DA client incomplète (sans "colors" ni "fonts") faisait planter le build ;
 // on part toujours de da/exemple.json et la DA de la personne écrase champ par champ. Une case « <à remplir> » = valeur de l'exemple.
 const DA = (() => {
   const base = existsSync(join(SKILL, "da", "exemple.json")) ? JSON.parse(readFileSync(join(SKILL, "da", "exemple.json"), "utf8")) : {};
@@ -55,20 +55,20 @@ const DA = (() => {
   return d;
 })();
 const C = DA.colors;
-// la DA du MONTAGE suit l'univers du RUSH (13/10, 4/10 quand la charte a été plaquée sur un rush d'un autre univers) : plan.colors écrase la DA
+// la DA du MONTAGE suit l'univers du RUSH (4/10 quand la charte a été plaquée sur un rush d'un autre univers) : plan.colors écrase la DA
 Object.assign(C, plan.colors || {});
-// 23/10 (cockpit v3, looks) : colors.serif = couleur des mots en serif (titre ligne 2, mots forts, mot géant) ; absent = inchangé
+// (cockpit v3, looks) : colors.serif = couleur des mots en serif (titre ligne 2, mots forts, mot géant) ; absent = inchangé
 mkdirSync("fonts", { recursive: true });
-// police des sous-titres à part si la DA en donne une (DA.fonts.sub ; défaut Montserrat, Oswald rejeté le 13/10) ; le reste (cartons, chiffres, CTA) garde DA.fonts.sans
+// police des sous-titres à part si la DA en donne une (DA.fonts.sub ; défaut Montserrat, Oswald rejeté) ; le reste (cartons, chiffres, CTA) garde DA.fonts.sans
 DA.fonts.sub = DA.fonts.sub || DA.fonts.sans;
-// 23/10 (cockpit, personnalisation) : plan.typo = { t1, t2, sub : {font, weight, size, caps, track, stretch, italic, color, scale}, shadow, align }
+// (cockpit, personnalisation) : plan.typo = { t1, t2, sub : {font, weight, size, caps, track, stretch, italic, color, scale}, shadow, align }
 // = police, graisse, taille, couleur de chaque ligne du titre et des sous-titres, choisis dans le cockpit. Absent = rendu inchangé.
-// 26/10 : la DA du setup peut porter la même typo (DA.typo) = défaut de tous les reels ; plan.typo l'écrase pour un reel
+// la DA du setup peut porter la même typo (DA.typo) = défaut de tous les reels ; plan.typo l'écrase pour un reel
 const TY = plan.typo || DA.typo || null;
 if (TY) DA.fonts.sub = TY.sub.font;
 for (const f of new Set([DA.fonts.sans, DA.fonts.serif, DA.fonts.sub, ...(TY ? [TY.t1.font, TY.t2.font] : [])])) if (!existsSync(join("fonts", f))) copyFileSync(join(SKILL, "fonts", f), join("fonts", f));
 const SUBSIZE = Math.round((plan.subSize || DA.subSize || 52) * (TY?.sub.scale || 1)), SUBTRACK = TY ? TY.sub.track ?? .5 : plan.subTrack ?? DA.subTrack ?? .5;
-// 22/10 (cockpit v2) : plan.subMax = mots max par sous-titre (1 = mot à mot, 2 = deux mots) ; défaut 4 = inchangé
+// (cockpit v2) : plan.subMax = mots max par sous-titre (1 = mot à mot, 2 = deux mots) ; défaut 4 = inchangé
 const SUBMAX = Math.max(1, Math.min(4, plan.subMax || 4));
 const out = args.out || "index.html";
 const esc = t => String(t).replace(/[<>&]/g, "");
@@ -88,14 +88,14 @@ const camDur = +execFileSync("ffprobe", ["-v", "error", "-show_entries", "format
 // corrections des erreurs de Whisper (plan.fixes : {"boulettes": "bullet"}), relues par Claude avant chaque montage
 const FIX = Object.fromEntries(Object.entries(plan.fixes || {}).map(([k, v]) => [norm(k), v]));
 for (const w of W) { const k = norm(w.text); if (FIX[k] !== undefined) w.text = w.text.replace(/^[^.,!?]+/, FIX[k]); }
-// 03/11 (RUSH, l’utilisateur : « quand y'a un nombre, écris-le toujours avec des chiffres et non des lettres ») :
+// (RUSH) :
 // les nombres dits en lettres par Whisper (« vingt ans », « trente-cinq », « quatre-vingt-dix ») passent en chiffres à l'écran.
 // Jamais « un » / « une » seuls (articles), ni « neuf » en fin de phrase (« un téléphone neuf. »). Les mots fusionnés
 // gardent le début du 1er et la fin du dernier.
 const NB = { "zéro": 0, un: 1, une: 1, deux: 2, trois: 3, quatre: 4, cinq: 5, six: 6, sept: 7, huit: 8, neuf: 9, dix: 10, onze: 11,
   douze: 12, treize: 13, quatorze: 14, quinze: 15, seize: 16, vingt: 20, vingts: 20, trente: 30, quarante: 40, cinquante: 50,
   soixante: 60, cent: 100, cents: 100, mille: 1000 };
-// 12/11 (Pub 1 décor 2, juge : « 12000 » illisible) : à partir de 10 000, espace insécable des milliers (« 12 000 », « 15 000 »).
+// (Pub 1 décor 2, juge : « 12000 » illisible) : à partir de 10 000, espace insécable des milliers (« 12 000 », « 15 000 »).
 const enChiffres = W => {
   const coupe = text => { const m = String(text).match(/^(.*?)([«»“”"….,!?;:]*)$/); return [m[1], m[2]]; };
   const parts = mot => mot.toLowerCase().replace("’", "'").split("-").filter(Boolean);
@@ -140,13 +140,13 @@ const enChiffres = W => {
 if (plan.chiffres !== false) W.splice(0, W.length, ...enChiffres(W));   // plan.chiffres = false : nombres laissés en lettres
 const dur = Math.min(plan.duration || camDur, camDur - 0.04);
 const kw = new Set((plan.keywords || []).map(norm));
-// règle (13/10, Style Lab final) : vidéo AVEC titre-question = ni mot géant derrière la tête, ni mot fort. Sans titre : les deux sont permis.
-// 21/10 (RUSH v1 : « dépendance / AGI, mot en gros derrière la tête » sur une vidéo AVEC titre) : le titre n'empêche
-// plus les mots géants (règle du 13/10 « titre = ni mot géant ni mot fort » assouplie) ; il coupe toujours les mots forts serif.
+// règle (Style Lab final) : vidéo AVEC titre-question = ni mot géant derrière la tête, ni mot fort. Sans titre : les deux sont permis.
+// (RUSH v1 : « dépendance / AGI, mot en gros derrière la tête » sur une vidéo AVEC titre) : le titre n'empêche
+// plus les mots géants (règle« titre = ni mot géant ni mot fort » assouplie) ; il coupe toujours les mots forts serif.
 const lists = plan.lists || [], proofs = plan.proofs || [], cta = plan.cta, bigwords = plan.bigwords || [];
-// style minimaliste (plan.mini, réf Creator College 16/10) : les cartons typo plein écran comptent comme des pleins écrans (anti-flash, pas de sous-titres dessous)
+// style minimaliste (plan.mini, réf Creator College) : les cartons typo plein écran comptent comme des pleins écrans (anti-flash, pas de sous-titres dessous)
 const cards = (plan.mini || []).filter(m => m.type === "card");
-// ---------- 17/10 (Tesla : « micro cut de ma tête ») : chaque début / fin de B-roll à moins de 0,35 s d'une coupe du dérush
+// ---------- (Tesla : « micro cut de ma tête ») : chaque début / fin de B-roll à moins de 0,35 s d'une coupe du dérush
 //            (cut.segments.json à côté du plan, ou plan.segments) est calé SUR la coupe : début 0,02 s avant, fin 0,02 s après.
 //            Sinon on voit la tête 0,1-0,3 s puis un saut. ----------
 {
@@ -155,7 +155,7 @@ const cards = (plan.mini || []).filter(m => m.type === "card");
     let o = 0; const C = JSON.parse(readFileSync(sp, "utf8")).slice(0, -1).map(([a, b]) => (o += b - a));
     (plan.brolls || []).forEach(b => {
       const cs = C.find(c => Math.abs(c - b.start) < 0.35 && Math.abs(c - b.start) > 0.03), ce = C.find(c => Math.abs(c - b.end) < 0.35 && Math.abs(c - b.end) > 0.03);
-      // 20/10 (Titanic) : 0,02 s ne suffisait pas, le Gardien (« Zéro micro-coupure ») veut la coupe à >= 0,05 s DANS le plein
+      // (Titanic) : 0,02 s ne suffisait pas, le Gardien (« Zéro micro-coupure ») veut la coupe à >= 0,05 s DANS le plein
       // écran (arrondi à l'image près : à 0,02 s, la 1re image de la nouvelle prise pouvait passer). Marge = 0,07 s (2 images).
       const M = 0.07;
       if (cs !== undefined) { console.log(`calage coupe : B-roll ${b.start} -> ${(cs - M).toFixed(2)} (coupe ${cs.toFixed(2)})`); b.start = +(cs - M).toFixed(3); }
@@ -163,7 +163,7 @@ const cards = (plan.mini || []).filter(m => m.type === "card");
     });
   }
 }
-// ---------- garde-fou anti-flash (13/10 : la tête visible une fraction de seconde entre deux pleins écrans = « bug pour le cerveau ») :
+// ---------- garde-fou anti-flash (la tête visible une fraction de seconde entre deux pleins écrans = « bug pour le cerveau ») :
 //            entre deux pleins écrans, soit enchaînés direct, soit >= 1,5 s de face cam. Carton/preuve -> prolongé jusqu'au suivant ;
 //            B-roll -> raccourci (ou retiré s'il tombe sous 1,2 s). ----------
 {
@@ -171,10 +171,10 @@ const cards = (plan.mini || []).filter(m => m.type === "card");
     .sort((a, b) => a.start - b.start);
   for (let i = 0; i + 1 < blocks.length; i++) {
     const a = blocks[i], b = blocks[i + 1], g = b.start - a.end;
-    // 20/10 (« Mode difficile » v3 : 1 image de la tête entre un B-roll et un carton enchaînés, à 9,2 et 30,6 s = « ça bugue ») :
+    // (« Mode difficile » v3 : 1 image de la tête entre un B-roll et un carton enchaînés, à 9,2 et 30,6 s = « ça bugue ») :
     // deux pleins écrans collés (B-roll -> carton, carton -> B-roll, B-roll -> B-roll) se CHEVAUCHENT de 0,35 s (le temps du fondu
     // d'entrée du second), jamais 0 s pile. (v3 : B-roll -> B-roll laissait aussi 1 image de tête à 6,6 s.)
-    // 20/10 (retour : « tu es déjà mort : il faut qu'il se cale à ma voix et qu'il ne dépasse pas ») : carton -> B-roll = le B-roll
+    // (retour : « tu es déjà mort : il faut qu'il se cale à ma voix et qu'il ne dépasse pas ») : carton -> B-roll = le B-roll
     // démarre 0,35 s plus tôt SOUS le carton (z 6 < 20), le carton finit pile à l'heure. Sinon le premier se prolonge sous le second.
     if (Math.abs(g) < 0.05) { if (!a._broll && b._broll) b.start = +(a.end - 0.35).toFixed(3); else a.end = +(b.start + 0.35).toFixed(3); continue; }
     if (g <= 0 || g >= GAP) continue;
@@ -185,10 +185,10 @@ const cards = (plan.mini || []).filter(m => m.type === "card");
   if (plan.brolls) plan.brolls = plan.brolls.filter(b => !b._drop);
 }
 // plages plein écran sans sous-titres dessous : cartons liste, preuves, feuille de commentaires
-// + B-rolls "nosub": true (graphique, capture d'écran : les sous-titres crème deviennent illisibles sur fond clair et cachent l'info, 13/10)
-// 30/10 (RUSH v2 : « lorsqu'il y a le titre, tu peux ne pas mettre de sous-titres ») : plan.noSub = [{start, end}] plages sans sous-titres
+// + B-rolls "nosub": true (graphique, capture d'écran : les sous-titres crème deviennent illisibles sur fond clair et cachent l'info)
+// (RUSH v2 : « lorsqu'il y a le titre, tu peux ne pas mettre de sous-titres ») : plan.noSub = [{start, end}] plages sans sous-titres
 const FULL = [...lists, ...proofs, ...cards, ...(cta ? [cta] : []), ...(plan.ctaMenu ? [plan.ctaMenu] : []), ...(plan.brolls || []).filter(b => b.nosub), ...(plan.noSub || [])];
-// 17/10 (selfie voiture, visage trop proche) : sous-titres posés AU-DESSUS de la tête (plan.subY < 760) = même place que les
+// (selfie voiture, visage trop proche) : sous-titres posés AU-DESSUS de la tête (plan.subY < 760) = même place que les
 // chiffres et mots géants -> masqués pendant qu'un chiffre / mot géant est à l'écran (sinon ils se chevauchent)
 const TOPBIG = (plan.subY ?? 9999) < 760 ? [...(plan.numbers || []), ...(plan.bigwords || []),
                                             ...(plan.inserts || []).filter(n => n.pos !== "center" && !n.track)] : [];
@@ -196,9 +196,9 @@ const covered = t => FULL.some(l => t >= l.start - 0.02 && t < l.end) || TOPBIG.
 // sortie douce seulement s'il reste >= 1,5 s de face cam derrière ; sinon coupe franche enchaînée au plein écran suivant (anti-flash)
 const FS = [...lists, ...proofs, ...cards, ...(cta ? [cta] : []), ...(plan.brolls || [])];
 const SOFT = (b, d) => Math.min(dur, ...FS.filter(x => x.start >= b - 0.02).map(x => x.start)) - b >= 1.5 ? d : 0;
-// sous-titres dans la zone la plus lisible (sombre + unie, ex. t-shirt noir), calculée sur le rush (13/10)
+// sous-titres dans la zone la plus lisible (sombre + unie, ex. t-shirt noir), calculée sur le rush
 let SUBY = plan.subY;
-// 03/11 (RUSH : 33 à 64 s de subzone.py à CHAQUE version, pour la même vidéo) : la hauteur est gardée dans subzone.json,
+// (RUSH : 33 à 64 s de subzone.py à CHAQUE version, pour la même vidéo) : la hauteur est gardée dans subzone.json,
 // liée à la vidéo (chemin + taille + date) ; une autre vidéo (dérush refait) = nouvelle mesure.
 if (SUBY == null) {
   let cle = "", cz = {};
@@ -209,15 +209,15 @@ if (SUBY == null) {
   }
   console.log(`sous-titres à y=${SUBY}px`);
 }
-// zones mortes Insta (16/10) : encre d'un sous-titre 52 px = de +8 à +53 px sous son haut ; mot fort serif 132 px = de +16 à +143 px
-// (jambages g, p, j compris), mesuré au navigateur le 16/10. Rien sous 1480 px, rien au-dessus de 270 px.
+// zones mortes Insta : encre d'un sous-titre 52 px = de +8 à +53 px sous son haut ; mot fort serif 132 px = de +16 à +143 px
+// (jambages g, p, j compris), mesuré au navigateur. Rien sous 1480 px, rien au-dessus de 270 px.
 const SUB_MAX = 1480 - Math.round(53 * SUBSIZE / 52), KW = plan.kwSize || 132, EMW = {};
-// 23/10 (RUSH, Gardien « zones mortes » : « personal » en mot fort à 1484 px) : les lignes se comptaient sur le SEUL mot fort ;
+// (RUSH, Gardien « zones mortes » : « personal » en mot fort à 1484 px) : les lignes se comptaient sur le SEUL mot fort ;
 // les mots normaux du même sous-titre (« conçu ta ») le poussaient sur une 2e ligne, 4 px dans la zone morte. On mesure tout le
 // sous-titre (mot fort en serif 132 px + mots normaux dans la police des sous-titres) et le mot fort est supposé sur la dernière ligne.
 const largeur = (t, f, sz) => { const k = f + "|" + sz + "|" + t; if (EMW[k] == null) { try { EMW[k] = +execFileSync("python3", ["-c", "import sys;from PIL import ImageFont;print(ImageFont.truetype(sys.argv[1],int(sys.argv[3])).getlength(sys.argv[2]))", join("fonts", f), t, String(sz)]).toString(); } catch { EMW[k] = t.length * 0.42 * sz; } } return EMW[k]; };
 const emLines = (t, normal = "") => Math.max(1, Math.ceil((largeur(t, DA.fonts.serif, KW) + (normal ? largeur(normal + " ", DA.fonts.sub, SUBSIZE) : 0)) * 1.03 / 840));
-// 23/10 (RUSH, style « Fin + gras ») : +143 px a été mesuré le 16/10 dans une ligne de sous-titres en Montserrat 52 px ; une
+// (RUSH, style « Fin + gras ») : +143 px a été mesuré dans une ligne de sous-titres en Montserrat 52 px ; une
 // autre police de sous-titres (Outfit 56 px ici) descend la ligne de base du mot fort (+4 px mesurés par le Gardien). Avec un style
 // perso (plan.typo), marge de 12 % de la taille des sous-titres.
 const EM_MARGE = TY ? Math.round(0.12 * SUBSIZE) : 0;
@@ -228,32 +228,32 @@ const ACC = C.accent || "#4f7cff";   // 1 seul accent (guide OPUS : 2 neutres + 
 let layers = "", camLayers = "", ops = "";
 const cues = [];   // sons des nouveaux blocs -> cues.json -> mix.py
 // V() = visibilité en fonction pure du temps (4 fromTo qui se suivent) : le rendu parallèle peut sauter dans le désordre
-// out = sortie douce en s (power2.in) au lieu d'une disparition sèche (experts 13/10 : NN/g, Ben Marriott)
+// out = sortie douce en s (power2.in) au lieu d'une disparition sèche (experts : NN/g, Ben Marriott)
 const V = (sel, a, b, from = "{}", to = "{}", fin = 0.12, out = 0) => { ops += `V("${sel}",${a.toFixed(3)},${b.toFixed(3)},${from},${to},${fin},${out});`; };
 // F() = une animation à l'instant t (to sans accolades) ; l'état avant t = celui du CSS
-// strokeDashoffset : autoRound:false OBLIGATOIRE (14/10) : GSAP arrondit au px entier, et avec pathLength=1 le tracé sautait de vide à plein
+// strokeDashoffset : autoRound:false OBLIGATOIRE : GSAP arrondit au px entier, et avec pathLength=1 le tracé sautait de vide à plein
 const F = (sel, from, to, t) => { ops += `tl.fromTo("${sel}",${from},{${to},immediateRender:false${/strokeDashoffset/.test(to) ? ",autoRound:false" : ""}},${(+t).toFixed(3)});`; };
 // H() = tient un état de 0 à t (quand l'état de départ n'est pas exprimable en CSS, ex. yPercent)
 const H = (sel, state, t) => { ops += `tl.fromTo("${sel}",${state},Object.assign(${state},{duration:${Math.max(+t, 0.001).toFixed(3)},immediateRender:false}),0);`; };
 // compteur qui défile (texte remplacé à chaque image), format français 12 400
 const COUNT = (id, to, t, d, dec = 0, ease = "power2.out") => { ops += `(function(){var o={v:0},el=document.getElementById("${id}");tl.fromTo(o,{v:0},{v:${to},duration:${d.toFixed(3)},ease:"${ease}",immediateRender:false,onUpdate:function(){el.textContent=o.v.toFixed(${dec}).replace(".",",").replace(/\\B(?=(\\d{3})+(?!\\d))/g,"\\u202f")}},${t.toFixed(3)});})();`; };
-// coup de zoom d'impact : COUPÉ (13/10 : les zooms brusques font saccader, « ça sort de la vidéo »)
+// coup de zoom d'impact : COUPÉ (les zooms brusques font saccader, « ça sort de la vidéo »)
 const PUNCH = () => {};
 
 // ---------- caméra : zoom LENT et doux seulement quand l'idée change (fin de phrase + au moins 5 s depuis le dernier),
 //            large / serré en alternance, transition 1,4 s sinusoïdale puis dérive lente. Jamais de saut de cadre. ----------
 const cuts = [0];
-// écart mini entre 2 zooms : 5 s dans le hook (0-7 s), 8 s ensuite (experts 13/10 : Victor Heras mesuré 9,6-14,5 s en face cam posée)
-// rythme de la DA (Style Lab client 16/10) : zoomGap = [écart dans le hook, écart ensuite] ; posé = [5, 8] (défaut), nerveux = [2.5, 4]
+// écart mini entre 2 zooms : 5 s dans le hook (0-7 s), 8 s ensuite (experts : Victor Heras mesuré 9,6-14,5 s en face cam posée)
+// rythme de la DA (Style Lab client) : zoomGap = [écart dans le hook, écart ensuite] ; posé = [5, 8] (défaut), nerveux = [2.5, 4]
 const ZG = plan.zoomGap || DA.zoomGap || [5, 8];
 W.forEach((w, i) => { if (i && /[.!?]$/.test(W[i - 1].text) && w.t - cuts[cuts.length - 1] > (w.t < 7 ? ZG[0] : ZG[1])) cuts.push(+(w.t - 0.3).toFixed(3)); });
 const lvl = [1.0, 1.07], DRIFT = 1.015, MOVE = 1.4;
 // plan.zoom = false (famille « À plusieurs », podcast.py) : pas de zoom, c'est l'alternance split / plein écran qui donne le rythme
-// 23/10 cockpit étape 3 « moments forts » : plan.zooms = [{start, end}] = un zoom lent et doux sur CE moment (entrée 0,9 s, dérive, sortie 0,9 s),
+// cockpit étape 3 « moments forts » : plan.zooms = [{start, end}] = un zoom lent et doux sur CE moment (entrée 0,9 s, dérive, sortie 0,9 s),
 // à la place des zooms automatiques. Absent = comme avant.
 const ZOOMS = plan.zooms || [];
 ZOOMS.forEach(z => {
-  // 23/10 (retour n7 « zoom in / zoom out ») : dir "out" = zoom arrière. Jamais de saut de cadre : la caméra s'avance
+  // (retour n7 « zoom in / zoom out ») : dir "out" = zoom arrière. Jamais de saut de cadre : la caméra s'avance
   // doucement (×1,10) dans la seconde d'avant, puis recule d'un coup franc mais lissé sur le moment (0,7 s).
   if (z.dir === "out") {
     const pre = Math.min(1.4, Math.max(0.6, z.start - 0.2));
@@ -273,7 +273,7 @@ if (plan.zoom !== false && !ZOOMS.length) cuts.forEach((t, i) => {
 });
 
 // ---------- chiffres géants derrière la tête ----------
-// compteur (recette officielle HyperFrames counting-dynamic-scale, greffe GitHub 14/10) : le chiffre GROSSIT de 55 % à 100 % pendant
+// compteur (recette officielle HyperFrames counting-dynamic-scale, greffe GitHub) : le chiffre GROSSIT de 55 % à 100 % pendant
 // qu'il compte (même durée, même ease power3.out), chiffres à chasse fixe dans une boîte fixe (pas de tremblement 9 -> 10 -> 100),
 // le suffixe arrive APRÈS le compte (son propre temps). Durée 1,2-2 s si la place le permet : en dessous de 0,8 s, ça se lit comme un flash.
 (plan.numbers || []).forEach((n, i) => {
@@ -288,7 +288,7 @@ if (plan.zoom !== false && !ZOOMS.length) cuts.forEach((t, i) => {
   if (n.fg) camLayers += `<video id="fg${i}" class="clip fg" src="${n.fg}" muted playsinline preload="auto" data-start="${n.fgStart.toFixed(3)}" data-duration="${(n.fgEnd - n.fgStart).toFixed(3)}" data-track-index="${2 + i}" data-has-audio="false"></video>`;
 });
 
-// ---------- MOTION DESIGN derrière la personne détourée (famille « Toi + une source », source.py -> plan.motion, 14/10) ----------
+// ---------- MOTION DESIGN derrière la personne détourée (famille « Toi + une source », source.py -> plan.motion) ----------
 //            univers = celui de la vidéo (pièce sombre, LED bleue), zéro visage, mouvements expo sans rebond, la personne repasse devant.
 const BADGE = (id, sz) => `<svg id="${id}" class="mo-badge" width="${sz}" height="${sz}" viewBox="0 0 40 40"><path fill="${ACC}" d="M20 1.5l4.3 3.1 5.3-.3 1.6 5 4.4 3-1.6 5.1 1.6 5.1-4.4 3-1.6 5-5.3-.3L20 38.5l-4.3-3.1-5.3.3-1.6-5-4.4-3 1.6-5.1-1.6-5.1 4.4-3 1.6-5 5.3.3z"/><path fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" d="M13 20.5l4.6 4.6L27.5 15"/></svg>`;
 const MOTION = {
@@ -431,7 +431,7 @@ const MOTION = {
     F(`#${id}t`, `{y:30,opacity:0}`, `y:0,opacity:1,duration:.6,ease:"expo.out"`, S + Math.min(m.pillAt ?? (E - S) * 0.6, E - S - 0.8));
     F(`#${id}a`, `{scale:1}`, `scale:1.04,duration:${(E - S).toFixed(3)},ease:"none"`, S);
   },
-  // anneau qui se remplit jusqu'à `value` % (recettes officielles stat-bars-and-fills + counting-dynamic-scale, greffe GitHub 14/10) :
+  // anneau qui se remplit jusqu'à `value` % (recettes officielles stat-bars-and-fills + counting-dynamic-scale, greffe GitHub) :
   // anneau et compteur partagent durée (≥ 0,8 s) et ease power3.out = un seul temps ; libellé en grosses capitales avant le pic, suffixe après
   ring(m, k) {
     const S = m.start, E = m.end, id = `mo${k}`, v = Math.max(0, Math.min(100, m.value ?? 92)), cd = Math.max(0.8, Math.min(2.0, E - S - 1.1));
@@ -475,7 +475,7 @@ const MOTION = {
     }
   },
 };
-// zones mortes Insta (16/10) : chaque bloc a été dessiné à partir de ~150 px. Boîte [haut, bas] mesurée le 16/10 sur tout le bloc
+// zones mortes Insta : chaque bloc a été dessiné à partir de ~150 px. Boîte [haut, bas] mesurée sur tout le bloc
 // (dérive comprise) ; on le recale à 280 px. Plancher = 890 px (10 px d'air au-dessus des sous-titres du green screen, y 900) ou son bas
 // d'origine s'il était plus bas (dm, chart, bars : jamais plus bas qu'avant). Simple descente s'il y a la place, sinon descente + réduction
 // proportionnelle (dm, chart -16 %, bars -17 %, profile -16 %, ring -12 %). Le fond et la LED débordent toujours.
@@ -501,7 +501,7 @@ const MO_TOP = 280, MO_FLOOR = 890;
 bigwords.forEach((w, i) => {
   const ch = [...String(w.text)], mid = (ch.length - 1) / 2, d = w.end - w.start;
   // taille = le mot tient dans 820 px (mesure exacte de la police si Pillow est là, sinon 0,47 em par lettre) : avec le zoom
-  // d'impact il reste entre les marges de 65 px (zones mortes Insta, 16/10 ; avant 900 px = « dangereux » mordait les bords)
+  // d'impact il reste entre les marges de 65 px (zones mortes Insta, avant 900 px = « dangereux » mordait les bords)
   const sans = w.font === "sans";
   let em = 0.47 * ch.length;
   try { em = +execFileSync("python3", ["-c", "import sys;from PIL import ImageFont;f=ImageFont.truetype(sys.argv[1],1000)\ntry: f.set_variation_by_axes([800])\nexcept Exception: pass\nprint(f.getlength(sys.argv[2])/1000)", join("fonts", sans ? DA.fonts.sans : DA.fonts.serif), sans ? String(w.text).toUpperCase() : String(w.text)]).toString() * 1.06; } catch {}
@@ -509,17 +509,17 @@ bigwords.forEach((w, i) => {
   const letters = ch.map((c, k) => `<span class="lm"><span class="lc" id="w${i}c${k}">${c === " " ? "&nbsp;" : esc(c)}</span></span>`).join("");
   // "font": "sans" = police des sous-titres en capitales grasses (comme son monteur, « VISIBILITÉ » derrière la tête) ; défaut serif italique
   const sty = sans ? `font-family:Mont;font-style:normal;font-weight:800;text-transform:uppercase;letter-spacing:2px;` : "";
-  // DERRIÈRE la tête (Style Lab R4, 13/10) : le bas du mot passe sous le haut des cheveux (headtop.py) ; avant, 170 px fixe = le mot flottait au-dessus
+  // DERRIÈRE la tête (Style Lab R4) : le bas du mot passe sous le haut des cheveux (headtop.py) ; avant, 170 px fixe = le mot flottait au-dessus
   let fsz = fs;   // sans : mesuré dans sa propre police (avant : 0,62 x la taille serif, pas mesuré = débordait)
   let top = w.top, devant = false;
   if (top == null) {
     try { const ht = +execFileSync("python3", [join(SKILL, "scripts", "headtop.py"), plan.cam, String(w.start), String(w.end)], { stdio: ["ignore", "pipe", "ignore"] }).toString().trim();
-          // 21/10 (RUSH v2 : « AGI » en 330 px caché à moitié par la tête) : entre la zone morte (270 px) et le haut de la tête,
+          // (RUSH v2 : « AGI » en 330 px caché à moitié par la tête) : entre la zone morte (270 px) et le haut de la tête,
           // la place est parfois courte ; un mot court montait à 330 px et la tête mangeait le bas des lettres. Taille plafonnée pour
           // que ~70 % de la hauteur des lettres reste au-dessus des cheveux (sauf taille imposée).
           if (!w.size) fsz = Math.min(fsz, Math.max(150, Math.round((ht - 270) / 0.7)));
           top = Math.max(270, Math.round(ht - 0.7 * fsz)); console.log(`mot géant « ${w.text} » : haut de la tête ${ht}px -> top ${top}px, ${fsz}px`); }
-    // 23/10 (retour n2, « sans téléprompteur » : la caméra montre le décor, pas de tête) : avant, top 270 px en dur, mot beige
+    // (retour n2, « sans téléprompteur » : la caméra montre le décor, pas de tête) : avant, top 270 px en dur, mot beige
     // illisible sur la boîte à lumière. Sans tête, le mot va au milieu de l'écran avec une ombre forte (lisible sur tout fond).
     catch { top = 760; devant = true; console.log(`mot géant « ${w.text} » : pas de tête à l'image -> devant, top ${top}px, ${fsz}px`); }
   }
@@ -540,12 +540,12 @@ bigwords.forEach((w, i) => {
 // ---------- ouverture du hook : viseur REC + impact grave (bandes noires seulement si bars: true, l'utilisateur n'en veut pas) ----------
 if (plan.hook) {
   const hk = plan.hook, f = hk.focus ?? 750, s = hk.slit ?? 380;
-  if (hk.bars === true) {   // bandes noires : REJETÉES par l'utilisateur le 13/10, coupées par défaut
+  if (hk.bars === true) {   // bandes noires : REJETÉES par l'utilisateur, coupées par défaut
     layers += `<div class="bar" id="barT" style="top:0;height:${f - s / 2}px"></div><div class="bar" id="barB" style="top:${f + s / 2}px;bottom:0"></div>`;
     F("#barT", "{yPercent:0}", `yPercent:-100,duration:.75,ease:"expo.inOut"`, 0.12);
     F("#barB", "{yPercent:0}", `yPercent:100,duration:.75,ease:"expo.inOut"`, 0.12);
   }
-  if (hk.rec === true) {   // viseur REC : seulement si la vidéo parle de tournage (13/10 : « REC, ça n'a rien à voir »)
+  if (hk.rec === true) {   // viseur REC : seulement si la vidéo parle de tournage (« REC, ça n'a rien à voir »)
     const re = hk.recEnd ?? 1.6;
     layers += `<div id="rec"><i class="cn c1"></i><i class="cn c2"></i><i class="cn c3"></i><i class="cn c4"></i><div class="rlab"><b id="rdot"></b>REC</div><div class="rtc" id="rtc">00:00:00</div></div>`;
     V("#rec", 0, re, "{}", "{}", 0.001);
@@ -557,7 +557,7 @@ if (plan.hook) {
 }
 
 // ---------- cartons liste plein écran ----------
-// zones mortes Insta (16/10) : une page (2 colonnes) doit tenir entre 540 px et 1480 px. Taille du texte = la plus grande
+// zones mortes Insta : une page (2 colonnes) doit tenir entre 540 px et 1480 px. Taille du texte = la plus grande
 // (43 px max, le style validé) pour laquelle la plus haute colonne tient dans 925 px (15 px de marge pour la montée d'entrée),
 // mesurée avec la vraie police (retours à la ligne compris). 18 lignes longues par page débordaient sous les boutons de l'appli.
 const LIST_FIT = `import sys,json
@@ -599,7 +599,7 @@ lists.forEach((l, li) => {
     const a = l.start + pi * pd, b = a + pd;
     V(`#l${li}p${pi}`, a, b, "{}", "{}", 0.001);
     const step = Math.min(0.05, (pd * 0.45) / items.length);
-    // cascade (recette officielle waterfall-entry, greffe GitHub 14/10) : chaque ligne monte de 40 px en 0,2 s power4.out, flou -> net
+    // cascade (recette officielle waterfall-entry, greffe GitHub) : chaque ligne monte de 40 px en 0,2 s power4.out, flou -> net
     items.forEach((_, k) => ops += `tl.fromTo("#l${li}p${pi}i${k}",{opacity:0,y:40,filter:"blur(6px)"},{opacity:1,y:0,filter:"blur(0px)",duration:.2,ease:"power4.out",immediateRender:false},${(a + 0.12 + k * step).toFixed(3)});`);
   });
   layers += html + `</div>`;
@@ -607,7 +607,7 @@ lists.forEach((l, li) => {
   ops += `tl.fromTo("#l${li} .lt",{opacity:0,y:-20},{opacity:1,y:0,duration:.3,ease:"power3.out",immediateRender:false},${(l.start + 0.05).toFixed(3)});`;
 });
 
-// ---------- 30/10 (RUSH : rendu calé 3 fois à 77 %, « injecting video frames », ~40 min perdues) : le calage (+0,07 s) et
+// ---------- (RUSH : rendu calé 3 fois à 77 %, « injecting video frames », ~40 min perdues) : le calage (+0,07 s) et
 //            l'anti-flash (+0,35 s) allongent un B-roll ou un écran coupé AU-DELÀ de la durée de son fichier ; HyperFrames demande
 //            alors des images qui n'existent pas et Chrome cale. Toute vidéo trop courte pour sa place est rallongée ici
 //            (dernière image tenue, NOUVEAU nom : jamais un fichier refait sous le même nom). Gardien avant : « Vidéos assez longues ». ----------
@@ -631,7 +631,7 @@ function assezLongue(src, need) {
 
 // ---------- B-rolls plein écran (au-dessus de la cam, sous les sous-titres) : légère poussée, entrée nette ----------
 (plan.brolls || []).forEach((b, i) => {
-  // 21/10 (RUSH, Gardien final : 2 « plans éclair » de 0,03 s à 26,63 et 41,63 s) : un début de B-roll entre deux images
+  // (RUSH, Gardien final : 2 « plans éclair » de 0,03 s à 26,63 et 41,63 s) : un début de B-roll entre deux images
   // (26,633 au lieu de 26,6333) tombait au milieu de l'entrée de 0,001 s = 1 image à 33 % d'opacité (fantôme tête + B-roll).
   // Début calé sur la grille des images (juste avant) : le B-roll est entier dès sa 1re image.
   b.start = Math.max(0, +(Math.round(b.start * 30) / 30 - 0.002).toFixed(4));
@@ -639,12 +639,12 @@ function assezLongue(src, need) {
   if (!img) b.src = assezLongue(b.src, +d + 0.1);   // la vidéo couvre son cadre (data-duration = d + 0,1 s)
   layers += img
     ? `<div class="broll" id="b${i}"><div class="bw" id="b${i}m"><img class="bm" src="${esc(b.src)}"/></div></div>`
-    // 23/10 (cockpit, Gardien : « plan éclair » de 0,03 s à 17,53 et 31,73 s = 1 image NOIRE) : la vidéo s'arrêtait 1 image avant
+    // (cockpit, Gardien : « plan éclair » de 0,03 s à 17,53 et 31,73 s = 1 image NOIRE) : la vidéo s'arrêtait 1 image avant
     // son cadre (fin hors de la grille des images) et le fond noir du cadre passait. La vidéo dure 0,1 s de plus que le cadre
     // (prep garde 0,9 s de marge) : c'est toujours le cadre qui disparaît, jamais la vidéo avant lui.
     : `<div class="broll" id="b${i}"><div class="bw" id="b${i}m"><video id="b${i}v" class="clip bm" src="${esc(b.src)}" muted playsinline preload="auto" data-start="${b.start.toFixed(3)}" data-duration="${(+d + 0.1).toFixed(3)}" data-track-index="${10 + i}" data-has-audio="false"></video></div></div>`;
   V(`#b${i}`, b.start, b.end, "{}", "{}", 0.001);
-  // 28/10 (RUSH, écran coupé pré-monté) : "push": false = pas de poussée 1,12 -> 1,02 (sinon le split est rogné)
+  // (RUSH, écran coupé pré-monté) : "push": false = pas de poussée 1,12 -> 1,02 (sinon le split est rogné)
   if (b.push !== false) ops += `tl.fromTo("#b${i}m",{scale:1.12},{scale:1.02,duration:${d},ease:"power2.out",force3D:true,immediateRender:false},${b.start.toFixed(3)});`;
 });
 
@@ -661,9 +661,9 @@ function assezLongue(src, need) {
       ops += `tl.fromTo("#it${i}",{x:${(p.x + dx).toFixed(1)},y:${(p.y + dy).toFixed(1)}},{x:${(q.x + dx).toFixed(1)},y:${(q.y + dy).toFixed(1)},duration:${Math.max(q.t - p.t, 0.001).toFixed(3)},ease:"none",force3D:true,immediateRender:false},${t.toFixed(3)});`; });
     return;
   }
-  // 17/10 : top 280 -> 290 : le flottement (y +10 -> -16) montait l'image à 264 px, dans la zone morte Insta (270)
+  // top 280 -> 290 : le flottement (y +10 -> -16) montait l'image à 264 px, dans la zone morte Insta (270)
   layers += `<div class="ins" id="i${i}" style="top:${c ? 520 : 290}px"><div class="iw" id="i${i}m"><img src="${esc(n.src)}" style="max-width:${n.w || (c ? 860 : 640)}px;max-height:${c ? 900 : 380}px"/></div></div>`;
-  V(`#i${i}`, n.start, n.end, `{scale:.94,y:24,filter:"blur(10px)"}`, `{scale:1,y:0,filter:"blur(0px)",ease:"power3.out"}`, 0.45, 0.25);   // fondu + montée douce, sans rebond (charte Quiet Luxury, 13/10)
+  V(`#i${i}`, n.start, n.end, `{scale:.94,y:24,filter:"blur(10px)"}`, `{scale:1,y:0,filter:"blur(0px)",ease:"power3.out"}`, 0.45, 0.25);   // fondu + montée douce, sans rebond (charte Quiet Luxury)
   ops += `tl.fromTo("#i${i}m",{y:10},{y:-16,duration:${d},ease:"sine.inOut",force3D:true,immediateRender:false},${n.start.toFixed(3)});`;
 });
 
@@ -782,7 +782,7 @@ proofs.forEach((p, i) => {
 // ---------- CTA « commente MOT » : une vraie feuille de commentaires monte du bas, le mot se tape lettre par lettre
 //            (clavier qui s'allume), puis se publie en haut de la liste. Champ de saisie au-dessus des 20 % du bas cachés par l'appli ----------
 if (cta) {
-  // zones mortes Insta (16/10) : touches, champ et commentaires entre 270 et 1480 px, à 65 px des bords ; le fond de la feuille et
+  // zones mortes Insta : touches, champ et commentaires entre 270 et 1480 px, à 65 px des bords ; le fond de la feuille et
   // la plaque grise du clavier descendent jusqu'en bas (décor). Le contenu monte dans un cache qui s'arrête à 1480 px.
   const WD = String(cta.word || "GUIDE").toUpperCase(), T = cta.start, rowH = 130;
   const com = cta.comments || [["julie.coach", WD, "2 min"], ["marc_formation", WD, "4 min"], ["sandra.business", `${WD} stp`, "9 min"], ["thomas.entrepreneur", WD, "14 min"]];
@@ -813,11 +813,11 @@ if (cta) {
   cues.push({ kind: "sheet", at: T + 0.25 }, { kind: "type", at: t0, dur: +(WD.length * step + 0.1).toFixed(3) }, { kind: "publish", at: tP });
 }
 
-// ---------- 28/10 (RUSH v2, retour : « pour le CTA de toutes mes vidéos, mets une animation pour mieux orienter le viewer sur
+// ---------- (RUSH v2, retour : « pour le CTA de toutes mes vidéos, mets une animation pour mieux orienter le viewer sur
 //            quoi cliquer ») : CTA « clique sur les deux petits traits, ça m'intéresse ». Un anneau pulse SUR le bouton ≡ d'Instagram
 //            (colonne de droite), une flèche s'y dessine depuis « APPUIE ICI », puis le vrai menu monte et « Ça m'intéresse » s'allume.
 //            plan.ctaMenu = {start (« clique »), sheet (« ça m'intéresse »), end?, x?, y?, label?}. Position du bouton ≡ mesurée le
-//            28/10 sur une capture iPhone de son reel publié : vidéo affichée à 0,953, bouton à (954, 1724) px de la vidéo.
+// sur une capture iPhone de son reel publié : vidéo affichée à 0,953, bouton à (954, 1724) px de la vidéo.
 //            L'anneau et la flèche sortent exprès de la zone sûre (ils montrent le bouton de l'appli) : décor pour zones.mjs. ----------
 if (plan.ctaMenu) {
   const cm = plan.ctaMenu, X = cm.x ?? 954, Y = cm.y ?? 1724, S0 = cm.start, S1 = cm.sheet ?? cm.start + 1.2, E = cm.end ?? dur;
@@ -846,7 +846,7 @@ if (plan.ctaMenu) {
   // appui sur ≡ : l'anneau se serre, flèche et texte s'effacent, le menu monte
   F("#ctmr", "{scale:1}", `scale:.8,duration:.12,yoyo:true,repeat:1,ease:"power2.inOut"`, S1 - 0.28);
   F("#ctml,#ctma", "{opacity:1}", `opacity:0,duration:.2`, S1 - 0.05);
-  // 28/10 RUSH : départ à y:80 (160 puis 120 : le menu sortait 1 image à 1501 puis 1495 px, zone morte du bas)
+  // RUSH : départ à y:80 (160 puis 120 : le menu sortait 1 image à 1501 puis 1495 px, zone morte du bas)
   F("#ctms", "{y:80,opacity:0}", `y:0,opacity:1,duration:.5,ease:"expo.out"`, S1);
   F("#ctmt", "{scale:.3,opacity:0}", `scale:1.5,opacity:.55,duration:.35,ease:"power2.out"`, S1 + 0.38);
   F("#ctmt", "{opacity:.55}", `opacity:0,duration:.3`, S1 + 0.73);
@@ -862,11 +862,11 @@ if (plan.bullets) {
   b.at.forEach((t, k) => ops += `tl.fromTo("#d${k}",{opacity:.25,scale:.85,backgroundColor:"rgba(255,255,255,0)"},{opacity:1,scale:1,backgroundColor:"rgba(255,255,255,.14)",duration:.25,ease:"power3.out",immediateRender:false},${t.toFixed(3)});`);
 }
 
-// ---------- sous-titres (règles Style Lab 13/10, <dossier>/style-lab/STYLE.md) : Montserrat 700 blanc 52 px, 1-3 mots, majuscules ;
+// ---------- sous-titres (règles Style Lab <dossier>/style-lab/STYLE.md) : Montserrat 700 blanc 52 px, 1-3 mots, majuscules ;
 //            mot fort = serif italique blanc 132 px, SEUL à l'écran, groupe de 1-3 mots ; entrée fondu + petite montée ; hauteur = subzone.py (sous le col) ----------
 // un bloc ne finit jamais sur un petit mot (« du », « pour »...) : il passe au bloc suivant
 const SMALL = new Set(["du","de","des","la","le","les","un","une","et","pour","sur","à","ta","tes","ce","cette","ces","il","on","tu","je","que","qu'à","c'est","t'as","t'es","avec","parce","plus","dès"]);
-// (16/10, conf « décision ») aussi jamais en fin de bloc : pronoms devant le verbe (« plus ÇA / traîne », « VOUS / tire »), possessifs,
+// (conf « décision ») aussi jamais en fin de bloc : pronoms devant le verbe (« plus ÇA / traîne », « VOUS / tire »), possessifs,
 // prépositions, « très / trop » et adjectifs placés devant le nom (« un BON / coup ») -> CARRY
 const CARRY = new Set([...SMALL, "vous","nous","elle","elles","ils","ça","me","te","se","lui","en","y","ne","n'","mon","ma","mes","ton","son","sa","ses",
   "notre","nos","votre","vos","leur","leurs","au","aux","dans","par","chez","sans","sous","vers","entre","très","trop","si","aussi","tout","toute","tous","toutes",
@@ -874,19 +874,19 @@ const CARRY = new Set([...SMALL, "vous","nous","elle","elles","ils","ça","me","
   "premier","première","dernier","dernière","meilleur","meilleure","mauvais","mauvaise","qui","dont"]);
 const isCarry = e => CARRY.has(e) || /^n['’]/.test(e);   // « CE N'EST / PAS » : la négation ne se coupe pas
 const openEnd = j => isCarry(norm(W[j].text)) && !/[.,!?]$/.test(W[j].text);   // le bloc ne peut pas finir sur ce mot
-// mots forts = mots OU groupes de 1 à 3 mots (« badge bleu »), Style Lab R2 13/10 : chaque mot porte l'id de sa phrase (-1 = normal)
+// mots forts = mots OU groupes de 1 à 3 mots (« badge bleu »), Style Lab R2 : chaque mot porte l'id de sa phrase (-1 = normal)
 // élision ignorée pour reconnaître le mot (« l'arnaque » = arnaque), le sous-titre garde « l'arnaque »
 const normK = s => norm(s).replace(/^(?:l|d|j|t|s|c|n|m|qu)['’]/, "");
-// règle Style Lab R5 (13/10) : vidéo AVEC titre-question = AUCUN mot fort dans les sous-titres, sinon ça fait trop. Titre OU mots forts, jamais les deux.
+// règle Style Lab R5 : vidéo AVEC titre-question = AUCUN mot fort dans les sous-titres, sinon ça fait trop. Titre OU mots forts, jamais les deux.
 if (plan.title && (plan.keywords || []).length) console.log(`titre présent : ${plan.keywords.length} mots forts ignorés (règle titre OU mot fort)`);
 const KWP = (plan.title ? [] : plan.keywords || []).map(k => String(k).split(/\s+/).map(normK).filter(Boolean)).filter(p => p.length);
-// nom propre (17/10, voix off Aristote : « aristote » en minuscule) : un mot fort écrit avec une majuscule dans plan.keywords la garde
+// nom propre (voix off Aristote en minuscule) : un mot fort écrit avec une majuscule dans plan.keywords la garde
 const PROPER = new Set((plan.keywords || []).flatMap(k => String(k).split(/\s+/)).filter(s => /^\p{Lu}/u.test(s)).map(normK));
-// 17/10 : nom de marque à majuscule interne (SpaceX, YouTube, TikTok, iPhone) gardé tel qu'écrit (avant : « Spacex »)
+// nom de marque à majuscule interne (SpaceX, YouTube, TikTok, iPhone) gardé tel qu'écrit (avant : « Spacex »)
 const kwCase = t => /[a-zà-ÿ][A-Z]/.test(t) ? t : PROPER.has(normK(t)) ? t.charAt(0).toUpperCase() + t.slice(1).toLowerCase() : t.toLowerCase();
 const kwOf = W.map(() => -1);
 W.forEach((_, i) => KWP.forEach((ph, p) => { if (kwOf[i] < 0 && ph.every((s, k) => W[i + k] && kwOf[i + k] < 0 && normK(W[i + k].text) === s)) ph.forEach((_, k) => kwOf[i + k] = p * 1000 + i); }));
-// 23/10 cockpit (retour n7 « mot géant dans le sous-titrage normal ») : plan.subwords = [{text, start, end}] = CE mot, à CE moment,
+// cockpit (retour n7 « mot géant dans le sous-titrage normal ») : plan.subwords = [{text, start, end}] = CE mot, à CE moment,
 // sort en géant (serif des mots forts) dans la ligne des sous-titres. Marche aussi avec un titre (≠ keywords, ignorés s'il y a un titre).
 (plan.subwords || []).forEach((sw, p) => {
   const toks = String(sw.text).split(/\s+/).map(normK).filter(Boolean);
@@ -896,22 +896,22 @@ W.forEach((_, i) => KWP.forEach((ph, p) => { if (kwOf[i] < 0 && ph.every((s, k) 
 const kStart = i => kwOf[i] >= 0 && (i === 0 || kwOf[i - 1] !== kwOf[i]);
 const kIn = i => kwOf[i] >= 0 && i > 0 && kwOf[i - 1] === kwOf[i];
 const kEnd = i => kwOf[i] >= 0 && kwOf[i + 1] !== kwOf[i];
-// découpage (16/10) : au lieu de couper au fil de l'eau, on teste TOUTES les coupes d'une phrase et on garde la moins chère.
+// découpage : au lieu de couper au fil de l'eau, on teste TOUTES les coupes d'une phrase et on garde la moins chère.
 // Coût d'un bloc : 1 (moins de blocs) ; > 16 car. +3 (max 18, 4 mots) ; mot seul +2,5 (+0,5 si long) ; finit sur un petit mot +6,
 // sur un pronom / adjectif / « très » +3 (sauf « ET QUE », « PARCE QUE ») ; pause > 0,25 s dans le bloc +4 (+1 après un mot CARRY).
 const LINK = new Set(["et","parce","alors","pendant","tandis","ainsi","bien","dès","avant","après","sans","sauf"]);
-// 22/10 (RUSH : « SUR LES MOTS / LOURDS QUI ONT », « POIDS ET LES MOTS / LOURDS ») : un CONCEPT de la vidéo ne se coupe jamais
+// (« POIDS ET LES MOTS / LOURDS ») : un CONCEPT de la vidéo ne se coupe jamais
 // en deux sous-titres. Concept = 2 mots qui se suivent, ni petits mots ni pronoms (CARRY), et qui reviennent au moins 2 fois
 // dans la transcription (« mots lourds » x3). Couper entre les deux = +8 (plus cher qu'un bloc qui finit sur « les »).
 const cleanW = j => normK(String(W[j].text).replace(/[.,!?;:…]+$/, ""));
 const pairKey = j => W[j + 1] && !/[.,!?;:…]$/.test(W[j].text) && !isCarry(cleanW(j)) && !isCarry(cleanW(j + 1)) && cleanW(j).length > 2 && cleanW(j + 1).length > 2 ? cleanW(j) + " " + cleanW(j + 1) : "";
 const PAIRN = {}; W.forEach((_, j) => { const k = pairKey(j); if (k) PAIRN[k] = (PAIRN[k] || 0) + 1; });
 const conceptAfter = j => { const k = pairKey(j); return k && PAIRN[k] >= 2; };
-// 02/11 (RUSH : « QU'EST-CE / QUE TU AS », « QUE TOUT / LE MONDE ») : plan.subLies = expressions jamais coupées en deux sous-titres,
+// (« QUE TOUT / LE MONDE ») : plan.subLies = expressions jamais coupées en deux sous-titres,
 // plan.subLarge = caractères max d'un bloc (défaut 18) pour qu'elles tiennent.
 const SUBLARGE = plan.subLarge || 18;
 const LIE = new Set();
-// 08/11 (RUSH : « ET IL Y / A 6 ANS », juge 8,8) : « il y a » ne se coupe jamais, dans aucun reel.
+// (juge 8,8) : « il y a » ne se coupe jamais, dans aucun reel.
 [...new Set(["il y a", ...(plan.subLies || [])])].forEach(x => { const m = x.split(/\s+/).map(normK); W.forEach((_, i) => { if (m.every((t, k) => W[i + k] && cleanW(i + k) === t)) m.slice(1).forEach((_, k) => LIE.add(i + k)); }); });
 const blockCost = (a, b, last) => {
   const n = b - a + 1, L = W.slice(a, b + 1).map(w => w.text).join(" ").length;
@@ -944,7 +944,7 @@ W.forEach((w, i) => {
   if (!next || /[.,!?]$/.test(w.text) || next.t - w.e >= .7) flush();
 });
 flush();
-// mot fort TOUJOURS SEUL à l'écran (Style Lab R2-R3 13/10) : la phrase s'efface, le mot fort arrive seul quand il est dit
+// mot fort TOUJOURS SEUL à l'écran (Style Lab R2-R3) : la phrase s'efface, le mot fort arrive seul quand il est dit
 groups = groups.flatMap(gr => { const out = []; let run = []; gr.forEach(j => { if (run.length && (kwOf[j] >= 0) !== (kwOf[run[0]] >= 0)) { out.push(run); run = []; } run.push(j); }); if (run.length) out.push(run); return out; });
 // un bloc de petits mots seuls (« UN » avant « badge bleu ») se recolle au bloc normal d'avant s'il tient (même phrase, ≤ 18 caractères)
 groups = groups.reduce((acc, gr, gi, all) => {
@@ -953,7 +953,7 @@ groups = groups.reduce((acc, gr, gi, all) => {
   if (small && prev && kwOf[prev[0]] < 0 && !/[.,!?]$/.test(W[prev.at(-1)].text) && txt([...prev, ...gr]).length <= 18 && prev.length + gr.length <= SUBMAX) prev.push(...gr); else acc.push(gr);
   return acc;
 }, []);
-// 02/11 (RUSH, débit 213 mots/min, blocs de 0,14 s illisibles) : plan.subMin = durée mini d'un bloc (s), sinon il rejoint son voisin
+// (RUSH, débit 213 mots/min, blocs de 0,14 s illisibles) : plan.subMin = durée mini d'un bloc (s), sinon il rejoint son voisin
 // (4 mots max, plan.subLarge + 2 caractères max, jamais par-dessus une fin de phrase).
 if (plan.subMin) for (let g = 0; g < groups.length; g++) {
   const gr = groups[g], next = groups[g + 1], prev = groups[g - 1];
@@ -963,16 +963,16 @@ if (plan.subMin) for (let g = 0; g < groups.length; g++) {
   if (Math.min(tn, tp) > SUBLARGE + 2) continue;
   if (tn <= tp) { gr.push(...next); groups.splice(g + 1, 1); g--; } else { prev.push(...gr); groups.splice(g, 1); g -= 2; }
 }
-// règle apprise (réf 12/10) : un chiffre ou un mot géant à l'écran sort du sous-titre (« DONNE-MOI » seul, pas « DONNE-MOI 30 »)
+// règle apprise (réf) : un chiffre ou un mot géant à l'écran sort du sous-titre (« DONNE-MOI » seul, pas « DONNE-MOI 30 »)
 const squash = t => normK(t).replace(/\s/g, "");   // « l'arnaque » sort aussi du sous-titre quand ARNAQUE est à l'écran
 const BIG = [...(plan.numbers || []).map(n => [n.start, n.end, squash(n.text + (n.suffix || ""))]), ...bigwords.map(w => [w.start, w.end, squash(w.text)])];
 const onScreen = j => BIG.some(([s, e, k]) => W[j].t >= s - 0.4 && W[j].t < e && squash(W[j].text.replace(FINP, "")) === k);
-// 11/11 (l’utilisateur : « Live en jaune avec un L majuscule ») : plan.couleurs = [{mot, couleur?, ecrit?, start?, end?}] : ce mot du
+// plan.couleurs = [{mot, couleur?, ecrit?, start?, end?}] : ce mot du
 // sous-titre en couleur (même police, même taille), écrit comme « ecrit » si donné. Marche aussi avec un titre (≠ keywords).
 const COUL = (plan.couleurs || []).filter(c => c && c.mot).map(c => ({ k: normK(String(c.mot)), c: /^#[0-9A-Fa-f]{6}$/.test(c.couleur || "") ? c.couleur : "#FFD60A", e: c.ecrit, a: c.start, b: c.end }));
 const coulOf = j => COUL.find(c => c.k === normK(W[j].text.replace(FINP, "")) && (c.a == null || W[j].t >= c.a - 0.05) && (c.b == null || W[j].t <= c.b + 0.05));
 const CAPT = [];   // [début, fin] de chaque sous-titre affiché (garde-fou chevauchement plus bas)
-// 11/11 (l’utilisateur : « il faut que le sous-titrage commence dès la première frame de la vidéo ») : le 1er sous-titre affiché
+// le 1er sous-titre affiché
 // démarre à 0 s, net dès l'image 0 (pas de fondu ni de montée), même si le 1er mot arrive un peu après.
 let CAP0 = false;
 groups.forEach((grp, gi) => {
@@ -999,7 +999,7 @@ groups.forEach((grp, gi) => {
     const zone = ZS.find(z => p0 >= z.start - 0.02 && p0 < z.end), id = `c${gi}${k ? "_" + k : ""}`;
     const y0 = zone ? zone.y : SUBY, y = subY(y0, emTxt, emTxt ? grp.filter(j => kwOf[j] < 0).map(j => FINS(W[j].text, W[j + 1]?.text)).map(t => TY && TY.sub.caps === false ? t : t.toUpperCase()).join(" ") : "");
     if (y !== y0) console.log(`sous-titre ${gi} « ${emTxt || W[grp[0]].text} » : y ${y0} -> ${y} (zones mortes)`);
-    // 30/10 : zone.color = couleur des sous-titres sur cette plage (fond clair d'un écran coupé), sans ombre
+    // zone.color = couleur des sous-titres sur cette plage (fond clair d'un écran coupé), sans ombre
     const zc = zone && zone.color ? `;color:${zone.color};text-shadow:none` : "";
     layers += `<div class="cap${zone && zone.light ? " onlight" : ""}" id="${id}"${zone || y !== y0 ? ` style="top:${y}px${zc}"` : ""}>${html}</div>`;
     CAPT.push([p0, p1]);
@@ -1009,14 +1009,14 @@ groups.forEach((grp, gi) => {
   });
 });
 
-// ---------- titre-question en haut pendant le hook (Style Lab R4, 13/10) : 2 lignes (petites MAJUSCULES + serif italique) sur un voile sombre,
+// ---------- titre-question en haut pendant le hook (Style Lab R4) : 2 lignes (petites MAJUSCULES + serif italique) sur un voile sombre,
 //            fondu + petite montée. plan.title = {l1: "Le badge bleu Meta", l2: "une arnaque ?", start: 0, end: 4, top: 280} ----------
-// 21/10 (RUSH v1 : « dans le titre, ne mets jamais de virgule ou de points, et deux petits points aussi ») :
+// (RUSH v1 : « dans le titre, ne mets jamais de virgule ou de points, et deux petits points aussi ») :
 // virgules, points, points de suspension, deux-points et points-virgules retirés du titre (le « ? » d'un titre-question reste).
-// 11/11 (l’utilisateur, « FABLE 5.2 » devenu « FABLE 52 ») : un point ou une virgule ENTRE deux chiffres reste (version, décimale).
-// 11/11 (bug « FABLE 52 ») : le point/la virgule ENTRE 2 chiffres (5.2, 3,5) est mis à l'abri AVANT le nettoyage, puis remis tel quel
+// (l’utilisateur, « FABLE 5.2 » devenu « FABLE 52 ») : un point ou une virgule ENTRE deux chiffres reste (version, décimale).
+// (bug « FABLE 52 ») : le point/la virgule ENTRE 2 chiffres (5.2, 3,5) est mis à l'abri AVANT le nettoyage, puis remis tel quel
 const TP = t => String(t || "").replace(/(\d)\.(?=\d)/g, "$1\u0001").replace(/(\d),(?=\d)/g, "$1\u0002").replace(/\s*[,.;:…]+/g, "").replace(/\u0001/g, ".").replace(/\u0002/g, ",").replace(/\s{2,}/g, " ").trim();
-// 23/10 (l’utilisateur : « jamais trois lignes ») : chaque ligne du titre reste sur UNE ligne, sa taille baisse jusqu'à tenir dans 940 px
+// chaque ligne du titre reste sur UNE ligne, sa taille baisse jusqu'à tenir dans 940 px
 // (x 70-1010, zone interdite des côtés = 65 px). Mesure Pillow avec la graisse et la largeur (axes variables) de la police.
 const MESURE = "import sys\nfrom PIL import ImageFont\nf=ImageFont.truetype(sys.argv[1],1000)\ntry:\n v=[]\n for a in f.get_variation_axes():\n  n=a['name'];n=n.decode() if isinstance(n,bytes) else n\n  x=float(sys.argv[3]) if n=='Weight' else float(sys.argv[4]) if n=='Width' else a['default']\n  v.append(max(a['minimum'],min(a['maximum'],x)))\n f.set_variation_by_axes(v)\nexcept Exception: pass\nprint(f.getlength(sys.argv[2]))";
 const fitLigne = (text, file, base, { weight = 400, stretch = 100, track = 0, caps = false } = {}, maxW = 940) => {
@@ -1024,13 +1024,13 @@ const fitLigne = (text, file, base, { weight = 400, stretch = 100, track = 0, ca
   try { const L = +execFileSync("python3", ["-c", MESURE, join("fonts", file), t, String(weight), String(stretch)]).toString() / 1000;
         return Math.min(base, Math.floor((maxW - track * t.length) / (L * 1.03))); } catch { return base; }
 };
-// taille du titre fixée au setup (26/10) : DA.titleSize = [ligne 1, ligne 2]
-// 31/10 : plan.typo sans taille = taille par défaut (avant : « NaNpx » et plantage d'express.py)
+// taille du titre fixée au setup : DA.titleSize = [ligne 1, ligne 2]
+// plan.typo sans taille = taille par défaut (avant : « NaNpx » et plantage d'express.py)
 const T1D = { font: DA.fonts.sub, weight: 700, size: DA.titleSize?.[0] || Math.round(SUBSIZE * 46 / 52), caps: true, track: plan.subTrack ?? DA.subTrack ?? 1 };
 const T2D = { font: DA.fonts.serif, weight: 400, size: DA.titleSize?.[1] || 104, track: 0 };
 const T1S = TY ? { ...TY.t1, size: TY.t1.size || T1D.size } : T1D;
 const T2S = TY ? { ...TY.t2, size: TY.t2.size || T2D.size } : T2D;
-// 11/11 (studio Super, « mets le titre du début en plus gros » : Claude écrivait title.size, que personne ne lisait = retouche
+// (studio Super, « mets le titre du début en plus gros » : Claude écrivait title.size, que personne ne lisait = retouche
 // « faite » sans rien changer) : plan.title.size = taille voulue en px (un nombre = les 2 lignes, [l1, l2] sinon), au-dessus de la DA.
 // Le titre reste rétréci tout seul s'il ne tient plus sur 2 lignes (fitLigne), jamais dans la zone morte.
 { const z = [].concat(plan.title?.size ?? []).map(Number).filter(n => Number.isFinite(n) && n >= 20 && n <= 300);   // « 72px », [] : ignorés
@@ -1038,21 +1038,20 @@ const T2S = TY ? { ...TY.t2, size: TY.t2.size || T2D.size } : T2D;
 let FS1 = T1S.size, FS2 = T2S.size;
 if (plan.title) {
   const T = plan.title;
-  // 28/10 (RUSH clip 5, « Focus : une seule plateforme » en encadré noir) : l'encadré ajoute 2 x 48 px de marge,
+  // (RUSH clip 5, « Focus : une seule plateforme » en encadré noir) : l'encadré ajoute 2 x 48 px de marge,
   // le titre le plus long sortait dans la zone morte de droite -> on mesure dans 940 - 96 px quand il y a un encadré.
   const TW = T.box ? 940 - 96 : 940;
-  // 11/11 (l’utilisateur : « si possible en une ligne, on privilégie une ligne ; sinon deux lignes maximum, jamais plus ») :
+
   // les 2 lignes recollées tiennent dans la largeur SANS rétrécir -> titre sur 1 ligne (style de la ligne 1).
   // Sinon 2 lignes, chacune sur une seule ligne (fitLigne rétrécit), jamais 3.
   if (T.l2 && !T.deuxLignes) { const one = `${TP(T.l1)} ${TP(T.l2)}`;
     if (fitLigne(one, T1S.font, T1S.size, T1S, TW) >= T1S.size) { console.log(`titre sur 1 ligne : « ${one} »`); T.l1 = one; T.l2 = ""; } }
   FS1 = fitLigne(TP(T.l1), T1S.font, T1S.size, T1S, TW); FS2 = fitLigne(TP(T.l2), T2S.font, T2S.size, T2S, TW);
-  // 05/11 (RUSH : ligne 1 rétrécie seule = 2 tailles, contre la règle « titre 1 taille » du 03/11) : une ligne trop longue
+  // (RUSH : ligne 1 rétrécie seule = 2 tailles, contre la règle « titre 1 taille ») : une ligne trop longue
   // fait rétrécir les DEUX lignes à la même taille.
   if (T1S.size === T2S.size) FS1 = FS2 = Math.min(FS1, FS2);
   if (FS1 < T1S.size || FS2 < T2S.size) console.log(`titre rétréci pour tenir sur 2 lignes : ${T1S.size} -> ${FS1} px, ${T2S.size} -> ${FS2} px`);
-  // 11/11 (l’utilisateur : « le titre, toujours au-dessus de la tête, sans toucher les cheveux, mais jamais dans la zone interdite ;
-  // s'il touche les cheveux, le remonter un peu ») : haut des cheveux mesuré pendant le titre (headtop.py, tête la plus haute).
+  // le titre reste au-dessus de la tête, sans toucher les cheveux ni entrer dans la zone interdite (remonté si besoin) : haut des cheveux mesuré pendant le titre (headtop.py, tête la plus haute).
   // Bas du texte + 24 px de marge au-dessus des cheveux ; on ne fait que REMONTER, jamais plus haut que la zone morte (texte >= 270 px).
   if (!T.topFixe) {
     try {
@@ -1067,22 +1066,22 @@ if (plan.title) {
       }
     } catch { /* pas de visage sur la plage : titre laissé à sa place */ }
   }
-  const tz = (plan.subYAt || []).find(z => (T.start ?? 0) >= z.start - 0.02 && (T.start ?? 0) < z.end);   // fond clair = pas de voile (14/10)
-  // 28/10 (RUSH, écran de projection blanc derrière : « blanc sur blanc ») : T.light = ombre forte, prime sur la DA
-  // 29/10 (RUSH : « mets le titre en noir dans un fond blanc ») : T.box = "#FFFFFF" -> encadré de cette couleur, sans ombre
+  const tz = (plan.subYAt || []).find(z => (T.start ?? 0) >= z.start - 0.02 && (T.start ?? 0) < z.end);   // fond clair = pas de voile
+  // (RUSH, écran de projection blanc derrière : « blanc sur blanc ») : T.light = ombre forte, prime sur la DA
+  // T.box = "#FFFFFF" -> encadré de cette couleur, sans ombre
   // sur le texte (couleur du texte = typo.t1 / t2 color)
   const BOXC = typeof T.box === "string" && T.box.startsWith("#") ? T.box : null;
   const TSH = BOXC ? ";text-shadow:none" : T.light ? ";text-shadow:0 0 3px rgba(0,0,0,.95),0 2px 8px rgba(0,0,0,.85),0 0 34px rgba(0,0,0,.7),0 0 70px rgba(0,0,0,.45)" : "";
   layers += `<div class="htitle${(tz && tz.light) || T.light ? " onlight" : ""}" id="htitle" style="top:${T.top ?? 250}px${TSH}">${T.box ? `<div style="display:inline-block;background:${BOXC || `rgba(0,0,0,${T.box === true ? .8 : T.box})`};border-radius:24px;padding:20px 48px 26px">` : ""}<div class="ht1">${esc(TP(T.l1))}</div>${T.l2 ? `<div class="ht2">${esc(TP(T.l2))}</div>` : ""}${T.box ? "</div>" : ""}</div>`;
-  // 28/10 (RUSH : « mets un encadré noir dans le fond ») : T.box = encadré noir arrondi autour du titre (true = 80 %, ou l'opacité)
-  // 28/10 (l’utilisateur : « pourquoi sur la toute première frame il n'y a pas de texte ? ») : un titre qui ouvre le reel est net dès
+  // T.box = encadré noir arrondi autour du titre (true = 80 %, ou l'opacité)
+  // un titre qui ouvre le reel est net dès
   // l'image 0 (1re image = ce que le pouce voit), sans fondu d'entrée ; plus tard dans le reel, il garde son petit fondu.
   const T0 = (T.start ?? 0) < 0.05;
   V("#htitle", T0 ? 0 : T.start, Math.min(T.end ?? 4, dur), T0 ? `{}` : `{y:10}`, T0 ? `{}` : `{y:0,ease:"power2.out"}`, T0 ? 0 : 0.25);
 
 }
 
-// garde-fou (13/10, Meta Verified v3) : un objet suivi (badge sur la paume...) qui passe dans la bande des sous-titres pendant
+// garde-fou (Meta Verified v3) : un objet suivi (badge sur la paume...) qui passe dans la bande des sous-titres pendant
 // qu'un sous-titre est affiché = les deux se cachent. On ne bouge rien tout seul : on prévient pour corriger l'offset ou le moment.
 (plan.inserts || []).forEach((n, i) => {
   if (!n.track) return;
@@ -1092,7 +1091,7 @@ if (plan.title) {
   if (hits.length) console.log(`ATTENTION chevauchement : incrustation ${i} (${n.src}) passe sur les sous-titres de ${hits[0].t.toFixed(2)} à ${hits.at(-1).t.toFixed(2)} s -> monter l'offset, la réduire ou décaler le moment`);
 });
 
-// ---------- STYLE MINIMALISTE (degré « face caméra minimaliste », réf Creator College, 16/10) : beaucoup d'air, zéro transition.
+// ---------- STYLE MINIMALISTE (degré « face caméra minimaliste », réf Creator College) : beaucoup d'air, zéro transition.
 //            card = carton typo plein écran, le texte se construit mot par mot, calé sur la voix (MAJUSCULES + serif italique) ;
 //            icon = icône au trait fin au-dessus de la tête (barrée d'une croix sur « non ») ;
 //            shot = capture en carte arrondie qui flotte, un cercle se dessine à la main autour de LA chose dite.
@@ -1126,7 +1125,7 @@ const fitPx = (text, file, base, maxW, upper) => {   // taille qui tient dans ma
   try { const em = +execFileSync("python3", ["-c", "import sys;from PIL import ImageFont;print(ImageFont.truetype(sys.argv[1],1000).getlength(sys.argv[2])/1000)", join("fonts", file), upper ? String(text).toUpperCase() : String(text)]).toString();
         return Math.round(Math.min(base, maxW / (em * 1.04))); } catch { return base; }
 };
-// ---------- 23/10 cockpit étape 3 « Motion design » : 2 variantes VALIDÉES par l’utilisateur (maquettes motion-r2 F + L, 23/10 ; leçon Jun Yuh :
+// ---------- cockpit étape 3 « Motion design » : 2 variantes VALIDÉES par l’utilisateur (maquettes motion-r2 F + L ; leçon Jun Yuh :
 //            rien de « mignon », pas de rebond, tout arrive en coupe franche ; jamais d'IA). Les anciens coeur / entoure / souligne
 //            (« dégueulasses ») restent lus pour les vieux plans mais ne sont plus proposés.
 //   chiffres : 1, 2, 3 géants DERRIÈRE la tête (matte.py → fg), contour fin, le chiffre en cours plein, son mot au-dessus (couleur serif).
@@ -1159,7 +1158,7 @@ const fitPx = (text, file, base, maxW, upper) => {   // taille qui tient dans ma
     layers += `<div class="mxt" id="${id}" style="${gauche ? "left:65px" : "right:65px"}">${svg}</div>`
             + `<div class="mxl" id="${id}w" style="${gauche ? "left:90px" : "right:130px;text-align:right"}">${esc(String(m.mot || "").toUpperCase())}</div>`;
     V(`#${id}`, S, E, "{}", "{}", 0.001); V(`#${id}w`, S, E, "{}", "{}", 0.001);
-  } else if (m.kind === "coeur") {   // ancien (23/10 matin), plus proposé
+  } else if (m.kind === "coeur") {   // ancien, plus proposé
     camLayers += `<div class="mxh" id="${id}"><svg viewBox="0 0 48 48" width="190" height="190"><path d="M24 42S5.5 31 5.5 17.8A10 10 0 0 1 24 12.6a10 10 0 0 1 18.5 5.2C42.5 31 24 42 24 42z" fill="#FF3B5C"/></svg></div>`;
     V(`#${id}`, S, E, "{}", "{}", 0.01, 0.2);
   }
@@ -1171,8 +1170,8 @@ const fitPx = (text, file, base, maxW, upper) => {   // taille qui tient dans ma
     // fond : "grad" = dégradé doux aux couleurs du rush (C.grad), "flat" = uni sombre, ou une couleur "#hex"
     // 4 coins comme la réf (sombre en haut à gauche, couleur vive en haut à droite, clair en bas) ; défaut = studio nuit + LED bleue
     const G = C.grad || ["#060a1c", "#2f74ff", "#132b66", "#9fbcf0", "#11235a"];
-    // "blur" (19/10) = SA vidéo floutée et assombrie derrière le carton (on reste dans sa pièce)
-    // 23/10 (l’utilisateur : « les cartes en plein écran, fais toujours des dégradés, jamais une couleur unie, c'est dégueulasse ») :
+    // "blur" = SA vidéo floutée et assombrie derrière le carton (on reste dans sa pièce)
+
     // une couleur "#hex" ou "flat" devient un dégradé de cette couleur (coin éclairé en haut à droite, coin sombre en bas à gauche).
     const DEG = h => { const x = parseInt(h.slice(1).padEnd(6, "0").slice(0, 6), 16), r = x >> 16, g = (x >> 8) & 255, b2 = x & 255;
       const mix = (k, t) => `rgb(${Math.round(r + (t - r) * k)},${Math.round(g + (t - g) * k)},${Math.round(b2 + (t - b2) * k)})`;
@@ -1181,13 +1180,13 @@ const fitPx = (text, file, base, maxW, upper) => {   // taille qui tient dans ma
       m.bg && /gradient\(/.test(m.bg) ? m.bg : m.bg && m.bg.startsWith("#") ? DEG(m.bg) : m.bg === "flat" && /^#[0-9a-f]{6}$/i.test(C.list[2]) ? DEG(C.list[2]) :
       `radial-gradient(85% 60% at 0% 0%,${G[0]} 0%,transparent 72%),radial-gradient(80% 60% at 100% 8%,${G[1]} 0%,transparent 72%),radial-gradient(90% 65% at 0% 100%,${G[2]} 0%,transparent 75%),radial-gradient(85% 60% at 100% 100%,${G[3]} 0%,transparent 72%),${G[4] || G[2]}`;
     const lines = m.lines || [];
-    // 21/10 (RUSH v2 : « de masse » affiché AVANT « chômage ») : chaque ligne cherchait ses mots depuis le DÉBUT du carton ;
+    // (RUSH v2 : « de masse » affiché AVANT « chômage ») : chaque ligne cherchait ses mots depuis le DÉBUT du carton ;
     // une ligne sans « at » après des lignes à « at » trouvait un mot plus tôt. Une ligne cherche maintenant après la ligne d'avant.
     let row = 0, cur = W.findIndex(w => w.t >= S - 0.05), prevT = S;
     const html = lines.map((ln, j) => {
       if (!(j && ln.swap)) row++;
       const serif = ln.font === "serif", toks = String(ln.text).split(/\s+/).filter(Boolean);
-      // 21/10 (RUSH v1 à 57 s : « fais attention que le texte ne va pas dans la zone interdite des reels ») : une ligne de
+      // (RUSH v1 à 57 s : « fais attention que le texte ne va pas dans la zone interdite des reels ») : une ligne de
       // carton tient dans 840 px centrés (120-960 px, comme les sous-titres : boutons Insta à droite), même avec une taille imposée.
       const fs = fitPx(ln.text, serif ? DA.fonts.serif : DA.fonts.sans, ln.size || (serif ? 150 : 104), 840, !serif);
       if (ln.at != null) { const c2 = W.findIndex(w => w.t >= ln.at - 0.05); if (c2 >= 0) cur = Math.max(cur, c2); }
@@ -1341,15 +1340,15 @@ const html = `<!doctype html><html><head><meta charset="utf-8"/>
   .mo-wok{background:${ACC};color:#0B0B0D}
   .mo-fgw{position:absolute;inset:0;z-index:3;transform-origin:50% 100%;filter:drop-shadow(0 16px 20px rgba(0,0,0,.45))}
   .cap em + em{margin-left:.16em}
-  /* fond clair (green screen devant une page / une image blanche, 14/10) : ombre serrée + diffuse au lieu d'une bande grise */
+  /* fond clair (green screen devant une page / une image blanche) : ombre serrée + diffuse au lieu d'une bande grise */
   .cap.onlight,.cap.onlight em{text-shadow:0 0 2px rgba(0,0,0,.9),0 2px 5px rgba(0,0,0,.8),0 6px 26px rgba(0,0,0,.55)}
-  /* 28/10 (RUSH : « pour le titre, enlève la bande noire ») : plus jamais de bande derrière le titre, même sans plan.typo ; ombre douce seule */
+  /* plus jamais de bande derrière le titre, même sans plan.typo ; ombre douce seule */
   .htitle{position:absolute;left:0;right:0;z-index:11;opacity:0;text-align:center;color:#fff;
           text-shadow:0 4px 26px rgba(0,0,0,.55),0 1px 3px rgba(0,0,0,.35);padding:30px 60px 38px;background:none}
   .htitle.onlight{background:none;text-shadow:0 0 2px rgba(0,0,0,.9),0 2px 5px rgba(0,0,0,.8),0 6px 26px rgba(0,0,0,.55)}
   .ht1{font-family:"Sub";font-weight:700;font-size:${FS1}px;letter-spacing:${plan.subTrack ?? DA.subTrack ?? 1}px;text-transform:uppercase;white-space:nowrap}
   .ht2{font-family:"SMSerif";font-style:italic;${C.serif ? `color:${C.serif};` : ""}font-size:${FS2}px;line-height:1.05;white-space:nowrap}
-  ${TY ? (() => {   // 23/10 personnalisation : jamais de bande derrière le titre (rejetée), ombre seule ; chaque ligne = sa police, sa couleur
+  ${TY ? (() => {   // personnalisation : jamais de bande derrière le titre (rejetée), ombre seule ; chaque ligne = sa police, sa couleur
     const L = (c, s, fs, lh) => `.${c}{font-family:"${c === "ht1" ? "T1" : "T2"}";font-weight:${s.weight || 400};font-size:${fs}px;line-height:${lh};font-style:${s.italic ? "italic" : "normal"};font-stretch:${s.stretch || 100}%;letter-spacing:${s.track || 0}px;text-transform:${s.caps ? "uppercase" : "none"};color:${s.color || "#fff"}}`;
     const sh = TY.shadow === "forte" ? "0 0 3px rgba(0,0,0,.9),0 3px 8px rgba(0,0,0,.75),0 8px 30px rgba(0,0,0,.6)" : "0 4px 26px rgba(0,0,0,.55),0 1px 3px rgba(0,0,0,.35)";
     return `.htitle,.htitle.onlight{background:none;text-shadow:${sh};padding:30px 70px 38px${TY.align === "left" ? ";text-align:left" : ""}}
@@ -1441,7 +1440,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"/>
   .tile{flex:1;border-radius:30px;padding:26px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);opacity:0}
   .tlb{font-size:26px;color:rgba(255,255,255,.55);font-weight:500}
   .tv{font-size:54px;font-weight:600;margin-top:8px;font-variant-numeric:tabular-nums;white-space:nowrap}
-  /* --- CTA menu ≡ « Ça m'intéresse » (28/10) --- */
+  /* --- CTA menu ≡ « Ça m'intéresse » --- */
   .ctm{position:absolute;inset:0;z-index:31;opacity:0;pointer-events:none}
   .ctm-veil{position:absolute;inset:0}
   .ctm-ring,.ctm-rip{position:absolute;width:140px;height:140px;border-radius:50%;box-sizing:border-box}
@@ -1529,7 +1528,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8"/>
       fin = Math.min(fin, Math.max(b - a, .001));
       out = Math.min(out || 0, Math.max((b - a - fin) / 2, 0));
       var X = {immediateRender:false, ease:"none"};
-      if (a < .001 && fin <= .002) {   // 17/10 (Tesla : « la 1re image doit être le split screen ») : plan à entrée sèche qui
+      if (a < .001 && fin <= .002) {   // (Tesla : « la 1re image doit être le split screen ») : plan à entrée sèche qui
         tl.fromTo(s, {opacity:1}, Object.assign({opacity:1, duration:Math.max(b - out, .001)}, X, {immediateRender:true}), 0);   // commence à 0 s = visible dès l'image 0
       } else {
       tl.fromTo(s, {opacity:0}, Object.assign({opacity:0, duration:Math.max(a, .001)}, X), 0);
@@ -1545,8 +1544,8 @@ const html = `<!doctype html><html><head><meta charset="utf-8"/>
   </script>
 </body></html>`;
 writeFileSync(out, html);
-// 23/10 (cockpit, retour n4 : 9 moments forts au lieu de 3) : deux effets à moins de 1,5 s (mot géant 19,04 s puis carton 20,48 s)
-// = deux bruitages collés, le Gardien bloquait le rendu (règle OPUS 13/10). Le moteur garde le 1er son et retire le suivant
+// (cockpit, retour n4 : 9 moments forts au lieu de 3) : deux effets à moins de 1,5 s (mot géant 19,04 s puis carton 20,48 s)
+// = deux bruitages collés, le Gardien bloquait le rendu (règle OPUS). Le moteur garde le 1er son et retire le suivant
 // (l'effet visuel, lui, reste) : la règle est tenue à la source, plus besoin d'écarter les moments à la main.
 const cuesOK = [];
 cues.sort((a, b) => a.at - b.at).forEach(c => {
@@ -1555,7 +1554,7 @@ cues.sort((a, b) => a.at - b.at).forEach(c => {
   else cuesOK.push(c);
 });
 writeFileSync(join(dirname(out), "cues.json"), JSON.stringify(cuesOK, null, 1));
-// 21/10 : les VRAIES positions (après calage sur les coupes et anti-flash) pour le Gardien avant rendu (gardien.py --avant)
+// les VRAIES positions (après calage sur les coupes et anti-flash) pour le Gardien avant rendu (gardien.py --avant)
 writeFileSync(join(dirname(out), "timeline.json"), JSON.stringify({ duration: dur, brolls: plan.brolls || [], inserts: plan.inserts || [],
   lists, proofs, mini: plan.mini || [] }, null, 1));
 console.log(`${W.length} mots · ${groups.length} sous-titres · ${cuts.length} plans · ${(plan.numbers || []).length} chiffres · ${bigwords.length} mots géants · ${lists.length} listes · ${proofs.length} preuves${cta ? " · CTA " + cta.word : ""}${plan.hook ? " · hook" : ""} -> ${out}`);

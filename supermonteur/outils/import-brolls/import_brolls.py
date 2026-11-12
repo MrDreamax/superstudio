@@ -42,7 +42,7 @@ V = {v["id"]: v for v in json.load(open("videos_courtes.json"))}
 L = {l["id"]: l for l in json.load(open("moments_ids.json"))} if os.path.exists("moments_ids.json") else {}
 dup = json.load(open("doublons_biblio.json"))
 
-# Séance photo 21-22/10/2025 : la biblio a déjà 167 photos de cette séance -> on écarte les scènes à moins de 60 s d'une photo déjà en biblio
+# Séance photo 21- : la biblio a déjà 167 photos de cette séance -> on écarte les scènes à moins de 60 s d'une photo déjà en biblio
 lib_ts = []
 for r in csv.DictReader(open(f"{B}/_Catalogue/_INDEX.csv", encoding="utf-8")):
     if r["date_tournage"] in ("2025-10-21", "2025-10-22") and r["dossier"].startswith("PHOTOS"):

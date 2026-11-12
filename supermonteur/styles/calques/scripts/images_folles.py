@@ -1,9 +1,8 @@
-"""Repère les images isolées incohérentes d'une sortie Beeble (10/11/2026, l’utilisateur : « des images qui traînent et font
-incohérent, il faut tracker ces images isolées et les retirer ») : une image (ou 2-3 d'affilée) qui ne ressemble ni à
+"""Repère les images isolées incohérentes d'une sortie Beeble une image (ou 2-3 d'affilée) qui ne ressemble ni à
 la précédente ni à la suivante alors que ces deux-là se ressemblent, dans un même plan (jamais sur une coupe).
 Docteur : aussi une blouse qui disparaît (part de blanc sur le torse qui s'effondre par rapport au plan).
-  python3 images_folles.py video.mp4 plans.json            -> liste + images de contrôle dans controle/folles/
-  python3 images_folles.py video.mp4 plans.json --repare sortie.mp4  -> chaque image folle remplacée par sa voisine propre (son intact)
+  python3 images_folles.py video.mp4 plans.json -> liste + images de contrôle dans controle/folles/
+  python3 images_folles.py video.mp4 plans.json --repare sortie.mp4 -> chaque image folle remplacée par sa voisine propre (son intact)
 """
 import json, os, subprocess, sys
 import numpy as np
@@ -35,12 +34,12 @@ for k in range(len(plans)):
             if j > b + 1: break
             if d(i, i - 1) > 4 * base and d(j - 1, j) > 4 * base and d(i - 1, j) < 2 * base:
                 folles.update(range(i, j)); break
-    # 10/11 : Beeble rate souvent la 1re (ou les 2-3 premières / dernières) image d'un plan : elle saute par rapport à la suite
+    # Beeble rate souvent la 1re (ou les 2-3 premières / dernières) image d'un plan : elle saute par rapport à la suite
     for bout in (list(idx[:6]), list(idx[::-1][:6])):
         for L in (1, 2, 3):
             if d(bout[L - 1], bout[L]) > 4 * base and d(bout[L], bout[L + 1]) < 2.5 * base:
                 folles.update(int(x) for x in bout[:L]); break
-    # 10/11 : couleur du torse très différente du reste du plan (blouse blanche -> pull gris : saut trop faible pour le test au-dessus)
+    # couleur du torse très différente du reste du plan (blouse blanche -> pull gris : saut trop faible pour le test au-dessus)
     C = T[idx].mean((1, 2)); med_c = np.median(C, 0); dist = np.sqrt(((C - med_c) ** 2).sum(1))
     seuil = max(22.0, 5 * np.median(dist))
     for n, i in enumerate(idx):                      # seulement les bords du plan (là où Beeble se trompe) : une main devant le torse au milieu = normal
@@ -64,7 +63,7 @@ if '--repare' in sys.argv:
             if i - k >= 0 and i - k not in fs and plan_i[i - k] == plan_i[i]: return i - k
             if i + k < N and i + k not in fs and plan_i[i + k] == plan_i[i]: return i + k
         return i
-    # 10/11 : fenêtre glissante simple (la 1re version perdait 58 images sur 2191 -> son décalé)
+    # fenêtre glissante simple (la 1re version perdait 58 images sur 2191 -> son décalé)
     dec = subprocess.Popen(['ffmpeg', '-v', 'error', '-i', src, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], stdout=subprocess.PIPE)
     enc = subprocess.Popen(['ffmpeg', '-v', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{W}x{H}', '-r', str(FPS), '-i', '-',
                             '-i', src, '-map', '0:v', '-map', '1:a', '-c:v', 'libx264', '-crf', '14', '-pix_fmt', 'yuv420p', '-c:a', 'copy', out],

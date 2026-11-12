@@ -4,7 +4,7 @@ import { createRequire } from "node:module";
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { homedir } from "node:os";
-const NPX = join(homedir(), ".npm", "_npx"), CH = [join(homedir(), ".cache", "hyperframes", "chrome", "chrome-headless-shell"), join(homedir(), ".cache", "puppeteer", "chrome-headless-shell")];   // 0.8 range Chrome dans ~/.cache/hyperframes, 0.6 dans ~/.cache/puppeteer (25/10)
+const NPX = join(homedir(), ".npm", "_npx"), CH = [join(homedir(), ".cache", "hyperframes", "chrome", "chrome-headless-shell"), join(homedir(), ".cache", "puppeteer", "chrome-headless-shell")];   // 0.8 range Chrome dans ~/.cache/hyperframes, 0.6 dans ~/.cache/puppeteer
 const mod = existsSync(NPX) && readdirSync(NPX).map(d => join(NPX, d, "node_modules")).find(d => existsSync(join(d, "puppeteer-core")));
 if (!mod) { console.log("puppeteer-core introuvable : lancer une fois « npx --yes hyperframes@0.8.149 browser ensure »"); process.exit(1); }
 const puppeteer = createRequire(mod + "/")("puppeteer-core");

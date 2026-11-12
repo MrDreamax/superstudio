@@ -1,7 +1,7 @@
 """Voix propre : une voix prise dans une salle (conférence, micro de scène capté par la caméra, pièce vide) remise au son de la
-voix STUDIO de la personne. 16/10 sur la conf « décide vite » : « améliore la qualité sonore », puis « améliore encore ».
+voix STUDIO de la personne. sur la conf « décide vite » : « améliore la qualité sonore », puis « améliore encore ».
   python3 voix_propre.py clip.mp4 voix/clean.wav [words.json] [--ref voix_studio.wav] [--fort]
-PAR DÉFAUT = DOUX (16/10, v4 : « ma voix est un peu bizarre et déformée, reviens à l'original et monte légèrement, +10 dB c'est
+PAR DÉFAUT = DOUX (v4 : « ma voix est un peu bizarre et déformée, reviens à l'original et monte légèrement, +10 dB c'est
 trop, peut-être +3 ou +4 dB ») : la voix ORIGINALE (pas de Demucs, pas d'expandeur, pas d'exciteur), seulement l'EQ vers la voix
 studio, à 35 % et bornée à ±3,5 dB. --fort = l'ancienne chaîne complète ci-dessous (à réserver à une salle vraiment mauvaise).
   puis : python3 mix.py plan.json renders/<x>.mp4 voix/clean.wav final.mp4
@@ -12,7 +12,7 @@ studio, à 35 % et bornée à ±3,5 dB. --fort = l'ancienne chaîne complète ci
      -10 à -25 dB d'aigus en moins (son étouffé) ; écart moyen 10,1 dB -> 2,8 dB.
   3. Aigus quasi absents (> 6 kHz) : exciteur (harmoniques recréées depuis 5 kHz), seulement s'il manque plus de 10 dB à 8 kHz.
   4. Écho entre les mots baissé (expandeur doux, -13 dB max, jamais coupé net), dé-esseur, compression légère.
-WPE (déréverbération classique, nara_wpe) testé le 16/10 : gain nul sur cette salle (-14,6 -> -14,9 dB de queue d'écho), pas gardé.
+WPE (déréverbération classique, nara_wpe) testé : gain nul sur cette salle (-14,6 -> -14,9 dB de queue d'écho), pas gardé.
 """
 import json, os, subprocess, sys, tempfile
 import numpy as np

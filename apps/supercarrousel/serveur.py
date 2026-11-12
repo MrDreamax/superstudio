@@ -24,7 +24,6 @@ import sc
 
 sys.path.insert(0, os.path.dirname(m.ICI))
 import ouvrier_claude
-import publier
 import reglages_apps
 
 ICI = m.ICI
@@ -68,7 +67,7 @@ def _telecharger_lien(lien, dest):
 
 
 def _images_carrousel(lien, dest):
-    """29/10 : yt-dlp ne prend que les vidéos (« No video formats found » sur un carrousel photo). On lit les slides
+    """yt-dlp ne prend que les vidéos (« No video formats found » sur un carrousel photo). On lit les slides
     avec la session Instagram déjà ouverte dans Chrome (module insta de SuperVeille, lecture seule). Renvoie le nombre."""
     code = re.search(r"instagram\.com/(?:[^/?#]+/)?(?:p|reel|reels|tv)/([A-Za-z0-9_-]+)", lien)
     if not code:
@@ -111,7 +110,7 @@ def preparer(pid):
                     m.maj_etat(pid, message="J'écoute ton reel…")
                     sys.path.insert(0, os.path.expanduser("~/.claude/skills/supermonteur/scripts"))
                     from mots import transcrire
-                    words, _ = transcrire(video, langue="fr", secours=True)   # 29/10 : le blocage ElevenLabs vise le montage seul
+                    words, _ = transcrire(video, langue="fr", secours=True)   # le blocage ElevenLabs vise le montage seul
                     mots = os.path.join(reel, "words.json")
                     m.ecrire(mots, {"words": words})
                 m.maj_etat(pid, message="Je choisis les meilleures images…")
@@ -223,7 +222,7 @@ def ouvrier():
                     tache = "écrire la version 1" if quoi == "texte" else "corriger ses retours (version suivante)"
                     ok, sortie = ouvrier_claude.lancer(CONSIGNE % (pid, tache, pid, pid, pid, pid), m.ICI,
                                                        ["Read", "Write", "Edit", "Glob", "Grep", "Skill", "Bash(python3 sc.py:*)"])
-                    # 05/11 (juge Super 1.7) : Claude absent ou déconnecté = dit à l'écran tout de suite, sans 2 essais pour rien
+                    #  (juge Super 1.7) : Claude absent ou déconnecté = dit à l'écran tout de suite, sans 2 essais pour rien
                     if not ok and ("Je ne trouve pas Claude" in sortie or "pas connecté" in sortie):
                         TENTATIVES[cle] = 99
                         DERNIERE[cle] = sortie
@@ -237,10 +236,6 @@ def ouvrier():
 
 
 # ---------------------------------------------------------------- vues
-
-def metricool():
-    """Publication retirée des applis (Super Studio 2.0) : toujours le mode Télécharger. On publie dans le chat (Blotato)."""
-    return {"branche": False, "compte": "", "verifie_le": ""}
 
 
 def superda():
@@ -270,25 +265,6 @@ def mes_carrousels(n=8):
     return out
 
 
-def publieur():
-    """Dès qu'un carrousel a un publication.json « a_faire » (clic confirmé de l’utilisateur), rien ne part : la publication se fait dans le chat (Blotato)."""
-    for pid in os.listdir(m.PROJETS):   # envoi coupé par un redémarrage : on ne sait pas ce qui est parti
-        if os.path.isdir(m.chemin(pid)) and publier.etat(m.chemin(pid)).get("statut") == "en_cours":
-            publier._maj(m.chemin(pid), statut="erreur", etape="", message="Envoi coupé (serveur relancé) : publie depuis le chat avec Claude.")
-    while True:
-        try:
-            for pid in sorted(os.listdir(m.PROJETS)):
-                if pid.startswith("_") or publier.etat(m.chemin(pid)).get("statut") != "a_faire":
-                    continue
-                v = m.version_rendue(pid)
-                n = m.lire(m.chemin(pid, f"v{v}", "rendu.json"))["slides"]
-                publier.lancer(m.chemin(pid), "SuperCarrousel",
-                               {"slides": [m.chemin(pid, f"v{v}", f"slide-{i}.png") for i in range(1, n + 1)],
-                                "legendes": m.legendes(m.lire(m.chemin(pid, f"v{v}", "description.json")))})
-        except Exception:
-            traceback.print_exc()
-        time.sleep(3)
-
 
 def vue_projet(pid):
     e = m.etat(pid)
@@ -303,8 +279,6 @@ def vue_projet(pid):
         out["slides"] = [f"/p/{pid}/v{v}/slide-{i}.png?t={stamp}" for i in range(1, r["slides"] + 1)]
         out["modele_rendu"] = r.get("modele", "epure")
         out["da_rendue"] = r.get("da")
-    out["publication"] = publier.etat(m.chemin(pid))
-    out["deja_publie"] = publier.deja_publie(pid)
     vc = e.get("version_en_cours")
     if e.get("statut") == "fabrication" and vc:
         fab = e.get("fab", {})
@@ -392,8 +366,7 @@ class H(BaseHTTPRequestHandler):
             f = os.path.normpath(os.path.join(m.PROJETS, urllib.parse.unquote(p[3:])))
             return self._fichier(f) if f.startswith(m.PROJETS) else self._json({}, 403)
         if p == "/api/accueil":
-            return self._json({"da": m.resume_da(), "superda": superda(), "metricool": metricool(),
-                               "mode_essai": config()["mode_essai"], "projets": mes_carrousels()})
+            return self._json({"da": m.resume_da(), "superda": superda(), "mode_essai": config()["mode_essai"], "projets": mes_carrousels()})
         if p == "/api/videos":
             return self._json(videos())
         if p == "/api/vignette":
@@ -487,16 +460,6 @@ class H(BaseHTTPRequestHandler):
             return self._json(vue_projet(pid))
         if action == "telecharger":
             return self._json({"chemin": m.livraison(pid)})
-        if action == "publier":
-            if config()["mode_essai"]:
-                return self._json({"essai": True, "message": "Mode essai : rien n'est publié."})
-            # 28/10 : vraie publication. Le clic confirmé = le OK de l’utilisateur pour CE carrousel ; Claude envoie (apps/publier.py).
-            ok, msg = publier.demander(m.chemin(pid), "carrousel",
-                                       [r for r in (d.get("reseaux") or []) if r in ("instagram", "tiktok", "facebook", "linkedin")],
-                                       d.get("quand") or "", m.etat(pid).get("titre", pid), cles_registre=(pid,), forcer=bool(d.get("forcer")))
-            if msg.startswith("DEJA:"):
-                return self._json({"deja": msg[5:]}, 409)
-            return self._json({"ok": ok, "message": msg, "projet": vue_projet(pid)}, 200 if ok else 400)
         if action == "da":  # la DA a changé : même texte, nouvelle version rendue avec la nouvelle DA
             src = m.lire(m.chemin(pid, f"v{v}", "description.json"))
             src.pop("corrections", None)
@@ -510,7 +473,6 @@ def main():
     os.makedirs(m.PROJETS, exist_ok=True)
     threading.Thread(target=boucle, daemon=True).start()
     threading.Thread(target=ouvrier, daemon=True).start()
-    threading.Thread(target=publieur, daemon=True).start()
     print(f"SuperCarrousel : http://localhost:{port}", flush=True)
     ThreadingHTTPServer(("127.0.0.1", port), H).serve_forever()
 

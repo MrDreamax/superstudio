@@ -7,7 +7,7 @@ images `(exemple retiré)`, `complet-r2/1c.png` et `2b.png`). Ancienne page v2 (
 et ancien serveur : `supermonteur/_backup/2026-10-23-cockpit-v2/`. Look Apple clair. Utilisable par un client SANS bibliothèque de B-rolls
 ni de photos, ni de musique.
 
-**Règ : jamais d'étalonnage ni de traitement du son du rush.** Un look = polices + couleur du texte + rythme. Rien d'autre.
+**Règle : jamais d'étalonnage ni de traitement du son du rush.** Un look = polices + couleur du texte + rythme. Rien d'autre.
 
 ## v5 : ÉTAPE 1 = TIMELINE façon Premiere Pro = « DERUSH LAB »
 **le Derush Lab est une ÉTAPE OBLIGATOIRE de SuperMonteur, pour TOUS les reels, clients compris : la règle « interne » ci-dessous est périmée. Voir `apps/supermonteur/CLAUDE.md` 1 bis.Décision : cette timeline s'appelle Derush Lab, outil INTERNE (jamais pour les clients ni le kit), qui sert
@@ -90,7 +90,7 @@ Maquettes : `(exemple retiré)` (A, B, C) puis `timeline-r2/1.png` VALIDÉE + so
   son chat, corrige, puis écrit dans la note `"statut": "corrigé"` + `"reponse": "J'ai retiré le « euh » de 0:12."` : la page affiche
   « Fait ✓ … ▶ Revoir » toute seule (elle relit l'état toutes les 5 s).
 - **Au centre, la vidéo** (téléphone + calques HTML) et la bande : coupes en rouge numérotées en haut, notes en bleu en bas. Barre espace =
-  lecture. En pause, la **zone interdite d'Insta** (règ : haut 270 px, bas 1480 px, côtés 65 px, 120 px à droite sous 1100 px) est en rouge sur la vidéo ; le Gardien (`zones.mjs`) bloque tout rendu avec du texte dedans. « Écouter » une coupe = le téléphone passe sur le rush (`/video/rush`) le temps du passage. Voile « Je remets le passage… »
+  lecture. En pause, la **zone interdite d'Insta** (règle : haut 270 px, bas 1480 px, côtés 65 px, 120 px à droite sous 1100 px) est en rouge sur la vidéo ; le Gardien (`zones.mjs`) bloque tout rendu avec du texte dedans. « Écouter » une coupe = le téléphone passe sur le rush (`/video/rush`) le temps du passage. Voile « Je remets le passage… »
   pendant le dérush. Pas de zone qui défile dans la page : si la conversation est longue, c'est la page qui défile, la vidéo reste en place.
 - **1er lancement (ni style ni ancien look)** : « Bienvenue » + **5 lignes qui se déplient** (, maquettes `(exemple retiré)`) :
   1 Police (ouvre la **galerie des 6 polices au centre**, en blanc), 2 Taille (titre S / M / L / XL, sous-titres 44-58 px), 3 Couleurs

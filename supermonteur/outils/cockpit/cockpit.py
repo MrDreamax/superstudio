@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Le Cockpit du Monteur (22/10/2026) : la page où l'on monte son reel en 5 étapes, sans rien écrire.
+"""Le Cockpit du Monteur : la page où l'on monte son reel en 5 étapes, sans rien écrire.
   python3 cockpit.py <dossier du reel> [--port 8790] [--lab]
-  --lab = DERUSH LAB (23/10, interne) : la timeline seule, pour dérusher ; « Valider le dérush » = clip.mp4 + Gardien du dérush.
+  --lab = DERUSH LAB (interne) : la timeline seule, pour dérusher ; « Valider le dérush » = clip.mp4 + Gardien du dérush.
 Puis ouvrir http://127.0.0.1:8790 (Chrome).
 
 Le dossier est préparé par le Monteur (SKILL étapes 1-4 : transcription du rush, dérush, plan.json) + cockpit.json =
@@ -9,7 +9,7 @@ les propositions de Claude (3 hooks, 3 musiques, légende). Voir COCKPIT.md.
 Rien n'est rendu avant « Fabriquer » : la page montre un aperçu (la vidéo + des calques HTML), puis monte.sh fabrique le
 vrai reel (Gardien compris). Écrit dans le dossier : cockpit-etat.json (les choix), cockpit-notes.json (ce que la personne
 dit à Claude), publication.json (demande de programmation : rien ne part sans un OK dans le chat), plan.json (à Fabriquer).
-v2 (22/10) : l'Export fabrique les 6 contenus, un par un (Mac 8 Go) : story/, carrousel/ (skill carrousel), le reel,
+v2 : l'Export fabrique les 6 contenus, un par un (Mac 8 Go) : story/, carrousel/ (skill carrousel), le reel,
 essais/<id>/ (reels d'essai : même montage, autre hook, monte.sh + Gardien dans leur dossier), puis publication.json.
 """
 import base64, datetime as dt, json, os, re, shutil, signal, subprocess, sys, threading, time, urllib.request
@@ -21,7 +21,7 @@ SKILL = os.path.abspath(os.path.join(ICI, "..", ".."))
 S = os.path.join(SKILL, "scripts")
 D = os.path.abspath(sys.argv[1])
 PORT = int(sys.argv[sys.argv.index("--port") + 1]) if "--port" in sys.argv else 8790
-LAB = "--lab" in sys.argv   # Derush Lab (23/10, l’utilisateur : « exclusivement pour dérusher ») : pas de plan.json, pas de Style ni d'Export
+LAB = "--lab" in sys.argv   # Derush Lab : pas de plan.json, pas de Style ni d'Export
 AP = os.path.join(D, "_cockpit")
 os.makedirs(AP, exist_ok=True)
 VERROU = threading.Lock()
@@ -90,13 +90,13 @@ def relire_cockpit():
 
 
 relire_cockpit()
-ETAT.setdefault("coches", ["reel"])   # 23/10 (l’utilisateur) : carrousel, story et reels d'essai décochés ; proposés à la fin, après le reel
-ETAT.setdefault("look", None)       # v3 (23/10) : aucun look = 1er lancement (3 looks proposés) ; plan inchangé tant qu'il n'y en a pas
+ETAT.setdefault("coches", ["reel"])   #  (l’utilisateur) : carrousel, story et reels d'essai décochés ; proposés à la fin, après le reel
+ETAT.setdefault("look", None)       # v3 : aucun look = 1er lancement (3 looks proposés) ; plan inchangé tant qu'il n'y en a pas
 ETAT.setdefault("affine", {})       # « Affiner » : polices, couleur des mots en serif, rythme
-ETAT.setdefault("style", None)      # 23/10 : le style réglé (police, tailles, couleurs, position, plus) ; None = 1er lancement
+ETAT.setdefault("style", None)      # le style réglé (police, tailles, couleurs, position, plus) ; None = 1er lancement
 ETAT.setdefault("coupes_ok", [])    # coupes validées « C'est bon » dans la conversation
-ETAT.setdefault("passe", 1)         # 23/10 montage en 3 étapes : 1 Dérushage, 2 Style, 3 Motion / B-roll (maquettes passes-r1 validées)
-ETAT.setdefault("moments_choix", {})   # étape 3 : id du moment -> un de CHOIX_MOMENT (zoom | carton | rien depuis le 23/10 ; absent = le conseil de Claude)
+ETAT.setdefault("passe", 1)         #  montage en 3 étapes : 1 Dérushage, 2 Style, 3 Motion / B-roll (maquettes passes-r1 validées)
+ETAT.setdefault("moments_choix", {})   # étape 3 : id du moment -> un de CHOIX_MOMENT (zoom | carton | rien absent = le conseil de Claude)
 ETAT.setdefault("passe3", None)     # "sautee" = étape 3 sautée (la vidéo reste telle quelle)
 ETAT.setdefault("prog", {"reseaux": ["instagram", "tiktok", "youtube"], "quand": "", "essais_heure": "18:00"})
 JOB = {"nom": None, "etat": "libre", "lignes": [], "debut": 0, "fin": 0, "taches": [], "courante": None}
@@ -292,7 +292,7 @@ def recouper(cid):
     return lancer("Je recoupe", derush)
 
 
-# ---------- 23/10 v4 dérushage « phrase en grand » (maquette (exemple retiré) validée) ----------
+# ---------- v4 dérushage « phrase en grand » (maquette (exemple retiré) validée) ----------
 # Le texte du rush en phrases : la personne barre une phrase (ou un seul mot), ouvre une phrase pour voir son son en grand et
 # pose ses bords au pixel. Ses choix : ETAT["derush"] = {"coupes": [indices de mots du rush], "bords": {"debut": {i: t}, "fin": {j: t}}}
 # -> drop.json (plages de mots) + bords.json (lu par derush.py --bords). Le moteur ne tourne qu'à « Suivant ».
@@ -328,7 +328,7 @@ def mots_rush():
             for i, w in enumerate(RW) for t in [CORR.get(str(i), {}).get("text", w["text"])]]
 
 
-# ---------- 23/10 v5 : dérushage en TIMELINE (maquette (exemple retiré) validée) ----------
+# ---------- v5 : dérushage en TIMELINE (maquette (exemple retiré) validée) ----------
 # Plus de texte : la personne voit le reel bout à bout (les coupes en petit) et ouvre n'importe quel bloc en grand pour remettre
 # un bout du gris ou retirer un petit mot du bleu. Ses choix = les plages GARDÉES, en secondes du rush :
 # ETAT["derush"] = {"plages": [[a, b], ...], "applique": sig} -> plages.json (derush.py --plages) au « Suivant ».
@@ -373,7 +373,7 @@ def plages_propres(liste):
     return pl
 
 
-# Derush Lab : « Valider le dérush » (maquette (exemple retiré) validée le 23/10) = le moteur recoupe
+# Derush Lab : « Valider le dérush » (maquette (exemple retiré) validée) = le moteur recoupe
 # si la timeline a changé (clip.mp4), puis le Gardien du dérush (gardien.py --derush). La page montre ses contrôles en vert / rouge.
 GROUPES_LAB = ["mot coupé", "respiration", "plans ≥ 2 s", "micro-coupure", "silence", "flash"]
 
@@ -447,8 +447,8 @@ def onde():
 PLACES = {"haut": -140, "normal": 0, "bas": 110}
 
 
-# Styles de sous-titres des reels d'essai (22/10, l’utilisateur : « changer aussi la musique et le style de sous-titrage »).
-# Toujours en MAJUSCULES, toujours sous 60 px (Style Lab). Police et couleur = le look du reel (décision 23/10 : les essais
+# Styles de sous-titres des reels d'essai.
+# Toujours en MAJUSCULES, toujours sous 60 px (Style Lab). Police et couleur = le look du reel (décision : les essais
 # prennent le même look que le reel ; avant les looks : toujours Montserrat blanc).
 STYLES_ST = {
     "classique": {"nom": "Classique", "taille": 52, "place": "normal", "mots_max": 4},
@@ -463,7 +463,7 @@ EXT_AUDIO = (".mp3", ".m4a", ".wav", ".aac")
 
 
 def musique_perso():
-    """« Ajoute ta musique » (v3, 23/10) : le fichier envoyé par la personne, gardé dans _cockpit/musique-perso.<ext>."""
+    """« Ajoute ta musique » (v3, ) : le fichier envoyé par la personne, gardé dans _cockpit/musique-perso.<ext>."""
     p = next((MUS_PERSO + e for e in EXT_AUDIO if os.path.exists(MUS_PERSO + e)), None)
     if not p:
         return None
@@ -496,7 +496,7 @@ def musique_essai(e):
     return m or musique_choisie()
 
 
-# ---------- v3 (23/10) : les looks = polices + couleur du texte + rythme. JAMAIS d'étalonnage ni de traitement du son du rush. ----------
+# ---------- v3 : les looks = polices + couleur du texte + rythme. JAMAIS d'étalonnage ni de traitement du son du rush. ----------
 LOOKS = [
     {"id": "premium", "nom": "Premium sombre", "sans": "Montserrat.ttf", "serif": "InstrumentSerif-Italic.ttf",
      "texte": "#FFFFFF", "serif_couleur": "#FFFFFF", "accent": "#4F9BFF", "rythme": "pose"},
@@ -505,7 +505,7 @@ LOOKS = [
     {"id": "chaud", "nom": "Cinéma chaud", "sans": "Poppins-SemiBold.ttf", "serif": "PlayfairDisplay-Italic.ttf",
      "texte": "#FFF8EC", "serif_couleur": "#F3DDB0", "accent": "#E0B46A", "rythme": "pose"},
 ]
-RYTHMES = {"pose": [5, 8], "nerveux": [2.5, 4]}   # zoomGap de build.mjs (Style Lab client 16/10)
+RYTHMES = {"pose": [5, 8], "nerveux": [2.5, 4]}   # zoomGap de build.mjs (Style Lab client)
 NOMS_POLICES = {"Montserrat.ttf": "Montserrat", "Inter.ttf": "Inter", "Poppins-SemiBold.ttf": "Poppins",
                 "InstrumentSerif-Italic.ttf": "Serif", "DMSerifDisplay-Italic.ttf": "DM Serif", "PlayfairDisplay-Italic.ttf": "Playfair"}
 NOMS_COULEURS = {"#FFFFFF": "blanc", "#BFDDFF": "bleu", "#F3DDB0": "or doux", "#E8CF9A": "or", "#FFF8EC": "ivoire"}
@@ -532,7 +532,7 @@ def look_actif():
     return lk
 
 
-# ---------- 23/10 (personnalisation, maquettes perso-r1 validées) : 6 POLICES + 5 réglages (police, taille, couleurs, position, plus).
+# ---------- (personnalisation, maquettes perso-r1 validées) : 6 POLICES + 5 réglages (police, taille, couleurs, position, plus).
 # Remplace les 3 looks à l'écran. Police principale (titre ligne 1 + sous-titres) TOUJOURS sans serif, accent (ligne 2) libre.
 # Couleurs à part (tout blanc par défaut). Jamais de bande ni d'étiquette derrière le titre, titre 2 lignes max (build.mjs rétrécit).
 # "size" = taille du titre en px réels (taille M) ; sub.scale = équivalence de taille avec Montserrat (52 px Montserrat = 52 x scale).
@@ -639,8 +639,8 @@ def ecrire_da_look(lk):
     return p
 
 
-# ---------- 23/10 étape 3 « Motion / B-roll » : les moments forts, la personne choisit pour chacun ----------
-# Maquettes : passes-r1/r2-3b (moments forts) puis etape3-r1 r1-a (liste, un moment s'ouvre) + r2-a (3 idées de B-roll), validées 23/10.
+# ---------- étape 3 « Motion / B-roll » : les moments forts, la personne choisit pour chacun ----------
+# Maquettes : passes-r1/r2-3b (moments forts) puis etape3-r1 r1-a (liste, un moment s'ouvre) + r2-a (3 idées de B-roll).
 # Claude les écrit dans cockpit.json "moments": [{id, t0, t1, texte, mot, reco, reglage?, carton?, brolls?}] (temps du reel), assez
 # pour illustrer TOUTE la vidéo (retour n4 : « 3 moments, c'est pas suffisant ») : un toutes les ~4 s. Sans eux : les mots forts
 # (keywords) puis les mots les plus longs, espacés d'au moins 3,5 s, après le titre.
@@ -648,13 +648,13 @@ def ecrire_da_look(lk):
 #   zoom "avant" | "arriere" ; mot "tete" (derrière la tête) | "sous" (en géant dans le sous-titre) ; carton {l1, l2, fond} ;
 #   motion "coeur" | "entoure" | "souligne" (dessins faits par le code, jamais d'IA) ; broll = un plan de SA bibliothèque
 #   (chemin relatif au dossier des B-rolls) ou "perso" (la vidéo envoyée). Jamais d'image ni de vidéo générée par IA.
-# 23/10 (l’utilisateur, après test dans Chrome) : l'étape 3 ne propose plus que Zoom, Carton plein et Rien, POUR TOUT LE MONDE.
+#  (l’utilisateur, après test dans Chrome) : l'étape 3 ne propose plus que Zoom, Carton plein et Rien, POUR TOUT LE MONDE.
 # Mot géant, Motion design et Ton B-roll sont CACHÉS, pas supprimés (build.mjs, matte.py, headtop.py, /api/biblio, /illus/ intacts) :
 # pour les remettre, reprendre TOUS_EFFETS ici (la page lit la liste dans /api/etat "effets").
 TOUS_EFFETS = ("zoom", "mot", "carton", "motion", "broll", "rien")
 CHOIX_MOMENT = ("zoom", "carton", "rien")
 REGLAGE_DEF = {"zoom": "avant", "mot": "tete", "motion": "chiffres"}
-# Motion design (23/10, maquettes motion-r2 F + L validées par l’utilisateur après 5 rounds ; leçon Jun Yuh : pro, sans fond, coupe franche) :
+# Motion design (maquettes motion-r2 F + L validées par l’utilisateur après 5 rounds ; leçon Jun Yuh : pro, sans fond, coupe franche) :
 #   "chiffres" = 1-2-3 géants derrière la tête (les moments « chiffres » de la vidéo sont numérotés dans l'ordre) ;
 #   "trait" = une illustration au trait blanc (celles du skill Carrousel, art.py, dessinées, jamais d'IA) + son mot.
 # Les anciens coeur / entoure / souligne (« dégueulasses ») deviennent "chiffres".
@@ -699,7 +699,7 @@ def illus_svg(nom):
         os.makedirs(ILLUS_DIR, exist_ok=True)
         open(p, "w").write(art.ARTS[nom]())
     return p
-# Fonds du carton plein : TOUJOURS un dégradé, jamais une couleur unie (l’utilisateur 23/10 : « une couleur unie, c'est dégueulasse »)
+# Fonds du carton plein : TOUJOURS un dégradé, jamais une couleur unie
 FONDS = {"nuit": "radial-gradient(85% 60% at 100% 0%,#2f74ff 0%,transparent 70%),radial-gradient(90% 65% at 0% 100%,#132b66 0%,transparent 75%),linear-gradient(165deg,#0d1836 0%,#060a1c 60%,#03050d 100%)",
          "noir": "radial-gradient(80% 55% at 100% 0%,#3a3f4a 0%,transparent 70%),radial-gradient(70% 50% at 0% 100%,#1a1d24 0%,transparent 75%),linear-gradient(165deg,#15171c 0%,#050506 70%)",
          "bleu": "radial-gradient(85% 60% at 100% 0%,#7fb2ff 0%,transparent 70%),radial-gradient(90% 65% at 0% 100%,#0a2a6b 0%,transparent 75%),linear-gradient(165deg,#2b6fff 0%,#0b3b8c 60%,#061f4d 100%)",
@@ -850,7 +850,7 @@ def ajouter_moments(plan):
     """Les choix de l'étape 3 dans le plan du reel. Zoom = plan.zooms (dir "out" = zoom arrière) ; mot géant = plan.bigwords
     (derrière la tête, matte.py) ou plan.subwords (en géant dans le sous-titre) ; carton plein = plan.mini type "card" ;
     motion design = plan.motions (build.mjs, dessins au code) ; B-roll = plan.brolls (son plan à elle, jamais d'IA).
-    Étape sautée = plan inchangé. Depuis le 23/10, moments() ne rend que CHOIX_MOMENT (zoom, carton, rien) : mot géant,
+    Étape sautée = plan inchangé. Depuis moments() ne rend que CHOIX_MOMENT (zoom, carton, rien) : mot géant,
     motion et B-roll des moments n'arrivent plus ici (le mot géant de l'OUVERTURE, lui, vient du hook et reste)."""
     if ETAT.get("passe3") == "sautee":
         return plan
@@ -892,7 +892,7 @@ def ajouter_moments(plan):
     return plan
 
 
-# ---------- 23/10 (retour n6) : l'aperçu imite le « derrière la tête » du rendu. headtop.py mesure le haut des cheveux sur la
+# ---------- (retour n6) : l'aperçu imite le « derrière la tête » du rendu. headtop.py mesure le haut des cheveux sur la
 #            silhouette détourée pour chaque mot géant (hook + moments), une fois, en tâche de fond ; la page pose le mot au même
 #            endroit que build.mjs et cache la partie derrière la tête. Sans tête à l'image : le mot est devant (comme le rendu).
 TETES_P = os.path.join(AP, "tetes.json")
@@ -946,7 +946,7 @@ def plan_final(h=None, st=None, m="choisie"):
     st = st or {"taille": ETAT["taille"], "place": ETAT["place"]}               # st, m = son style de sous-titres, sa musique
     for k in ("title", "bigwords"):
         if k in h:   # copie : ajouter_moments ajoute ses mots géants au plan ; avant, il les ajoutait à la liste du hook
-            plan[k] = json.loads(json.dumps(h[k]))   # lui-même (« script » x2, x3… à chaque calcul : retour n2 du 23/10)
+            plan[k] = json.loads(json.dumps(h[k]))   # lui-même (« script » x2, x3… à chaque calcul : retour n2)
     # mots forts : serif blanc géant (Style Lab : jamais en couleur), ignorés par le moteur s'il y a un titre
     if ETAT["mots_forts"] and "title" not in plan:
         geants = {norm(b["text"]) for b in plan.get("bigwords", [])}   # le mot géant sort déjà du sous-titre
@@ -964,7 +964,7 @@ def plan_final(h=None, st=None, m="choisie"):
         plan.pop("music", None)   # « Sans musique » : la personne l'ajoute dans Insta (mix.py : voix seule)
     plan["words"] = "words.json"
     lk, sty = look_actif(), style_actif()
-    if sty:   # 23/10 : le style réglé (6 polices + 5 réglages) passe avant l'ancien look ; « style » dans le plan = refaire le rendu s'il change
+    if sty:   # le style réglé (6 polices + 5 réglages) passe avant l'ancien look ; « style » dans le plan = refaire le rendu s'il change
         plan["typo"] = typo(sty)
         if "title" in plan:
             plan["title"] = dict(plan["title"], top=TITRE_PLACES.get(sty["titre_place"], 280))
@@ -975,14 +975,14 @@ def plan_final(h=None, st=None, m="choisie"):
     elif lk:   # sans look, le plan reste celui de Claude (rendu identique) ; « look » dans le plan = refaire le rendu s'il change
         plan["da"] = ecrire_da_look(lk)
         plan["look"] = {k: lk[k] for k in ("id", "sans", "serif", "texte", "serif_couleur", "accent", "rythme")}
-    # 23/10 (l’utilisateur, après test) : étape 3 SUPPRIMÉE (zoom, carton, mot géant, motion, B-roll des moments) : ajouter_moments n'est plus appelé.
+    #  (l’utilisateur, après test) : étape 3 SUPPRIMÉE (zoom, carton, mot géant, motion, B-roll des moments) : ajouter_moments n'est plus appelé.
     if plan.get("keywords") and plan.get("bigwords"):   # un mot fort qui contient un mot géant (« piège du script » / SCRIPT) :
         geants = {norm(b["text"]) for b in plan["bigwords"]}   # le mot géant le remplace (avant : « piège du » seul en serif)
         plan["keywords"] = [k for k in plan["keywords"] if not geants & {norm(x) for x in k.split()}]
     return plan
 
 
-# ---------- v2 (22/10) : l'Export fabrique les 6 contenus, un par un (Mac 8 Go), puis la demande de programmation ----------
+# ---------- v2 : l'Export fabrique les 6 contenus, un par un (Mac 8 Go), puis la demande de programmation ----------
 HOME = os.path.expanduser("~")
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 CARROUSEL = os.path.join(HOME, ".claude", "skills", "carrousel", "scripts", "carrousel.py")
@@ -1298,7 +1298,7 @@ def ecrire_publication(ids):
             x.update(reseaux=res, legende=COCKPIT.get("legende", ""), duree=round(duree(f), 1),
                      gardien="✅" if gardien_ok(D) else "❌", donnees_reseau={r: md[r] for r in res})
             if "tiktok" in res and duree(f) < 60:
-                alertes.append(f"TikTok : le reel dure {mmss(duree(f))}. Ta règle du 20/10 : plus de 60 s pour être payé par TikTok.")
+                alertes.append(f"TikTok : le reel dure {mmss(duree(f))}. Ta règle : plus de 60 s pour être payé par TikTok.")
         elif cid == "story":
             x.update(reseaux=["instagram"], donnees_reseau={"instagram": {"instagramData": {"type": "STORY"}}})
         elif cid == "carrousel":
@@ -1320,8 +1320,8 @@ def ecrire_publication(ids):
                 "dans le chat. donnees_reseau = les données à envoyer pour chaque réseau.",
         "statut": "à valider dans le chat", "demande_le": time.strftime("%Y-%m-%d %H:%M"), "fuseau": fuseau(),
         "dossier": D, "contenus": contenus, "alertes": alertes,
-        "note_claude": "Le Publieur dit « trial reel jamais par défaut » (règle d'avant le 22/10) : les reels d'essai du cockpit sont le "
-                       "choix de l'utilisateur du 22/10, son OK sur ce lot vaut exception. 3 reels par jour max (essais compris)."})
+        "note_claude": "Le Publieur dit « trial reel jamais par défaut » (règle d') : les reels d'essai du cockpit sont le "
+                       "choix de l'utilisateur son OK sur ce lot vaut exception. 3 reels par jour max (essais compris)."})
 
 
 def tout(ids, programmer):
@@ -1346,7 +1346,7 @@ def tout(ids, programmer):
 
 
 # ---------- aperçu du rush (le rush original est souvent en HEVC 4K : le navigateur ne le lit pas partout) ----------
-APERCU = []   # son ffmpeg : coupé avec le cockpit (29/10 : un cockpit arrêté le laissait tourner seul)
+APERCU = []   # son ffmpeg : coupé avec le cockpit (un cockpit arrêté le laissait tourner seul)
 
 
 def arreter(*_):
@@ -1360,7 +1360,7 @@ def apercu_rush():
     out = os.path.join(AP, "rush.mp4")
     if os.path.exists(out) or not RUSH:
         return
-    # un seul aperçu à la fois (29/10 : 3 cockpits relancés = 3 ffmpeg sur le même fichier, 15 min de derush)
+    # un seul aperçu à la fois (3 cockpits relancés = 3 ffmpeg sur le même fichier, 15 min de derush)
     verrou = out + ".pid"
     try:
         while True:   # un autre aperçu tourne : on attend sa fin au lieu d'en lancer un 2e

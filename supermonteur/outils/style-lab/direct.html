@@ -19,7 +19,7 @@ h1{font-size:22px;line-height:1.15;letter-spacing:-.3px;font-weight:700}
 .htitle{position:absolute;left:0;right:0;text-align:center;color:#fff;text-shadow:0 4px 26px rgba(0,0,0,.55),0 1px 3px rgba(0,0,0,.35);padding:30px 60px 38px;transition:opacity .25s}
 .htitle .box{display:inline-block}
 .htitle.boxed .box{background:rgba(0,0,0,.8);border-radius:24px;padding:20px 48px 26px}
-.ht1,.ht2{font-weight:700;white-space:nowrap;letter-spacing:1px;line-height:1.15}   /* 11/11 l’utilisateur : titre = exactement la police des sous-titres */
+.ht1,.ht2{font-weight:700;white-space:nowrap;letter-spacing:1px;line-height:1.15}   /* l’utilisateur : titre = exactement la police des sous-titres */
 .ctrl{display:flex;gap:8px;justify-content:center;flex:none}
 .btn{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;cursor:pointer}
 .btn:focus-visible,.chip:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
@@ -36,7 +36,7 @@ h1{font-size:22px;line-height:1.15;letter-spacing:-.3px;font-weight:700}
 #picker{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
 .chip.add{background:transparent;border:1.5px dashed var(--line);color:var(--mute)}
 .chip[data-saved]::after{content:"";position:absolute;top:4px;right:4px;width:6px;height:6px;border-radius:50%;background:var(--acc)}
-.chip[data-saved][aria-pressed="true"]::after{background:var(--acc-ink)}   /* 11/11 : point bleu = ton style enregistré (plus « la maison ») */
+.chip[data-saved][aria-pressed="true"]::after{background:var(--acc-ink)}   /* point bleu = ton style enregistré (plus « la maison ») */
 .send{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 #note{flex:1 1 220px;min-width:0;height:42px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:0 12px;font:inherit;font-size:14px}
 .go{appearance:none;border:0;background:var(--acc);color:var(--acc-ink);font:inherit;font-weight:700;font-size:15px;height:42px;padding:0 18px;border-radius:12px;cursor:pointer}
@@ -57,7 +57,7 @@ pre{white-space:pre-wrap;word-break:break-word;background:var(--bg);border:1px s
   .panel{padding:10px 12px;border-radius:14px}.panel h2{margin-bottom:4px}
   .row{display:flex;align-items:center;gap:8px}.row + .row{margin-top:6px}
   .row .lab{flex:0 0 66px;font-size:12.5px;margin:0;line-height:1.2}
-  .chips{flex-wrap:wrap;gap:5px}   /* 11/11 : aucun défilement, même de côté : les choix passent à la ligne */
+  .chips{flex-wrap:wrap;gap:5px}   /* aucun défilement, même de côté : les choix passent à la ligne */
   .chip{font-size:13px;padding:5px 9px;min-height:32px;white-space:nowrap;flex:none}
   #note{display:none}.go{flex:1;height:44px}
 }
@@ -111,13 +111,13 @@ const AUTO = D.subY || 1300;
 const SEC = {
   sub: [
     {k: "police", lab: "Police", opts: [["Montserrat", "Montserrat.ttf", "la maison"], ["Anton", "Anton-Regular.ttf", "haute et serrée"],
-      ["Lilita One", "LilitaOne-Regular.ttf", "ronde, fun"], ["Cinzel", "Cinzel.ttf", "luxe"], ["Space Grotesk", "SpaceGrotesk.ttf", "tech"]]},   /* 11/11 l’utilisateur : 5 polices max, les plus différentes */
+      ["Lilita One", "LilitaOne-Regular.ttf", "ronde, fun"], ["Cinzel", "Cinzel.ttf", "luxe"], ["Space Grotesk", "SpaceGrotesk.ttf", "tech"]]},   /* l’utilisateur : 5 polices max, les plus différentes */
     {k: "taille", lab: "Taille", opts: [["Petite", 40], ["Moyenne", 52, "la maison"], ["Grande", 64], ["Très grande", 76]]},
     {k: "casse", lab: "Lettres", opts: [["MAJUSCULES", true, "la maison"], ["minuscules", false]]},
   ],
   title: [
     {k: "ttaille", lab: "Taille", opts: [["Petit", 50], ["Moyen", 62, "la maison"], ["Grand", 76]]},   /* 1 seule taille pour les 2 lignes (règle titre 1 taille) */
-    {k: "tfond", lab: "Fond", opts: [["Pas d'encadré", false, "la maison"], ["Encadré blanc", "#FFFFFF"]]},   /* 11/11 l’utilisateur : blanc ou rien */
+    {k: "tfond", lab: "Fond", opts: [["Pas d'encadré", false, "la maison"], ["Encadré blanc", "#FFFFFF"]]},   /* blanc ou rien */
   ],
 };
 let CUSTOM = "#E4572E";
@@ -146,7 +146,7 @@ function build(id, list) {
     s.opts.forEach((o, i) => {
       const b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = o[0];
       if (s.k === "tfond" && o[1]) { const sw = document.createElement("span"); sw.className = "sw"; sw.style.background = o[1] === "custom" ? CUSTOM : o[1];
-        if (o[1] === "custom") sw.id = "sw-custom"; b.prepend(sw); }   /* 11/11 encadré du titre, couleur au choix */
+        if (o[1] === "custom") sw.id = "sw-custom"; b.prepend(sw); }   /* encadré du titre, couleur au choix */
       if (o[2] && o[2] !== "la maison") b.title = o[2];
       if (/police/.test(s.k)) b.style.fontFamily = `${fam(o[1])}, inherit`;
       b.setAttribute("aria-pressed", String(i === pick[s.k]));
@@ -154,7 +154,7 @@ function build(id, list) {
                           if (s.k.startsWith("t")) { V.currentTime = 0; V.play().catch(() => {}); } render(true); };
       c.appendChild(b);
     });
-    if (s.k === "police") {   /* 11/11 : le client peut ajouter SA police (fichier .ttf / .otf / .woff) */
+    if (s.k === "police") {   /* le client peut ajouter SA police (fichier .ttf / .otf / .woff) */
       const add = document.createElement("button"); add.type = "button"; add.className = "chip add"; add.textContent = "+ Ma police";
       add.title = "Ajoute ta police (fichier .ttf, .otf ou .woff)"; add.onclick = () => document.getElementById("fontfile").click();
       c.appendChild(add); ADD = {s, c, add};
@@ -164,7 +164,7 @@ function build(id, list) {
 }
 build("p-sub", SEC.sub); build("p-title", SEC.title);
 let touched = false; document.addEventListener("click", e => { if (e.target.closest(".chip")) touched = true; });
-/* 11/11 l’utilisateur : points bleus sur le style ENREGISTRÉ (dernier envoi) ; au chargement, la page repart de ce style */
+/* l’utilisateur : points bleus sur le style ENREGISTRÉ (dernier envoi) ; au chargement, la page repart de ce style */
 function applySaved(ch, preselect) {
   if (!ch) return; let any = false;
   for (const g of Object.values(SEC)) for (const s of g) {
@@ -199,21 +199,21 @@ document.getElementById("fontfile").onchange = async e => {
 
 // ---------- sous-titres : groupes de 3 mots max, coupés à la ponctuation, le mot fort isolé ----------
 const FINP = /[\s.,!?…;:«»"“”]+$/u;   // tout retirer (mot fort)
-// 11/11 l’utilisateur, même règle que build.mjs : on garde … ? ; on enlève , . ; ! ; « : » reste seulement avant une citation
+// l’utilisateur, même règle que build.mjs : on garde … ? ; on enlève , . ; ! ; « : » reste seulement avant une citation
 const FINS = (t, nxt) => { let r = String(t).replace(/[\s,;!]+$/u, ""); if (!/(\.\.\.|…)$/.test(r)) r = r.replace(/[\s,;.!]+$/u, "");
   if (/:$/.test(r) && !(nxt && /^[«"“]/.test(nxt.trim()))) r = r.replace(/[\s:]+$/u, ""); return r; };
 const KWN = s => s.toLowerCase().replace(/[«»"….,!?;:]/g, "");
 const G = []; let cur = [];
 const flush = () => { if (cur.length) G.push(cur); cur = []; };
 for (const w of D.words) {
-  const isK = false;   /* 11/11 : plus de mot fort, le mot reste dans sa phrase (comme build.mjs) */
+  const isK = false;   /* plus de mot fort, le mot reste dans sa phrase (comme build.mjs) */
   if (isK) { flush(); G.push([{...w, k: true}]); continue; }
   if (cur.length && (w.t - cur[cur.length - 1].e > 0.5)) flush();
   cur.push(w);
   if (cur.length >= 3 || /[.,!?;:]$/.test(w.w)) flush();
 }
 flush();
-G.forEach((g, i) => { g.t = i === 0 ? 0 : g[0].t;   /* 11/11 l’utilisateur : sous-titre dès la 1re image */ g.e = i + 1 < G.length ? Math.min(G[i + 1][0].t, g[g.length - 1].e + 0.6) : g[g.length - 1].e + 0.4; });
+G.forEach((g, i) => { g.t = i === 0 ? 0 : g[0].t;   /* l’utilisateur : sous-titre dès la 1re image */ g.e = i + 1 < G.length ? Math.min(G[i + 1][0].t, g[g.length - 1].e + 0.6) : g[g.length - 1].e + 0.4; });
 
 // ---------- rendu ----------
 const V = document.getElementById("vid"), cap = document.getElementById("cap"), ht = document.getElementById("htitle");
@@ -225,9 +225,9 @@ function fit(el, base) {   // une ligne tient dans 940 px (règle « jamais 3 li
   el.style.fontSize = base + "px"; const w = el.scrollWidth; return w > 940 ? Math.floor(base * 940 / (w * 1.03)) : base;
 }
 function render(force) {
-  const sf = val("police")[1], size = Math.round(val("taille")[1] * (SCALE[sf] || 1)), mf = false /* 11/11 l’utilisateur : jamais de mot fort */;
-  const y = Math.min(AUTO /* 11/11 l’utilisateur : sous-titres toujours au col */, 1480 - Math.round(53 * size / 52));
-  cap.style.textTransform = val("casse")[1] ? "uppercase" : "none";   /* 11/11 option majuscules / minuscules */
+  const sf = val("police")[1], size = Math.round(val("taille")[1] * (SCALE[sf] || 1)), mf = false /* l’utilisateur : jamais de mot fort */;
+  const y = Math.min(AUTO /* l’utilisateur : sous-titres toujours au col */, 1480 - Math.round(53 * size / 52));
+  cap.style.textTransform = val("casse")[1] ? "uppercase" : "none";   /* option majuscules / minuscules */
   cap.style.fontFamily = fam(sf); cap.style.fontSize = size + "px"; cap.style.letterSpacing = ".5px"; cap.style.top = y + "px";
   const t = V.currentTime || 0;
   const gi = G.findIndex(g => t >= g.t && t < g.e);
@@ -242,7 +242,7 @@ function render(force) {
   // titre
   const tsz = Math.round(val("ttaille")[1] * (SCALE[sf] || 1)), tt = val("casse")[1] ? "uppercase" : "none";
   for (const h of [h1, h2]) { h.style.fontFamily = fam(sf); h.style.textTransform = tt; }
-  /* 11/11 l’utilisateur : 1 ligne si le titre entier tient sans rétrécir, sinon 2 lignes max (jamais 3) */
+  /* l’utilisateur : 1 ligne si le titre entier tient sans rétrécir, sinon 2 lignes max (jamais 3) */
   h1.textContent = D.title.l1 + " " + D.title.l2; h2.style.display = "none";
   if (fit(h1, tsz) < tsz) { h1.textContent = D.title.l1; h2.style.display = ""; }
   const f = h2.style.display === "none" ? tsz : Math.min(fit(h1, tsz), fit(h2, tsz));   /* une ligne trop longue = les 2 rétrécissent ensemble */
@@ -251,7 +251,7 @@ function render(force) {
   ht.classList.toggle("boxed", !!bc); box.style.background = bc || "";
   const ink = bc && lum(bc) > .6 ? "#0B0B0D" : "#fff";   /* encadré clair = texte noir, sans ombre (comme build.mjs avec box "#…") */
   ht.style.color = ink; ht.style.textShadow = bc ? "none" : "";
-  /* 11/11 l’utilisateur : titre au-dessus de la tête ; s'il touche les cheveux, remonté (jamais au-dessus de 270 px, zone morte) */
+  /* l’utilisateur : titre au-dessus de la tête ; s'il touche les cheveux, remonté (jamais au-dessus de 270 px, zone morte) */
   let top = 280;
   if (D.headTop) { const bas = ht.offsetHeight - 38 - (bc ? 26 : 0); if (top + bas + 24 > D.headTop) top = Math.max(240, Math.round(D.headTop - 24 - bas)); }
   ht.style.top = top + "px";
@@ -263,7 +263,7 @@ function render(force) {
 const phone = document.getElementById("phone"), stage = document.getElementById("stage");
 const sc = () => { stage.style.transform = `scale(${phone.clientWidth / 1080})`; };
 new ResizeObserver(sc).observe(phone); sc();
-/* 11/11 l’utilisateur : tout tient sur UN écran, jamais de défilement. Si les choix débordent (petit écran), on les réduit (zoom) jusqu'à ce qu'ils tiennent. */
+/* l’utilisateur : tout tient sur UN écran, jamais de défilement. Si les choix débordent (petit écran), on les réduit (zoom) jusqu'à ce qu'ils tiennent. */
 const right = document.querySelector(".right");
 const fitRight = () => { let z = 1; right.style.zoom = 1;
   while ((right.scrollHeight > right.clientHeight + 1 || right.scrollWidth > right.clientWidth + 1) && z > .55) { z -= .04; right.style.zoom = z; } };

@@ -1,6 +1,6 @@
-"""29/10 (l’utilisateur : « reprends le positionnement du texte de la vidéo originale », « mot par mot comme le reel original ») :
+"""« mot par mot comme le reel original ») :
 lit un reel de référence et rend la place et l'instant d'apparition de chaque mot blanc qui s'ajoute à l'écran.
-    python3 nuage_ref.py <reference.mp4>     -> JSON [{"t": 5.3, "x": 750, "y": 1307, "w": 372, "h": 78}, ...] (px 1080x1920, ordre d'apparition)
+    python3 nuage_ref.py <reference.mp4> -> JSON [{"t": 5.3, "x": 750, "y": 1307, "w": 372, "h": 78}, ...] (px 1080x1920, ordre d'apparition)
 Méthode : 10 images/s ; pixels très clairs (texte blanc) qui apparaissent et RESTENT 0,5 s ; lettres collées en mots ;
 les petits restes (< 200 px d'encre) sont ignorés. Utilisé par brolltexte.py ("slots": "ref/reference.mp4").
 """

@@ -1,7 +1,7 @@
-"""Rush iPhone HDR (HLG ou PQ, BT.2020 10 bits) -> couleurs standard (SDR bt709) AVANT tout traitement (25/10/2026).
+"""Rush iPhone HDR (HLG ou PQ, BT.2020 10 bits) -> couleurs standard (SDR bt709) AVANT tout traitement.
   python3 sdr.py <rush>            -> affiche le fichier à utiliser (la rush elle-même si elle est déjà SDR)
   from sdr import sdr; src = sdr(src)
-Pourquoi : le 16/10 (vidéo protocole de David), une passe ffmpeg sur une rush HLG a perdu les étiquettes de couleur :
+Pourquoi : (vidéo protocole de David), une passe ffmpeg sur une rush HLG a perdu les étiquettes de couleur :
 peau pâle, lampe verdâtre. Sur 4 conversions testées (avconvert Apple, tonemap hable, mobius, zscale), celle d'Apple
 est la plus naturelle. On la garde : avconvert, même définition (4K reste 4K pour la marge de recadrage de cadre.py),
 rotation du téléphone appliquée à l'image, puis le SON D'ORIGINE recollé tel quel (-c copy, aucune réécriture).

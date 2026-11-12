@@ -1,6 +1,5 @@
-"""Nettoie la voix avec ElevenLabs Voice Isolator puis la remonte à -14 LUFS (10/11/2026, l’utilisateur : « améliore le son avec
-ElevenLabs, il faut augmenter le volume et la clarifier »). Coût : ~1 000 crédits ElevenLabs par minute d'audio.
-  python3 voix_clean.py entree.mp4 sortie.mp4      (vidéo copiée telle quelle, son remplacé)"""
+"""Nettoie la voix avec ElevenLabs Voice Isolator puis la remonte à -14 LUFS Coût : ~1 000 crédits ElevenLabs par minute d'audio.
+  python3 voix_clean.py entree.mp4 sortie.mp4 (vidéo copiée telle quelle, son remplacé)"""
 import os, subprocess, sys, tempfile, requests
 src, out = sys.argv[1], sys.argv[2]
 key = subprocess.run(["security", "find-generic-password", "-s", "elevenlabs-api-key", "-w"], capture_output=True, text=True).stdout.strip()

@@ -161,7 +161,7 @@ KW = ["// AppStartPredictor", "getFeature(producer,", '  "app_start_predict_list
 for k, (a, b, h) in enumerate([(65.85, 67.25, []), (67.25, 69.75, ['"app_start_prediction_at"']), (69.75, 71.35, ['"prefetch_keep_warm"'])]):
     ajoute(a, b, f"11-keepwarm-{k}", code(KW, h, 310))
 
-# 05/11 : bords des écrans calés sur les coupes du dérush (sinon plan éclair < 0,1 s vu par le Gardien)
+# bords des écrans calés sur les coupes du dérush (sinon plan éclair < 0,1 s vu par le Gardien)
 seg = json.load(open(os.path.join(D, "cut.segments.json")))
 coupes, t = [], 0.0
 for a, b in seg:

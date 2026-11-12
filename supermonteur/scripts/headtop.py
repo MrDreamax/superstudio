@@ -1,12 +1,12 @@
-"""Haut de la tête (cheveux compris) sur une plage, pour poser le mot géant DERRIÈRE la tête (Style Lab R4, 13/10).
+"""Haut de la tête (cheveux compris) sur une plage, pour poser le mot géant DERRIÈRE la tête (Style Lab R4, ).
   python3 headtop.py clip.mp4 START END          -> imprime le y (px, 1080x1920) du haut des cheveux
   python3 headtop.py clip.mp4 START END --json   -> {"top", "cx", "hw", "visage"} (aperçu du cockpit : il imite le détourage)
-23/10 (retour n6 de l'utilisateur, « les mots géants ne sont pas bien derrière la tête ») : le haut des cheveux est MESURÉ sur
+(retour n6 de l'utilisateur, « les mots géants ne sont pas bien derrière la tête ») : le haut des cheveux est MESURÉ sur
 la silhouette détourée (Robust Video Matting, le modèle de matte.py) au-dessus du visage (MediaPipe). Avant : front - 0,45 x hauteur
 du visage, une estimation faite sur Meta Verified ; sur des cheveux courts elle tombait ~50 px trop haut (RUSH : 465 contre 512
 mesuré) et le mot flottait au-dessus de la tête au lieu de passer derrière.
 Sort en erreur (« pas de visage ») si la tête n'est pas vue sur au moins la moitié de la plage (plan sur le décor, caméra retournée) :
-build.mjs pose alors le mot devant, lisible, sans faire semblant de le passer derrière une tête absente (retour n2, 23/10).
+build.mjs pose alors le mot devant, lisible, sans faire semblant de le passer derrière une tête absente (retour n2, ).
 """
 import json, os, subprocess, sys
 
@@ -14,7 +14,7 @@ src, t0, t1 = sys.argv[1], float(sys.argv[2]), float(sys.argv[3])
 MOD = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "models", "face_landmarker.task")
 RVM = os.path.expanduser("~/.cache/supermonteur/rvm_mobilenetv3_fp32.onnx")
 W, H, FPS, WARM = 540, 960, 10, 0.5
-# 12/11 (chrono Minimaliste : 15,7 s sur 17 de composition, titre tenu 16 s = 164 images détourées) : 40 images au plus.
+#  (chrono Minimaliste : 15,7 s sur 17 de composition, titre tenu 16 s = 164 images détourées) : 40 images au plus.
 # Plage courte (mot géant, <= 4 s) = 10 images/s comme avant ; plage longue (titre) = moins d'images/s, même médiane.
 FPS = float(os.environ.get("HEADTOP_FPS") or (10 if t1 - t0 <= 4 else max(0.5, 40 / (t1 - t0))))
 # même vidéo + même plage = même réponse : gardée dans headtop.cache.json à côté de la vidéo (chaque version la redemandait)

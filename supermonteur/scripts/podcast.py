@@ -1,4 +1,4 @@
-"""Famille « À plusieurs » (podcast, visio, split screen) : 2 personnes côte à côte en 16:9 -> reel 9:16 (13/10).
+"""Famille « À plusieurs » (podcast, visio, split screen) : 2 personnes côte à côte en 16:9 -> reel 9:16.
 Mise en page MIX validée : split haut/bas par défaut, plein écran sur celui qui parle pendant la phrase qui porte un mot fort
 (2-3,5 s), jamais moins de 1,5 s de split entre deux pleins écrans. Échantillon validé : <dossier>/style-lab/a-plusieurs/MIX_musique.mp4
 
@@ -63,7 +63,7 @@ def speakers(src, words_p):
     W = json.load(open(words_p))
     ws = W["words"]
     F = faces(src)
-    # MOUVEMENT de la mâchoire seulement : la bouche ouverte d'un sourire qui écoute ne compte pas (test 13/10 : sourire de l'hôte
+    # MOUVEMENT de la mâchoire seulement : la bouche ouverte d'un sourire qui écoute ne compte pas (test : sourire de l'hôte
     # pris pour de la parole). Visage perdu (main devant) = image ignorée, pas « bouche fermée ».
     motion = {}
     for s in ("L", "R"):
@@ -144,7 +144,7 @@ def layout(plan_p):
             while k2 < len(ws) and ws[k2]["who"] == w["who"] and ws[k2]["end"] - s <= MAX_FULL and ws[k2 - 1]["text"].rstrip()[-1:] not in ".,!?":
                 e = ws[k2]["end"]; k2 += 1
             full.append([max(0, s), min(dur, e + .3)])
-    # HOOK (score.py 13/10 : rien ne bougeait avant 8,3 s) : si aucun plein écran avant 3 s, on ouvre en plein écran sur celui
+    # HOOK (score.py : rien ne bougeait avant 8,3 s) : si aucun plein écran avant 3 s, on ouvre en plein écran sur celui
     # qui parle en premier (la question), 2-3 s, coupé sur une fin de mot, puis split pour voir l'autre réagir
     full.sort()
     if not full or full[0][0] > 3.0:

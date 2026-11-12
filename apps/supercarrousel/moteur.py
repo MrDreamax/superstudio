@@ -31,7 +31,7 @@ sys.path.insert(0, SKILL)
 import apple  # noqa: E402  (moteur style Apple du skill carrousel)
 from art import BLUE, MIST, PALE, SKY, YELLOW  # noqa: E402
 import modeles  # noqa: E402  (modèles que le moteur ne fait pas encore : Cinéma)
-import modeles_bm  # noqa: E402  (4 modèles repris de Brian Mark, 12/11/2026)
+import modeles_bm  # noqa: E402 (4 modèles repris de Brian Mark)
 
 W, H = apple.W, apple.H
 RESEAUX = ["instagram", "tiktok", "facebook", "linkedin"]  # jamais YouTube (pas de carrousel)
@@ -39,10 +39,10 @@ NOMS_RESEAUX = {"instagram": "Instagram", "tiktok": "TikTok (mode photos)", "fac
 
 # ---------------------------------------------------------------- DA
 
-# En attendant da.json de SuperDA : la DA actuelle du skill carrousel (style Apple validé le 22/10), au format du contrat
+# En attendant da.json de SuperDA : la DA actuelle du skill carrousel (style Apple validé), au format du contrat
 DA_SKILL = {
     "version": 1,
-    "_source": "skill carrousel (style Apple du 22/10), en attendant SuperDA",
+    "_source": "skill carrousel (style Apple ), en attendant SuperDA",
     "commun": {
         "duo": {"id": "moderne", "nom": "Apple",
                 "principale": {"famille": "-apple-system", "graisse": 700, "majuscules": False},
@@ -117,7 +117,7 @@ def resume_da(da=None):
     da = da or lire_da()
     c, car = da["commun"]["couleurs"], da["carrousels"]
     acc, tou = nom_couleur(c.get("accent")), nom_couleur(c.get("touches"))
-    couleurs = acc or "Aucune"  # petites touches supprimées le 28/10
+    couleurs = acc or "Aucune"  # petites touches supprimées
     duo = da["commun"]["duo"].get("nom", "")
     cov = {"haut": "Titre en haut", "bas": "Titre en bas", "derriere_tete": "Mot derrière la tête"}
     photos = {"sombres": "Sombres", "naturelles": "Naturelles", "noir_blanc": "Noir et blanc"}
@@ -334,7 +334,7 @@ def _photo(p, nom, projet_dir, work):
 
 
 def visage(work, nom):
-    """Rond de la dernière slide (28/10, photo « mal centrée ») : trouve le visage de la personne détourée avec Vision (intégré
+    """Rond de la dernière slide (photo « mal centrée ») : trouve le visage de la personne détourée avec Vision (intégré
     à macOS, visage.swift compilé une fois) -> [cx, cy, D] en px sur la photo préparée (1080 x 1440), D = rond tête + épaules.
     None si aucun visage : le rond garde alors le cadrage de SuperDA."""
     exe = os.path.join(ICI, "_outils", "visage")

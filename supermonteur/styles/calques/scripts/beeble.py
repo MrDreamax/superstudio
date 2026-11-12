@@ -1,6 +1,5 @@
-"""Beeble SwitchX (09/11/2026, l’utilisateur : « je veux le meilleur rendu possible, s'il faut payer Beeble je paye. Ne garde pas
-mon décor de base. ») : change la pièce de chaque plan et ré-éclaire la personne pour qu'elle colle.
-API : https://developer.beeble.ai/docs (720p par défaut depuis le 09/11 = 0,10 $ / s ; "resolution": 1080 dans le json = 0,30 $ / s ; 8 s = 240 images max par vidéo, 2,77 Mpx max).
+"""Beeble SwitchX change la pièce de chaque plan et ré-éclaire la personne pour qu'elle colle.
+API : https://developer.beeble.ai/docs (720p par défaut = 0,10 $ / s ; "resolution": 1080 dans le json = 0,30 $ / s ; 8 s = 240 images max par vidéo, 2,77 Mpx max).
 Clé lue dans le trousseau (service beeble-api-key), jamais dans un fichier.
 
   python3 beeble.py plans.json
@@ -83,7 +82,7 @@ def main():
         src, alpha = os.path.join(B, nom + "_src.mp4"), os.path.join(B, nom + "_alpha.mp4")
         dur = pl["a"] - pl["de"]
         if not os.path.exists(src):
-            # 09/11 : découpe à l'IMAGE près (Beeble refuse un masque qui a 1 image de moins que la vidéo)
+            # découpe à l'IMAGE près (Beeble refuse un masque qui a 1 image de moins que la vidéo)
             fa, nf = round(pl["de"] * 30), round(dur * 30)
             tr = f"trim=start_frame={fa}:end_frame={fa + nf},setpts=PTS-STARTPTS"
             subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", clip, "-vf", tr, "-an",
@@ -108,7 +107,7 @@ def main():
         jobs.append((nom, pc, src, alpha))
     for pc, cache in refs.items():
         if not os.path.exists(cache + ".png"): genere(key, {"generation_type": "image"}, cache)
-    for nom, pc, src, alpha in jobs:   # 09/11 : toutes les vidéos en même temps (Beeble : 5 travaux à la fois)
+    for nom, pc, src, alpha in jobs:   # toutes les vidéos en même temps (Beeble : 5 travaux à la fois)
         out = os.path.join(B, nom)
         if not os.path.exists(out + ".mp4"):
             print(f"{nom} (pièce {pc}) envoyé")

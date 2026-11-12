@@ -1,4 +1,4 @@
-"""Devine le format d'un rush avant le montage (26/10 : « je dis toujours "monte cette vidéo", c'est à toi d'en déduire
+"""Devine le format d'un rush avant le montage (« je dis toujours "monte cette vidéo", c'est à toi d'en déduire
 le type de montage »). Mesure, ne décide pas : Claude regarde la planche, puis pose UNE question en boutons
 (« Tu veux un montage tier list ? »), le format deviné en 1er. Règle complète : devine-format.md.
   python3 devine_format.py rush.MOV                    -> devine.json + devine.jpg (planche de 8 images) dans le dossier courant
@@ -66,7 +66,7 @@ if words_path:
     mots = mots.get("words", mots) if isinstance(mots, dict) else mots
 else:
     sys.path.insert(0, os.path.join(SK, "scripts"))
-    from mots import transcrire   # 09/11 : ElevenLabs d'abord (2 s au lieu de ~40 s), Whisper du Mac en secours
+    from mots import transcrire   # ElevenLabs d'abord (2 s au lieu de ~40 s), Whisper du Mac en secours
     mots, _ = transcrire(src, 0, min(dur, 150), langue=None, secours=True)
 texte = " ".join(m.get("text", m.get("word", "")) for m in mots)
 plat = unicodedata.normalize("NFKD", texte.lower().replace("’", "'")).encode("ascii", "ignore").decode()

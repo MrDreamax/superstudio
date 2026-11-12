@@ -83,7 +83,7 @@ def normaliser(da):
     co = da.setdefault("commun", {})
     duo = co.setdefault("duo", {})
     if duo.get("id") != "perso":
-        ref = par_id(c["duos"], duo.get("id")) or par_id(c["duos"], "apple") or c["duos"][0]  # 05/11 : défaut = Moderne (Outfit, une taille)
+        ref = par_id(c["duos"], duo.get("id")) or par_id(c["duos"], "apple") or c["duos"][0]  # défaut = Moderne (Outfit, une taille)
         duo.update({"id": ref["id"], "nom": ref["nom"],
                     "principale": copy.deepcopy(ref["principale"]), "secondaire": copy.deepcopy(ref["secondaire"])})
     else:
@@ -95,20 +95,20 @@ def normaliser(da):
     for k, d in (("titre", "#FFFFFF"), ("ligne2", "#FFFFFF"), ("sous_titres", "#FFFFFF"), ("texte", "#FFFFFF")):
         cl.setdefault(k, d)
     cl.setdefault("accent", "#4F9BFF")
-    cl["touches"] = None  # petites touches supprimées le 28/10 (« ça pollue le design »)
+    cl["touches"] = None  # petites touches supprimées (« ça pollue le design »)
 
     m = da.setdefault("montage", {})
     t = m.setdefault("titre", {})
-    t["taille"] = borne(t.get("taille"), 40, 200, 62)   # 05/11 : défaut = titre 62 px (règle du 03/11), plus 104
+    t["taille"] = borne(t.get("taille"), 40, 200, 62)   # défaut = titre 62 px (règle), plus 104
     if t.get("position") not in ("haut", "milieu", "bas"):
         t["position"] = "haut"
-    t["decalage"] = borne(t.get("decalage"), -600, 600, 60)   # 05/11 : défaut = haut des lettres à 350 px
+    t["decalage"] = borne(t.get("decalage"), -600, 600, 60)   # défaut = haut des lettres à 350 px
     _pp = duo.get("principale", {})
     hauteur_titre = int(round((t["taille"] * _pp.get("ratio_ligne1", 0.5) * 1.05 + t["taille"] * 1.1) * _pp.get("echelle", 1)))
     y = c["positions"]["titre"][t["position"]] + t["decalage"]
     t["_y"] = max(zi["haut"], min(zi["bas"] - hauteur_titre, y))
     s = m.setdefault("sous_titres", {})
-    s["taille"] = borne(s.get("taille"), 24, 120, 54)   # 05/11 : défaut = sous-titres 54 px
+    s["taille"] = borne(s.get("taille"), 24, 120, 54)   # défaut = sous-titres 54 px
     if s.get("position") not in ("col", "poitrine", "bas"):
         s["position"] = "col"
     s["decalage"] = borne(s.get("decalage"), -600, 600, 0)
@@ -381,7 +381,7 @@ ZONES = ("superda", "supercarrousel", "supermonteur")
 EXT_CODE = (".py", ".js", ".mjs", ".css", ".html", ".json", ".md", ".sh")
 SAUTE = {"historique", "preuves", "projets", "reels", "fonts", "img", "inspiration", "node_modules", "final", "rendus", "__pycache__", ".git"}
 SERVEURS = {"supercarrousel": 8797, "supermonteur": 8801}
-EXCLUS = {"a-corriger.json", "metricool.json", "config.json"}  # état vivant des applis (retours en cours) : jamais remis en arrière
+EXCLUS = {"a-corriger.json", "config.json"}  # état vivant des applis (retours en cours) : jamais remis en arrière
 
 CONSIGNES_CODE = """Tu es dans le dossier des 3 applis de l’utilisateur (créateur de contenu, pas développeur). Elles se parlent :
 - superda/ : la DA. server.py (normaliser() = bornes et valeurs par défaut de chaque réglage, resume()), app.js (SECTIONS, panneau() = les réglages de chaque section avec les aides pm / seg / inter / dots, et les aperçus reel() / slides()), catalogue.json, da-schema.json, da.json (la DA en cours).

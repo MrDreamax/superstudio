@@ -1,14 +1,14 @@
-"""FAMILLE « B-ROLL + TEXTE » (16/10/2026) : 1 plan (2 max) de 5-7 s, du texte AU-DESSUS DE LA TÊTE, musique, zéro voix.
+"""FAMILLE « B-ROLL + TEXTE » : 1 plan (2 max) de 5-7 s, du texte AU-DESSUS DE LA TÊTE, musique, zéro voix.
   python3 brolltexte.py plan.json            -> final.mp4 + legende.txt (+ text.png pour contrôle)
 plan.json :
   "brolls": [{"src": "<chemin absolu>", "from": 1.33 | "auto", "dur": 6}]   1 ou 2 plans, total 5-7 s
   "text": {"lines": ["Tu n'es pas nul en vidéo.", "Ton message est flou."], "strong": "flou", "cta": "Commente POSITION"}
            2 lignes (3 MAX), chacune tient sur UNE ligne ; "strong" = mot fort en serif italique ; "cta" FACULTATIF
-  OU (29/10, mode TABLEAU, repris d'un reel « No digas / Mejor di ») :
+  OU (mode TABLEAU, repris d'un reel « No digas / Mejor di ») :
   "text": {"title": "Parle mieux pour vendre", "head": ["Ne dis pas", "Dis plutôt"], "rows": [["Je pense que", "Je sais que"], ...]}
            3 à 9 lignes ; colonne gauche fine, flèche, colonne droite en gras ; posé en haut de la zone sûre, voile auto
-           "accent": "#FFD60A" facultatif = titre + colonne droite (en-tête compris) en couleur (29/10 : jaune demandé par l’utilisateur)
-  OU (29/10, mode NUAGE, repris d'un reel « I'm a business owner but I'm also a… » + 20 métiers autour) :
+           "accent": "#FFD60A" facultatif = titre + colonne droite (en-tête compris) en couleur (jaune demandé par l’utilisateur)
+  OU (mode NUAGE, repris d'un reel « I'm a business owner but I'm also a… » + 20 métiers autour) :
   "text": {"lines": ["Tu es coach", "mais aussi"], "strong": "coach", "words": ["Monteur", "Vendeur", ...], "accent": "#FFD60A"}
            lines = le texte AU CENTRE (MAJUSCULES, gras, TOUT en couleur "accent", défaut jaune #FFD60A ; "strong" ignoré) ;
            words = 8 à 30 mots courts (MAJUSCULES, éparpillés au hasard sur tout l'écran) qui APPARAISSENT UN PAR UN autour (de plus en plus vite), jamais sur le visage
@@ -19,14 +19,14 @@ plan.json :
            "at": 4.1 facultatif = TOUS les mots apparaissent d'un coup à cette seconde (sur un temps fort de la musique)
   "music": {..., "tempo": 1.06}   facultatif : accélère la musique (hauteur gardée) ; un temps fort à m s du morceau
            tombe à (m - from) / tempo dans la vidéo
-  "sombre": 0.3     facultatif (0 à 0.6) : assombrit tout le plan (29/10 : « assombris le tout »)
+  "sombre": 0.3     facultatif (0 à 0.6) : assombrit tout le plan (« assombris le tout »)
   "style": "da" (défaut, VALIDÉ : police de la DA en majuscules blanches + mot fort serif italique, ombre douce)
            | "natif" (bandeau blanc arrondi, texte noir, casse mixte = l'outil texte d'Instagram)
   "y": 470          facultatif : force le centre du bloc texte (sinon calculé au-dessus de la tête)
   "music": {"src": "<wav Epidemic coupé à la durée, loopable>", "from": 0}   "from" facultatif : départ dans le morceau (s)
   "caption": "..."  la légende du post (écrite par l'étape Copywriter)
   "da": "da/<client>.json"   facultatif (défaut : config.json « client », sinon la DA de l'utilisateur : Brain/00-Moi/reglages/da-montage.json, sinon da/exemple.json)
-Règles 16/10 :
+Règles :
 - Texte TOUJOURS au-dessus de la tête. Le script mesure le haut de la tête sur tout le plan (5e centile = quand elle est
   la plus haute) ; pas assez de place -> le plan descend et le haut de l'image est prolongé en fondu (« place rajoutée »
   validée en montage viral). Pas de visage (de dos, mains, lieu) -> texte en haut de la zone sûre.
@@ -51,7 +51,7 @@ CFG = reglages.config()
 _da = os.path.expanduser(plan.get("da") or (CFG.get("client") and f"da/{CFG['client']}.json") or reglages.da_perso())
 DA = json.load(open(_da if os.path.isabs(_da) else os.path.join(SKILL, _da)))
 W, H, FPS = 1080, 1920, 30
-TOP, BOTTOM, LEFT, RIGHT = 270, 1480, 120, 960      # zones mortes Instagram (16/10)
+TOP, BOTTOM, LEFT, RIGHT = 270, 1480, 120, 960      # zones mortes Instagram
 AIR, SMAX, FADE = 70, 480, 260                     # air entre texte et tête ; descente max du plan ; fondu (viral.py)
 run = lambda *a: subprocess.run(a, check=True)
 P = lambda n: os.path.join(here, n)
@@ -59,7 +59,7 @@ P = lambda n: os.path.join(here, n)
 # --- 1. plans : coupés, recadrés 1080x1920, bruts, enchaînés en coupe franche ---
 parts = []
 for i, b in enumerate(plan["brolls"]):
-    b["src"] = sdr(b["src"], here)   # 25/10 : plan iPhone HDR -> SDR avant la coupe
+    b["src"] = sdr(b["src"], here)   # plan iPhone HDR -> SDR avant la coupe
     start = b.get("from", 0)
     if start == "auto":
         out = subprocess.check_output(["python3", os.path.join(SKILL, "scripts/broll.py"), "steady", b["src"], str(b["dur"])]).decode()
@@ -81,7 +81,7 @@ def head_top(src):
 
 
 def face_box(src, t0=0.0):
-    """29/10 : boîte du visage sur tout le plan [x0, haut de tête, x1, menton] (px 1080x1920) ; None si aucun visage."""
+    """boîte du visage sur tout le plan [x0, haut de tête, x1, menton] (px 1080x1920) ; None si aucun visage."""
     import mediapipe as mp
     from mediapipe.tasks.python import vision, BaseOptions
     w, h = 540, 960
@@ -106,7 +106,7 @@ def face_box(src, t0=0.0):
 t = plan["text"]; style = plan.get("style", "da")
 import re
 def nopunct(x):
-    """16/10 : pas de ponctuation à la fin d'un texte (l'emoji final reste)."""
+    """pas de ponctuation à la fin d'un texte (l'emoji final reste)."""
     emo = re.search(r"[\s\U0001F000-\U0001FFFF\u2600-\u27BF\uFE0F]*$", x).group(0)
     core = x[:len(x) - len(emo)] if emo else x
     return re.sub(r"[\s.,;:!?…«»\"']+$", "", core) + (" " + emo.strip() if emo.strip() else "")
@@ -114,7 +114,7 @@ table = "rows" in t
 cloud = bool(t.get("words"))
 if cloud and not 8 <= len(t["words"]) <= 30: sys.exit(f"!! nuage de {len(t['words'])} mots : 8 à 30.")
 lines, cta = [nopunct(l) for l in t.get("lines", [])], nopunct(t.get("cta", ""))
-if cloud:                                           # 29/10 (l’utilisateur : « Tu es coach mais tu es aussi... ») : les points de suspension restent
+if cloud:                                           # les points de suspension restent
     lines = [re.sub(r"\.{3}$", "…", l.strip()) if l.strip().endswith(("...", "…")) else nopunct(l) for l in t["lines"]]
 if table and not 3 <= len(t["rows"]) <= 9: sys.exit(f"!! tableau de {len(t['rows'])} lignes : 3 à 9.")
 if len(lines) > 3: sys.exit(f"!! {len(lines)} lignes de texte : 2 conseillées, 3 MAX. Raccourcir.")
@@ -124,7 +124,7 @@ isemo = lambda c: ord(c) >= 0x1F000 or 0x2600 <= ord(c) <= 0x27BF or ord(c) == 0
 
 
 def row_html(s):
-    if cloud:                                       # nuage (29/10, comme la réf) : casse normale, tout en couleur, pas de mot fort à part
+    if cloud:                                       # nuage (comme la réf) : casse normale, tout en couleur, pas de mot fort à part
         return f'<div class="row"><span class="l">{s.upper()}</span></div>'
     if style == "da" and strong and strong in s:
         a, z = s.split(strong, 1)
@@ -141,7 +141,7 @@ def row_html(s):
 
 def rows_html():
     h = [row_html(s) for s in lines]
-    if cloud: h = [x.replace('<div class="row">', '<div class="row acc">', 1) for x in h]   # nuage : tout le texte du centre en couleur (29/10)
+    if cloud: h = [x.replace('<div class="row">', '<div class="row acc">', 1) for x in h]   # nuage : tout le texte du centre en couleur
     return "".join(h)
 
 
@@ -175,7 +175,7 @@ else:
 
 
 def table_html():
-    """29/10 : titre + 2 colonnes (« ne dis pas » -> « dis plutôt »), police de la DA, couleur texte de la DA."""
+    """titre + 2 colonnes (« ne dis pas » -> « dis plutôt »), police de la DA, couleur texte de la DA."""
     esc = lambda x: x.replace("&", "&amp;").replace("<", "&lt;")
     hd = t.get("head", ["Ne dis pas", "Dis plutôt"])
     h = (f'<div class="tt">{esc(nopunct(t["title"])).upper()}</div>' if t.get("title") else "") + \
@@ -215,7 +215,7 @@ import {{ existsSync, readdirSync }} from "node:fs";
 import {{ join }} from "node:path";
 import {{ homedir }} from "node:os";
 // puppeteer-core + Chrome installés par HyperFrames (même recherche que zones.mjs) ; secours : Google Chrome
-const NPX = join(homedir(), ".npm", "_npx"), CH = [join(homedir(), ".cache", "hyperframes", "chrome", "chrome-headless-shell"), join(homedir(), ".cache", "puppeteer", "chrome-headless-shell")];   // 0.8 range Chrome dans ~/.cache/hyperframes, 0.6 dans ~/.cache/puppeteer (25/10)
+const NPX = join(homedir(), ".npm", "_npx"), CH = [join(homedir(), ".cache", "hyperframes", "chrome", "chrome-headless-shell"), join(homedir(), ".cache", "puppeteer", "chrome-headless-shell")];   // 0.8 range Chrome dans ~/.cache/hyperframes, 0.6 dans ~/.cache/puppeteer
 const mod = existsSync(NPX) && readdirSync(NPX).map(d => join(NPX, d, "node_modules")).find(d => existsSync(join(d, "puppeteer-core")));
 if (!mod) {{ console.log("puppeteer-core introuvable : lancer une fois « npx --yes hyperframes@0.8.149 browser ensure »"); process.exit(1); }}
 const puppeteer = createRequire(mod + "/")("puppeteer-core");
@@ -291,7 +291,7 @@ else:
         if hb - room > SMAX:
             print(f"!! même descendu de {SMAX} px, le texte touche la tête : prendre un plan plus large (tête plus basse)")
 cam = P("_broll.mp4")
-if S > 0:                                          # fondu « place rajoutée » (même recette que viral.py, validé 16/10)
+if S > 0:                                          # fondu « place rajoutée » (même recette que viral.py)
     from PIL import Image
     ramp = np.ones((H, W), np.float32); x = np.linspace(0, 1, FADE)
     ramp[:FADE] = (x * x * (3 - 2 * x))[:, None]
@@ -303,7 +303,7 @@ if S > 0:                                          # fondu « place rajoutée »
         "-filter_complex", fc, "-map", "[v]", "-t", str(dur), "-c:v", "libx264", "-crf", "14", "-preset", "fast", P("_place.mp4"))
     os.remove(P("_mask.png")); cam = P("_place.mp4")
 top, bot, ok, ctop, cbot = render(ytop)
-# contraste sous le texte (16/10 : « fond légèrement noir en haut » quand le contraste n'est pas bon)
+# contraste sous le texte (« fond légèrement noir en haut » quand le contraste n'est pas bon)
 x0, x1 = LEFT - 20, RIGHT + 20
 ch, cy = (bot - top) // 2 * 2, top // 2 * 2          # ffmpeg arrondit le crop au pair sur du 4:2:0 : on le fait nous-mêmes
 raw = subprocess.check_output(["ffmpeg", "-nostdin", "-v", "error", "-i", cam, "-vf",
@@ -317,18 +317,18 @@ if veil:
 print(f"bloc texte {top} -> {bot} px" + (f" · CTA {ctop} -> {cbot} px" if cta else ""))
 if top < TOP or bot > BOTTOM or (cta and cbot > BOTTOM): print(f"!! hors zone Insta (autorisé {TOP}-{BOTTOM})")
 
-# --- 3 bis. NUAGE (29/10) : les mots se posent autour (jamais sur le visage ni sur le texte du centre), 1 PNG par mot ---
+# --- 3 bis. NUAGE : les mots se posent autour (jamais sur le visage ni sur le texte du centre), 1 PNG par mot ---
 words = []
 if cloud:
     fb = None
     if not table and "y" not in plan and head is not None:
         t0 = float(t["at"]) if "at" in t else float(t.get("start", 0.35)) * dur
-        fbox = face_box(P("_broll.mp4"), t0) or fbox   # 29/10 : le visage seulement quand les mots sont là (il bouge : sinon zone interdite trop large)
+        fbox = face_box(P("_broll.mp4"), t0) or fbox   # le visage seulement quand les mots sont là (il bouge : sinon zone interdite trop large)
         fb = [fbox[0] - 25, fbox[1] + S - 15, fbox[2] + 25, fbox[3] + S + 30]   # visage (plan descendu de S) + marge
         print(f"nuage : visage {fb}")
     js = open(P("_shot.mjs")).read()
-    ws = json.dumps([nopunct(w).upper() for w in t["words"]], ensure_ascii=False)   # 29/10 : tout en majuscules
-    # 29/10 : "slots" = places + instants des mots d'un reel de référence (nuage_ref.py), resserrés dans la zone Insta
+    ws = json.dumps([nopunct(w).upper() for w in t["words"]], ensure_ascii=False)   # tout en majuscules
+    # "slots" = places + instants des mots d'un reel de référence (nuage_ref.py), resserrés dans la zone Insta
     sl, st = t.get("slots"), None
     if isinstance(sl, str):
         import nuage_ref
@@ -352,7 +352,7 @@ if cloud:
     words = json.loads(subprocess.check_output(["node", P("_shot.mjs")]).decode().strip().splitlines()[-1])
     lost = [t["words"][i] for i in range(len(t["words"])) if i not in {w[0] for w in words}]
     print(f"nuage : {len(words)} mots posés" + (f" · pas de place pour : {', '.join(lost)}" if lost else ""))
-    # contrôle zone Insta sur l'ENCRE réelle (alpha > 50 %, l'ombre douce peut déborder) : 29/10, valable pour tous les nuages
+    # contrôle zone Insta sur l'ENCRE réelle (alpha > 50 %, l'ombre douce peut déborder) :, valable pour tous les nuages
     from PIL import Image
     al = np.array(Image.open(P("text-nuage.png")))[:, :, 3] > 128
     ys, xs = np.nonzero(al)
@@ -364,7 +364,7 @@ if cloud:
         t0 = float(t["at"]) if "at" in t else float(t.get("start", 0.35)) * dur
         when = {w[0]: t0 + st[w[0]] - st[0] if w[0] < len(st) else t0 + st[-1] - st[0] for w in words}
         words = [(when[w[0]], P(f"_w{w[0]}.png")) for w in words]
-    elif "at" in t: a0 = a1 = float(t["at"])          # 29/10 : "at" = tous les mots d'un coup à cette seconde (ex. 2e coup de violon)
+    elif "at" in t: a0 = a1 = float(t["at"])          # "at" = tous les mots d'un coup à cette seconde (ex. 2e coup de violon)
     if not st: words = [(a0 + (a1 - a0) * (k / max(1, n - 1)) ** 0.6, P(f"_w{w[0]}.png")) for k, w in enumerate(words)]   # de plus en plus vite
 
 # --- 4. image + son ---
@@ -385,7 +385,7 @@ if m:
     meas = subprocess.run(["ffmpeg", "-nostats", "-ss", str(m.get("from", 0)), "-t", str(dur), "-i", m["src"], "-af", "ebur128", "-f", "null", "-"],
                           capture_output=True, text=True).stderr
     I = float([l for l in meas.splitlines() if l.strip().startswith("I:")][-1].split()[1])
-    tempo = float(m.get("tempo", 1))                # 29/10 : "tempo": 1.06 = musique accélérée de 6 % (hauteur gardée)
+    tempo = float(m.get("tempo", 1))                # "tempo": 1.06 = musique accélérée de 6 % (hauteur gardée)
     fc += f";[{ia}:a]" + (f"atempo={tempo:.3f}," if tempo != 1 else "") + f"atrim=0:{dur},asetpts=N/SR/TB,volume={-14 - I:.2f}dB,alimiter=limit=0.79:attack=1:release=50:level=false," \
           f"afade=t=in:d=0.05,afade=t=out:st={dur-0.12}:d=0.12[a]"
 cmd += ["-filter_complex", fc, "-map", "[v]"] + (["-map", "[a]", "-c:a", "aac", "-b:a", "192k", "-ar", "48000"] if m else []) + \

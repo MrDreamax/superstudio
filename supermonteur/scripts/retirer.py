@@ -1,4 +1,4 @@
-"""Retirer (09/11/2026, RUSH) : coupe des bouts précis dans cut.mp4 APRÈS le dérush, quand derush.py remet le bout
+"""Retirer (RUSH) : coupe des bouts précis dans cut.mp4 APRÈS le dérush, quand derush.py remet le bout
 (sa butée « vraie attaque » recule le bord jusqu'au euh ou au mot doublé collé au mot suivant : « le le marché », « parce que euh le GPS »).
 
     python3 retirer.py <t0> <t1> [<t0> <t1> ...]      # dans le dossier du reel, temps de cut.mp4 (avant teaser)

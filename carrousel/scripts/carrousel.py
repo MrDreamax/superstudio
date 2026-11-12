@@ -1,11 +1,11 @@
-"""Monte un carrousel Instagram 1080x1440 (3:4) au modèle validé le 16/10 (v4 « Quand tous les coachs se ressemblent »)
+"""Monte un carrousel Instagram 1080x1440 (3:4) au modèle validé (v4 « Quand tous les coachs se ressemblent »)
 à partir d'un fichier de description, via Open Carrusel (localhost:3210), puis exporte les PNG + planche + légende.
   python3 carrousel.py spec.json
 Le fichier spec : voir ../exemples/exemple-v4.json. Types de slide :
   cover : photo + mot géant derrière la tête + 1 ligne en majuscules (couverture validée)
   photo : vraie photo étalonnée (prep.py) + titre serif + 1 phrase
   art   : illustration 2D (art.py "art" ou fichier "svg") + titre + 1 phrase | "steps" (liste 1-2-3) | "cta" (mot-clé)
-"style": "apple" (validé le 22/10/2026) : rendu local par apple.py, sans Open Carrusel. Voir ../exemples/exemple-apple.json.
+"style": "apple" (validé ) : rendu local par apple.py, sans Open Carrusel. Voir ../exemples/exemple-apple.json.
 Pas de numéro de slide, pas de @, flèche « swipe » sur toutes sauf la dernière.
 """
 import io
@@ -97,7 +97,7 @@ def call(method, path, body=None, raw=False):
 def main():
     spec_path = os.path.abspath(sys.argv[1])
     spec, spec_dir = json.load(open(spec_path)), os.path.dirname(spec_path)
-    if spec.get("style") == "apple":  # style Apple (22/10/2026) : rendu local, sans Open Carrusel
+    if spec.get("style") == "apple":  # style Apple : rendu local, sans Open Carrusel
         return finish(spec, apple.build(spec, spec_dir, os.path.expanduser(spec["out"])))
     try:
         call("GET", "/brand")
@@ -135,7 +135,7 @@ def finish(spec, n):
     """Planche + légende + copie de la description dans le dossier de sortie."""
     out = os.path.expanduser(spec["out"])
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-start_number", "1", "-i", os.path.join(out, "slide-%d.png"),
-                    "-vf", f"scale=540:720,pad=556:736:8:8:color=0x888888,tile={min(n, 4)}x{(n + 3) // 4}",  # 12/11/2026 : moins de 4 slides = pas de case noire vide
+                    "-vf", f"scale=540:720,pad=556:736:8:8:color=0x888888,tile={min(n, 4)}x{(n + 3) // 4}",  # moins de 4 slides = pas de case noire vide
                     "-frames:v", "1", os.path.join(out, "00-planche.png")], check=True)
     with open(os.path.join(out, "legende.txt"), "w") as f:
         f.write(spec.get("caption", "") + "\n\n" + " ".join("#" + h for h in spec.get("hashtags", [])) + "\n")

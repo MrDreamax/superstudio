@@ -1,9 +1,9 @@
-# Fiche retours : corriger vite (03/11/2026, notes locales 11/11)
+# Fiche retours : corriger vite (notes locales)
 
 Collée dans la consigne de l'ouvrier de SuperMonteur (Claude Sonnet, sans chat) à chaque « Suivant : corrige mes retours ». But : la version
 suivante en moins de 2 min. Tu modifies les fichiers, le serveur remonte la vidéo et répond à l’utilisateur tout seul.
 
-## Ce que tu touches (11/11 : 1 seul fichier dans le cas courant)
+## Ce que tu touches (1 seul fichier dans le cas courant)
 - `<dossier>/retouche.json` (fichier neuf, Write) : `{"plan": {<les clés de plan.json qui changent>}, "reponses": {"<id>": "..."}}`.
   Le serveur fusionne `plan` dans plan.json (objets imbriqués fusionnés, `null` = retirer la clé, une liste se donne en entier)
   et note feedback-retours.md lui-même. Ex. titre plus gros : `{"plan": {"title": {"size": 72}}, "reponses": {"6": "..."}}`.
@@ -47,7 +47,7 @@ Rien d'autre (jamais cut.segments.json ni les fichiers du dérush : le serveur l
 - « cut plus serré » partout, « bug ici » sur une coupe, « enlève cette phrase » longue : c'est le dérush, pas faisable ici.
   Réponds `"pas fait : dérush (coupe à <t> s), à refaire dans le chat"`. Le serveur le laisse à faire, bien visible.
 
-## Note posée à un moment précis (t > 0, ligne « note LOCALE ») : ne change QUE ce moment (11/11)
+## Note posée à un moment précis (t > 0, ligne « note LOCALE ») : ne change QUE ce moment
 Méthode de l’utilisateur : seules les notes sont retouchées, le reste de la vidéo ne bouge pas.
 - Musique (« baisse la musique ici », « trop fort là ») : `music_zones` sur la fenêtre donnée (`db` -4 / +4), JAMAIS
   `music.target`. « À partir d'ici » = de t à la fin (to = 999). Réponse : « Musique baissée de 4 dB de a à b s seulement ».

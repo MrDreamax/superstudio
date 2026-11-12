@@ -1,9 +1,9 @@
 """Prépare la note /10 : mesure le reel et la réf monteur côte à côte, sort les planches à regarder.
   python3 score.py final.mp4 [ref.mp4]      -> score/ (metrics.json, compare.jpg, hook.jpg)
-ref par défaut : ../ref/FINAL.mp4 (réf validée par l'utilisateur le 12/10/2026).
+ref par défaut : ../ref/FINAL.mp4 (réf validée par l'utilisateur ).
 Les chiffres ne notent rien tout seuls : ils servent à juger la grille de SKILL.md sans se mentir.
 À lancer depuis le dossier du reel : words.json (débit, vitesse de lecture) et clip.mp4 (image de la cam) y sont lus s'ils existent.
-Repères experts 13/10 : débit 165-195 mots/min (alerte > 240), <= 20 car/s, cam P1 1-8 / P99 <= 235 / néon < 0,5 %,
+Repères experts : débit 165-195 mots/min (alerte > 240), <= 20 car/s, cam P1 1-8 / P99 <= 235 / néon < 0,5 %,
 yeux à 30-40 % de la hauteur (réf monteur 35 %, largeur du visage 33 %).
 """
 import json, os, re, subprocess, sys
@@ -45,7 +45,7 @@ def measure(p):
 
 m = {"final": measure(final), "ref": measure(ref)}
 
-# --- experts 13/10 (regles-experts.md) : cadrage, débit, vitesse de lecture, image de la cam ---
+# --- experts (regles-experts.md) : cadrage, débit, vitesse de lecture, image de la cam ---
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from lookstats import face, measure as look, verdicts
 for name, p in (("final", final), ("ref", ref)):

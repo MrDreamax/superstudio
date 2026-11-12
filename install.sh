@@ -69,6 +69,11 @@ for dir in 02-Formations 03-Livres 08-Conseillers _outils 09-SOP _a-trier; do
   [[ -d "$ICI/Brain/$dir" ]] || continue; mkdir -p "$BR/$dir"
   rsync -a -b --backup-dir="$BK/Documents/Brain/$dir" "$ICI/Brain/$dir/" "$BR/$dir/"
 done
+if [[ -d "$BK/Documents/Brain" ]]; then
+  n=$(find "$BK/Documents/Brain" -type f | wc -l | tr -d ' ')
+  echo "Tu avais modifié $n fiche(s) du Brain que la mise à jour remplace. Ta version est sauvegardée dans : $BK/Documents/Brain"
+  find "$BK/Documents/Brain" -type f | head -5 | sed "s#^$BK/Documents/Brain/#  - #"
+fi
 for f in README.md GUIDE.md GUIDE.html; do [[ -f "$ICI/Brain/$f" ]] || continue; [[ -f "$BR/$f" ]] && ! cmp -s "$ICI/Brain/$f" "$BR/$f" && backup "$BR/$f"; cp "$ICI/Brain/$f" "$BR/$f"; done
 ( cd "$ICI/Brain"
   for p in 00-Moi 01-Projets 04-Audits 05-Decisions 06-Contenu 07-Clients hot.md log.md index.md; do
@@ -118,7 +123,7 @@ if [[ -d "$PSRC" ]]; then
   fi
   mkdir -p "$PDEST"
   rsync -a --exclude config.json --exclude retours-client.md "$PSRC/" "$PDEST/"
-  # 12/11 : réglages du Publieur créés une fois (avant : jamais créés, « Réglages introuvables »), reels lus dans le Monteur
+  # réglages du Publieur créés une fois (avant : jamais créés, « Réglages introuvables »), reels lus dans le Monteur
   if [[ ! -f "$PDEST/config.json" ]]; then
     sed 's#"montages": "~/Documents/Montage/LIVRES"#"montages": "~/Documents/SuperApps/supermonteur/reels"#' "$PDEST/config.exemple-client.json" > "$PDEST/config.json"
   fi
@@ -184,7 +189,7 @@ PYDA
   chmod +x "$ADEST"/*/lancer.sh "$ADEST/superda/connecter-claude.command"
 fi
 
-# Scripteur : remplacé à chaque mise à jour (13/11 : plus d'appli Super, rien n'est supprimé chez la personne)
+# Scripteur : remplacé à chaque mise à jour (plus d'appli Super, rien n'est supprimé chez la personne)
 for s in scripteur; do
   [[ -d "$HOME/.claude/skills/$s" ]] && backup "$HOME/.claude/skills/$s"
   if [[ -d "$(dirname "$SRC")/$s" ]]; then mkdir -p "$HOME/.claude/skills/$s"; rsync -a --exclude config.json --exclude retours-client.md "$(dirname "$SRC")/$s/" "$HOME/.claude/skills/$s/"; fi
@@ -209,7 +214,7 @@ echo "Préparation du Carrousel (jusqu'à 3 min la première fois)…"
 # Les 100 musiques si leur ZIP est posé à côté
 mkdir -p "$HOME/Documents/Montage"
 for z in "$ICI/100-MUSIQUES.zip" "$ICI/../100-MUSIQUES.zip" "$HOME/Downloads/100-MUSIQUES.zip"; do
-    # 12/11 : le dossier MUSIQUE existe déjà (mkdir plus haut) : on teste la présence de mp3, pas du dossier
+    # le dossier MUSIQUE existe déjà (mkdir plus haut) : on teste la présence de mp3, pas du dossier
   if [[ -f "$z" && -z "$(find "$HOME/Documents/Montage/MUSIQUE" -name '*.mp3' -print -quit 2>/dev/null)" ]]; then echo "Installation des 100 musiques…"; unzip -q "$z" -d "$HOME/Documents/Montage" && echo "100 musiques installées dans Documents/Montage/MUSIQUE."; break; fi
 done
 [[ -n "$(find "$HOME/Documents/Montage/MUSIQUE" -name '*.mp3' -print -quit 2>/dev/null)" ]] || echo "Attention : pas encore de musiques. Mets 100-MUSIQUES.zip à côté de ce dossier et relance, ou pose tes mp3 dans Documents/Montage/MUSIQUE."

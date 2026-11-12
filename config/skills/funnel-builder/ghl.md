@@ -1,10 +1,10 @@
 # GoHighLevel : le mode d'emploi du Funnel Builder
 
-Lu sur l'aide officielle le 21/10/2026. H = https://help.gohighlevel.com/support/solutions/articles/ (H/<numéro> s'ouvre avec le numéro seul).
+Lu sur l'aide officielle. H = https://help.gohighlevel.com/support/solutions/articles/ (H/<numéro> s'ouvre avec le numéro seul).
 **Vérifie à l'écran avant chaque clic** : les noms de menus bougent. « (déduit) » = pas écrit dans l'aide, à confirmer à l'écran. Un écart entre ce fichier et l'écran → l'écran gagne, et corrige ce fichier.
 
 ## Le plan
-- Starter (97 $/mois au 21/10/2026) = 3 sous-comptes, funnels, domaines, workflows, paiements, emails payés à l'usage (0,675 $ les 1 000). https://www.gohighlevel.com/pricing
+- Starter (97 $/mois) = 3 sous-comptes, funnels, domaines, workflows, paiements, emails payés à l'usage (0,675 $ les 1 000). https://www.gohighlevel.com/pricing
 
 ## 1. Le funnel et ses pages
 - Sites > Funnels > New Funnel > From Blank. Puis Add New Step (150 étapes max). H/155000005057, H/155000005071
@@ -25,7 +25,7 @@ Lu sur l'aide officielle le 21/10/2026. H = https://help.gohighlevel.com/support
 - Petit plus dans le constructeur de formulaires : élément « Sell Products », type « Bump Product ». Un bump ne s'affiche que s'il y a un produit principal. H/155000005767
 - Apple Pay / Google Pay (Stripe seulement) : Payments > Integrations > Stripe > Manage Payment Methods > « Funnels - One-Step / Two-Step Order Form ». Apple Pay demande de vérifier le domaine. Réglages test et réel séparés. H/48001229200, H/155000005164
 - Case « Conditions générales » : interrupteur dans les réglages du formulaire de commande (texte + lien), obligatoire pour payer, sur les 2 étapes. → On y met la renonciation au droit de rétractation + le lien des CGV. https://ideas.gohighlevel.com/changelog/enable-terms-and-conditions-on-1-step-and-2-step-order-forms, H/155000006325
-- Case « je veux recevoir les emails » séparée : **pas native** sur les formulaires de commande au 21/10/2026 (demande ouverte du 05/09/2026). Piste : un formulaire du constructeur de formulaires (champ case à cocher + élément « Sell Products ») à la place du « Two-Step Order » (déduit, à tester). Sans case d'accord : pas de relance de panier.
+- Case « je veux recevoir les emails » séparée : **pas native** sur les formulaires de commande (demande ouverte du 05/09/2026). Piste : un formulaire du constructeur de formulaires (champ case à cocher + élément « Sell Products ») à la place du « Two-Step Order » (déduit, à tester). Sans case d'accord : pas de relance de panier.
 - Un avis d'utilisateur (pas officiel) dit que la case CGV n'est pas gardée sur la fiche du contact : garde une capture de la page de commande datée comme preuve.
 
 ## 4. L'offre en 1 clic après l'achat
@@ -63,7 +63,7 @@ Lu sur l'aide officielle le 21/10/2026. H = https://help.gohighlevel.com/support
 - Nom et adresse de l'expéditeur : dans l'action « Send Email », ou Workflow > Settings > Communication > Sender details. H/48000979925, H/155000004428
 
 ## 10. Le domaine des pages
-- Settings > Domains & URL Redirects > + Connect a domain > Funnel. H/48001153720 (mis à jour le 16/10/2026)
+- Settings > Domains & URL Redirects > + Connect a domain > Funnel. H/48001153720 (mis à jour)
 - Domaine racine : enregistrement A, hôte `@`, valeur 162.159.140.166. Sous-domaine : CNAME vers sites.ludicrous.cloud (jamais A et CNAME sur le même hôte). Cloudflare : « DNS only ». Jusqu'à 24 h.
 - Changer les DNS = action de l'utilisateur. Avant : vérifie avec `dig` et `curl` ce que le domaine fait tourner aujourd'hui (le basculer coupe l'ancien site).
 
@@ -71,7 +71,7 @@ Lu sur l'aide officielle le 21/10/2026. H = https://help.gohighlevel.com/support
 - Fichiers (zip compris) et images : 100 Mo max par l'écran. H/48001216629
 - Le nom du fichier dans l'adresse publique : pas écrit. Pour un livrable qui doit garder son nom (ex. un zip + version.json côte à côte), héberge-le ailleurs.
 
-## Astuces vues à l'écran (21/10/2026)
+## Astuces vues à l'écran
 - Sans domaine connecté, aucune page n'est en ligne : seulement des aperçus `sites.leadconnectorhq.com/preview/<id>`. Le test de paiement de bout en bout demande un domaine.
 - Le constructeur de pages et celui des workflows tournent dans un cadre d'un autre site : read_page, find et JavaScript ne les voient pas. Travaille à la capture d'écran.
 - Menus déroulants natifs du constructeur : clique, tape les premières lettres de l'option (ex. « Hide »), puis Entrée.
@@ -82,7 +82,7 @@ Lu sur l'aide officielle le 21/10/2026. H = https://help.gohighlevel.com/support
 - Les fichiers de la médiathèque reçoivent un nom au hasard (…/media/<id>.jpg).
 - Nouveau produit : coupe « Include in Online store » (sinon il part dans la boutique).
 
-## Ce que GoHighLevel ne fait pas (au 21/10/2026)
+## Ce que GoHighLevel ne fait pas
 - Créer une page de funnel par API ou MCP : navigateur seulement.
 - Panier abandonné automatique sur un funnel (voir 7).
 - Case d'accord emails séparée sur le formulaire de commande (voir 3).

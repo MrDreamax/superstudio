@@ -331,74 +331,8 @@ function vuePublier(p) {
   dessinerSlides();
   $("pret-sous").textContent = p.slides.length + " slides · 1080 × 1440";
   $("nb-img").textContent = p.slides.length;
-  const mc = S.accueil.metricool;
-  $("pub-branche").hidden = !mc.branche;
-  $("pub-dl-seul").hidden = mc.branche;
-  if (mc.branche) {
-    $("compte").textContent = "compte " + (mc.compte || "Blotato");
-    $("essai").hidden = !S.accueil.mode_essai;
-    $("vrai").hidden = S.accueil.mode_essai;
-    etatPublication(p);
-    if (!$("quand").value) {
-      const d = new Date(Date.now() + 86400000);
-      d.setHours(18, 0, 0, 0);
-      $("quand").value = new Date(d - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-    }
-    majProgrammer();
-  }
-}
-
-function majProgrammer() {
-  const d = new Date($("quand").value);
-  $("pub-prog").textContent = isNaN(d) ? "Programmer" : "Programmer " + d.toLocaleDateString("fr-FR", { weekday: "short", day: "2-digit", month: "2-digit" }) + " · " + d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-}
-
-// ce que Claude a fait de la publication (publication.json) : en cours, envoyé, en partie, pas envoyé
-function etatPublication(p) {
-  const P = p.publication || {}, e = $("pub-etat");
-  const enCours = ["a_faire", "en_cours"].includes(P.statut);
-  ["pub-now", "pub-prog"].forEach((id) => ($(id).disabled = enCours));
-  let h = "";
-  if (enCours) h = `<div class="pub-encours"><i class="spin"></i><div><b>Envoi en cours</b><br>${esc(P.etape || "Claude envoie…")}</div></div>`;
-  else if (P.statut) h = `<div class="pub-res ${P.statut === "programme" ? "ok" : "ko"}"><b>${{ programme: "Envoyé ✓", partiel: "Envoyé en partie", erreur: "Pas envoyé" }[P.statut] || esc(P.statut)}</b>`
-    + `${P.heure ? " · " + esc(String(P.heure).replace("T", " ").slice(0, 16)) : ""}<br>${esc(P.message || "")}`
-    + (P.posts || []).map((x) => `<a href="${esc(x.planner)}" target="_blank">Voir la publication (${esc((x.reseaux || []).join(", "))})</a>`).join("")
-    + ((P.manque || []).length ? `<br>Pas parti : ${esc(P.manque.join(", "))}` : "") + `</div>`;
-  if (p.deja_publie && !enCours) h += `<p class="pub-deja">Déjà publié : ${esc(p.deja_publie)}</p>`;
-  e.innerHTML = h;
-  clearTimeout(etatPublication.k);
-  if (enCours) etatPublication.k = setTimeout(async () => {
-    if (S.vue !== "publier" || !S.pid) return;
-    const q = await api("/api/projet/" + S.pid).catch(() => null);
-    if (q) { S.projet = q; etatPublication(q); }
-  }, 4000);
-}
-
-// 1er clic = arme le bouton, 2e clic dans les 6 s = envoi réel ; déjà publié = « Republier quand même »
-async function publier(quand, bouton, forcer = false) {
-  const reseaux = [...document.querySelectorAll(".sw:checked")].map((x) => x.dataset.res);
-  if (!reseaux.length) return toast("Choisis au moins un réseau.");
-  if (!S.accueil.mode_essai && !bouton.classList.contains("arme")) {
-    const avant = bouton.textContent;
-    bouton.classList.add("arme");
-    bouton.textContent = `Confirmer : ça part sur ${reseaux.length} réseau${reseaux.length > 1 ? "x" : ""}`;
-    clearTimeout(bouton.k);
-    bouton.k = setTimeout(() => { bouton.classList.remove("arme"); bouton.textContent = avant; bouton.onclick = () => publier(quand === "maintenant" ? "maintenant" : $("quand").value, bouton); }, 6000);
-    return;
-  }
-  clearTimeout(bouton.k);
-  bouton.disabled = true;
-  const r = await fetch(`/api/projet/${S.pid}/publier`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ reseaux, quand, forcer }) });
-  const j = await r.json().catch(() => ({}));
-  bouton.disabled = false;
-  if (r.status === 409) {
-    bouton.textContent = "Republier quand même";
-    bouton.onclick = () => publier(quand, bouton, true);
-    return toast(`Déjà publié (${j.deja}). Reclique pour republier quand même.`, 6000);
-  }
-  bouton.classList.remove("arme");
-  toast(j.message || "Erreur", 5000);
-  if (j.projet) { S.projet = j.projet; etatPublication(j.projet); majProgrammer(); }
+  // publication retirée de l'appli (Super Studio 2.0) : on publie dans le chat avec Claude (skill publieur, Blotato)
+  $("pub-dl-seul").hidden = false;
 }
 
 async function telecharger() {
@@ -507,16 +441,12 @@ $("form-retour").onsubmit = ajouterRetour;
 $("suivant").onclick = async () => { S.projet = await api(`/api/projet/${S.pid}/suivant`, {}); rafraichir(); };
 $("parfait").onclick = async () => {
   const reste = (S.projet.retours || []).filter((r) => r.statut === "a_faire").length;
-  if (reste && !confirm(reste + " retour" + (reste > 1 ? "s" : "") + " pas encore corrigé" + (reste > 1 ? "s" : "") + ". Publier quand même ?")) return;
+  if (reste && !confirm(reste + " retour" + (reste > 1 ? "s" : "") + " pas encore corrigé" + (reste > 1 ? "s" : "") + ". Continuer quand même ?")) return;
   await api(`/api/projet/${S.pid}/valider`, {});
   rafraichir();
 };
 $("rouvrir").onclick = async () => { await api(`/api/projet/${S.pid}/rouvrir`, {}); rafraichir(); };
 $("telecharger").onclick = telecharger;
-$("pub-dl").onclick = telecharger;
-$("pub-now").onclick = () => publier("maintenant", $("pub-now"));
-$("pub-prog").onclick = () => publier($("quand").value, $("pub-prog"));
-$("quand").oninput = majProgrammer;
 $("form-da").onsubmit = async (e) => {
   e.preventDefault();
   const t = $("da-txt").value.trim();

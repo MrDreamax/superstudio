@@ -1,10 +1,10 @@
-"""Mesure le « look » d'un rush, d'un b-roll ou d'une image (experts colorimétrie 13/10 : mesurer AVANT de toucher).
+"""Mesure le « look » d'un rush, d'un b-roll ou d'une image (experts colorimétrie : mesurer AVANT de toucher).
   python3 lookstats.py clip.mp4 [--json look.json] [--face]
 Sort : noirs (P1), médiane (P50), hautes lumières (P95, P99) de la luminance 0-255, couleur de la lumière (rouge/bleu des
 hautes lumières), % de pixels « néon », netteté, palette de 5 couleurs ; avec --face : joue, yeux et visage dans le cadre.
 Bornes (Darren Mostyn, Cullen Kelly ; seuils à tester) : P1 entre 1 et 8 (noirs ni bouchés ni relevés), P99 <= 235, néon < 0,5 %.
 Elles valent pour la CAM et les visuels ajoutés, pas pour un final (vignettage, cartons et vrais logos faussent P1 et néon).
-Cadre (mesuré 13/10) : rush « vidéos virales » (réf FINAL.mp4) FILMÉE serré = yeux 34,5 %, visage 33 % de la largeur ;
+Cadre (mesuré ) : rush « vidéos virales » (réf FINAL.mp4) FILMÉE serré = yeux 34,5 %, visage 33 % de la largeur ;
 rush Meta Verified filmée large = yeux 47,6 %, visage 24,5 %. Le monteur humain NE recadre PAS : la différence vient du tournage.
 Utilisé aussi comme module par match_look.py, univers_check.py et score.py.
 """
@@ -20,7 +20,7 @@ def _size(path):
     s = json.loads(subprocess.check_output(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_streams",
                                             "-show_entries", "format=duration", "-of", "json", path]))
     st = s["streams"][0]; w, h = st["width"], st["height"]
-    # téléphone filmé debout = fichier 3840x2160 + rotation 90 : ffmpeg tourne l'image au décodage, donc on raisonne en taille AFFICHÉE (16/10)
+    # téléphone filmé debout = fichier 3840x2160 + rotation 90 : ffmpeg tourne l'image au décodage, donc on raisonne en taille AFFICHÉE
     if any(abs(int(d.get("rotation", 0))) % 180 == 90 for d in st.get("side_data_list", [])): w, h = h, w
     return w, h, float(s.get("format", {}).get("duration") or 0)
 

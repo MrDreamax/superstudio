@@ -1,8 +1,8 @@
-"""SuperMonteur : le petit serveur local (28/10/2026).  python3 serveur.py [port]  ->  http://localhost:8801
+"""SuperMonteur : le petit serveur local.  python3 serveur.py [port]  ->  http://localhost:8801
 
-Écrans : 0 style · 1 retours · 2 Ma DA (tiroir SuperDA) · 3 publier. Les reels vivent dans reels/<id>/ (etat.json,
+Écrans : 0 style · 1 retours · 2 Ma DA (tiroir SuperDA) · 3 télécharger. Les reels vivent dans reels/<id>/ (etat.json,
 retours.json, versions/). « Suivant : corrige mes retours » écrit reels/<id>/demande.json + a-corriger.json (la boîte
-que Claude lit, mode d'emploi : CLAUDE.md). Publication réelle depuis le 28/10 (clic confirmé de l’utilisateur, apps/publier.py).
+que Claude lit, mode d'emploi : CLAUDE.md). Pas de publication ici : elle se fait dans le chat (skill publieur, Blotato).
 """
 import datetime, io, json, mimetypes, os, re, shutil, subprocess, sys, threading, time, urllib.parse, urllib.request, zipfile
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -16,7 +16,6 @@ from monter import lire, ecrire, etat, pousser_ref, garder_eveille
 import images
 sys.path.insert(0, os.path.dirname(APP))
 import ouvrier_claude
-import publier
 import reglages_apps
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8801
@@ -27,7 +26,7 @@ CASES = {  # devine-format.md 3 bis (B-rolls décochés par défaut, maquette 0-
     "Minimaliste": [["titre", "titre"], ["sous_titres", "sous-titres"]],
     "Comparatif": [["titre", "titre"], ["tableau", "tableau"], ["sous_titres", "sous-titres"], ["bruitages", "bruitages"]],
     "Interview": [["titre", "titre"], ["sous_titres", "sous-titres"], ["ecran_coupe", "écran coupé"], ["plein_ecran", "plein écran sur qui parle"]],
-    "Inspiration": [],   # 29/10 : remplace « Autre » = le montage d'un reel à reprendre (lien ou vidéo)
+    "Inspiration": [],   # remplace « Autre » = le montage d'un reel à reprendre (lien ou vidéo)
 }
 RESEAUX = ["Instagram", "TikTok", "YouTube Shorts", "Facebook", "LinkedIn"]
 LIEN_REF = re.compile(r"https?://([\w-]+\.)?(instagram\.com|tiktok\.com|youtube\.com|youtu\.be)/\S+$")
@@ -116,12 +115,12 @@ def lancer(action, rid):
                      start_new_session=True)
 
 
-# 29/10 : le DERUSH LAB (skill outils/cockpit, cockpit.py --lab) dans l'écran, entre le 1er dérush de Claude et le montage.
+# le DERUSH LAB (skill outils/cockpit, cockpit.py --lab) dans l'écran, entre le 1er dérush de Claude et le montage.
 # Un petit serveur par reel en statut « derush », sur un port libre à partir de 8830 ; arrêté à « Monter le reel ».
 COCKPIT = os.path.expanduser("~/.claude/skills/supermonteur/outils/cockpit/cockpit.py")
 LABS = {}   # rid -> (process ou None si repris d'un ancien serveur, pid, port)
 VERROU_LAB = threading.Lock()
-# 29/10 : serveur redémarré = LABS vide = 2e Lab lancé sur le même reel (+ son aperçu ffmpeg) -> derush de 15 min.
+# serveur redémarré = LABS vide = 2e Lab lancé sur le même reel (+ son aperçu ffmpeg) -> derush de 15 min.
 # Le pid et le port du Lab sont écrits dans le dossier du reel ; un Lab vivant est repris, jamais doublé.
 LAB_PID = "_derushlab.pid"
 
@@ -211,15 +210,15 @@ plan = celles que l’utilisateur a choisies (liste dans le retour, détail dans
 Réponds en 1 ligne quand la nouvelle version est montée."""
 ESSAIS = {}  # (reel, version) -> nombre d'essais
 
-# 03/11 (RUSH : Opus 15 min sur 4 retours, arrêté sans répondre) : les retours simples passent par Sonnet avec une fiche
+#  (RUSH : Opus 15 min sur 4 retours, arrêté sans répondre) : les retours simples passent par Sonnet avec une fiche
 # d'1 page (FICHE-RETOURS.md) au lieu de CLAUDE.md + SKILL.md + feedback.md (~45 000 mots), 4 min max. Claude ne fait QUE corriger
 # plan.json / words.json et écrire reponses.json ; le serveur prend les images avant, remonte, répond à l’utilisateur et vide la boîte
 # lui-même (avant : 4 à 6 allers-retours de Claude, et un Claude qui s'arrête = retours jamais répondus).
-# 11/11 (studio Super, « mets le titre en plus gros » : 1 min de Claude pour 1 chiffre) : la fiche et plan.json sont DANS la
+#  (studio Super, « mets le titre en plus gros » : 1 min de Claude pour 1 chiffre) : la fiche et plan.json sont DANS la
 # consigne (plus de Read), Claude écrit 1 seul fichier neuf, retouche.json = {"plan": <morceau de plan.json à changer>,
 # "reponses": {...}}, que le serveur fusionne lui-même dans plan.json ; le serveur note aussi feedback-retours.md. Il reste
 # 2 tours de Claude au lieu de 5 à 7. Les fichiers du dérush (cut.segments.json…) sont remis tels quels si Claude y touche :
-# le 10/11 il avait réécrit cut.segments.json à la main, d'où un « plan de 0,11 s » fantôme et la v4 bloquée.
+#  il avait réécrit cut.segments.json à la main, d'où un « plan de 0,11 s » fantôme et la v4 bloquée.
 CONSIGNE_RAPIDE = """Tu es Claude dans l'appli SuperMonteur de l’utilisateur. Ne publie rien. Ne lance aucune commande : le serveur remonte
 la version suivante tout seul dès que tu as fini. Va vite : 1 seul Write dans le cas courant.
 Reel %s, dossier %s, version %s. Retours de l’utilisateur (t = seconde dans la version affichée) et l'image de cet instant :
@@ -304,7 +303,7 @@ def mesure_titre(d, taille=None):
 
 
 def titre_max(d):
-    """11/11 : (taille actuelle [l1, l2], taille max [l1, l2]) du titre. Le titre tient TOUJOURS sur 2 lignes (règle du 23/10 :
+    """(taille actuelle [l1, l2], taille max [l1, l2]) du titre. Le titre tient TOUJOURS sur 2 lignes (règle :
     jamais 3), donc le max dépend du texte. Les 2 lignes grossissent ENSEMBLE, dans les mêmes proportions (un titre 52 / 104 px
     reste 1 / 2) ; la plus grande ligne ne dépasse pas max(TITRE_MAX, sa taille actuelle) (au-delà le titre descend sur le visage)."""
     a = mesure_titre(d)
@@ -319,7 +318,7 @@ def titre_max(d):
     return a, (int(a[0] * f), int(a[1] * f))
 
 
-# 11/11 (studio Super, note « baisse un peu la musique ici » posée à 5 s : la musique avait baissé sur TOUTE la vidéo ; méthode de
+#  (studio Super, note « baisse un peu la musique ici » posée à 5 s : la musique avait baissé sur TOUTE la vidéo ; méthode de
 # l’utilisateur = seules les notes sont retouchées) : une note posée à un moment précis (t > 0) ne change QUE ce moment.
 # - le serveur donne à Claude la fenêtre de la note (t ± 2 s, calée sur les mots) et le mot dit à t avec son numéro ;
 # - « plus bas / plus fort » sur la musique = music_zones (mix.py, son seul ~20 s) ; si Claude change quand même le niveau
@@ -410,14 +409,14 @@ def corriger_vite(dem):
                             "-vf", "scale=540:-2", img])
             lignes.append(f"- id {r['id']}, à {r.get('t')} s : « {r.get('texte')} » -> image {img}")
             t = float(r.get("t") or 0)
-            if t > 0 and W:   # 11/11 : note posée à un moment précis = on retouche CE moment
+            if t > 0 and W:   # note posée à un moment précis = on retouche CE moment
                 a, b = fenetre(W, t); k = mot_a(W, t)
                 autour = " ".join(f"#{j} {W[j]['text']}" for j in range(max(0, k - 4), min(len(W), k + 5)))
                 lignes.append(f"  note LOCALE : fenêtre {a}-{b} s ; mot dit à {t} s = #{k} « {W[k]['text']} » ({W[k]['start']}-{W[k]['end']} s) ;"
                               f" autour : {autour}")
         for f in ("reponses.json", "retouche.json"):
             if os.path.exists(os.path.join(d, f)): os.remove(os.path.join(d, f))
-        sig = lambda: [os.path.getmtime(os.path.join(d, f)) if os.path.exists(os.path.join(d, f)) else 0 for f in ("plan.json", "words.json", "drop.json")]   # 10/11 : drop.json = mot coupé -> re-dérush (monter.py redecoupe)
+        sig = lambda: [os.path.getmtime(os.path.join(d, f)) if os.path.exists(os.path.join(d, f)) else 0 for f in ("plan.json", "words.json", "drop.json")]   # drop.json = mot coupé -> re-dérush (monter.py redecoupe)
         remettre = proteger_derush(d)
         avant = sig()
         etat(d, etape="Claude lit tes retours (~20 s)…")
@@ -516,7 +515,7 @@ def ouvrier():
                 rid, d = dem.get("reel"), dem.get("dossier")
                 if not rid or not d or not os.path.isdir(d):
                     continue
-                if lire(os.path.join(d, "etat.json"), {}).get("format") == "16:9":   # 09/11 RUSH : montage 16:9 fait à la main (sous_titres.py), le correcteur auto ne sait que le 9:16 : la demande attend un chat
+                if lire(os.path.join(d, "etat.json"), {}).get("format") == "16:9":   #  RUSH : montage 16:9 fait à la main (sous_titres.py), le correcteur auto ne sait que le 9:16 : la demande attend un chat
                     if lire(os.path.join(d, "etat.json"), {}).get("statut") == "correction":
                         etat(d, statut="retours", etape="Vidéo 16:9 : écris « corrige mes retours » dans le chat Claude.")
                     continue
@@ -535,7 +534,7 @@ def ouvrier():
                         ecrire(os.path.join(APP, "a-corriger.json"), [x for x in boite if x.get("reel") != rid or x.get("date") != dem.get("date")])
                     break
                 retours = "\n".join(f"- à {r.get('t')} s : {r.get('texte')}" for r in dem.get("retours", []))
-                remettre = proteger_derush(d)   # 11/11 : même protection sur le chemin lourd (Opus)
+                remettre = proteger_derush(d)   # même protection sur le chemin lourd (Opus)
                 ouvrier_claude.lancer(CONSIGNE % (rid, d, dem.get("version"), retours), APP,
                                       ["Read", "Write", "Edit", "Glob", "Grep", "Bash(python3 monter.py remonter:*)", "Bash(ffmpeg -ss:*)"],
                                       delai=2400)
@@ -545,10 +544,6 @@ def ouvrier():
             print("ouvrier :", x, flush=True)
         time.sleep(3)
 
-
-def metricool():
-    """Publication retirée des applis (Super Studio 2.0) : toujours le mode Télécharger. On publie dans le chat (Blotato)."""
-    return {"branche": False, "compte": "", "verifie": "", "essai": True}
 
 
 def legendes(d):
@@ -607,19 +602,19 @@ def carte(rid):
     faite une fois puis gardée ; refaite si une nouvelle version sort)."""
     d = os.path.join(REELS, rid)
     e = lire(os.path.join(d, "etat.json"), {})
-    if not e or e.get("cache"):   # 29/10 : projet supprimé depuis l'accueil = caché, aucun fichier effacé
+    if not e or e.get("cache"):   # projet supprimé depuis l'accueil = caché, aucun fichier effacé
         return None
     t = (lire(os.path.join(d, "plan.json"), {}) or {}).get("title") or {}
     e["titre"] = re.sub(r"<[^>]+>", "", " ".join(x for x in (t.get("l1"), t.get("l2")) if x) if isinstance(t, dict) else str(t)).strip()
     v = (e.get("versions") or [{}])[-1].get("fichier")
     if not (v and os.path.isfile(os.path.join(d, v))) and os.path.isfile(os.path.join(d, "final.mp4")):
-        v = "final.mp4"   # 10/11 (studio, Publieur : miniatures vides) : reel monté dans un chat = pas de versions, mais un final.mp4
+        v = "final.mp4"   #  (studio, Publieur : miniatures vides) : reel monté dans un chat = pas de versions, mais un final.mp4
     vig = os.path.join(d, "vignette.jpg")
     if v and os.path.isfile(os.path.join(d, v)):
         if not os.path.exists(vig) or os.path.getmtime(vig) < os.path.getmtime(os.path.join(d, v)):
             subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", "1.5", "-i", os.path.join(d, v), "-frames:v", "1",
                             "-vf", "scale=180:-2", vig], timeout=20)
-    if os.path.exists(vig):   # 10/11 : vignette gardée même si la vidéo a été déplacée
+    if os.path.exists(vig):   # vignette gardée même si la vidéo a été déplacée
         e["vignette"] = f"/media/{rid}/vignette.jpg?t={int(os.path.getmtime(vig))}"
     return e
 
@@ -629,23 +624,6 @@ def titre_reel(d):
     return re.sub(r"<[^>]+>", "", " ".join(x for x in (t.get("l1"), t.get("l2")) if x) if isinstance(t, dict) else str(t)).strip()
 
 
-def publieur():
-    """Dès qu'un reel a un publication.json « a_faire » (clic confirmé de l’utilisateur), rien ne part : la publication se fait dans le chat (Blotato)."""
-    for r in os.listdir(REELS):   # un envoi coupé par un redémarrage du serveur : on ne sait pas ce qui est parti
-        d = os.path.join(REELS, r)
-        if os.path.isdir(d) and publier.etat(d).get("statut") == "en_cours":
-            publier._maj(d, statut="erreur", etape="", message="Envoi coupé (serveur relancé) : publie depuis le chat avec Claude.")
-    while True:
-        try:
-            for r in sorted(os.listdir(REELS)):
-                d = os.path.join(REELS, r)
-                if os.path.isdir(d) and publier.etat(d).get("statut") == "a_faire":
-                    e = lire(os.path.join(d, "etat.json"), {})
-                    publier.lancer(d, "SuperMonteur", {"video": os.path.join(d, e["versions"][-1]["fichier"]), "legendes": legendes(d)})
-        except Exception as x:
-            print("publieur :", x, flush=True)
-        time.sleep(3)
-
 
 def fiche(rid):
     d = D(rid)
@@ -653,19 +631,17 @@ def fiche(rid):
     r = lire(os.path.join(d, "retours.json"), []) or []
     e["retours"] = r
     e["cases_du_style"] = CASES
-    e["images"] = lire(os.path.join(d, "images.json")) if e.get("statut") == "images" else None   # 29/10 écran « Tes images »
+    e["images"] = lire(os.path.join(d, "images.json")) if e.get("statut") == "images" else None   #  écran « Tes images »
     if e["images"]:   # le titre du reel, montré dans le brouillon avec sa police
         t = (lire(os.path.join(d, "plan.json"), {}) or {}).get("title") or {}
         e["images"]["titre"] = re.sub(r"<[^>]+>", "", " ".join(x for x in (t.get("l1"), t.get("l2")) if x) if isinstance(t, dict) else str(t)).strip()
-    if e.get("statut") == "derush" and not e.get("derush_ok"):   # 29/10 : l'écran montre le Derush Lab de ce reel
+    if e.get("statut") == "derush" and not e.get("derush_ok"):   # l'écran montre le Derush Lab de ce reel
         try:
             v = lab_valide(d)
             rouge = [x["controle"] + " : " + x["detail"] for x in lire(os.path.join(d, "gardien-derush.json"), []) or [] if x.get("ok") is False]
             e["lab"] = {"port": lab(rid), "valide": v, "rouge": rouge[0] if v == "rouge" and rouge else ""}
         except Exception as x:
             e["lab"] = {"erreur": str(x)[:200]}
-    e["publication"] = publier.etat(d)
-    e["deja_publie"] = publier.deja_publie(rid)
     ty = (lire(os.path.join(d, "plan.json"), {}) or {}).get("typo") or {}
     if ty.get("t1", {}).get("size") and ty.get("t2", {}).get("size"):  # tailles propres à CE reel (un retour les a changées)
         e["tailles_reel"] = f'{ty["t2"]["size"]} · {ty["t1"]["size"]} px'
@@ -723,12 +699,12 @@ class H(BaseHTTPRequestHandler):
     # ------------------------------------------------------------------------------------------------------- GET
     def do_GET(self):
         u = urllib.parse.urlparse(self.path)
-        p = urllib.parse.unquote(u.path)  # 12/11 : dossiers avec accent (hookcorvée) arrivent en %C3%A9 -> décodés une fois ici pour toutes les routes
+        p = urllib.parse.unquote(u.path)  # dossiers avec accent (hookcorvée) arrivent en %C3%A9 -> décodés une fois ici pour toutes les routes
         try:
             if p in ("/", "/index.html"): return self.fichier(os.path.join(WEB, "index.html"))
             if p.startswith("/web/"): return self.fichier(os.path.join(WEB, os.path.basename(p)))
             if p.startswith("/fonts/"): return self.fichier(os.path.join(WEB, "fonts", os.path.basename(p)))
-            if p == "/api/alerte":   # 29/10 : ElevenLabs refuse (mots.py) -> bandeau rouge en haut de l'écran
+            if p == "/api/alerte":   # ElevenLabs refuse (mots.py) -> bandeau rouge en haut de l'écran
                 f = os.path.expanduser("~/.claude/skills/supermonteur/.alerte-elevenlabs.json")
                 if os.path.exists(f): return self.envoyer(200, json.load(open(f)))
                 sm = os.path.join(APP, ".sans-musique.json")  # reel monté sans musique (monter.py)
@@ -749,7 +725,6 @@ class H(BaseHTTPRequestHandler):
                 except Exception:
                     ok = False
                 return self.envoyer(200, {"url": url, "en_marche": ok})
-            if p == "/api/metricool": return self.envoyer(200, metricool())
             m = re.fullmatch(r"/media/([\w-]+)/(.+)", p)
             if m:
                 d = D(m.group(1))
@@ -802,7 +777,7 @@ class H(BaseHTTPRequestHandler):
             act, rid = m.groups()
             d = D(rid)
             e = lire(os.path.join(d, "etat.json"), {})
-            if act == "reprendre":   # 11/11 : « Réessayer » relance VRAIMENT l'étape ratée (collage ou lecture), sans renvoyer les vidéos
+            if act == "reprendre":   # « Réessayer » relance VRAIMENT l'étape ratée (collage ou lecture), sans renvoyer les vidéos
                 if e.get("statut") != "erreur" or e.get("version") or os.path.exists(os.path.join(d, "words.rush.json")):
                     return self.envoyer(409, {"erreur": "rien à reprendre"})
                 if e.get("rushs") and not os.path.isfile(e.get("rush", "")):
@@ -815,7 +790,7 @@ class H(BaseHTTPRequestHandler):
             if act == "monter":
                 if e.get("statut") in ("montage",): return self.envoyer(409, {"erreur": "déjà en cours"})
                 style = b.get("style") if b.get("style") in CASES else e.get("conseil", "Minimaliste")
-                # 29/10 : montage à reprendre pour CE reel (lien Instagram / TikTok / YouTube, ou vidéo glissée) ; la police reste la DA
+                # montage à reprendre pour CE reel (lien Instagram / TikTok / YouTube, ou vidéo glissée) ; la police reste la DA
                 ref, lien, fic = None, (b.get("lien") or "").strip(), os.path.basename(b.get("fichier") or "")
                 if lien:
                     if not LIEN_REF.match(lien): return self.envoyer(400, {"erreur": "colle un lien Instagram, TikTok ou YouTube"})
@@ -827,7 +802,7 @@ class H(BaseHTTPRequestHandler):
                 etat(d, statut="montage", style=style, cases=b.get("cases", {}), reference=ref, etape="Je prépare le montage…", erreur=None)
                 lancer("monter", rid)
                 return self.envoyer(200, fiche(rid))
-            if act == "derush_ok":  # 29/10 « Monter le reel » sous le Derush Lab : monter.py attend ce feu vert
+            if act == "derush_ok":  #  « Monter le reel » sous le Derush Lab : monter.py attend ce feu vert
                 if e.get("statut") != "derush": return self.envoyer(409, {"erreur": "le dérush est déjà validé"})
                 v = lab_valide(d)
                 if not v: return self.envoyer(409, {"erreur": "clique d'abord « ✓ Valider le dérush » en bas"})
@@ -844,7 +819,7 @@ class H(BaseHTTPRequestHandler):
                     etat(d, statut="montage")
                     lancer("suite", rid)
                 return self.envoyer(200, fiche(rid))
-            if act == "images":     # 29/10 « Monter avec ces images » : ses choix, puis Claude monte au style de la référence
+            if act == "images":     #  « Monter avec ces images » : ses choix, puis Claude monte au style de la référence
                 if e.get("statut") != "images": return self.envoyer(409, {"erreur": "les images sont déjà envoyées"})
                 images.prendre(d, b.get("pris") or {})
                 pousser_ref(d, texte=e.get("images_texte"))
@@ -856,7 +831,7 @@ class H(BaseHTTPRequestHandler):
                 R.append({"id": max([x["id"] for x in R] or [0]) + 1, "t": round(float(b.get("t", 0)), 2), "texte": texte,
                           "statut": "a_faire", "version": e.get("version", 1), "reponse": "",
                           "date": datetime.datetime.now().isoformat(timespec="seconds"),
-                          **({"auto": "lourd"} if b.get("lourd") else {})})   # 10/11 studio : images à ajouter, style à refaire = Claude complet (Opus), pas le correcteur rapide
+                          **({"auto": "lourd"} if b.get("lourd") else {})})   #  studio : images à ajouter, style à refaire = Claude complet (Opus), pas le correcteur rapide
                 ecrire(os.path.join(d, "retours.json"), R)
                 return self.envoyer(200, fiche(rid))
             if act == "effacer":     # retirer un retour pas encore envoyé (faute de frappe)
@@ -881,22 +856,9 @@ class H(BaseHTTPRequestHandler):
             if act == "rouvrir":
                 etat(d, statut="retours")
                 return self.envoyer(200, fiche(rid))
-            if act == "cacher":      # 29/10 « Supprimer » de l'accueil (2 clics) : le projet disparaît, ses fichiers et le rush restent
+            if act == "cacher":      #  « Supprimer » de l'accueil (2 clics) : le projet disparaît, ses fichiers et le rush restent
                 etat(d, cache=datetime.datetime.now().isoformat(timespec="seconds"))
                 return self.envoyer(200, {"ok": True})
-            if act == "publier":
-                if reglages_apps.mode_essai(APP):
-                    return self.envoyer(400, {"ok": False, "message": "Mode essai : rien n'est publié. Pour publier pour de vrai : "
-                                                                      "supermonteur/config.json, \"mode_essai\": false."})
-                # 28/10 : vraie publication. Le clic confirmé = le OK de l’utilisateur pour CE reel ; Claude envoie (apps/publier.py).
-                reseaux, quand = [r for r in (b.get("reseaux") or []) if r in RESEAUX], b.get("quand") or ""
-                if not reseaux:
-                    return self.envoyer(400, {"ok": False, "message": "Choisis au moins un réseau."})
-                ok, msg = publier.demander(d, "reel", reseaux, quand, titre_reel(d) or e.get("nom", rid), cles_registre=(rid,),
-                                           forcer=bool(b.get("forcer")))
-                if msg.startswith("DEJA:"): return self.envoyer(409, {"deja": msg[5:]})
-                if not ok: return self.envoyer(400, {"ok": False, "message": msg})
-                return self.envoyer(200, {"ok": True, "message": msg, "publication": publier.etat(d)})
             return self.envoyer(404, {"erreur": "action inconnue"})
         except KeyError:
             return self.envoyer(404, {"erreur": "reel introuvable"})
@@ -907,7 +869,7 @@ class H(BaseHTTPRequestHandler):
         base = re.sub(r"[^\w-]", "", os.path.splitext(os.path.basename(rush))[0]).lower() or "reel"
         rid = f"{datetime.date.today():%Y-%m-%d}-{base}"
         k = 2
-        while True:   # 29/10 : deux imports dans la même seconde plantaient (FileExistsError)
+        while True:   # deux imports dans la même seconde plantaient (FileExistsError)
             try: os.makedirs(os.path.join(REELS, rid)); break
             except FileExistsError:
                 rid = f"{datetime.date.today():%Y-%m-%d}-{base}-{k}"
@@ -918,14 +880,14 @@ class H(BaseHTTPRequestHandler):
                                               "etape": f"J'assemble tes {len(rushs)} rushes…" if rushs else "Je regarde ta vidéo…",
                                               "version": 0, "versions": [], **({"rushs": rushs} if rushs else {})})
         ecrire(os.path.join(d, "retours.json"), [])
-        if rushs:   # 11/11 : plusieurs rushes = 1 seule vidéo, collés bout à bout puis regardés
+        if rushs:   # plusieurs rushes = 1 seule vidéo, collés bout à bout puis regardés
             coller_puis_regarder(rid, rushs, rush)
         else:
             lancer("regarder", rid)
         return self.envoyer(200, fiche(rid))
 
     def assembler(self, rushs):
-        """11/11 (l’utilisateur : « j'avais deux rushes ») : plusieurs vidéos = UNE vidéo, dans l'ordre reçu."""
+        """plusieurs vidéos = UNE vidéo, dans l'ordre reçu."""
         rushs = [os.path.expanduser(str(r).strip()) for r in rushs if str(r).strip()]
         manque = [r for r in rushs if not os.path.isfile(r)]
         if not rushs or manque: return self.envoyer(400, {"erreur": f"vidéo introuvable : {(manque or ['aucune'])[0]}"})
@@ -943,7 +905,7 @@ class H(BaseHTTPRequestHandler):
         os.makedirs(dst, exist_ok=True)
         p = os.path.join(dst, re.sub(r"[^\w.-]", "_", nom))
         n = int(self.headers.get("Content-Length") or 0)
-        # 29/10 (RUSH : copie arrêtée à 5,8 / 6,4 Go, vidéo illisible) : copie dans .part, gardée seulement si complète
+        #  (RUSH : copie arrêtée à 5,8 / 6,4 Go, vidéo illisible) : copie dans .part, gardée seulement si complète
         part = p + ".part"
         with open(part, "wb") as f:
             while n > 0:
@@ -955,11 +917,11 @@ class H(BaseHTTPRequestHandler):
             os.remove(part)   # copie partielle faite par ce serveur, jamais la vidéo d'origine
             return self.envoyer(400, {"erreur": "import coupé en route : colle plutôt le chemin de la vidéo"})
         os.replace(part, p)
-        if self.headers.get("X-Seul"): return self.envoyer(200, {"chemin": p})   # 11/11 : un rush d'un lot, assemblé ensuite
+        if self.headers.get("X-Seul"): return self.envoyer(200, {"chemin": p})   # un rush d'un lot, assemblé ensuite
         return self.nouveau(p)
 
     def image_fichier(self, rid, n):
-        """29/10 : sa vidéo glissée sur un plan de l'écran « Tes images » (il l'a filmée pour ce plan) : copiée dans
+        """sa vidéo glissée sur un plan de l'écran « Tes images » (il l'a filmée pour ce plan) : copiée dans
         reels/<id>/images/, ajoutée aux choix du plan et choisie."""
         dst = os.path.join(D(rid), "images")
         os.makedirs(dst, exist_ok=True)
@@ -1000,5 +962,4 @@ class H(BaseHTTPRequestHandler):
 if __name__ == "__main__":
     print(f"SuperMonteur : http://localhost:{PORT}")
     threading.Thread(target=ouvrier, daemon=True).start()
-    threading.Thread(target=publieur, daemon=True).start()
     ThreadingHTTPServer(("127.0.0.1", PORT), H).serve_forever()

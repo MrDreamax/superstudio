@@ -1,22 +1,22 @@
 # GREEN SCREEN (ex « Toi + une source ») : green screen, réaction (validé par l'utilisateur v8)
 
 Lu après `SKILL.md`. La **démo filmée** (écran du Mac filmé + zooms 4K) a été SUPPRIMÉE par l'utilisateur (« ça sert à rien ») : ne plus jamais la proposer (le code de `source.py` reste, il est partagé).
-Réf VALIDÉE : `<dossier>/style-lab/toi-plus-source/greenscreen-metaverified-v8.mp4` (1 visuel par phrase, article Higgsfield au hook, images réalistes en zoom progressif, motion design max 2 d'affilée, zéro visage, musique dynamique).
+Réf VALIDÉE : `<dossier>/style-lab/toi-plus-source/greenscreen-metaverified-v8.mp4` (1 visuel par phrase, carton titre-question au hook, vraies photos ou captures en zoom progressif, motion design max 2 d'affilée, musique dynamique).
 
 **Zones mortes (build.mjs + source.py)** : chaque bloc motion est recalé à 280 px (boîtes mesurées dans `MOBOX`), jamais plus bas qu'avant ni sous 890 px (air au-dessus des sous-titres) ; s'il manque de place il est réduit (dm, chart, profile -16 %, bars -17 %, ring -12 %), sinon il descend simplement (compare, webapp, versus, badge) ; `connect` glisse depuis un cache à 65 px ; react = vidéo en 950 px entre les marges, crédit à 274 px ; bulle à 65 px du bord. **Nouveau type de bloc = mesurer sa boîte et l'ajouter à `MOBOX`**, puis `zones.mjs`.
 
 Il parle face cam pendant toute la vidéo : la source remplit l'écran pendant les phrases qui en parlent, face cam seule le reste. 3 mises en page (`"layout"`) : `greenscreen` (la personne détourée en bas au centre devant la source, ombre douce ; **DÉFAUT**, « le détourage, c'est super »), `split` (source en haut, visage en bas), `bubble` (source plein écran + visage dans une bulle). Sources qui défilent doucement de `y0` à `y1`, ou une vidéo (`"from"`). Sous-titres au-dessus de la tête détourée ; sur fond clair = ombre renforcée automatique (zone `light`), jamais de bande grise (retirée).
 
 ## Règles de découpe (après v7 : ce sont elles qui gagnent)
-- **UNE phrase** (jusqu'au point / point d'interrogation, pas la virgule) **= UN seul visuel** : image Higgsfield OU motion design OU article.
+- **UNE phrase** (jusqu'au point / point d'interrogation, pas la virgule) **= UN seul visuel** : vraie photo ou capture OU motion design OU carton titre.
 - Jamais 3 motion design d'affilée (2 max).
-- L'**« article » seulement pour le HOOK**, généré sur Higgsfield (titre-question, aucun média réel ni visage, aucune marque de presse). Plus de vraies pages ni d'articles réels au milieu (les « vraies pages qui défilent » des v2-v4 sont remplacées par cette règle).
+- Le **carton titre-question seulement pour le HOOK**, dessiné en motion design (HyperFrames) : grosse question, aucune marque de presse. Jamais d'image ni d'article générés par IA.
 - **ZÉRO VISAGE** dans toutes les sources : jamais de B-roll de lui ni d'image avec un visage derrière son détourage (v3 rejetée : « deux visages, on ne sait pas où regarder »), jamais de mannequins ni de photos d'auteur.
 - Musique Epidemic DYNAMIQUE et émotionnelle (v8 : trap sombre « JUMBOTRON », 120 BPM ; ex. « Bang Bang », « Ultimo »).
-- Pas de payant (Artlist) tant que SSD + Higgsfield + Pexels suffisent.
+- Pas de payant (Artlist) tant que ses vrais plans + Pexels suffisent.
 
-## Images d'idée (Higgsfield)
-- Modèle `gpt_image_2_5` (0,25 crédit), photo RÉALISTE et captivante (« candid realistic photo, 35mm, natural light, film grain, not CGI »), pas une nature morte de studio (v4 « encore fades »). Ambiance = celle de la vidéo (matières bois foncé, cuir, laiton, lampe chaude, coche bleue si ça colle). Fond clair de préférence pour que le détourage ressorte.
+## Images d'idée (vraies photos, captures)
+- Une vraie photo (la sienne, ses plans, une banque gratuite comme Pexels) ou une vraie capture d'écran. JAMAIS d'image générée par IA.
 - Objets dans le TIERS HAUT (sinon cachés derrière lui), AUCUN visage ni main, zéro chrome / néon / texte.
 - `"push": 0.10` = zoom PROGRESSIF, `"push": -0.10` = dézoom progressif, `"cy"` = point visé (0 haut, 1 bas) ; JAMAIS de zoom brusque (« punch » ignoré).
 - Pages et images sont dessinées par HyperFrames (bloc `img` automatique) et non par ffmpeg : ffmpeg bouge au pixel entier = saccades (« pas fluide », : à-coups 1,18 px/image → 0,11 px).

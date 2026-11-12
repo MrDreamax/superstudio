@@ -1,7 +1,7 @@
 <meta charset="utf-8">
 <title>Cut Notes</title>
 <style>
-  /* 11/11 (l’utilisateur : « fond noir comme Style Lab ») : mêmes couleurs que Style Lab, noir + bleu, police système Apple */
+  /* mêmes couleurs que Style Lab, noir + bleu, police système Apple */
   :root {
     color-scheme: dark;
     --ground: #0B0B0D;
@@ -331,7 +331,7 @@
   const pin = () => { if (pendingT !== null) return; video.pause(); pendingT = video.currentTime || 0; $("noteAt").textContent = tc(pendingT); };
   input.addEventListener("focus", pin);
   input.addEventListener("input", pin);
-  // 16/10 : les notes n'arrivaient pas (tapées ou dictées sans Entrée, puis « I'm done »). Une note tapée est enregistrée
+  // les notes n'arrivaient pas (tapées ou dictées sans Entrée, puis « I'm done »). Une note tapée est enregistrée
   // dès qu'on quitte le champ, avec le bouton « Envoyer la note », et avant « I'm done ».
   input.addEventListener("blur", () => { if (input.value.trim()) addNote(); else pendingT = null; });
   $("saveNote").addEventListener("mousedown", (e) => e.preventDefault());

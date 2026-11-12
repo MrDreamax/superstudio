@@ -49,7 +49,7 @@ Règle de base : Claude prépare, toi tu décides. Rien n'est envoyé, publié o
 - **C'est quoi** : il monte ta vidéo brute en reel prêt à poster (coupes, sous-titres, musique).
 - **La phrase** : glisse ta vidéo dans le chat + « Monte cette vidéo »
 - **Ça te donne** : un reel monté en quelques minutes. Tu notes ce qui ne va pas, il corrige.
-- **Bon à savoir** : « Change mon style » ouvre Style Lab (ton choix de look) pour régler ton style une fois pour toutes.
+- **Bon à savoir** : « Change mon style » ouvre Style Lab : une page où tu choisis en cliquant ton look de montage (polices, couleurs, musique), une fois pour toutes.
 
 ### Le Carrousel
 - **C'est quoi** : il fait des carrousels Instagram (plusieurs images à faire défiler) avec tes vraies photos.
@@ -57,7 +57,7 @@ Règle de base : Claude prépare, toi tu décides. Rien n'est envoyé, publié o
 - **Ça te donne** : les images + la légende, prêtes à poster.
 
 ### Le Publieur
-- **C'est quoi** : il programme tes reels et carrousels sur tous tes réseaux, via Blotato (un site qui publie partout).
+- **C'est quoi** : il programme tes reels et carrousels sur tous tes réseaux, via Blotato (un site payant qui publie sur tous tes réseaux à ta place).
 - **La phrase** : « Programme ma semaine » · « Publie ce reel maintenant »
 - **Ça te donne** : la légende, la bonne heure, tout part tout seul. Seulement après ton OK.
 - **Bonus** : « Quand quelqu'un commente GUIDE, envoie-lui mon guide » → il envoie ton cadeau en message privé tout seul. Il te demande le lien si tu ne l'as pas donné.
@@ -92,7 +92,7 @@ Règle de base : Claude prépare, toi tu décides. Rien n'est envoyé, publié o
 - **Ça te donne** : des textes prêts. Rien n'est publié sans toi.
 
 ### Le Funnel builder
-- **C'est quoi** : il monte ton tunnel de vente (le chemin jusqu'à l'achat : commentaire → message → page → paiement) dans GoHighLevel (ton logiciel de vente).
+- **C'est quoi** : il monte ton tunnel de vente (le chemin jusqu'à l'achat : commentaire → message → page → paiement) dans GoHighLevel : un logiciel tout-en-un pour vendre en ligne (pages, paiements, emails, messages automatiques).
 - **La phrase** : « Monte mon tunnel »
 - **Ça te donne** : un tunnel qui marche, testé avant la mise en ligne.
 
@@ -107,7 +107,7 @@ Règle de base : Claude prépare, toi tu décides. Rien n'est envoyé, publié o
 - **Ça te donne** : des pubs prêtes à tourner. Il ne lance jamais de campagne.
 
 ### Le Pilote pub
-- **C'est quoi** : il lit tes pubs Meta (Facebook et Instagram) et te dit lesquelles couper, garder ou pousser.
+- **C'est quoi** : il lit tes pubs Meta (Meta = la société de Facebook et Instagram, là où tu paies tes pubs) et te dit lesquelles couper, garder ou pousser.
 - **La phrase** : « Quelles pubs couper ? »
 - **Ça te donne** : un tableau clair. Il ne touche jamais à tes campagnes.
 
@@ -171,6 +171,14 @@ Règle de base : Claude prépare, toi tu décides. Rien n'est envoyé, publié o
 - Elle est dans Documents/Brain. Tu n'as pas besoin de l'ouvrir.
 - Elle contient déjà des fiches d'experts (vente, contenu, pubs, montage...).
 - Tout ce que tu dis d'important y est rangé tout seul.
+
+## Les mots compliqués, en simple
+- **Blotato** : le site qui publie tes vidéos sur tous tes réseaux et envoie tes cadeaux en message privé.
+- **GoHighLevel** : un logiciel pour vendre en ligne (pages, paiements, emails).
+- **Meta** : la société de Facebook et Instagram. Tes pubs passent par elle.
+- **Style Lab** : la page où tu choisis ton look de montage en cliquant.
+- **Tunnel de vente** : le chemin d'une personne, de ta vidéo jusqu'à l'achat.
+- **Lead magnet** : le cadeau gratuit (guide, vidéo) que tu envoies contre un commentaire.
 
 ## Si tu bloques
 - Dis simplement ce que tu veux faire : Claude choisit le bon outil.

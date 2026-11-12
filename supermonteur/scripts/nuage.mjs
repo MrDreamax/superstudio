@@ -1,9 +1,9 @@
-// 29/10 : mode NUAGE de brolltexte.py (collé à la fin de _shot.mjs, les __X__ sont remplacés par Python).
+// mode NUAGE de brolltexte.py (collé à la fin de _shot.mjs, les __X__ sont remplacés par Python).
 // Pose chaque mot au hasard (graine fixe) hors du texte du centre, du visage et des zones mortes Insta,
 // puis capture text.png (texte du centre seul), _w<i>.png (un mot seul) et text-nuage.png (tout, pour contrôle).
 const W0 = __WORDS__, SL = __SLOTS__, FB = __FB__, ZL = 90, ZR = __W__ - 90, ZT = __TOP__ + 20, ZB = __BOTTOM__ - 20;
 const res = await p.evaluate((W0, SL, FB, ZL, ZR, ZT, ZB, WW) => {
-  // 29/10 (l’utilisateur : « plus aléatoire, trop regroupé, respecte les zones Insta ») : zone sûre + 20-25 px de marge,
+  // zone sûre + 20-25 px de marge,
   // chaque mot tire une taille au hasard, puis parmi 60 places libres tirées au hasard on garde celle la plus
   // éloignée de tout le reste (texte du centre, visage, autres mots) -> éparpillé sur tout l'écran, jamais en paquet.
   let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
@@ -16,7 +16,7 @@ const res = await p.evaluate((W0, SL, FB, ZL, ZR, ZT, ZB, WW) => {
   const out = [];
   const libre = r => !(r[3] > 1080 && r[2] > WW - 140) && r[0] >= ZL && r[2] <= ZR && r[1] >= ZT && r[3] <= ZB &&
     !busy.some(b => hit([r[0] - 14, r[1] - 6, r[2] + 14, r[3] + 6], b));
-  // 29/10 « reprends le positionnement de l'original » : un mot qui a une place de la référence (SL[i] = [cx, cy, h, w])
+  // « reprends le positionnement de l'original » : un mot qui a une place de la référence (SL[i] = [cx, cy, h, w])
   // s'y pose ; si elle touche le visage, le texte du centre ou un autre mot, on prend la place libre la plus proche (spirale).
   const reste = [];   // place de la référence introuvable -> posé au hasard ensuite
   const avec = W0.map((w, i) => [w, i]).filter(([, i]) => SL && SL[i]);

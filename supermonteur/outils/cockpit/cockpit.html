@@ -1,9 +1,9 @@
 <!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Le Monteur</title>
 <style>
-/* Cockpit v3 « Claude te guide » (maquette validée le 23/10 : (exemple retiré), complet-r2/1c et 2b).
-   Conversation à droite (23/10 : « mieux pour le contrôle »), vidéo au centre. Remplace Style Lab + Cut Notes. Ancienne page (v2, panneau de cartes) : _backup/2026-10-23-cockpit-v2/.
-   Règle 23/10 : un look = polices + couleur du texte + rythme. JAMAIS d'étalonnage ni de filtre sur la vidéo du rush.
+/* Cockpit v3 « Claude te guide » (maquette validée : (exemple retiré), complet-r2/1c et 2b).
+   Conversation à droite (« mieux pour le contrôle »), vidéo au centre. Remplace Style Lab + Cut Notes. Ancienne page (v2, panneau de cartes) : _backup/2026-10-23-cockpit-v2/.
+   Règle : un look = polices + couleur du texte + rythme. JAMAIS d'étalonnage ni de filtre sur la vidéo du rush.
    Pas de zone qui défile dans la page : si la conversation est longue, c'est la page qui défile, la vidéo reste en place. */
 :root{--bg:#f5f5f7;--ink:#1d1d1f;--ink2:#6e6e73;--ink3:#86868b;--line:rgba(0,0,0,.08);--blue:#0071e3;--green:#34c759;--red:#ff3b30;--yellow:#ffcc00;--orange:#ff9500}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -48,7 +48,7 @@ button{cursor:pointer}button:disabled{opacity:.4;cursor:default}
 .lk small{font-weight:400;color:var(--ink3);font-size:10.5px;margin-top:1px}
 .reg{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:13px;flex-wrap:wrap}.reg>b{width:62px;font-weight:600;color:var(--ink2);font-size:12px;flex:none}
 .dot{width:24px;height:24px;border-radius:50%;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.25);transition:box-shadow .15s}.dot.on{box-shadow:inset 0 0 0 .5px rgba(0,0,0,.25),0 0 0 2px #fff,0 0 0 4px var(--blue)}
-/* 23/10 personnalisation : galerie des 6 polices au centre + 5 réglages qui se déplient (maquettes perso-r1 validées) */
+/* personnalisation : galerie des 6 polices au centre + 5 réglages qui se déplient (maquettes perso-r1 validées) */
 .galerie{display:grid;grid-template-columns:repeat(3,auto);gap:14px 28px}
 .galerie button{text-align:center;font-size:13px;font-weight:600;line-height:1.3}
 .galerie .v{border-radius:14px;background:#000 center/cover;position:relative;overflow:hidden;box-shadow:0 10px 26px rgba(0,0,0,.16);margin-bottom:7px;transition:box-shadow .15s}
@@ -83,7 +83,7 @@ button{cursor:pointer}button:disabled{opacity:.4;cursor:default}
 .play b{width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);display:grid;place-items:center;transition:opacity .2s}
 .play b:after{content:"";border-left:17px solid #1d1d1f;border-top:10px solid transparent;border-bottom:10px solid transparent;margin-left:5px}
 .joue .play b{opacity:0}
-/* zones interdites d'Instagram (règle 16/10, toutes les vidéos) : en rouge quand la vidéo est en pause ; le Gardien bloque tout texte dedans */
+/* zones interdites d'Instagram (règle toutes les vidéos) : en rouge quand la vidéo est en pause ; le Gardien bloque tout texte dedans */
 .zones{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;transition:opacity .2s}
 .joue .zones{opacity:0}
 /* calques de l'aperçu : polices et couleurs du look (variables posées sur le téléphone ou la vignette) */
@@ -156,7 +156,7 @@ button{cursor:pointer}button:disabled{opacity:.4;cursor:default}
 .alerte{font-size:12.5px;color:#c93400;margin-top:6px}
 .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,10px);background:rgba(29,29,31,.9);color:#fff;backdrop-filter:blur(20px);padding:10px 18px;border-radius:980px;font-size:14px;opacity:0;transition:opacity .25s,transform .35s cubic-bezier(.2,.9,.3,1);pointer-events:none;z-index:50}
 .toast.on{opacity:1;transform:translate(-50%,0)}
-/* 23/10 montage en 3 étapes (maquettes passes-r1 validées : A « étapes en haut » + r2-3b « moments forts ») */
+/* montage en 3 étapes (maquettes passes-r1 validées : A « étapes en haut » + r2-3b « moments forts ») */
 .steps{position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px}
 .st{display:flex;align-items:center;gap:8px;padding:5px 14px 5px 5px;border-radius:980px;font-size:13px;background:rgba(0,0,0,.04);white-space:nowrap;transition:background .15s}
 .st i{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:700;font-size:12px;background:rgba(0,0,0,.1);color:var(--ink2)}
@@ -207,7 +207,7 @@ body.lab #steps,body.lab #auto,body.lab #exporter,body.lab #retour{display:none!
 .bt small{position:absolute!important;left:0;right:0;bottom:0;margin:0!important;font-size:10.5px!important;color:#fff!important;background:linear-gradient(transparent,rgba(0,0,0,.75));padding:12px 5px 4px;border-radius:0 0 9px 9px;line-height:1.25;text-align:left}
 .bt i{position:absolute;top:5px;right:5px;width:18px;height:18px;border-radius:50%;background:var(--blue);color:#fff;font-size:11px;display:grid;place-items:center;font-style:normal}
 .lien{font-size:12.5px;color:var(--blue);margin-top:8px;display:block}
-/* 23/10 v5 étape 1 : dérushage en TIMELINE (maquettes (exemple retiré) + courbe-1-bourse.png validées).
+/* v5 étape 1 : dérushage en TIMELINE (maquettes (exemple retiré) + courbe-1-bourse.png validées).
    La conversation se range : un message + « Suivant » en bas ; toute la largeur pour la loupe et le reel bout à bout. */
 .main.e1 .chat{display:none}
 .main.e1 .stage{padding:16px 20px;justify-content:flex-start}
@@ -253,8 +253,8 @@ body.lab #steps,body.lab #auto,body.lab #exporter,body.lab #retour{display:none!
 .ob.court{box-shadow:0 0 0 2px var(--orange)}
 .tete{position:absolute;top:-8px;bottom:-8px;width:2px;margin-left:-1px;background:var(--red);pointer-events:none}
 .ovw .tete{top:-6px;bottom:-6px}
-/* 23/10 barre de lecture (maquette (exemple retiré), choix de l’utilisateur : « barre en rouge sur la timeline et sur la
-   coupe en grand ») : la barre rouge s'attrape et se tire, dans le reel bout à bout ET dans la loupe ; l'image suit sous le doigt. */
+/* barre de lecture rouge, sur la timeline et sur la coupe en grand :
+   la barre rouge s'attrape et se tire, dans le reel bout à bout ET dans la loupe ; l'image suit sous le doigt. */
 .tete.prise{pointer-events:auto;cursor:ew-resize;touch-action:none;z-index:4}
 .tete.prise::after{content:"";position:absolute;top:0;bottom:0;left:-9px;right:-9px}
 .tete.prise>b{position:absolute;bottom:100%;left:50%;transform:translate(-50%,-4px);background:var(--red);color:#fff;font:700 11.5px/1 -apple-system,system-ui;padding:4px 9px;border-radius:980px;white-space:nowrap;box-shadow:0 2px 8px rgba(255,59,48,.35);font-variant-numeric:tabular-nums;cursor:grab}
@@ -330,7 +330,7 @@ const nomPolices = L => `${E.noms_polices[L.sans] || L.sans} + ${E.noms_polices[
 const nomCouleur = c => (E.noms_couleurs || {})[String(c).toUpperCase()] || "couleur perso";
 function appliquerLook() { const p = $("#p-reel"); if (p) { p.style.cssText = p.style.cssText.replace(/--[^;]+;?/g, "") + ";" + varsLook(lookVu()); lecteurs.forEach(L => L.dernier = ""); } }
 
-// ---------- 23/10 personnalisation : le style = 1 police (sur 6) + taille, couleurs, position, plus. Même règles que build.mjs. ----------
+// ---------- personnalisation : le style = 1 police (sur 6) + taille, couleurs, position, plus. Même règles que build.mjs. ----------
 let spick = null;   // le style en cours de réglage : {...style, ouvert: "police" | "taille" | "couleurs" | "position" | "plus" | null}
 const PALETTE = [["#FFFFFF", "blanc"], ["#F4EBDD", "ivoire"], ["#F2D37A", "or"], ["#A9D1FF", "bleu"], ["#8FF0C8", "menthe"], ["#FF8A8A", "corail"]];
 const STYLE_DEF = () => ({police: "combo", titre: "M", couleurs: {t1: "#FFFFFF", t2: "#FFFFFF", sub: "#FFFFFF"}, titre_place: "haut", align: "centre", majuscules: null, ombre: "douce", mots: 4});
@@ -361,7 +361,7 @@ function typoJS(S, blanc) {   // = typo() de cockpit.py ; blanc = la galerie mon
           forte: S.ombre === "forte", gauche: S.align === "gauche", top: TPL[S.titre_place] || 280};
 }
 
-// ---------- 23/10 les 3 étapes : 1 Dérushage, 2 Style (sautée dès la 2e vidéo), 3 Motion / B-roll (facultative) ----------
+// ---------- les 3 étapes : 1 Dérushage, 2 Style (sautée dès la 2e vidéo), 3 Motion / B-roll (facultative) ----------
 const passe = () => E.lab ? 1 : (C().passe || 1);   // Derush Lab : toujours l'étape 1
 const styleFait = () => !!(E.style || E.look);
 const nomStyle = () => E.style ? polDe(E.style.police).nom : E.look ? E.look.nom : "";
@@ -375,7 +375,7 @@ function rendreSteps() {
 }
 async function allerPasse(n) {
   finEcoute(); pick = null; mode = "montage";
-  spick = n === 2 && !styleFait() ? {...STYLE_DEF(), ouvert: "police"} : null;   // 23/10 v4 : l'étape 2 = l'aperçu habillé ; la galerie seulement à la 1re vidéo
+  spick = n === 2 && !styleFait() ? {...STYLE_DEF(), ouvert: "police"} : null;   // v4 : l'étape 2 = l'aperçu habillé ; la galerie seulement à la 1re vidéo
   await sauver({passe: n}); window.scrollTo(0, 0); rendre();
 }
 // étape 3 : les moments forts que Claude a repérés, avec le choix de la personne (aperçu = ce que le moteur fabriquera)
@@ -436,7 +436,7 @@ function preparerTexte() {
   });
 }
 const hookChoisi = () => E.hooks.find(h => h.id === C().hook) || {};
-// 23/10 (retour n6) : le mot géant au même endroit que le rendu (build.mjs : 820 px de large, haut de la tête - 0,7 x taille,
+// (retour n6) : le mot géant au même endroit que le rendu (build.mjs : 820 px de large, haut de la tête - 0,7 x taille,
 // jamais au-dessus de 270 px) ; la tête (mesurée par headtop.py, E.tetes) cache le bas du mot comme le détourage du rendu.
 // Sans tête à l'image : devant, au milieu, ombre forte (comme le rendu). Mesure pas encore prête : en haut, sans masque.
 function motGeant(b, k) {
@@ -572,7 +572,7 @@ function bande() {
   const zones = remettables().filter(c => c.etat === "remis").map(c => `<div class="remis ${c.id === choisie ? "on" : ""}" data-sel="${c.id}" style="left:${pct(placeDansReel(c.a))}%;width:${100 * (c.b - c.a) / D}%"><i>${numero(c)}</i></div>`).join("");
   const mks = mode === "montage" && passe() === 3 ? momentsVus().map((m, i) => `<div class="mk" data-mom="${m.id}" style="left:${pct(m.t0)}%"><i>${i + 1}</i></div>`).join("") : "";
   const pins = passe() === 3 ? "" : notesPlacees().map(n => `<div class="pin ${n.id === choisie ? "on" : ""}" data-note="${n.id}" style="left:${pct(n.t)}%" title="${esc(n.texte)}"><i>${numeroNote(n)}</i></div>`).join("");
-  return `<div class="strip" id="strip">${imgs}${pins}<div class="ph" id="ph"></div></div>`;   // 23/10 v4 : les coupes se règlent à l'étape 1, plus sur la bande
+  return `<div class="strip" id="strip">${imgs}${pins}<div class="ph" id="ph"></div></div>`;   // v4 : les coupes se règlent à l'étape 1, plus sur la bande
 }
 function brancherBande() {
   const s = $("#strip"), v = $("#v-reel");
@@ -639,11 +639,11 @@ function finEcoute() {
   rendreFil();
 }
 
-// ---------- 23/10 v5 étape 1 : dérushage en TIMELINE (maquettes (exemple retiré) + courbe-1-bourse.png validées) ----------
+// ---------- v5 étape 1 : dérushage en TIMELINE (maquettes (exemple retiré) + courbe-1-bourse.png validées) ----------
 // Plus de texte. En haut à gauche le téléphone joue le RUSH en sautant ce qui est coupé (montage virtuel, instantané) ; à droite la
 // LOUPE : le bloc ouvert en grand (image + son) avec 1,6 s autour ; en bas le reel bout à bout, les coupes en PETIT (image + son en gris).
 // Dans la loupe on tire une sélection : dans le gris « Remettre ce bout », dans le bleu « Retirer » (un petit mot). Les bords des blocs
-// se tirent aussi. ← → = 10 ms. Le son = courbe « Bourse » EXACTE (l’utilisateur : « très précis ») : la vraie valeur toutes les 10 ms, le pic
+// se tirent aussi. ← → = 10 ms. Le son = courbe « Bourse » EXACTE : la vraie valeur toutes les 10 ms, le pic
 // de chaque pixel, aucun lissage. Choix = les plages GARDÉES (secondes du rush) -> /api/derush -> plages.json (derush.py --plages) à « Suivant ».
 let DR = null, ONDE = null, SPR = null, vue = null, ouvertT = null, sel = null, actif = null, marque = null, rejoue = null, drT = null, rejT = null;
 const CTX = 1.6;
@@ -677,7 +677,7 @@ function raison(c) {   // une coupe : par Claude (son 1er dérush) ou par toi ; 
 const dureeVirt = () => DR.plages.reduce((s, [a, b]) => s + b - a, 0);
 function rushVersVirt(t) { let s = 0; for (const [a, b] of DR.plages) { if (t <= a) break; s += Math.min(t, b) - a; } return s; }
 function virtVersRush(x) { for (const [a, b] of DR.plages) { if (x <= b - a) return a + x; x -= b - a; } return DR.plages.length ? DR.plages.at(-1)[1] : 0; }
-// 29/10 (l’utilisateur : « entre chaque partie, une micro coupure de 0,05 s ») : le son du dérush joue en Web Audio, les plages
+// le son du dérush joue en Web Audio, les plages
 // gardées collées à l'échantillon près ; la vidéo, muette, suit l'horloge du son. Avant : la vidéo sautait d'une plage à
 // l'autre (un saut = 30 à 100 ms de trou). Son pas encore chargé (ou navigateur qui refuse) = l'ancien saut, en secours.
 const AUD = {ctx: null, buf: null, charge: false, srcs: [], on: false, x0: 0, c0: 0, sig: "", seek: 0, user: false};
@@ -822,7 +822,7 @@ function peindreLoupe() {   // le canvas, la règle, les étiquettes (jamais les
   }).join("");
   const b = blocOuvert(), cs = coupes(), n = b.k ? DR.plages.findIndex(([a]) => Math.abs(a - b.a) < 1e-6) + 1 : cs.findIndex(c => Math.abs(c.a - b.a) < 1e-6) + 1;
   $("#tl-titre").textContent = b.k ? `Bloc gardé ${n} en grand` : `Coupe ${n} en grand`;
-  $("#tl-tout").textContent = b.k ? "🗑 Supprimer ce bloc" : "Tout remettre";   // 29/10 l’utilisateur : « je ne peux pas supprimer un bout que tu as gardé »
+  $("#tl-tout").textContent = b.k ? "🗑 Supprimer ce bloc" : "Tout remettre";
   $("#tl-tout").className = "pill " + (b.k ? "rouge" : "gris");
 }
 function calqueLoupe() {   // bords des blocs (tirables), sélection et ses poignées, la barre « Remettre / Retirer »
@@ -1073,7 +1073,7 @@ function boucleDR() {   // le téléphone saute les coupes ; la barre rouge suit
   if ((!v.paused || tireTete) && vue && !actif && !sel && (t > vue.t1 || t < vue.t0) && !(rejoue && rejoue.brut)) { const d = vue.t1 - vue.t0; vue = {t0: Math.max(0, Math.min(DUR() - d, t - d * 0.1)), t1: 0}; vue.t1 = vue.t0 + d; dessinerLoupe(); }
 }
 async function attendreJob() { while ((E = await api("/api/etat")).job.etat === "en cours") await new Promise(r => setTimeout(r, 1200)); }
-// ----- Derush Lab (23/10, maquette derushlab-r1/A.png) : « ✓ Valider le dérush » → clip.mp4 + Gardien du dérush -----
+// ----- Derush Lab (maquette derushlab-r1/A.png) : « ✓ Valider le dérush » → clip.mp4 + Gardien du dérush -----
 const r2 = x => JSON.stringify((x || []).map(([a, b]) => [Math.round(a * 100), Math.round(b * 100)]));
 const labValide = () => !!(E.lab && E.lab.valide && r2(E.lab.valide) === r2(DR.plages));   // une retouche après = à revalider
 const labOK = () => labValide() && E.lab.groupes.every(g => g.ok);
@@ -1194,14 +1194,14 @@ function bulleMusique() {
     <button class="pill" id="ajout-mus">+ ${perso ? "Changer ta musique" : "Ajoute ta musique"}</button>
     ${ch.musique === "sans" ? "" : '<button class="pill gris" data-m="sans">Sans musique</button>'}</div>`);
 }
-// 23/10 étape 3 (maquettes etape3-r1 validées : r1-a « liste » + r2-a « 3 idées de B-roll ») : tous les moments forts en liste,
+// étape 3 (maquettes etape3-r1 validées : r1-a « liste » + r2-a « 3 idées de B-roll ») : tous les moments forts en liste,
 // celui qu'on touche s'ouvre avec ses 6 effets et le réglage de l'effet choisi (retours n3, n4, n7). Jamais d'IA.
-// 23/10 (l’utilisateur) : seuls les effets de /api/etat "effets" sont proposés (Zoom, Carton plein, Rien) ; Mot géant, Motion design et
+// (l’utilisateur) : seuls les effets de /api/etat "effets" sont proposés (Zoom, Carton plein, Rien) ; Mot géant, Motion design et
 // Ton B-roll restent ci-dessous, cachés, pour pouvoir les remettre (cockpit.py CHOIX_MOMENT).
 const NOMS_EF = {zoom: "Zoom", mot: "Mot géant", carton: "Carton plein", motion: "Motion design", broll: "Ton B-roll", rien: "Rien"};
 const VAR = {zoom: {avant: "Zoom avant", arriere: "Zoom arrière"}, mot: {tete: "Derrière la tête", sous: "Dans le sous-titre"},
-             motion: {chiffres: "Chiffres géants", trait: "Illustration"}};   // 23/10 maquettes motion-r2 F + L validées
-// fonds du carton plein = les mêmes dégradés que cockpit.py FONDS (jamais de couleur unie, l’utilisateur 23/10)
+             motion: {chiffres: "Chiffres géants", trait: "Illustration"}};   // maquettes motion-r2 F + L validées
+// fonds du carton plein = les mêmes dégradés que cockpit.py FONDS (jamais de couleur unie, l’utilisateur)
 const FONDS_C = {nuit: "radial-gradient(85% 60% at 100% 0%,#2f74ff 0%,transparent 70%),radial-gradient(90% 65% at 0% 100%,#132b66 0%,transparent 75%),linear-gradient(165deg,#0d1836 0%,#060a1c 60%,#03050d 100%)",
                  noir: "radial-gradient(80% 55% at 100% 0%,#3a3f4a 0%,transparent 70%),radial-gradient(70% 50% at 0% 100%,#1a1d24 0%,transparent 75%),linear-gradient(165deg,#15171c 0%,#050506 70%)",
                  bleu: "radial-gradient(85% 60% at 100% 0%,#7fb2ff 0%,transparent 70%),radial-gradient(90% 65% at 0% 100%,#0a2a6b 0%,transparent 75%),linear-gradient(165deg,#2b6fff 0%,#0b3b8c 60%,#061f4d 100%)",
@@ -1296,7 +1296,7 @@ function bullesExport() {
     h += claude(`Ton reel est prêt : Gardien ${E.final.gardien_ok ? "✓" : "à revoir"} · ${fmt(E.final.duree)}.<div class="ch"><a class="pill plein" style="text-decoration:none" href="/video/final" download="reel.mp4">Télécharger le reel</a></div>`);
   } else h += claude(C().extras === "oui" ? `Voilà tes ${n} contenus au centre. Décoche ceux que tu ne veux pas, touche une date pour la changer.`
                                           : "Voilà ton reel au centre. Fabrique-le ou programme-le.");
-  // 23/10 (l’utilisateur) : carrousel, story et reels d'essai décochés par défaut, proposés seulement à la fin (pour ne pas perdre de temps)
+  // (l’utilisateur) : carrousel, story et reels d'essai décochés par défaut, proposés seulement à la fin (pour ne pas perdre de temps)
   if (n > 1 && !C().extras && !fabEnCours())
     h += claude(`Je te fais aussi ${[E.contenus.some(c => c.type === "carrousel") && "un carrousel", E.contenus.some(c => c.type === "story") && "une story",
                    (ne => ne > 1 ? ne + " reels d'essai" : ne ? "un reel d'essai" : "")(E.contenus.filter(c => c.essai).length)].filter(Boolean).join(", ").replace(/, ([^,]*)$/, " et $1")} avec cette vidéo ?
@@ -1308,7 +1308,7 @@ function rendreFil() {
   if (mode === "export") h = bullesExport();
   else if (spick) h = bullesStyle();
   else if (pick) h = bullesLook();
-  else if (passe() >= 2) {   // 23/10 v4 : étape 2 = la vidéo habillée (style, ouverture, sous-titres, musique), puis l'export
+  else if (passe() >= 2) {   // v4 : étape 2 = la vidéo habillée (style, ouverture, sous-titres, musique), puis l'export
     h = '<div class="who">CLAUDE · ÉTAPE 2 SUR 2</div>' + claude(`Ton style : <b>${esc(nomStyle() || "pas encore choisi")}</b>.<div class="ch"><button class="pill gris" id="changer-style">Changer de style</button></div>`);
     if (derushEnCours()) h += claude(`<span class="spin"></span>${esc(E.job.nom || "Je recoupe")}… ta vidéo revient dans quelques secondes.`);
     h += bulleOuverture() + bulleSousTitres() + bulleMusique() + bullesNotes() + '<button class="suivant" id="fin3">Terminer → Exporter</button>';
@@ -1336,7 +1336,7 @@ function brancherFil() {
   q("[data-pol]").forEach(b => b.onclick = () => { pick.affine.polices = b.dataset.pol; majTout(); });
   q("[data-coul]").forEach(b => b.onclick = () => { pick.affine.couleur = b.dataset.coul; majTout(); });
   q("[data-ry]").forEach(b => b.onclick = () => { pick.affine.rythme = b.dataset.ry; rendreFil(); });
-  // style (23/10) : 5 réglages ; taille et place des sous-titres = #moins, #plus, [data-pl] plus bas (enregistrés tout de suite)
+  // style : 5 réglages ; taille et place des sous-titres = #moins, #plus, [data-pl] plus bas (enregistrés tout de suite)
   const majStyle = () => { rendreFil(); appliquerLook(); };
   const ouvrir = id => { const av = spick.ouvert; spick.ouvert = id; rendreFil(); if ((av === "police") !== (id === "police")) rendreScene(); else appliquerLook(); };
   q("[data-acc]").forEach(b => b.onclick = () => ouvrir(spick.ouvert === b.dataset.acc ? null : b.dataset.acc));

@@ -1,4 +1,4 @@
-"""La DA vue par SuperMonteur (28/10/2026). Source unique = SuperDA : ~/Documents/SuperApps/superda/da.json
+"""La DA vue par SuperMonteur. Source unique = SuperDA : ~/Documents/SuperApps/superda/da.json
 (clés commun + montage, contrat da-schema.json). Tant que SuperDA n'a rien écrit : repli sur la DA du moteur
 (Brain 00-Moi/reglages/da-montage.json, sinon le da/exemple.json du skill), lue en lecture seule.
 """
@@ -81,13 +81,13 @@ def pour_moteur():
     c, m = d.get("commun", {}), d.get("montage", {})
     p, s, co = c.get("duo", {}).get("principale", {}), c.get("duo", {}).get("secondaire", {}), c.get("couleurs", {})
     fonts_dir = os.path.join(SK, "fonts")
-    fp = p.get("fichier") if p.get("fichier") and os.path.exists(os.path.join(fonts_dir, p["fichier"])) else "Outfit.ttf"   # 05/11 : police par défaut = Outfit (duo Moderne)
+    fp = p.get("fichier") if p.get("fichier") and os.path.exists(os.path.join(fonts_dir, p["fichier"])) else "Outfit.ttf"   # police par défaut = Outfit (duo Moderne)
     fs = s.get("fichier") if s.get("fichier") and os.path.exists(os.path.join(fonts_dir, s["fichier"])) else "Outfit.ttf"
-    # contrat SuperDA (note du 28/10 01:50) : titre.taille = ligne 2 (police secondaire) ; ligne 1 = taille x 0,5
-    t2 = int(m.get("titre", {}).get("taille") or 62)   # 05/11 : défauts = ceux de SuperDA (62 · 54)
-    t1 = round(t2 * p.get("ratio_ligne1", 0.5))   # 02/11 duo Moderne : ligne 1 fine et presque aussi grande que la ligne 2
+    # contrat SuperDA (note01:50) : titre.taille = ligne 2 (police secondaire) ; ligne 1 = taille x 0,5
+    t2 = int(m.get("titre", {}).get("taille") or 62)   # défauts = ceux de SuperDA (62 · 54)
+    t1 = round(t2 * p.get("ratio_ligne1", 0.5))   #  duo Moderne : ligne 1 fine et presque aussi grande que la ligne 2
     sub = int(m.get("sous_titres", {}).get("taille") or 54)
-    # 05/11 (l’utilisateur : « Bebas Neue est un peu petit ») : police étroite = « echelle » du catalogue (Bebas x1,35), même présence à réglage égal
+    # police étroite = « echelle » du catalogue (Bebas x1,35), même présence à réglage égal
     t1, t2, sub = round(t1 * p.get("echelle", 1)), round(t2 * s.get("echelle", 1)), round(sub * p.get("echelle", 1))
     accent = co.get("accent") or co.get("titre") or "#FFFFFF"
     car = m.get("cartons", {})
@@ -98,14 +98,14 @@ def pour_moteur():
                    "list": [car.get("depart") or "#161D2F", car.get("arrivee") or "#0B0B0D"]},
         "subSize": sub,
         "typo": {
-            "t1": {"font": fp, "weight": p.get("graisse_ligne1", p.get("graisse", 700)), "size": t1, "color": co.get("titre") or "#FFFFFF", "caps": True},   # 02/11 (l’utilisateur : « mets toujours le titre en majuscule ») : quel que soit le duo
+            "t1": {"font": fp, "weight": p.get("graisse_ligne1", p.get("graisse", 700)), "size": t1, "color": co.get("titre") or "#FFFFFF", "caps": True},   # quel que soit le duo
             "t2": {"font": fs, "weight": s.get("graisse", 400), "size": t2, "color": co.get("ligne2") or "#FFFFFF",
                    "italic": bool(s.get("italique", True)), "caps": True},
             "sub": {"font": fp, "weight": p.get("graisse", 700), "caps": bool(m.get("sous_titres", {}).get("majuscules", True)), "scale": 1, "color": co.get("sous_titres") or "#FFFFFF",
-                    "track": 0.5},   # sous-titres du moteur : majuscules, 0,5 px (moteur.md, Style Lab 13/10)
+                    "track": 0.5},   # sous-titres du moteur : majuscules, 0,5 px (moteur.md, Style Lab)
             "shadow": "douce", "align": "center"},
         "subMax": max(1, min(4, int(m.get("mots_par_ligne") or 4))),   # le moteur plafonne à 4 mots (plan.subMax)
-        # 03/11 (l’utilisateur : « un peu plus bas ») : la hauteur du titre de SuperDA (_y = haut des lettres) arrive au moteur ;
+        # la hauteur du titre de SuperDA (_y = haut des lettres) arrive au moteur ;
         # avant, monter.py posait top 250 en dur et le réglage de SuperDA ne servait à rien. top = _y - 20 (marge du bloc).
         "titleTop": int(m.get("titre", {}).get("_y", 350)) - 20,
     }

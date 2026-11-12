@@ -12,7 +12,6 @@ __pycache__/
 # données de la personne et journaux (jamais publiés)
 *.log
 da.json
-metricool.json
 demandes.jsonl
 a-corriger.json
 feedback-retours.md

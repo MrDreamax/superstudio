@@ -1,4 +1,4 @@
-"""Tracking : un objet suit un point du corps (13/10 : le badge au bout du doigt quand il pointe = ce qui marche chez son monteur).
+"""Tracking : un objet suit un point du corps (le badge au bout du doigt quand il pointe = ce qui marche chez son monteur).
   python3 track.py clip.mp4 START END --point index_tip --out track_badge.json
 Points : index_tip (bout de l'index), thumb_tip, palm (paume), head_top (au-dessus de la tête),
          head_left / head_right (à côté de la tête, côté gauche / droit de l'écran), chin.
@@ -38,7 +38,7 @@ for k, f in enumerate(frames):
     if hand and r.hand_landmarks:
         idx = {"index_tip": 8, "thumb_tip": 4, "palm": 9}[point]
         # 1re image : la main la plus haute (celle qui pointe / montre) ; ensuite TOUJOURS la même main (la plus proche
-        # du point précédent), sinon l'objet saute d'une main à l'autre (bug vu le 13/10 : x 231 -> 745)
+        # du point précédent), sinon l'objet saute d'une main à l'autre (bug vu : x 231 -> 745)
         last = next((q for q in reversed(pts) if q), None)
         cand = [(h[idx].x, h[idx].y) for h in r.hand_landmarks]
         if side: cand = [c for c in cand if (c[0] < 0.5) == (side == "left")] or []

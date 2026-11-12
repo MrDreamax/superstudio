@@ -1,4 +1,4 @@
-"""29/10 RUSH écran coupé : pose les sons d'iPhone (sons.json : t en secondes du clip, src dans la bibliothèque Sons de son disque externe
+"""RUSH écran coupé : pose les sons d'iPhone (sons.json : t en secondes du clip, src dans la bibliothèque Sons de son disque externe
 ou dans ce dossier, db = gain, duree = coupé à n s) sur le son de la vidéo. python3 ajoute_sons.py entree.mp4 sortie.mp4 [duree_max]"""
 import json, os, subprocess, sys
 ICI = os.path.dirname(os.path.abspath(__file__))

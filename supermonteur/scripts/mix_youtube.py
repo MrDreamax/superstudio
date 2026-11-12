@@ -1,4 +1,4 @@
-"""Mix d'une vidéo YouTube 16:9 (31/10, style theyo) : voix du rush sans traitement, musique très basse, un son sur chaque apparition, -14 LUFS.
+"""Mix d'une vidéo YouTube 16:9 (style theyo) : voix du rush sans traitement, musique très basse, un son sur chaque apparition, -14 LUFS.
   python3 mix_youtube.py rendu.mp4 rush.mp4 final.mp4 --sons sons.json [--musique m.mp3] [--debut 12] [--ecart 24]
 sons.json = [{"t": 1.1, "src": "epidemic - ui-pop-dull.wav", "db": -6}] ; src = dossier ~/Documents/Montage/SFX (règle : son coupé net au début).
 --ecart = dB de la musique sous la voix. Le gain final est un seul chiffre sur tout le mix : la voix n'est ni compressée ni égalisée (rush intouchable).

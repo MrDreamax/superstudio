@@ -1,10 +1,10 @@
-"""Le Gardien : bloque la livraison tant qu'une erreur DÉJÀ signalée par l'utilisateur revient (18/10/2026).
+"""Le Gardien : bloque la livraison tant qu'une erreur DÉJÀ signalée par l'utilisateur revient.
   python3 gardien.py <dossier du reel>        -> ✅ / ❌ par contrôle, rapport gardien.json, code 1 si un ❌
-  python3 gardien.py <dossier du reel> --derush -> DERUSH LAB (23/10) : seulement les contrôles du dérush (mot coupé, respiration,
+  python3 gardien.py <dossier du reel> --derush -> DERUSH LAB : seulement les contrôles du dérush (mot coupé, respiration,
       plans >= 2 s, micro-coupure, silence, flash), sans plan.json ni rendu. Rapport gardien-derush.json.
-  python3 gardien.py <dossier du reel> --avant -> AVANT LE RENDU (21/10) : tout ce qui se voit sans la vidéo finale
+  python3 gardien.py <dossier du reel> --avant -> AVANT LE RENDU : tout ce qui se voit sans la vidéo finale
       (plan, coupes, B-rolls, son de la voix, zones mortes, durée) + un APERÇU image par image (face cam + B-rolls + cartons
-      collés en vignettes, ~10 s) pour les flashs. Rapport gardien-avant.json. Pourquoi : le 20/10 (Titanic), 5 rendus au lieu
+      collés en vignettes, ~10 s) pour les flashs. Rapport gardien-avant.json. Pourquoi : (Titanic), 5 rendus au lieu
       d'1, parce que le Gardien ne voyait les erreurs qu'après chaque rendu de 3 à 15 min.
 Lit ce qui existe dans le dossier : plan.json, cut.segments.json, cut.mp4 (voix dérushée), final.mp4, cues.json, index.html.
 Un contrôle sans son fichier = « sans objet ». Règle : chaque nouvelle note mesurable de l'utilisateur = un contrôle de plus ici
@@ -14,7 +14,7 @@ Pourquoi : sur Tesla/SpaceX, la note auto disait 8,9 aux v1, v2, v3 et v4 alors 
 import json, os, subprocess, sys
 import numpy as np
 
-DERUSH = "--derush" in sys.argv[1:]   # Derush Lab (23/10) : le dérush seul, comme avant le rendu mais sans plan
+DERUSH = "--derush" in sys.argv[1:]   # Derush Lab : le dérush seul, comme avant le rendu mais sans plan
 AVANT = "--avant" in sys.argv[1:] or DERUSH
 D = next((a for a in sys.argv[1:] if not a.startswith("--")), ".")
 S = os.path.dirname(os.path.abspath(__file__))
@@ -54,7 +54,7 @@ def flashs(fr):  # une image (ou 2 à 6) qui saute puis revient, ou qui ne resse
         for L in range(1, 7):                                # flash de L images : saut en i, puis autre saut en i+L
             j = i + L
             if j + 1 >= len(fr): break
-            # 21/10 : tête qui bouge vite en continu (fin de Titanic 61 s) = ramp d'écarts AVANT et APRÈS, pas un intrus isolé
+            # tête qui bouge vite en continu (fin de Titanic 61 s) = ramp d'écarts AVANT et APRÈS, pas un intrus isolé
             if L == 1 and i > 0 and j + 1 < len(d) and d[i - 1] > T * 0.6 and d[j + 1] > T * 0.6: break
             if d[j] > T and np.abs(fr[i + L + 1] - fr[i]).mean() > T:
                 # l'image courte ne ressemble ni à l'avant (i) ni à l'après (i+L+1) : c'est un intrus
@@ -67,10 +67,10 @@ def duree(path):
                                 capture_output=True, text=True).stdout.strip() or 0)
 
 plan = {} if DERUSH else (J("plan.json") or {})
-# 21/10 : build.mjs DÉPLACE les B-rolls et cartons (calage sur les coupes, anti-flash) sans toucher plan.json ; il écrit les
+# build.mjs DÉPLACE les B-rolls et cartons (calage sur les coupes, anti-flash) sans toucher plan.json ; il écrit les
 # vraies positions dans timeline.json. Le Gardien contrôle donc ce qui sera rendu, pas le brouillon.
 tl = None if DERUSH else J("timeline.json")
-# 11/11 : MIXSEUL (monte.sh, seul le son a changé) = la vidéo rendue est gardée telle quelle : ses vraies places sont dans
+# MIXSEUL (monte.sh, seul le son a changé) = la vidéo rendue est gardée telle quelle : ses vraies places sont dans
 # timeline.json même si plan.json a été réécrit depuis (sinon le Gardien relit les places brutes du plan = fausses alertes).
 if tl and (os.environ.get("MIXSEUL") == "1" or os.path.getmtime(P("timeline.json")) >= os.path.getmtime(P("plan.json") or P("timeline.json"))):
     for k in ("brolls", "inserts", "lists", "mini", "proofs"):
@@ -81,64 +81,64 @@ if AVANT: final = None   # un final.mp4 d'une ancienne version ne compte pas
 cam = P(plan.get("cam", "clip.mp4"))
 dur_v = duree(final) if final else min(plan.get("duration") or 1e9, duree(cam) - 0.04) if cam else None
 
-# 1. Micro-coupes (Tesla v1, 17/10 : « micro cuts qui buggent », « micro rush inutile qui saccade »)
-if segs is None: check(None, "Micro-coupes", "pas de cut.segments.json", "17/10 Tesla v1")
+# 1. Micro-coupes (Tesla v1,, « micro rush inutile qui saccade »)
+if segs is None: check(None, "Micro-coupes", "pas de cut.segments.json", "Tesla v1")
 else:
     bad = [(round(a, 2), round(b - a, 2)) for a, b in segs if b - a < 0.6]
-    check(not bad, "Micro-coupes", f"{len(bad)} bout(s) de face cam < 0,6 s : {bad[:6]}" if bad else f"{len(segs)} plans, aucun < 0,6 s", "17/10 Tesla v1")
+    check(not bad, "Micro-coupes", f"{len(bad)} bout(s) de face cam < 0,6 s : {bad[:6]}" if bad else f"{len(segs)} plans, aucun < 0,6 s", "Tesla v1")
 
-# 1 quater. Coupes à jour (11/11, studio Super « Pas le temps de filmer » v4 : cut.segments.json annonçait 17,68 s pour un clip
+# 1 quater. Coupes à jour (, studio Super « Pas le temps de filmer » v4 : cut.segments.json annonçait 17,68 s pour un clip
 # de 17,33 s : dérush qui finissait après la fin du rush + fichier retouché à la main). Le Gardien mesure les plans sur ces
 # coupes : si elles décrivent plus de vidéo qu'il n'y en a, il voit des plans fantômes (« 0,11 s » en fin) et rate les vrais.
 # Un clip PLUS long que les coupes est permis (dernière image tenue pour passer 60 s, monter.rallonge_60).
 if segs and cam:
     _ecart = sum(b - a for a, b in segs) - duree(cam)
-    check(_ecart <= 0.1, "Coupes à jour", f"cut.segments.json = {_ecart:+.2f} s de plus que {os.path.basename(cam)}" + (" : ces coupes ne décrivent pas cette vidéo, refaire le dérush (fin_propre.py ne répare que la fin posée après le rush)" if _ecart > 0.1 else ""), "11/11 studio Super v4")
+    check(_ecart <= 0.1, "Coupes à jour", f"cut.segments.json = {_ecart:+.2f} s de plus que {os.path.basename(cam)}" + (" : ces coupes ne décrivent pas cette vidéo, refaire le dérush (fin_propre.py ne répare que la fin posée après le rush)" if _ecart > 0.1 else ""), "studio Super v4")
 
-# 2. Silence qu'on entend dans la voix (Tesla v2, 17/10 : « zéro silence audible » ; 13/10 : 1 seul silence voulu)
-if not voix: check(None, "Silences entendus", "pas de voix dérushée (cut.mp4 / plan.cam)", "17/10 Tesla v2")
+# 2. Silence qu'on entend dans la voix (Tesla v2, ; : 1 seul silence voulu)
+if not voix: check(None, "Silences entendus", "pas de voix dérushée (cut.mp4 / plan.cam)", "Tesla v2")
 else:
     db = pcm(voix); thr = np.percentile(db, 95) - 30
     gaps = [g for g in runs(db < thr, 50) if g[0] > 0.3 and g[1] < len(db) / 100 - 0.3]  # blancs > 0,5 s, hors bords
     allowed = 1 if (plan.get("silences") or "--pause" in json.dumps(plan)) else 0
-    # 22/10 (RUSH v2 : « enlève le carton plein écran de l’utilisateur ») : le petit temps naturel AVANT la signature finale
+    #  (RUSH v2 : « enlève le carton plein écran de l’utilisateur ») : le petit temps naturel AVANT la signature finale
     # (« … avec le cœur. [temps] l’utilisateur ») n'est pas une hésitation : couper = plan de 1,1 s (micro-coupure), cacher = carton
     # refusé. Avec "pause_signature": true dans plan.json, UN blanc de 0,8 s au plus dans les 2,5 dernières secondes de voix passe.
-    # La musique continue dessous et la voix garde le bruit de la pièce (derush.py, 22/10) : pas de trou.
+    # La musique continue dessous et la voix garde le bruit de la pièce (derush.py) : pas de trou.
     if plan.get("pause_signature"):
         _vend = max((b for a, b in runs(db >= thr, 5)), default=len(db) / 100)
         gaps = [g for g in gaps if not (g[1] - g[0] <= 0.8 and g[1] >= _vend - 2.5)]
-    # 23/10 (règle de l’utilisateur : « ne coupe jamais en plein milieu d'une phrase ») : un blanc gardé EXPRÈS en milieu de phrase
+    #  (règle de) : un blanc gardé EXPRÈS en milieu de phrase
     # (cut.voice.json "pauses_phrase", écrit par derush.py) n'est pas une hésitation à couper : signalé, pas bloquant.
     _pp = (J("cut.voice.json") or {}).get("pauses_phrase", [])
     _ph = [g for g in gaps if any(pa - 0.15 <= g[0] and g[1] <= pb + 0.15 for pa, pb in _pp)]
-    if _ph: check(True, "Blancs en milieu de phrase", f"{len(_ph)} blanc(s) gardé(s) (on ne coupe pas une phrase) : {[(round(a,2), round(b-a,2)) for a,b in _ph][:6]} (à écouter)", "23/10 règle phrase")
+    if _ph: check(True, "Blancs en milieu de phrase", f"{len(_ph)} blanc(s) gardé(s) (on ne coupe pas une phrase) : {[(round(a,2), round(b-a,2)) for a,b in _ph][:6]} (à écouter)", "règle phrase")
     gaps = [g for g in gaps if g not in _ph]
     extra = gaps[allowed:] if allowed else gaps
-    check(not extra, "Silences entendus", f"{len(gaps)} blanc(s) > 0,5 s dans la voix : {[(round(a,2), round(b-a,2)) for a,b in gaps][:6]}" if extra else "aucun blanc > 0,5 s", "17/10 Tesla v2")
+    check(not extra, "Silences entendus", f"{len(gaps)} blanc(s) > 0,5 s dans la voix : {[(round(a,2), round(b-a,2)) for a,b in gaps][:6]}" if extra else "aucun blanc > 0,5 s", "Tesla v2")
 
-# 2 bis. Trou de son (21/10, RUSH v2 à 11 s : « bug ici ») : un blanc coupé à zéro (-180 dB) au milieu de la voix fait
+# 2 bis. Trou de son (RUSH v2 à 11 s) : un blanc coupé à zéro (-180 dB) au milieu de la voix fait
 # disparaître le bruit de la pièce d'un coup = on croit à une panne. derush.py baisse les respirations de 22 dB, jamais à zéro.
 if voix:
     _W = (J(plan.get("words", "words.json")) or {}).get("words") or []
     _fin = (_W[-1]["end"] + 0.3) if _W else len(db) / 100
-    # 22/10 (RUSH v1 : « dès que j'arrête de parler, il y a un gros silence ») : la fin de la voix est contrôlée aussi.
+    #  (RUSH v1 : « dès que j'arrête de parler, il y a un gros silence ») : la fin de la voix est contrôlée aussi.
     # derush.py ne descend plus jamais sous le bruit de la pièce, même après le dernier mot (seul le fondu des 0,05 s finales).
     trous = [g for g in runs(db < -80, 6) if 0.2 < g[0] < len(db) / 100 - 0.1]   # un silence qui démarre avant les 0,1 s finales
-    # 05/11 (RUSH, faux ❌ à 53,95 s) : pièce très calme (bruit du rush à -78 dB, sous le seuil d'écoute). Sa fin baissée
+    #  (RUSH, faux ❌ à 53,95 s) : pièce très calme (bruit du rush à -78 dB, sous le seuil d'écoute). Sa fin baissée
     # au niveau de la pièce tombe sous -80 dB sans qu'on entende rien disparaître : un trou ne s'entend que si la pièce s'entend.
     _fl = (J("cut.voice.json") or {}).get("floor")
     if _fl is not None and _fl <= -72:
         trous = [g for g in runs(db < -120, 6) if 0.2 < g[0] < len(db) / 100 - 0.1]   # pièce inaudible : seul un vrai zéro compte
     check(not trous, "Pas de trou de son", f"{len(trous)} silence(s) total(aux) dans la voix : {[(round(a, 2), round(b - a, 2)) for a, b in trous][:6]}"
-          if trous else "aucun", "21/10 RUSH v2")
+          if trous else "aucun", "RUSH v2")
 
-# 2 quater. Mot coupé (22/10, RUSH v1 : « à un moment le mot est coupé, et à la fin aussi le mot est coupé ») : derush.py
+# 2 quater. Mot coupé (RUSH v1) : derush.py
 # écrit cut.voice.json = chaque endroit du RUSH où la voix s'arrête (fin de plage, blanc baissé, fin de voix) ou reprend.
 #  - fin : la voix s'arrête avant la fin réelle du mot (queue_mot.py, même définition que derush.py : voix douce qui traîne,
 #    queue sourde de 0,25 s au plus, explosion d'un « t » après sa fermeture) = « t » de « script », « x » de « l’utilisateur » ;
 #  - début : la trame juste avant la reprise est déjà de la voix (voisée, > bruit + 15 dB) = l'attaque est mangée (« M » de « Mr »).
-# Testé le 22/10 : la v1 d'RUSH est bloquée (script, l’utilisateur, Mr), la v2 passe.
+# Testé : la v1 d'RUSH est bloquée (script, l’utilisateur, Mr), la v2 passe.
 vj = J("cut.voice.json")
 if vj and os.path.exists(vj.get("src", "")):
     _rr = subprocess.run(["ffmpeg", "-v", "error", "-i", vj["src"], "-vn", "-ac", "1", "-ar", "16000", "-f", "f32le", "-"], capture_output=True).stdout
@@ -157,7 +157,7 @@ if vj and os.path.exists(vj.get("src", "")):
     from queue_mot import fin_du_mot
     coupes = []
     _mots = J("words.rush.json") or []; _mots = _mots.get("words", []) if isinstance(_mots, dict) else _mots
-    _serrees = vj.get("serrees", [])   # 23/10 : coupe sans blanc choisie (phrase retirée collée au mot d'avant) : signalée, pas bloquante
+    _serrees = vj.get("serrees", [])   # coupe sans blanc choisie (phrase retirée collée au mot d'avant) : signalée, pas bloquante
     for e in vj.get("ends", []) + [vj.get("voice_end")]:
         if e is None or any(abs(e - x) < 0.02 for x in _serrees): continue
         k = int(e * 100); j = k
@@ -165,7 +165,7 @@ if vj and os.path.exists(vj.get("src", "")):
         if _rdb[j] < _q + 6: continue
         nx = k
         while nx < len(_rdb) - 1 and nx < k + 150 and _rdb[nx] < _q + 6: nx += 1   # reprise de la voix forte
-        # 08/11 (RUSH, rush dehors : grondement grave < 200 Hz à -21 dB sous toute la voix, 10 dB sous la parole) : le son ne
+        #  (RUSH, rush dehors : grondement grave < 200 Hz à -21 dB sous toute la voix, 10 dB sous la parole) : le son ne
         # redescend JAMAIS sous le seuil de voix à la coupe (nx == k), la queue du mot n'est pas mesurable à l'énergie et
         # fin_du_mot rendait toujours « coupé » (4 fausses alertes, coupes 0,25 s APRÈS « refaire », « hasard », « aussi »).
         # Dans ce cas seulement : on juge sur la fin du dernier mot (words.rush.json, recalée sur le son).
@@ -174,17 +174,17 @@ if vj and os.path.exists(vj.get("src", "")):
             if _fin is not None and e >= _fin + 0.03: continue
         if e < fin_du_mot(_rdb, _voisee, _q, _fl, j / 100, nx / 100) - 0.03: coupes.append(("fin", round(e, 2)))
     for s0 in vj.get("starts", []):
-        if any(abs(s0 - x) < 0.02 for x in _serrees): continue   # 23/10 v5 : début posé à la main sur la timeline (signalé, pas bloquant)
+        if any(abs(s0 - x) < 0.02 for x in _serrees): continue   #  v5 : début posé à la main sur la timeline (signalé, pas bloquant)
         k = int(s0 * 100) - 1
         if _rdb[k] >= _fl + 15 and _voisee(k): coupes.append(("début", round(s0, 2)))
-    if _serrees: check(True, "Coupes serrées", f"{len(_serrees)} coupe(s) posée(s) à la main au ras de la voix (secondes du rush) : {_serrees[:6]} (à écouter)", "23/10 cockpit v4")
+    if _serrees: check(True, "Coupes serrées", f"{len(_serrees)} coupe(s) posée(s) à la main au ras de la voix (secondes du rush) : {_serrees[:6]} (à écouter)", "cockpit v4")
     check(not coupes, "Pas de mot coupé", f"{len(coupes)} mot(s) coupé(s) (où, seconde du rush) : {coupes[:6]}" if coupes
-          else f"{len(vj.get('ends', [])) + 1} fins et {len(vj.get('starts', []))} reprises de voix entières", "22/10 RUSH v1")
+          else f"{len(vj.get('ends', [])) + 1} fins et {len(vj.get('starts', []))} reprises de voix entières", "RUSH v1")
 
-# 2 ter. Respiration en début de phrase (21/10, RUSH v1 puis v2, 2 fois : « au début de chaque phrase, enlève la respiration »,
+# 2 ter. Respiration en début de phrase (, RUSH v1 puis v2, 2 fois : « au début de chaque phrase, enlève la respiration »,
 # « enlève la respiration dès le départ », « respiration à cut »). Une inspiration peut être presque aussi forte que la voix :
 # on la reconnaît parce qu'elle n'a pas de note (trame non voisée). Au début de chaque plage, 0,20 s ou plus de son sans note
-# avant la 1re note de voix = bloquant (calé le 21/10 : v2 refusée = 0,24 / 0,33 / 0,38 s ; v3 validée « parfait » = 0,16 s au plus).
+# avant la 1re note de voix = bloquant (calé : v2 refusée = 0,24 / 0,33 / 0,38 s ; v3 validée « parfait » = 0,16 s au plus).
 if voix and segs:
     _raw = subprocess.run(["ffmpeg", "-v", "error", "-i", voix, "-vn", "-ac", "1", "-ar", "16000", "-f", "f32le", "-"], capture_output=True).stdout
     _x = np.frombuffer(_raw, dtype=np.float32).astype(np.float64)
@@ -197,7 +197,7 @@ if voix and segs:
         F = np.abs(np.fft.rfft(f * np.hanning(480))) ** 2; fr = np.fft.rfftfreq(480, 1 / 16000)
         return e, r, F[fr > 2000].sum() / (F.sum() + 1e-12)
     souffles, t = [], 0.0
-    _libres = set((vj or {}).get("souffle_garde", []))   # 23/10 : souffle gardé EXPRÈS par la personne (cockpit, --bords de derush.py)
+    _libres = set((vj or {}).get("souffle_garde", []))   # souffle gardé EXPRÈS par la personne (cockpit, --bords de derush.py)
     for _k, (a, b) in enumerate(segs):
         if _k in _libres: t += b - a; continue
         n = 0
@@ -208,19 +208,19 @@ if voix and segs:
         if n >= 20: souffles.append((round(t, 2), round(n / 100, 2)))
         t += b - a
     check(not souffles, "Pas de respiration en début de phrase", f"{len(souffles)} début(s) de phrase avec du souffle (instant, durée) : {souffles[:6]}"
-          if souffles else f"{len(segs)} débuts de phrase propres", "21/10 RUSH v1 + v2")
+          if souffles else f"{len(segs)} débuts de phrase propres", "RUSH v1 + v2")
 
-# 3. Musique coupée en plein milieu (Tesla v1, 17/10 : « pause sans musique = bug »)
+# 3. Musique coupée en plein milieu (Tesla v1)
 sil = plan.get("silences") or []
-check(not sil, "Musique jamais coupée", f"le plan coupe la musique : silences {sil}" if sil else "aucune coupure de musique prévue", "17/10 Tesla v1")
+check(not sil, "Musique jamais coupée", f"le plan coupe la musique : silences {sil}" if sil else "aucune coupure de musique prévue", "Tesla v1")
 mus = plan.get("music") or []
-# 28/10 (l’utilisateur : « il faut bien varier les musiques en fonction de l'ambiance et pas toujours réutiliser les mêmes ») :
+
 # un morceau déjà monté dans un des 3 reels précédents (musiques_utilisees.csv, écrit par mix.py) = bloquant.
 _mj = os.path.join(S, "..", "musiques_utilisees.csv")
 if os.path.exists(_mj) and plan.get("music"):
     import csv as _csv
     _un = os.path.abspath
-    # 28/10 (RUSH monté en Dynamique ET Minimaliste pour comparer) : plan.variantes = dossiers du même reel dans un autre style
+    #  (RUSH monté en Dynamique ET Minimaliste pour comparer) : plan.variantes = dossiers du même reel dans un autre style
     _var = {_un(v) for v in plan.get("variantes", [])}
     _rows = [r for r in _csv.DictReader(open(_mj)) if _un(r["reel"]) != _un(D) and _un(r["reel"]) not in _var]
     _reels = []
@@ -229,20 +229,20 @@ if os.path.exists(_mj) and plan.get("music"):
     _rec = {os.path.basename(r["musique"]): os.path.basename(_un(r["reel"])) for r in _rows if _un(r["reel"]) in _reels[-3:]}
     _mus = [m.get("src", "") for m in (plan["music"] if isinstance(plan["music"], list) else [plan["music"]])]
     _dbl = [f"{os.path.basename(m)} ({_rec[os.path.basename(m)]})" for m in _mus if os.path.basename(m) in _rec]
-    check(not _dbl, "Musique variée", f"déjà dans un des 3 derniers reels : {_dbl}" if _dbl else "aucune des 3 derniers reels", "28/10 RUSH")
+    check(not _dbl, "Musique variée", f"déjà dans un des 3 derniers reels : {_dbl}" if _dbl else "aucune des 3 derniers reels", "RUSH")
 m0 = min((m.get("start", 0) for m in mus), default=None) if isinstance(mus, list) else None
 if m0 is not None:
-    check(m0 <= 0.05, "Musique dès 0 s", f"la musique démarre à {m0} s" if m0 > 0.05 else "démarre à 0 s", "17/10 Tesla v1")
+    check(m0 <= 0.05, "Musique dès 0 s", f"la musique démarre à {m0} s" if m0 > 0.05 else "démarre à 0 s", "Tesla v1")
 if final:
     db = pcm(final); trou = [g for g in runs(db < -50, 30) if g[0] > 0.2 and g[1] < len(db) / 100 - 0.2]
-    check(not trou, "Aucun trou de son", f"{len(trou)} trou(s) muet(s) > 0,3 s : {trou[:5]}" if trou else "le son ne s'arrête jamais", "17/10 Tesla v1")
+    check(not trou, "Aucun trou de son", f"{len(trou)} trou(s) muet(s) > 0,3 s : {trou[:5]}" if trou else "le son ne s'arrête jamais", "Tesla v1")
 
-# 4. Fin muette (voix off 17/10 : « la vidéo finit quand la musique finit, jamais de queue muette »)
+# 4. Fin muette (voix off)
 if final:
     db = pcm(final); queue = float(db[-100:].mean())
-    check(queue > -45, "Pas de fin muette", f"dernière seconde à {queue:.0f} dB" + ("" if queue > -45 else " : on n'entend plus rien"), "17/10 voix off")
+    check(queue > -45, "Pas de fin muette", f"dernière seconde à {queue:.0f} dB" + ("" if queue > -45 else " : on n'entend plus rien"), "voix off")
 
-# 5. Écran noir au départ (16/10 conf : la vidéo commençait à 0,021 s, aucune image à 0 s)
+# 5. Écran noir au départ (conf : la vidéo commençait à 0,021 s, aucune image à 0 s)
 if final:
     st = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "stream=start_time", "-select_streams", "v:0",
                          "-of", "csv=p=0", final], capture_output=True, text=True).stdout.strip()
@@ -250,9 +250,9 @@ if final:
                           "-f", "rawvideo", "-"], capture_output=True).stdout
     luma = float(np.frombuffer(img, dtype=np.uint8).mean()) if img else 0
     ok = st in ("0", "0.000000") and luma > 12
-    check(ok, "Image dès 0 s", f"start_time {st}, 1re image luminosité {luma:.0f}/255" + ("" if ok else " : écran noir ou décalé"), "16/10 conf")
+    check(ok, "Image dès 0 s", f"start_time {st}, 1re image luminosité {luma:.0f}/255" + ("" if ok else " : écran noir ou décalé"), "conf")
 
-# 1 bis. Plans >= 2 s (20/10, « Mode difficile » v2 : « micro-coupures, on dirait que la vidéo bugue ; chaque plan minimum 2 secondes,
+# 1 bis. Plans >= 2 s (, « Mode difficile » v2 : « micro-coupures, on dirait que la vidéo bugue ; chaque plan minimum 2 secondes,
 # même les b-rolls »). Un plan = ce qu'on voit entre deux changements d'image : coupe de dérush NON cachée, début / fin de B-roll,
 # capture, carton, liste. Une coupe cachée sous un B-roll ou un carton ne compte pas.
 ovl = [(x["start"], x["end"]) for x in (plan.get("brolls") or []) + (plan.get("inserts") or []) + (plan.get("lists") or [])]
@@ -261,10 +261,10 @@ ovl += [(m["start"], m["end"]) for m in (plan.get("proofs") or [])]
 if segs:
     cuts, t = [], 0.0
     for a, b in segs: t += b - a; cuts.append(round(t, 3))
-    # 11/11 : la fin = celle de la vidéo, calculée comme build.mjs et fin_propre.py (durée face cam - 0,04 s, ou la vidéo finale),
+    # la fin = celle de la vidéo, calculée comme build.mjs et fin_propre.py (durée face cam - 0,04 s, ou la vidéo finale),
     # pas la somme des coupes : un écart de 0,04 à 0,1 s (ou une dernière image tenue, rallonge_60) faisait voir un plan fantôme.
     dur = dur_v or cuts[-1]; cuts = cuts[:-1]   # (cuts garde l'ordre des segments : la règle des micro-coupures s'en sert)
-    # 21/10 : la fin d'un plein écran qui finit SOUS un autre (B-roll prolongé 0,35 s sous le carton ou le B-roll suivant,
+    # la fin d'un plein écran qui finit SOUS un autre (B-roll prolongé 0,35 s sous le carton ou le B-roll suivant,
     # B-roll qui démarre sous un carton) ne se voit pas : ce n'est pas un plan (sinon fausse alerte « 0,35 s »).
     lay = [(x["start"], x["end"], 6) for x in plan.get("brolls") or []]
     lay += [(x["start"], x["end"], 20) for x in [m for m in (plan.get("mini") or []) if m.get("type") == "card"] + (plan.get("lists") or []) + (plan.get("proofs") or [])]
@@ -276,11 +276,10 @@ if segs:
     for v in bs[1:]:
         if v - merged[-1] > 0.08: merged.append(v)
     shots = [(round(a, 2), round(b - a, 2)) for a, b in zip(merged, merged[1:])]
-    # 20/10 : un carton punchline calé sur la voix (« tu es déjà mort ») peut durer < 2 s, il ne doit juste pas dépasser la phrase
+    # un carton punchline calé sur la voix (« tu es déjà mort ») peut durer < 2 s, il ne doit juste pas dépasser la phrase
     cardiv = [(m["start"], m["end"]) for m in (plan.get("mini") or []) if m.get("type") == "card"]
     short = [s_ for s_ in shots if s_[1] < 1.95 and not any(ca - 0.06 <= s_[0] and s_[0] + s_[1] <= cb + 0.06 for ca, cb in cardiv)]
-    # 29/10 (l’utilisateur : « la règle des 2 secondes c'est pas une règle absolue, des fois je dis des phrases qui durent moins de
-    # 2 secondes ; l'idée c'est pas de faire un cut en plein milieu d'une phrase ») : un plan court qui contient une phrase
+    #  la règle des 2 secondes n'est pas absolue (une phrase entière peut durer moins) : un plan court qui contient une phrase
     # ENTIÈRE (il démarre au début d'une phrase et finit sur . ? ! … : ou ,) passe.
     _P = (J(plan.get("words", "words.json")) or {}).get("words") or []
     _fin = lambda w: w["text"].rstrip(" »\"'").endswith((".", "?", "!", "…", ":", ","))
@@ -288,15 +287,15 @@ if segs:
         dans = [k for k, w in enumerate(_P) if t0 - 0.1 <= w["start"] < t0 + d - 0.05]
         return bool(dans) and (dans[0] == 0 or _fin(_P[dans[0] - 1])) and _fin(_P[dans[-1]])
     short = [s_ for s_ in short if not phrase_entiere(*s_)]
-    # coupe visible qui ne gagne presque rien (< 0,45 s) = micro-coupure (17/10 MINCUT, 20/10 « plus de micro-coupures ») : à cacher
+    # coupe visible qui ne gagne presque rien (< 0,45 s) = micro-coupure (MINCUT,« plus de micro-coupures ») : à cacher
     micro = []
     for k in range(1, len(segs)):
         g = segs[k][0] - segs[k - 1][1]; c = cuts[k - 1]
-        if 0 < g < 0.15 and not any(a + 0.05 < c < b - 0.05 for a, b in ovl): micro.append((round(c, 2), round(g, 2)))   # 06/11 serré par défaut (RUSH)
-    check(not micro, "Zéro micro-coupure", f"{len(micro)} coupe(s) visible(s) qui gagnent < 0,15 s (instant, gain) : {micro} -> cacher sous un B-roll / carton" if micro else "aucune coupe visible pour rien", "20/10 Mode difficile v2")
-    check(not short, "Plans ≥ 2 s", f"{len(short)} plan(s) < 2 s (début, durée) : {short[:8]}" if short else f"{len(shots)} plans, tous ≥ 2 s ou phrase entière", "20/10 Mode difficile v2, 29/10 phrase entière")
+        if 0 < g < 0.15 and not any(a + 0.05 < c < b - 0.05 for a, b in ovl): micro.append((round(c, 2), round(g, 2)))   #  serré par défaut (RUSH)
+    check(not micro, "Zéro micro-coupure", f"{len(micro)} coupe(s) visible(s) qui gagnent < 0,15 s (instant, gain) : {micro} -> cacher sous un B-roll / carton" if micro else "aucune coupe visible pour rien", "Mode difficile v2")
+    check(not short, "Plans ≥ 2 s", f"{len(short)} plan(s) < 2 s (début, durée) : {short[:8]}" if short else f"{len(shots)} plans, tous ≥ 2 s ou phrase entière", "Mode difficile v2, phrase entière")
 
-# 22/10 (RUSH, OK de l'utilisateur : « fais les 2 réglages dans le Monteur ») : un « flash » au MILIEU d'une prise continue de
+#  (RUSH, OK de) : un « flash » au MILIEU d'une prise continue de
 # la face cam, à plus de 0,15 s de toute coupe et de tout plein écran, c'est un GESTE FILMÉ (caméra tournée vers la softbox à 4 s,
 # main devant l'objectif à 27,7 s), pas un montage raté : rien à recaler, on ne bloque pas. Restent bloquants : les flashs près
 # d'un montage (coupe de dérush, B-roll, carton, liste, preuve, capture) et ceux DANS un B-roll (tête tournée trop vite, Titanic).
@@ -308,7 +307,7 @@ def geste(t, L):
     # bout de 0,18 s entre 2 coupes) ; la main d'RUSH arrive 0,30 s après la coupe de 27,43 s
     if any(a - 0.15 < t + L and t < b + 0.15 for a, b in ovl): return False
     return not any(abs(e - x) < 0.15 for e in _edits for x in (t, t + L))
-# 23/10 (RUSH : 3 « flashs » bloquants à 9,1 / 18,9 / 24,1 s ; images vérifiées une à une = coupes NETTES) : une coupe de dérush
+#  (RUSH : 3 « flashs » bloquants à 9,1 / 18,9 / 24,1 s ; images vérifiées une à une = coupes NETTES) : une coupe de dérush
 # qui entre dans (ou sort d') un plan où le téléphone bouge (l'image change à chaque frame) donne « saut de la coupe, puis saut du
 # mouvement » : ça ressemblait à une image intruse. Ce n'en est pas une quand l'un des deux sauts est une coupe de dérush (loin de
 # tout B-roll / carton), que l'autre n'est pas un montage, et que le mouvement CONTINUE de l'autre côté (image d'après / d'avant
@@ -330,15 +329,15 @@ def tri_flashs(fl, fr=None):
     return ([f for f in fl if f not in g and f not in m], (f" ({len(g)} geste(s) filmé(s) ignoré(s), loin de tout montage : {g[:4]})" if g else "")
             + (f" ({len(m)} coupe(s) dans un plan qui bouge, pas un flash : {m[:4]})" if m else ""))
 
-# 1 ter. Flash d'image réel (20/10, « Mode difficile » v3 : 1 image de la tête entre deux pleins écrans enchaînés, invisible dans
+# 1 ter. Flash d'image réel (, « Mode difficile » v3 : 1 image de la tête entre deux pleins écrans enchaînés, invisible dans
 # plan.json et ratée par scdet). Image par image (30 i/s, vignettes grises) : une image (ou 2 à 6) qui saute puis revient vers ce
 # qu'il y avait avant OU qui ne ressemble ni à l'avant ni à l'après = flash.
 if final:
     _gf = gris(final); fl, _gn = tri_flashs(flashs(_gf), _gf)
-    check(not fl, "Pas de flash d'image", f"{len(fl)} plan(s) éclair dans la vidéo finale (instant, durée) : {fl[:8]}" if fl else "aucun plan éclair (image par image)" + _gn, "20/10 Mode difficile v3")
+    check(not fl, "Pas de flash d'image", f"{len(fl)} plan(s) éclair dans la vidéo finale (instant, durée) : {fl[:8]}" if fl else "aucun plan éclair (image par image)" + _gn, "Mode difficile v3")
 elif AVANT and cam and dur_v:
-    # 21/10 : APERÇU avant rendu = la face cam, avec par-dessus chaque B-roll (vraies images, au bon passage) puis les cartons
-    # (aplat), aux positions de timeline.json. Les flashs du 20/10 (1re image d'une prise sous un B-roll mal calé, tête tournée
+    # APERÇU avant rendu = la face cam, avec par-dessus chaque B-roll (vraies images, au bon passage) puis les cartons
+    # (aplat), aux positions de timeline.json. Les flashs (1re image d'une prise sous un B-roll mal calé, tête tournée
     # trop vite dans le plan de la montre, bout de face cam de 0,18 s avant « Faux ») s'y voient comme dans la vidéo finale.
     n = int(round(dur_v * 30)); fr = gris(cam)[:n].copy()
     k_ = lambda t: max(0, min(n, int(np.ceil(t * 30 - 1e-6))))   # 1re image où l'élément est visible (t >= début)
@@ -353,19 +352,19 @@ elif AVANT and cam and dur_v:
     for m in [x for x in (plan.get("mini") or []) if x.get("type") == "card"] + (plan.get("lists") or []) + (plan.get("proofs") or []):
         fr[k_(m["start"]):k_(m["end"])] = 30.0               # carton plein écran = aplat sombre
     fl, _gn = tri_flashs(flashs(fr), fr)
-    check(not fl, "Pas de flash d'image (aperçu)", f"{len(fl)} plan(s) éclair prévus (instant, durée) : {fl[:8]} -> recaler le B-roll / carton ou prendre un passage plus calme" if fl else "aucun plan éclair dans l'aperçu (image par image)" + _gn, "20/10 Mode difficile v3 + Titanic")
+    check(not fl, "Pas de flash d'image (aperçu)", f"{len(fl)} plan(s) éclair prévus (instant, durée) : {fl[:8]} -> recaler le B-roll / carton ou prendre un passage plus calme" if fl else "aucun plan éclair dans l'aperçu (image par image)" + _gn, "Mode difficile v3 + Titanic")
 
-# 11. Plus d'1 minute (20/10, Titanic : monétisation TikTok = vidéos de plus d'1 min ; 60,7 s validé). "duree_min": 0 pour un client.
+# 11. Plus d'1 minute (Titanic : monétisation TikTok = vidéos de plus d'1 min ; 60,7 s validé). "duree_min": 0 pour un client.
 dmin = plan.get("duree_min", 60.0)
 if dur_v and dmin:
-    check(dur_v > dmin, "Plus d'1 minute", f"{dur_v:.1f} s" + ("" if dur_v > dmin else f" : il faut plus de {dmin:.0f} s (prolonger le dernier plan face cam : derush.py --tail)"), "20/10 Titanic TikTok")
+    check(dur_v > dmin, "Plus d'1 minute", f"{dur_v:.1f} s" + ("" if dur_v > dmin else f" : il faut plus de {dmin:.0f} s (prolonger le dernier plan face cam : derush.py --tail)"), "Titanic TikTok")
 
-# 12. La musique va jusqu'au bout (20/10, Titanic : mix.py coupe la vidéo là où la musique s'arrête, 61,5 s prévus -> 60,7 s)
+# 12. La musique va jusqu'au bout (Titanic : mix.py coupe la vidéo là où la musique s'arrête, 61,5 s prévus -> 60,7 s)
 if isinstance(mus, list) and mus and dur_v and not final:
     m1 = max(m.get("end", dur_v) for m in mus)
-    check(m1 >= dur_v - 0.15, "Musique jusqu'au bout", f"musique jusqu'à {m1:.2f} s, vidéo {dur_v:.2f} s" + ("" if m1 >= dur_v - 0.15 else " : la vidéo sera coupée à la fin de la musique"), "20/10 Titanic 61 s")
+    check(m1 >= dur_v - 0.15, "Musique jusqu'au bout", f"musique jusqu'à {m1:.2f} s, vidéo {dur_v:.2f} s" + ("" if m1 >= dur_v - 0.15 else " : la vidéo sera coupée à la fin de la musique"), "Titanic 61 s")
 
-# 13. Aucun B-roll HDR (20/10, Titanic : 1 plan iPhone HDR = rendu en mode HDR, mot géant et chiffres cachés derrière la tête)
+# 13. Aucun B-roll HDR (Titanic : 1 plan iPhone HDR = rendu en mode HDR, mot géant et chiffres cachés derrière la tête)
 hdrs = []
 for b in (plan.get("brolls") or []) + (plan.get("inserts") or []):
     src = b["src"] if os.path.isabs(b["src"]) else os.path.join(D, b["src"])
@@ -373,9 +372,9 @@ for b in (plan.get("brolls") or []) + (plan.get("inserts") or []):
         t = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=color_transfer",
                             "-of", "csv=p=0", src], capture_output=True, text=True).stdout.strip()
         if t in ("arib-std-b67", "smpte2084"): hdrs.append(os.path.basename(src))
-check(not hdrs, "B-rolls sans HDR", f"{len(hdrs)} plan(s) HDR : {hdrs} -> broll.py prep les convertit" if hdrs else "aucun plan HDR", "20/10 Titanic HDR")
+check(not hdrs, "B-rolls sans HDR", f"{len(hdrs)} plan(s) HDR : {hdrs} -> broll.py prep les convertit" if hdrs else "aucun plan HDR", "Titanic HDR")
 
-# 13 bis. Vidéos assez longues (30/10, RUSH : rendu calé 3 fois à 77 % = un écran coupé plus court que sa place, ~40 min perdues).
+# 13 bis. Vidéos assez longues (RUSH : rendu calé 3 fois à 77 % = un écran coupé plus court que sa place, ~40 min perdues).
 # build.mjs rallonge seul une vidéo trop courte ; ce contrôle vérifie qu'aucune ne passe au rendu (sinon Chrome cale).
 courtes = []
 for b in plan.get("brolls") or []:
@@ -388,25 +387,25 @@ for b in plan.get("brolls") or []:
             continue
         if fd < b["end"] - b["start"] + 0.1 - 0.02: courtes.append((os.path.basename(src), round(fd, 2), round(b["end"] - b["start"] + 0.1, 2)))
 check(not courtes, "Vidéos assez longues", f"{len(courtes)} vidéo(s) plus courte(s) que leur place (fichier, durée, place) : {courtes} -> relancer build.mjs (il les rallonge)"
-      if courtes else "chaque B-roll / écran coupé couvre sa place", "30/10 RUSH rendu calé")
+      if courtes else "chaque B-roll / écran coupé couvre sa place", "RUSH rendu calé")
 
 
-# 6. Plans trop courts (Tesla v3, 17/10 : « capture trop rapide », capture >= 1,2 s)
+# 6. Plans trop courts (Tesla v3,, capture >= 1,2 s)
 ins = (plan.get("brolls") or []) + (plan.get("inserts") or [])
 court = [(x["src"].split("/")[-1], round(x["end"] - x["start"], 2)) for x in ins if x["end"] - x["start"] < 1.2]
-check(not court, "Plans ≥ 1,2 s", f"{len(court)} plan(s) trop court(s) : {court[:6]}" if court else f"{len(ins)} B-rolls / captures, tous ≥ 1,2 s", "17/10 Tesla v3")
+check(not court, "Plans ≥ 1,2 s", f"{len(court)} plan(s) trop court(s) : {court[:6]}" if court else f"{len(ins)} B-rolls / captures, tous ≥ 1,2 s", "Tesla v3")
 
-# 7. Flash de tête entre deux pleins écrans (13/10 : « tête visible une fraction de seconde = effet bug »)
+# 7. Flash de tête entre deux pleins écrans (« tête visible une fraction de seconde = effet bug »)
 iv = sorted((x["start"], x["end"]) for x in ins); flash = []
 for (a1, b1), (a2, b2) in zip(iv, iv[1:]):
     if 0.01 < a2 - b1 < 0.6: flash.append((round(b1, 2), round(a2 - b1, 2)))
-check(not flash, "Pas de flash de tête", f"{len(flash)} flash(s) : {flash}" if flash else "aucun", "13/10 OPUS v2")
+check(not flash, "Pas de flash de tête", f"{len(flash)} flash(s) : {flash}" if flash else "aucun", "OPUS v2")
 
-# 8. Bruitages collés (13/10 : jamais 2 SFX à moins de 1,5 s)
+# 8. Bruitages collés (jamais 2 SFX à moins de 1,5 s)
 cues = J("cues.json")
 if cues is not None:
     t = sorted(c["at"] for c in cues); col = [(round(a, 2), round(b - a, 2)) for a, b in zip(t, t[1:]) if b - a < 1.5]
-    check(not col, "Bruitages espacés", f"{len(col)} paire(s) à < 1,5 s : {col}" if col else f"{len(t)} sons, tous espacés", "13/10 OPUS")
+    check(not col, "Bruitages espacés", f"{len(col)} paire(s) à < 1,5 s : {col}" if col else f"{len(t)} sons, tous espacés", "OPUS")
 
 # 9. Volume (note-10 : LUFS entre -15 et -13)
 if final:
@@ -414,9 +413,9 @@ if final:
     lufs = float(out.rsplit("I:", 1)[1].split("LUFS")[0]) if "I:" in out else None
     check(lufs is not None and -15 <= lufs <= -13, "Volume", f"{lufs} LUFS (cible -15 à -13)", "note-10")
 
-# 10. Zones mortes Instagram (16/10 : rien au-dessus de 270 px, sous 1 480 px, à moins de 65 px des bords)
+# 10. Zones mortes Instagram (rien au-dessus de 270 px, sous 1 480 px, à moins de 65 px des bords)
 if P("index.html"):
-    # 11/11 : un Chrome qui ne répond plus ne bloque plus le montage pour toujours : 2 min max, un 2e essai, puis la vraie raison
+    # un Chrome qui ne répond plus ne bloque plus le montage pour toujours : 2 min max, un 2e essai, puis la vraie raison
     txt = []
     for _essai in range(2):
         try:
@@ -435,7 +434,7 @@ if P("index.html"):
         except subprocess.TimeoutExpired:
             txt = ["zones.mjs : Chrome n'a pas répondu en 2 min (Mac en veille ou trop chargé), contrôle non fait"]
     ok = any(l.startswith("OK : 0") for l in txt)
-    check(ok, "Zones mortes Insta", txt[-1][:160] if txt else "zones.mjs n'a rien dit", "16/10 zones mortes")
+    check(ok, "Zones mortes Insta", txt[-1][:160] if txt else "zones.mjs n'a rien dit", "zones mortes")
 
 # Derush Lab : on ne garde que ce que le dérush peut casser (le reste dépend du montage : musique, B-rolls, durée, zones)
 LAB = {"Micro-coupes": "micro-coupure", "Zéro micro-coupure": "micro-coupure", "Pas de mot coupé": "mot coupé",

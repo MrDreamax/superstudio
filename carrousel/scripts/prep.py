@@ -1,5 +1,4 @@
-"""Prépare une VRAIE photo de l'utilisateur pour une slide : recadrage 3:4, étalonnage validé le 16/10
-(teintes naturelles + légère touche bleue dans les ombres, dégradé navy en bas pour lire le texte),
+"""Prépare une VRAIE photo de l'utilisateur pour une slide : recadrage 3:4, étalonnage validé (teintes naturelles + légère touche bleue dans les ombres, dégradé navy en bas pour lire le texte),
 et détourage local (RVM) pour poser le mot géant DERRIÈRE la tête sur la couverture.
   python3 prep.py <photo> <nom> [--fx 0.5] [--fy 0.45] [--zoom 1.0] [--bright 1.03] [--grad 0.55]
 Écrit ~/open-carrusel/public/uploads/<nom>-bg.jpg (fond) et <nom>-fg.png (sujet seul, même étalonnage).

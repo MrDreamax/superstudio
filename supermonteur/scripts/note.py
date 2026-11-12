@@ -1,4 +1,4 @@
-"""Note auto /10 d'un reel monté (étape 5 du process client, 13/10 ; codé le 25/10/2026). Grille SEULE de note-10.md, sans
+"""Note auto /10 d'un reel monté (étape 5 du process client, ; codé ). Grille SEULE de note-10.md, sans
 vidéo de référence, + garde-fous BLOQUANTS. Sous 9/10 on refait (2 essais de plus max, visuels réutilisés), puis on livre avec la note.
   python3 note.py <dossier du reel>
 1er passage : mesure tout (score.py, gardien.json, saccades, néon, visages des visuels générés), sort score/planche.jpg et
@@ -45,7 +45,7 @@ def saccades(path):
     dup = [i for i in range(1, len(d) - 1) if d[i] < 0.3 and d[i - 1] > 1.2 and d[i + 1] > 1.2]
     t = np.array(dup) / fps
     zones = sorted({round(float(x), 1) for x in t if ((t >= x) & (t < x + 2)).sum() >= 4})   # >= 4 doublons en 2 s
-    # 25/10 : HyperFrames 0.6.81 prend l'image floor((i/30)*30) = i-1 pour certaines images (4,10 / 8,17 / 16,33 / 32,17 s…) :
+    # HyperFrames 0.6.81 prend l'image floor((i/30)*30) = i-1 pour certaines images (4,10 / 8,17 / 16,33 / 32,17 s…) :
     # doublon + image sautée, mêmes instants sur TOUS les reels. Corrigé dans HyperFrames 0.8 (+1e-9). Sinon : B-roll à une autre cadence.
     r = round(fps)   # cadence du rendu (le final mixé affiche 30,01 en moyenne)
     arrondi = {i for i in range(len(f) + 2) if int(np.floor((i / r) * r)) != i}
@@ -65,7 +65,7 @@ def visage(p):
     except Exception: return 0
 
 
-# visuels générés (Higgsfield, Gemini) : dossier genere/ du reel + éléments du plan marqués "genere": true
+# visuels générés par IA (interdits ; contrôle gardé) : dossier genere/ du reel + éléments du plan marqués "genere": true
 items = [x for k in ("brolls", "inserts", "motions", "proofs") for x in (plan.get(k) or []) if isinstance(x, dict)]
 genere = sorted(set(glob.glob(P("genere/*")) + [os.path.join(D, x["src"]) if not os.path.isabs(x["src"]) else x["src"]
                                                 for x in items if x.get("genere") and x.get("src")]))
@@ -209,7 +209,7 @@ for k, (nom, v) in crit.items():
     print(f"  {'✅' if v == 1 else '🟠' if v == 0.5 else '❌'} {k:>2}. {nom:12} {v}" + (f"  {why[k].strip(' ,')}" if v < 1 and why[k].strip() else ""))
 for b in B: print("  ⛔ " + b)
 rates = [f"{nom} {v}" + (f" ({why[k].strip(' ,')})" if why[k].strip() else "") for k, (nom, v) in crit.items() if v < 1]
-if note >= 9 and not B:   # 31/10, l’utilisateur : « minimum du 9 sur 10 à chaque fois »
+if note >= 9 and not B:
     H["verdict"] = "LIVRER"; code = 0
     print(f"\n✅ LIVRER : {note}/10")
 elif n < 3:

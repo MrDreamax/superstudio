@@ -2,11 +2,11 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "superda/da-schema.json",
   "title": "DA SuperDA (contrat partagé SuperDA / SuperMonteur / SuperCarrousel)",
-  "description": "Contrat FIGÉ le 28/10/2026. Fichier lu par SuperMonteur et SuperCarrousel : ~/Documents/SuperApps/superda/da.json (servi aussi par le serveur SuperDA : GET http://localhost:8765/api/da). Règle : on ne renomme ni ne supprime JAMAIS une clé ; ajouter une clé = OK. Coordonnées en px sur un reel 1080 x 1920 et un carrousel 1080 x 1440. Les clés qui commencent par « _ » sont des notes ou des valeurs calculées par le serveur (lecture seule).",
+  "description": "Contrat FIGÉ Fichier lu par SuperMonteur et SuperCarrousel : ~/Documents/SuperApps/superda/da.json (servi aussi par le serveur SuperDA : GET http://localhost:8765/api/da). Règle : on ne renomme ni ne supprime JAMAIS une clé ; ajouter une clé = OK. Coordonnées en px sur un reel 1080 x 1920 et un carrousel 1080 x 1440. Les clés qui commencent par « _ » sont des notes ou des valeurs calculées par le serveur (lecture seule).",
   "type": "object",
   "required": ["version", "commun", "montage", "carrousels"],
   "properties": {
-    "version": { "type": "integer", "description": "Version du contrat. 1 = 28/10/2026." },
+    "version": { "type": "integer", "description": "Version du contrat. 1 =" },
     "maj": { "type": "string", "description": "Date ISO de la dernière écriture (posée par le serveur)." },
     "nom": { "type": "string", "description": "À qui est cette DA (l’utilisateur ou un client)." },
 

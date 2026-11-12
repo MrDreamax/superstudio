@@ -1,16 +1,16 @@
-"""Tri de la bibliothèque B-roll (20/10 : « tu utilises souvent les mêmes b-rolls : varie, ou fais un tri »).
+"""Tri de la bibliothèque B-roll (« tu utilises souvent les mêmes b-rolls : varie, ou fais un tri »).
   python3 -E broll_tri.py            -> mesure les plans pas encore mesurés, puis classe toute la bibliothèque
   python3 -E broll_tri.py classe     -> reclasse seulement (après un changement de seuil), sans remesurer
 Sorties (à côté de ce dossier, rien n'est écrit sur son disque externe) :
   broll_tri_mesures.csv : tremblement, netteté, luminosité par plan (long à calculer : gardé d'une fois sur l'autre)
   broll_tri.csv         : fichier, rang (beau / ok / photo / telephone / ecarte), raison  -> lu par broll.py search
 Rangs : beau = vidéo caméra stable et nette ; ok = vidéo caméra correcte ; photo ; telephone = dossier B-ROLL-TELEPHONE
-(« plans téléphone moches », 19/10) ; ecarte = tremble, « flou » dans le nom, trop court, trop sombre, illisible ou refusé
+(« plans téléphone moches », ) ; ecarte = tremble, « flou » dans le nom, trop court, trop sombre, illisible ou refusé
 par l'utilisateur (broll_refuses.txt).
 Rien n'est supprimé : un plan écarté reste sur son disque externe et revient avec broll.py search --tout.
 Tremblement : même mesure que broll.shakes et outils/extraire-brolls (270x480, 15 i/s, seuils moyenne <= 1,2 et pic <= 6),
 calculée sur la meilleure fenêtre de 2,5 s du plan (on n'en monte jamais plus d'un morceau).
-Jamais -hwaccel (image verte, 19/10)."""
+Jamais -hwaccel (image verte, )."""
 import csv, json, os, subprocess, sys
 import numpy as np
 from multiprocessing import Pool
@@ -111,7 +111,7 @@ def classer(rows):
             moy, pic, net, lum = (float(x[k] or 0) for k in ("tremble_moy", "tremble_pic", "nettete", "lum"))
             if not img and (moy > 1.2 or pic > 6): why.append(f"tremble ({moy} / pic {pic})")
             if not img and float(r.get("duree_s") or 0) < 2.2: why.append("trop court")
-            # pas de rejet « flou » à la mesure : le 20/10 elle écartait 2 plans gardés par l'utilisateur (Tesla de profil, silhouette
+            # pas de rejet « flou » à la mesure : elle écartait 2 plans gardés par l'utilisateur (Tesla de profil, silhouette
             # skyline Singapour : peu de détails = plan cinématique, pas flou). La netteté sert seulement à classer beau / ok.
             if lum < 14: why.append("trop sombre")
             if lum > 235: why.append("brûlé")

@@ -2,7 +2,7 @@
 Ils réutilisent la préparation photo du moteur (apple.prep_photo : recadrage 3:4 + détourage) et les dessins
 d'art.py : seule la mise en page change. Jamais d'image IA.
 
-Cinéma (SuperDA, 26/10/2026) : photo plein cadre assombrie vers le bas, petite ligne en majuscules (police principale),
+Cinéma (SuperDA, ) : photo plein cadre assombrie vers le bas, petite ligne en majuscules (police principale),
 titre en police secondaire (ex. Instrument Serif italique) en blanc, mot fort <em> en couleur d'accent ;
 slides dessin sur fond nuit en dégradé ; dernière slide : photo ronde + 3 bulles de message.
 """
@@ -27,7 +27,7 @@ def _font_faces(da, superda):
 
 
 def _sur_accent(h):
-    """Couleur du texte posé sur l'accent : noir sur un accent clair (blanc sur blanc = bouton vide, vu le 02/11/2026)."""
+    """Couleur du texte posé sur l'accent : noir sur un accent clair (blanc sur blanc = bouton vide, vu )."""
     r, g, b = (int(h[i:i + 2], 16) for i in (1, 3, 5))
     return "#0B0B0D" if (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.6 else "#FFFFFF"
 

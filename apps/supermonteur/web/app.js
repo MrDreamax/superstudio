@@ -1,4 +1,4 @@
-// SuperMonteur : la page (28/10/2026). Un reel = ?reel=<id>. Les 4 écrans suivent etat.statut :
+// SuperMonteur : la page. Un reel = ?reel=<id>. Les 4 écrans suivent etat.statut :
 // regarde / choix -> 0 style ; montage / retours / correction -> 1 retours ; valide -> 3 publier ; « Ma DA » = tiroir.
 const $ = s => document.querySelector(s);
 const api = (u, corps) => fetch(u, corps === undefined ? {} : {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(corps)})
@@ -56,7 +56,7 @@ function rendre() {
   return ecranRetours();
 }
 
-// ------------------------------------------- écran « Tes images pour ce reel » (29/10, reprise fidèle : reprise-r1 A + r2 B)
+// ------------------------------------------- écran « Tes images pour ce reel » (reprise fidèle : reprise-r1 A + r2 B)
 // Un plan de la référence = une ligne : sa vignette, puis 3 de ses b-rolls à égalité + « ta vidéo » ; 1 clic = choisi.
 // Plan qu'il n'a pas : le plus proche est mis + « Pour coller pile : filme-toi… ». À droite, le brouillon qui se joue.
 let IM = {rid: null, pris: {}, cle: ""};
@@ -144,7 +144,7 @@ function brouillon() {
   caler();
 }
 
-// ------------------------------------------- écran « Vérifie ton dérush » (29/10) : le Derush Lab du skill, dans un cadre
+// ------------------------------------------- écran « Vérifie ton dérush » : le Derush Lab du skill, dans un cadre
 // Le 1er dérush de Claude est déjà posé. l’utilisateur retouche, « ✓ Valider le dérush » (dans le Lab), puis « Monter le reel ».
 function ecranDerush() {
   montrer("derush");
@@ -174,7 +174,7 @@ $("#dr-monter").onclick = async () => {
 };
 
 // ------------------------------------------------------------------------------------------------------ accueil
-// 29/10 : ElevenLabs refuse (crédit vide, clé) = bandeau rouge sur tous les écrans, vérifié à chaque page et chaque minute
+// ElevenLabs refuse (crédit vide, clé) = bandeau rouge sur tous les écrans, vérifié à chaque page et chaque minute
 async function alerte() {
   const a = await api("/api/alerte").catch(() => ({}));
   const el = $("#alerte");
@@ -192,12 +192,12 @@ async function accueil() {
   const lib = {regarde: "je regarde", choix: "style à choisir", derush: "dérush à vérifier", montage: "en montage", retours: "retours", correction: "Claude corrige", images: "images à choisir", valide: "validé ✓", erreur: "bloqué"};
   $("#liste-reels").innerHTML = L.length ? `<p class="lbl" style="font-size:12px;color:#86868B;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Tes reels</p>` +
     `<div class="grille">` + L.map(r => {
-      const jour = (r.cree || r.id).slice(0, 10).split("-").reverse().slice(0, 2).join("/");  // 2026-10-28 -> 28/10
+      const jour = (r.cree || r.id).slice(0, 10).split("-").reverse().slice(0, 2).join("/");  // 2026-10-28 ->
       return `<div class="rc"><a href="/?reel=${r.id}">${r.vignette ? `<img src="${r.vignette}" alt="" loading="lazy">` : `<i class="vide"></i>`}
         <b>${esc(r.titre || r.nom)}</b><span>${esc(r.nom)} · ${jour}</span><span>${r.version ? "Version " + r.version + " · " : ""}${lib[r.statut] || r.statut}</span></a>
         <button class="suppr" data-id="${r.id}" title="Supprimer ce projet" aria-label="Supprimer ce projet">×</button></div>`;
     }).join("") + `</div>` : "";
-  // 29/10 : 1er clic sur × = « Supprimer ? » en rouge, 2e clic dans les 4 s = le projet est caché (fichiers et rush gardés)
+  // 1er clic sur × = « Supprimer ? » en rouge, 2e clic dans les 4 s = le projet est caché (fichiers et rush gardés)
   $("#liste-reels").querySelectorAll(".suppr").forEach(b => b.onclick = async () => {
     if (!b.classList.contains("arme")) {
       b.classList.add("arme"); b.textContent = "Supprimer ?";
@@ -264,7 +264,7 @@ function majMonter() {
   const ref = choix.style !== "Inspiration" || choix.fichier || LIEN_OK.test($("#ref-lien").value.trim());
   b.disabled = !(R.statut !== "regarde" && choix.style && ref);
 }
-// 29/10 : un montage à reprendre pour CE reel : lien Instagram (TikTok, YouTube) ou une vidéo glissée. Claude le reprend en v2.
+// un montage à reprendre pour CE reel : lien Instagram (TikTok, YouTube) ou une vidéo glissée. Claude le reprend en v2.
 function refPris(nom) {
   $("#ref-z").hidden = !!nom; $("#ref-pris").hidden = !nom; $("#ref-nom").textContent = nom || "";
   majMonter();
@@ -348,7 +348,7 @@ function majTemps() {
 }
 vid.ontimeupdate = vid.onseeked = vid.onplay = vid.onpause = majTemps;
 const T0 = parseFloat(new URLSearchParams(location.search).get("t"));   // ?t=14 : ouvre la vidéo à cet instant
-vid.onloadedmetadata = () => { vid.closest(".ph")?.classList.toggle("large", vid.videoWidth > vid.videoHeight);   // 09/11 RUSH : vidéo 16:9 montrée en entier, plus coupée dans le cadre de téléphone
+vid.onloadedmetadata = () => { vid.closest(".ph")?.classList.toggle("large", vid.videoWidth > vid.videoHeight);   // RUSH : vidéo 16:9 montrée en entier, plus coupée dans le cadre de téléphone
   if (T0 >= 0 && !vid.dataset.t0) { vid.dataset.t0 = 1; vid.currentTime = T0; } majTemps(); if (R) ecranRetours(); };
 $("#play").onclick = () => vid.paused ? vid.play() : vid.pause();
 $("#img-moins").onclick = () => { vid.pause(); vid.currentTime = Math.max(0, vid.currentTime - 1 / FPS); };
@@ -386,7 +386,6 @@ $("#parfait").onclick = async () => { vid.pause(); R = await api(`/api/valider/$
 
 // ------------------------------------------------------------------------------------------- écran 3 : publier
 const vid2 = $("#vid2");
-const PUB = {off: new Set(), quand: null};   // ses choix tiennent quand l'écran se redessine
 async function ecranPublier() {
   montrer("publier");
   vid.pause();
@@ -394,71 +393,9 @@ async function ecranPublier() {
   if (vid2.dataset.f !== der.fichier) { vid2.dataset.f = der.fichier; vid2.src = `/media/${rid}/${der.fichier}`; }
   $("#pret-titre").textContent = "Ton reel est prêt ✓";
   $("#pret-info").textContent = `${tc(der.duree)} · 1080 × 1920`;
-  const M = await api("/api/metricool").catch(() => ({branche: false}));
-  const S = $("#pub-side");
-  if (!M.branche) {
-    // pas branché : AUCUNE possibilité de publier ni de programmer (maquette 3b)
-    S.innerHTML = `<h2>Télécharger</h2><p class="gris">Pour publier sur tes réseaux, dis à Claude « Publie ce reel » ou « Programme ma semaine ». Ou télécharge la vidéo + ses légendes et poste toi-même.</p>
-      <div class="end"><a class="now" href="/api/telecharger/${rid}" download>Télécharger</a></div>`;
-    return;
-  }
-  const P = R.publication || {};
-  if (["a_faire", "en_cours"].includes(P.statut)) {
-    // envoi en cours (plus utilisé : publication dans le chat) ; on relit l'état toutes les 4 s
-    S.innerHTML = `<h2>Publier</h2><div class="pub-encours"><i class="spin"></i><div><b>Envoi en cours</b><br>${esc(P.etape || "Claude envoie…")}</div></div>
-      <p class="gris">Sur ${esc((P.reseaux || []).join(", "))}. Tu peux fermer cette page, ça continue.</p>`;
-    clearTimeout(ecranPublier.k);
-    ecranPublier.k = setTimeout(async () => { if (vueCourante !== "publier") return; R = await api(`/api/reel/${rid}`).catch(() => R); ecranPublier(); }, 4000);
-    return;
-  }
-  const res = P.statut && P.statut !== "a_faire" ? `<div class="pub-res ${P.statut === "programme" ? "ok" : "ko"}">
-      <b>${{programme: "Envoyé ✓", partiel: "Envoyé en partie", erreur: "Pas envoyé"}[P.statut] || esc(P.statut)}</b>
-      ${P.heure ? ` · ${esc(String(P.heure).replace("T", " ").slice(0, 16))}` : ""}<br>${esc(P.message || "")}
-      ${(P.posts || []).map(x => `<a href="${esc(x.planner)}" target="_blank">Voir la publication (${esc((x.reseaux || []).join(", "))})</a>`).join("")}
-      ${(P.manque || []).length ? `<br>Pas parti : ${esc(P.manque.join(", "))}` : ""}</div>` : "";
-  const deja = R.deja_publie ? `<p class="pub-deja">Déjà publié : ${esc(R.deja_publie)}</p>` : "";
-  const dans = new Date(Date.now() + 864e5); dans.setHours(18, 0, 0, 0);
-  const iso = new Date(dans - dans.getTimezoneOffset() * 6e4).toISOString().slice(0, 16);
-  const R5 = ["Instagram", "TikTok", "YouTube Shorts", "Facebook", "LinkedIn"];
-  S.innerHTML = `<h2>Publier</h2>
-    <div class="mc">✓ <span><b>Publication branchée</b>${M.compte ? " · compte " + esc(M.compte) : ""}</span></div>
-    ${res}${deja}
-    <div class="nets">${R5.map(n => `<div class="net">${n}<button class="tg${PUB.off.has(n) ? " off" : ""}" data-n="${n}" aria-label="${n}"></button></div>`).join("")}</div>
-    <div class="dt"><span>Programmer le</span><input type="datetime-local" id="quand" value="${PUB.quand || iso}"></div>
-    <div class="end"><button class="now" id="p-now">Publier maintenant</button><button class="prog" id="p-prog"></button>
-      <a class="dl" href="/api/telecharger/${rid}" download>Juste télécharger</a>
-      <p class="confirme">Ça part pour de vrai : 2e clic pour confirmer.</p></div>`;
-  const reseaux = () => [...S.querySelectorAll(".nets .tg:not(.off)")].map(t => t.dataset.n);
-  const lib = () => { const d = new Date($("#quand").value); $("#p-now").textContent = "Publier maintenant";
-    $("#p-prog").textContent = `Programmer ${d.toLocaleDateString("fr-FR", {weekday: "short", day: "2-digit", month: "2-digit"})} · ${d.toLocaleTimeString("fr-FR", {hour: "2-digit", minute: "2-digit"})}`; };
-  lib(); $("#quand").onchange = () => { PUB.quand = $("#quand").value; lib(); };
-  S.querySelectorAll(".nets .tg").forEach(t => t.onclick = () => { t.classList.toggle("off"); PUB.off[t.classList.contains("off") ? "add" : "delete"](t.dataset.n); lib(); });
-  // 1er clic = arme le bouton (« Confirmer… »), 2e clic dans les 6 s = envoi réel. Déjà publié = 3e étape « Republier quand même ».
-  const envoyer = async (bouton, quand, forcer = false) => {
-    if (!reseaux().length) return toast("Choisis au moins un réseau.");
-    if (!bouton.classList.contains("arme")) {
-      const avant = bouton.textContent, n = reseaux().length;
-      bouton.classList.add("arme");
-      bouton.textContent = `Confirmer : ça part sur ${n} réseau${n > 1 ? "x" : ""}`;
-      clearTimeout(bouton.k); bouton.k = setTimeout(() => { bouton.classList.remove("arme"); bouton.textContent = avant; }, 6000);
-      return;
-    }
-    clearTimeout(bouton.k); bouton.disabled = true;
-    const r = await fetch(`/api/publier/${rid}`, {method: "POST", headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({quand, reseaux: reseaux(), forcer})});
-    const j = await r.json().catch(() => ({}));
-    bouton.disabled = false;
-    if (r.status === 409) {
-      bouton.textContent = "Republier quand même"; bouton.classList.add("arme");
-      toast(`Déjà publié (${j.deja}). Reclique pour republier quand même.`, 6000);
-      bouton.onclick = () => envoyer(bouton, quand, true);
-      return;
-    }
-    toast(j.message || "Erreur", 5000);
-    if (j.ok) { R = await api(`/api/reel/${rid}`); ecranPublier(); }
-  };
-  $("#p-now").onclick = () => envoyer($("#p-now"), "maintenant");
-  $("#p-prog").onclick = () => envoyer($("#p-prog"), $("#quand").value);
+  // publication retirée de l'appli (Super Studio 2.0) : on publie dans le chat avec Claude (skill publieur, Blotato)
+  $("#pub-side").innerHTML = `<h2>Télécharger</h2><p class="gris">Pour publier sur tes réseaux, dis à Claude « Publie ce reel » ou « Programme ma semaine ». Ou télécharge la vidéo + ses légendes et poste toi-même.</p>
+    <div class="end"><a class="now" href="/api/telecharger/${rid}" download>Télécharger</a></div>`;
 }
 $("#play2").onclick = () => vid2.paused ? vid2.play() : vid2.pause();
 vid2.onloadeddata = () => { if (T0 >= 0 && !vid2.dataset.t0) { vid2.dataset.t0 = 1; vid2.currentTime = T0; } };

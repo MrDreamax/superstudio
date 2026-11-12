@@ -1,9 +1,9 @@
 """Transcription mot à mot : ElevenLabs Scribe d'abord, faster-whisper du Mac en secours (moteur commun : mots.py).
   python3 transcribe.py video.mp4 out.words.json [--mac] [--model small] [--no-snap]
-ElevenLabs (23/10, rush RUSH) : 16/16 vraies pauses contre 8/16 pour Whisper, bords à 0,03 s, 2 s au lieu de 39 s.
+ElevenLabs (rush RUSH) : 16/16 vraies pauses contre 8/16 pour Whisper, bords à 0,03 s, 2 s au lieu de 39 s.
 Clé lue dans le trousseau (service elevenlabs-api-key), jamais dans un fichier. Pas de clé, quota vide, pas d'internet
 ou toute autre erreur -> Whisper du Mac, sans s'arrêter. --mac = Whisper forcé.
-Recalage sur le vrai son (16/10, rush de conférence) : dans une salle qui résonne, Whisper colle les pauses À L'INTÉRIEUR des mots
+Recalage sur le vrai son (rush de conférence) : dans une salle qui résonne, Whisper colle les pauses À L'INTÉRIEUR des mots
 (« vous » 4,94-6,10 s pour 0,25 s de parole), donc derush.py ne voyait aucun blanc à couper. On mesure l'énergie de la voix
 (10 ms) et chaque plage vraiment silencieuse >= 0,15 s cachée dans un mot est sortie du mot : la plus grande partie parlée garde
 le mot, l'autre part au mot voisin (on ne perd jamais de parole). --no-snap = timings Whisper bruts.
@@ -16,15 +16,15 @@ model = sys.argv[sys.argv.index("--model") + 1] if "--model" in sys.argv else "s
 
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from mots import transcrire, SansElevenLabs                         # ElevenLabs seul (29/10), Whisper si --mac
+from mots import transcrire, SansElevenLabs                         # ElevenLabs seul, Whisper si --mac
 
 try:
     words, moteur = transcrire(src, modele=model, mac="--mac" in sys.argv)
-except SansElevenLabs as e:   # 29/10 : une seule ligne claire, c'est elle que SuperMonteur affiche
+except SansElevenLabs as e:   # une seule ligne claire, c'est elle que SuperMonteur affiche
     print(e, file=sys.stderr)
     sys.exit(3)
 print(f"transcription : {moteur}")
-# 06/11 (RUSH : « enlève la guillemet qui se balade toute seule », 2 fois dans le même reel) : ElevenLabs colle « » “ ”
+#  (2 fois dans le même reel) : ElevenLabs colle « » “ ”
 # aux mots (« dit:« »). Jamais de guillemet dans les sous-titres : retirés à la source, ponctuation française « : » remise.
 import re
 for w in words:
@@ -51,7 +51,7 @@ def snap(words, run_min=0.15, part_min=0.06, margin=0.05):
             else: runs.append([i, j])
             i = j
         else: i += 1
-    # marge de 0,05 s rendue à la parole : le « s » d'attaque (souffle aigu, peu d'énergie) reste dans le mot (mesuré 16/10 sur « soufflez »)
+    # marge de 0,05 s rendue à la parole : le « s » d'attaque (souffle aigu, peu d'énergie) reste dans le mot (sur « soufflez »)
     runs = [(s / 100 + margin, e / 100 - margin) for s, e in runs if (e - s) / 100 >= run_min + 2 * margin]
     moved = 0
     for k, w in enumerate(words):

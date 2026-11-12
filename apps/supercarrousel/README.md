@@ -1,6 +1,6 @@
 # SuperCarrousel
 
-L'écran des carrousels (maquettes validées le 26/10/2026, codé la nuit du 28/10/2026).
+L'écran des carrousels (maquettes validées codé la nuit).
 Lien : http://localhost:8797 · lancer : `bash ~/Documents/SuperApps/supercarrousel/lancer.sh`
 puis `preview_start` « supercarrousel » (le navigateur intégré ne peut pas lancer un serveur qui lit ~/Documents).
 
@@ -11,7 +11,7 @@ puis `preview_start` « supercarrousel » (le navigateur intégré ne peut pas l
 3. **Ma DA** : tiroir qui ouvre SuperDA (`?tiroir=carrousels`) ; si SuperDA ne tourne pas, les 7 lignes en lecture + « Demande à Claude ». Une DA changée = carrousel refait avec la nouvelle DA (même texte).
 4. **Publier** : retiré de l'appli (Super Studio 2.0). Un seul bouton Télécharger (images + légendes). Pour publier : dans le chat, « Publie ce carrousel » (skill publieur, Blotato).
 
-## Claude tout seul (28/10/2026)
+## Claude tout seul
 Le serveur lance lui-même Claude Code (`../ouvrier_claude.py`, Opus, outils limités : lire/écrire + `python3 sc.py`) dès que l'écran attend un texte ou des corrections : plus besoin d'un chat ouvert. 2 essais max par version, sinon l'écran passe en « erreur ». Journal : `_claude.log`. `config.json` `"claude_auto": false` = revenir au chat (sc.py attendre).
 
 ## Côté Claude (sc.py)
@@ -22,7 +22,7 @@ Le serveur lance lui-même Claude Code (`../ouvrier_claude.py`, Opus, outils lim
 Description = celle du skill carrousel (style Apple) + `name`, `legendes` {instagram, tiktok, facebook, linkedin}, `corrections` [{retour, ligne, slide}].
 
 ## La DA
-Lue dans `apps/superda/da.json` (contrat `da-schema.json`, clés `commun` + `carrousels`). Sans ce fichier : la DA actuelle du skill (style Apple). Modèles rendus : **Épuré** (moteur Apple du skill) et **Cinéma** (`modeles.py`). Depuis le 12/11/2026 : **Deux photos, Sous-titres, Bulles** (Infographie retirée le 12/11, jugée moche) (`modeles_bm.py`, repris des carrousels de Brian Mark, références dans `inspirations/brian-mark/`). Sans couleur de marque, ces 4 modèles prennent le bleu de la marque (blanc = invisible sur papier et bulles). Sous-titres : images de vidéo gardées entières. Collage, Carnet, Impact, Post texte : rendus en Épuré tant qu'ils ne sont pas codés.
+Lue dans `apps/superda/da.json` (contrat `da-schema.json`, clés `commun` + `carrousels`). Sans ce fichier : la DA actuelle du skill (style Apple). Modèles rendus : **Épuré** (moteur Apple du skill) et **Cinéma** (`modeles.py`). Depuis : **Deux photos, Sous-titres, Bulles** (Infographie retirée jugée moche) (`modeles_bm.py`, repris des carrousels de Brian Mark, références dans `inspirations/brian-mark/`). Sans couleur de marque, ces 4 modèles prennent le bleu de la marque (blanc = invisible sur papier et bulles). Sous-titres : images de vidéo gardées entières. Collage, Carnet, Impact, Post texte : rendus en Épuré tant qu'ils ne sont pas codés.
 
 ## Fichiers
-`serveur.py` (HTTP + boucle de rendu, un rendu à la fois) · `moteur.py` (DA, typo, rendu slide par slide, Télécharger) · `modeles.py` (Cinéma) · `sc.py` (Claude) · `static/` (l'écran) · `projets/<id>/` (demande, versions, retours) · `preuves/` (captures du 28/10).
+`serveur.py` (HTTP + boucle de rendu, un rendu à la fois) · `moteur.py` (DA, typo, rendu slide par slide, Télécharger) · `modeles.py` (Cinéma) · `sc.py` (Claude) · `static/` (l'écran) · `projets/<id>/` (demande, versions, retours) · `preuves/` (captures).

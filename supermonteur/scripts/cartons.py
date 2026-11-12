@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Cartons d'arbitre au-dessus de la tête (09/11/2026, RUSH, l’utilisateur : « illustre ça avec un carton rouge et un carton
-vert au-dessus de ma tête », maquette C notée 9/10 par le juge). Variante du style Comparatif.
+"""Cartons d'arbitre au-dessus de la tête (RUSH, maquette C notée 9/10 par le juge). Variante du style Comparatif.
 
 Une rangée de cases (une par élément) entre la zone morte du haut (270 px) et la tête. Cases vides en pointillé
-(toutes blanches : 09/11, la verte en vert « spoile la suite »). À chaque élément : son titre en gros (Outfit 800,
+(toutes blanches : la verte en vert « spoile la suite »). À chaque élément : son titre en gros (Outfit 800,
 blanc, une ligne) à `at` ; le carton tombe dans sa case avec un ressort à `carte` (le mot « carton »). Le vert arrive
 plus gros. Tout s'efface à `fin` (début du CTA).
 
@@ -11,7 +10,7 @@ plan.json :
   "cartons": {"top": 300, "fin": 52.1, "items": [
       {"couleur": "rouge", "titre": "MONTER TOI-MÊME", "at": 0.2, "carte": 3.1}, ...
       {"couleur": "vert", "titre": "TES PROPRES MOTS", "at": 40.0, "carte": 42.3}]}
-Lancé par monte.sh juste après build.mjs (comme viral.py inject) :  python3 cartons.py plan.json
+Lancé par monte.sh juste après build.mjs (comme viral.py inject) : python3 cartons.py plan.json
 """
 import json, sys
 
@@ -54,7 +53,7 @@ def inject(plan_path):
         x = x0 + i * (W + GAP)
         vert = it["couleur"] == "vert"
         rot = -4 if (i % 2 or vert) else 4
-        body.append(f'<div class="cs" style="left:{x}px"></div>')   # 09/11 l’utilisateur : case verte en pointillé vert = « ça spoile la suite » -> toutes blanches
+        body.append(f'<div class="cs" style="left:{x}px"></div>')   #  l’utilisateur : case verte en pointillé vert = « ça spoile la suite » -> toutes blanches
         glow = ",0 0 18px #2fb87259" if vert else ""
         body.append(f'<div class="cd" id="cd{i}" style="left:{x}px;background:{VERT if vert else ROUGE};'
                     f'box-shadow:0 18px 40px #000a, inset 0 0 0 3px #fff3{glow}"></div>')
@@ -63,7 +62,7 @@ def inject(plan_path):
         js.append(f'tl.fromTo("#tt{i}",{{opacity:0,y:14,filter:"blur(6px)"}},{{opacity:1,y:0,filter:"blur(0px)",duration:.3,ease:"power3.out",immediateRender:false}},{it["at"]:.2f});')
         if i + 1 < n:
             js.append(f'tl.to("#tt{i}",{{opacity:0,y:-10,filter:"blur(6px)",duration:.18,ease:"power2.in"}},{items[i + 1]["at"] - 0.18:.2f});')
-        # carton : tombe d'en haut (20 px seulement : 09/11, à -90 il passait dans la zone morte du haut), ressort, se pose légèrement penché
+        # carton : tombe d'en haut (20 px seulement : à -90 il passait dans la zone morte du haut), ressort, se pose légèrement penché
         sc = 1.06 if vert else 1
         js.append(f'tl.fromTo("#cd{i}",{{opacity:0,y:-20,rotation:{rot * -2},scale:{sc * 1.1:.2f}}},'
                   f'{{opacity:1,y:0,rotation:{rot},scale:{sc},duration:.42,ease:"back.out(2.2)",immediateRender:false}},{it["carte"]:.2f});')

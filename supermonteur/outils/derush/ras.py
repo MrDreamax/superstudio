@@ -1,4 +1,4 @@
-"""Coupes au ras de la voix (06/11/2026, RUSH : « cut plus serré, grave dans le brain corrige »).
+"""Coupes au ras de la voix (RUSH : « cut plus serré, grave dans le brain corrige »).
 
 Mesure RUSH : derush.py (même en mode serré) laisse 0,08 à 0,22 s de blanc à CHAQUE coupe (moyenne 0,15 s) :
 fin_du_mot +0,04 s, filet +0,03 s au-delà du fondu de 0,03 s, attaque -0,04 à -0,10 s, puis arrondi à l'image vers
@@ -20,7 +20,7 @@ import numpy as np
 
 src, D = sys.argv[1], sys.argv[2]
 P = lambda f: os.path.join(D, f)
-FIN, DEBUT, FADE_OUT, FADE_IN = 0.0, 0.012, 0.012, 0.008   # 07/11 : FIN 0,02 -> 18 mots coupés au Gardien (il veut fin - fondu >= f - 0,03)
+FIN, DEBUT, FADE_OUT, FADE_IN = 0.0, 0.012, 0.012, 0.008   # FIN 0,02 -> 18 mots coupés au Gardien (il veut fin - fondu >= f - 0,03)
 sys.path.insert(0, os.path.expanduser("~/.claude/skills/supermonteur/scripts"))
 from queue_mot import fin_du_mot          # même définition que derush.py et gardien.py (lue, jamais modifiée ici)
 
@@ -37,7 +37,7 @@ x = np.frombuffer(raw, np.float32); n = len(x) // 160 * 160
 db = 20 * np.log10(np.sqrt((x[:n].reshape(-1, 160) ** 2).mean(1)) + 1e-9)
 db = np.convolve(db, np.ones(3) / 3, "same")                       # lissé 30 ms, comme derush.py / gardien.py
 q = float(np.percentile(db, 95)) - 21                              # seuil de parole
-fl = float(np.percentile(db, 3))   # calme de la pièce sur TOUT le rush, comme derush.py et le Gardien (sur les seules plages gardées il monte de ~8 dB et la queue des mots serait rognée, testé 07/11)
+fl = float(np.percentile(db, 3))   # calme de la pièce sur TOUT le rush, comme derush.py et le Gardien (sur les seules plages gardées il monte de ~8 dB et la queue des mots serait rognée)
 
 def voisee(k):
     f = x[k * 160: k * 160 + 480].astype(np.float64); f = f - f.mean()
@@ -52,7 +52,7 @@ def fin(a, b):          # -> (nouvelle fin, fin du mot f)
     return min(b, f - FIN), f
 
 def debut(a, b):        # -> (nouveau début, attaque)
-    # 07/11 (Gardien, « t » de « Tu es coach ? » mangé) : derush.py pose parfois son début DANS l'attaque ; on cherche l'attaque
+    #  (Gardien, « t » de « Tu es coach ? » mangé) : derush.py pose parfois son début DANS l'attaque ; on cherche l'attaque
     # à partir de 0,05 s avant sa plage et on part DEBUT avant elle (la voix continue, au plus 0,15 s plus tôt que derush.py).
     # Puis on remonte la voix CONTINUE (au-dessus du calme + 12 dB) jusqu'à 0,15 s avant la plage (« Et » doux de 308,3 s).
     for k in range(int((a - 0.05) * 100), min(len(db), int(b * 100))):
@@ -81,9 +81,9 @@ for i, (a, b) in enumerate(segs):
 # rendu : une entrée par plage (saut 1 s avant, découpe exacte dans le filtre), un seul encodage, puce vidéo du Mac
 inputs, f, chain = [], "", ""
 for i, (a, b) in enumerate(res):
-    pre = math.floor(min(1.0, a) * FPS) / FPS   # 07/11 : saut calé sur la grille des images, sinon chaque morceau prend une fraction d'image de trop (+0,17 s sur 23 morceaux, son décalé)
+    pre = math.floor(min(1.0, a) * FPS) / FPS   # saut calé sur la grille des images, sinon chaque morceau prend une fraction d'image de trop (+0,17 s sur 23 morceaux, son décalé)
     inputs += ["-ss", f"{a - pre:.4f}", "-t", f"{b - a + pre + 0.2:.4f}", "-i", src]
-    sf, nf = round(pre * FPS), round((b - a) * FPS); d = nf / FPS   # 07/11 : découpe à l'IMAGE près (trim par durée gardait parfois 1 image de trop -> silence ajouté par concat)
+    sf, nf = round(pre * FPS), round((b - a) * FPS); d = nf / FPS   # découpe à l'IMAGE près (trim par durée gardait parfois 1 image de trop -> silence ajouté par concat)
     f += (f"[{i}:v]trim=start_frame={sf}:end_frame={sf + nf},setpts=PTS-STARTPTS[v{i}];"
           f"[{i}:a]atrim=start={pre:.4f}:duration={d:.4f},asetpts=PTS-STARTPTS,"
           f"afade=t=in:d={FADE_IN if i else 0.03},afade=t=out:st={d - (FADE_OUT if i < len(res) - 1 else 0.03):.4f}:d={FADE_OUT if i < len(res) - 1 else 0.03}[a{i}];")

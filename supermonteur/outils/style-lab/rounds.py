@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Style Lab « détaillé » (11/11) : la version d'origine, round par round, 1 seule variable par carte.
+"""Style Lab « détaillé » : la version d'origine, round par round, 1 seule variable par carte.
 Round 1 = sous-titres (police, taille, emplacement, mot fort). Les rounds suivants (titre, cartons et chiffres,
 transitions et sons) partent de ce qui a été gardé (--keep).
 
@@ -12,7 +12,7 @@ import argparse, concurrent.futures as cf, json, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import round as R   # make / render / finish / FONTS / SCALES du Style Lab client
 
-# 4 familles VRAIMENT différentes (juge 11/11 : Montserrat / Poppins / Inter se confondaient) ; le mot fort reste en Instrument Serif
+# 4 familles VRAIMENT différentes (juge : Montserrat / Poppins / Inter se confondaient) ; le mot fort reste en Instrument Serif
 FONTS = [("Montserrat.ttf", "InstrumentSerif-Italic.ttf", "Montserrat", "Large et sobre, celle de la maison."),
          ("BebasNeue-Regular.ttf", "InstrumentSerif-Italic.ttf", "Bebas", "Haute et serrée, look affiche."),
          ("Cinzel.ttf", "InstrumentSerif-Italic.ttf", "Cinzel", "Capitales à empattements, luxe classique."),

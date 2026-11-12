@@ -1,4 +1,4 @@
-"""Style Calques (09/11/2026) : reprise du reel @viashaan « mots derrière la tête » (Brain/02-Formations/
+"""Style Calques : reprise du reel @viashaan « mots derrière la tête » (Brain/02-Formations/
 viashaan-sous-titres-ia-derriere-la-tete.md). Chaque image = une pile : décor, mots DERRIÈRE toi, toi (masque de detoure.py),
 mots DEVANT, lueurs. Une caméra virtuelle recadre chaque phrase (zoom, poussée lente, à-coup) comme si c'était un autre plan.
 Un style par scène :
@@ -86,7 +86,7 @@ def paste(cv, spr, cx, cy, scale=1.0, rot=0.0, op=1.0, blur=0.0):
     reg[:] = o + reg * (1 - o[..., 3:4])
 
 
-OMBRE = [0.55]   # 10/11 (mur clair, RUSH) : "ombre": 0.9 dans plan.json = ombre plus forte sous les textes blancs
+OMBRE = [0.55]   #  (mur clair, RUSH) : "ombre": 0.9 dans plan.json = ombre plus forte sous les textes blancs
 
 
 def ombre(cv, spr, cx, cy, scale=1.0, rot=0.0, op=1.0, blur=0.0, force=None, dy=5):
@@ -144,7 +144,7 @@ def ligne(cv, mots, t, cx, y, fnt, fill=(255, 255, 255), glow=None, glowcv=None,
     pad = int(fnt.size * 0.5)
     ws = [s.shape[1] - 2 * pad for s in sprs]
     tot = sum(ws) + gap * (len(ws) - 1)
-    k = min(1.0, (W - 2 * MX - 20) / max(tot, 1))   # 09/11 : gros sous-titres, une ligne trop large rétrécit
+    k = min(1.0, (W - 2 * MX - 20) / max(tot, 1))   # gros sous-titres, une ligne trop large rétrécit
     ws = [w_ * k for w_ in ws]; gap *= k; tot *= k
     x = max(MX, min(W - MX - tot, cx - tot / 2))
     for s, w_, m in zip(sprs, ws, mots):
@@ -159,7 +159,7 @@ def ligne(cv, mots, t, cx, y, fnt, fill=(255, 255, 255), glow=None, glowcv=None,
 
 
 def sous_menton(c, y):
-    """09/11 (juge : « virus cognitif » sur le menton) : y jamais au-dessus de bas du visage + 50 px, jamais sous 1420 px."""
+    """(juge : « virus cognitif » sur le menton) : y jamais au-dessus de bas du visage + 50 px, jamais sous 1420 px."""
     top, hx, hw = c["tete"]
     return min(0.74 * H, max(y, top + 1.45 * hw + 50))
 
@@ -247,7 +247,7 @@ def chemin_corps(ms):
 
 
 def chemin_tete(ms, hx):
-    """09/11 (poing levé qui emmêlait le texte) : silhouette tête + épaules SANS les bras. Pour chaque ligne, le bloc de
+    """(poing levé qui emmêlait le texte) : silhouette tête + épaules SANS les bras. Pour chaque ligne, le bloc de
     colonnes qui contient le centre de la tête ; les bords s'élargissent seulement en descendant (cône lisse, pas de cou)."""
     small = cv2.resize(ms, (W // 4, H // 4), interpolation=cv2.INTER_AREA) > 0.5
     h4, w4 = small.shape
@@ -289,7 +289,7 @@ def st_orbite(c):
     t, ws, (top, hx, hw) = c["t"], c["mots"], c["tete"]
     hy = top + 0.30 * hw
     f = font("Outfit.ttf", 124, 700)
-    # 09/11 (13 mots empilés sur RUSH) : 6 mots max autour de la tête ; le plus récent arrive devant à droite,
+    #  (13 mots empilés sur RUSH) : 6 mots max autour de la tête ; le plus récent arrive devant à droite,
     # les autres reculent d'un cran (52°) vers l'arrière, le 6e s'efface.
     dits = [m for m in ws if t >= m["start"] - 0.02]
     for j, m in enumerate(reversed(dits)):
@@ -376,7 +376,7 @@ def geant_pose(c, txt, fnt_name, wght, fill, couvre=0.6, largeur=0.85):
 def st_geant(c):
     t, ws = c["t"], c["mots"]
     cle = c["sc"]["mot"]
-    kms = suite(ws, cle)                      # 09/11 : « CLAUDE CODE » = 2 mots
+    kms = suite(ws, cle)                      # « CLAUDE CODE » = 2 mots
     km = kms[0]
     c["dit"] = t >= km["start"] - 0.02
     f, cy, h = geant_pose(c, cle, "Outfit.ttf", 800, None, couvre=0.15, largeur=0.9)
@@ -398,7 +398,7 @@ def st_tracking(c):
     top, hx, hw = c["tete"]
     creme = np.array([237, 233, 225], np.float32) / 255
     noir = np.array([18, 16, 15], np.float32) / 255
-    # 09/11 (RUSH : trous blancs dans la silhouette au niveau du micro et des mains) : silhouette pleine, trous bouchés
+    #  (RUSH : trous blancs dans la silhouette au niveau du micro et des mains) : silhouette pleine, trous bouchés
     mp = cv2.resize(m, (W // 4, H // 4), interpolation=cv2.INTER_AREA)
     mp = cv2.morphologyEx(mp, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (25, 25)))
     pl_ = (mp > 0.5).astype(np.uint8)
@@ -475,7 +475,7 @@ def st_contour(c):
     vecteur(c["F"], trace)
     pts, nr = chemin_tete(ms, c["tete"][1])
     if pts is None: return
-    # 09/11 (juge : texte trop dense) : un groupe court à la fois (coupé aux virgules, 4 mots max), centré sur le sommet
+    #  (juge : texte trop dense) : un groupe court à la fois (coupé aux virgules, 4 mots max), centré sur le sommet
     f = font("Outfit.ttf", 64, 700)
     bloc = groupe_du_moment(groupes(ws, maxi=4), t)
     if not bloc: return
@@ -513,7 +513,7 @@ def st_serif(c):
     f, cy, h = geant_pose(c, txt, "InstrumentSerif-Italic.ttf", None, None, couvre=0.45, largeur=0.9)
     u = apparition(t, km[0]["start"], 0.22)
     if u > 0:
-        s = sprite(txt, f, tuple(c["sc"].get("couleur", (255, 255, 255))))   # 10/11 : couleur au choix (mur clair)
+        s = sprite(txt, f, tuple(c["sc"].get("couleur", (255, 255, 255))))   # couleur au choix (mur clair)
         ombre(c["B"], s, W / 2, cy, 1.08 - 0.08 * u, 0, u * 0.8, 10 * (1 - u))
         paste(c["B"], s, W / 2, cy, 1.08 - 0.08 * u, 0, u, 10 * (1 - u))
     g = groupe_du_moment(groupes_sans(ws, km), t)
@@ -526,7 +526,7 @@ def st_filaire(c):
     top, hx, hw = c["tete"]
     cle0 = suite(ws, c["sc"]["mot"])
     ks = cle0[0]["start"] if (cle0 and c["sc"].get("au_mot", True)) else c["de"]
-    pf = ease((t - ks + 0.05) / 0.35)          # 09/11 : la pièce (Beeble) est vraie, PUIS elle devient des lignes au mot-clé
+    pf = ease((t - ks + 0.05) / 0.35)          # la pièce (Beeble) est vraie, PUIS elle devient des lignes au mot-clé
     yy = np.linspace(0, 1, H, dtype=np.float32)[:, None, None]
     fond = (np.array([44, 28, 19], np.float32) * (1 - yy) + np.array([20, 13, 9], np.float32) * yy) / 255
     if pf > 0:
@@ -562,7 +562,7 @@ def st_filaire(c):
 
 
 def st_dit(c):
-    """09/11 (« des textes en néon, des gros textes ou même des textes en italique ») : chaque bloc prend le style qu'il nomme."""
+    """(« des textes en néon, des gros textes ou même des textes en italique ») : chaque bloc prend le style qu'il nomme."""
     t, ws = c["t"], c["mots"]
     blocs = [(suite(ws, d_["mots"]), d_["style"]) for d_ in c["sc"]["dits"]]
     blocs = [b for b in blocs if b[0]]
@@ -600,7 +600,7 @@ def st_dit(c):
 
 
 def st_fleches(c):
-    """09/11 (« il sait exactement où se trouve la zone de danger sur Instagram ») : sous-titres + la zone interdite
+    """(« il sait exactement où se trouve la zone de danger sur Instagram ») : sous-titres + la zone interdite
     s'allume en rouge + flèches dessinées vers les boutons de droite."""
     t, ws = c["t"], c["mots"]
     g = groupe_du_moment(groupes(ws), t)
@@ -726,7 +726,7 @@ def st_or(c):
     # flèche dessinée vers la droite et le bas
     p = ease((t - km["start"] - 0.3) / 0.45)
     if p > 0:
-        # 09/11 : vers le bouton commentaire d'Instagram (à droite, ~1330 px de haut)
+        # vers le bouton commentaire d'Instagram (à droite, ~1330 px de haut)
         x0, y0 = W / 2 + 0.28 * W, cy + hh * 0.75
         x1, y1 = W - 118, 0.665 * H
         cxb, cyb = x1 + 40, y0 + (y1 - y0) * 0.35
@@ -744,9 +744,9 @@ def st_or(c):
         vecteur(c["F"], fl)
 
 
-# ------------------------------------------------------------------ 09/11 soir : fidèle à l'original (retours de l’utilisateur sur RUSH)
+# ------------------------------------------------------------------ : fidèle à l'original (retours de l’utilisateur sur RUSH)
 def mains(c):
-    """Hauteur des mains = un tiers du corps sous le haut de la tête (09/11 : la détection de peau prenait le pantalon,
+    """Hauteur des mains = un tiers du corps sous le haut de la tête (la détection de peau prenait le pantalon,
     éclairé chaud par Beeble, et posait les textes aux hanches). Lissé. -> (x, y)"""
     top, hx, hw = c["tete"]
     m = c["m"]
@@ -1020,7 +1020,7 @@ def st_rdv(c):
         cy = max(TOP + 285, top - 40)   # la tête ne touche que le bas du « 20 H » ; 35 px sous DIMANCHE
         paste(c["B"], teinte(spr, (0, 0, 0), 0.6), W / 2 + 6, cy + 14, pop(v, 0.7, 0.06), 0, 1, 14)
         paste(c["B"], spr, W / 2, cy, pop(v, 0.7, 0.06))
-    # 09/11 : pas de « ce à » avant DIMANCHE ; après « vingt heures », la suite en petit sous le menton
+    # pas de « ce à » avant DIMANCHE ; après « vingt heures », la suite en petit sous le menton
     if heure:
         g = groupe_du_moment(groupes(ws[ws.index(heure[-1]) + 1:]), t)
         if g: ligne(c["F"], g, t, W / 2, sous_menton(c, 0.64 * H), font("Outfit.ttf", 84, 700))
@@ -1037,13 +1037,13 @@ def soleil(cv, x, y, r, p):
 
 
 def st_carton(c):
-    """09/11 (l’utilisateur : « mets un carton plein pour éviter les erreurs de cut ») : plein écran en DÉGRADÉ (jamais d'aplat,
-    règle du 23/10), la phrase apparaît mot à mot sur la voix ; mots-clés en or 3D et en serif italique. Finir le
+    """plein écran en DÉGRADÉ (jamais d'aplat,
+    règle ), la phrase apparaît mot à mot sur la voix ; mots-clés en or 3D et en serif italique. Finir le
     carton PILE sur le cut : le saut d'image disparaît."""
     t, ws = c["t"], c["mots"]
     cache = c["cache"]
     fond = c["sc"].get("fond", "brun")
-    # 09/11 (l’utilisateur : « fais un carton plein avec un dégradé ») : dégradé diagonal BIEN visible, bronze -> brun -> presque noir
+    # dégradé diagonal BIEN visible, bronze -> brun -> presque noir
     FONDS = {"brun": ([150, 92, 44], [58, 34, 20], [10, 8, 7]), "nuit": ([120, 80, 40], [40, 26, 16], [6, 5, 5]),
              "ambre": ([176, 108, 46], [70, 40, 20], [14, 9, 6])}
     if "_carton" + fond not in cache:
@@ -1057,7 +1057,7 @@ def st_carton(c):
         g += (rng.standard_normal((H, W, 1)).astype(np.float32) * 0.012)   # grain léger
         cache["_carton" + fond] = np.clip(g, 0, 1)
     c["base"][:] = cache["_carton" + fond]
-    zoom = 1.0   # 09/11 (l’utilisateur : « le texte se déplace, on a du mal à lire ») : plus de zoom, rien ne bouge
+    zoom = 1.0   # plus de zoom, rien ne bouge
     lignes_ = c["sc"]["lignes"]   # [{"mots": "...", "style": "sans|or|serif|petit"}]
     tailles = {"sans": 86, "or": 250, "serif": 170, "petit": 66, "caps": 230}
     hauteurs = {"sans": 112, "or": 250, "serif": 190, "petit": 92, "caps": 215}
@@ -1294,10 +1294,10 @@ def main():
 
     dec = subprocess.Popen(["ffmpeg", "-v", "error", "-ss", f"{t0:.3f}", "-i", clip, "-t", f"{t1 - t0:.3f}", "-vf", f"fps={FPS}",
                             "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
-    # 10/11 : le masque démarre lui aussi à t0 (avant, il repartait de 0 : rendu partiel = mauvaise silhouette)
+    # le masque démarre lui aussi à t0 (avant, il repartait de 0 : rendu partiel = mauvaise silhouette)
     dm = subprocess.Popen(["ffmpeg", "-v", "error", "-i", masque, "-vf", f"trim=start_frame={round(t0 * FPS)},setpts=PTS-STARTPTS", "-f", "rawvideo", "-pix_fmt", "gray", "-"], stdout=subprocess.PIPE)
     muet = os.path.join(d, "_muet.mp4")
-    SON = sys.argv[sys.argv.index("--son") + 1] if "--son" in sys.argv else None   # 10/11 : refaire seulement le son sur une image déjà rendue
+    SON = sys.argv[sys.argv.index("--son") + 1] if "--son" in sys.argv else None   # refaire seulement le son sur une image déjà rendue
     if SON: subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", SON, "-map", "0:v", "-c", "copy", muet], check=True); n = 0
     enc = None if SON else subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
                             "-c:v", "libx264", "-crf", "17", "-preset", "medium", "-pix_fmt", "yuv420p",
@@ -1334,7 +1334,7 @@ def main():
         fil.append(f"[{len(ev) + 1}:a]aformat=sample_rates=48000:channel_layouts=stereo,volume={mus.get('db', -22)}dB,"
                    + ("afade=t=in:d=%s," % plan.get("fondu_musique", 0.3) if plan.get("fondu_musique", 0.3) else "") + f"afade=t=out:st={t1 - t0 - 1.0:.2f}:d=1.0,atrim=0:{t1 - t0:.3f}[mu]")
         n_in += 1
-    fil.append("[v]" + "".join(f"[s{j}]" for j in range(len(ev))) + ("[mu]" if mus else "") + f"amix=inputs={n_in}:normalize=0:duration=first,alimiter=limit=0.79:attack=0.5:release=60:level=false[a]")   # 09/11 : pic à +0,3 dB sans limiteur
+    fil.append("[v]" + "".join(f"[s{j}]" for j in range(len(ev))) + ("[mu]" if mus else "") + f"amix=inputs={n_in}:normalize=0:duration=first,alimiter=limit=0.79:attack=0.5:release=60:level=false[a]")   # pic à +0,3 dB sans limiteur
     son = os.path.join(d, "_son.m4a")
     subprocess.run(["ffmpeg", "-v", "error", "-y", *ins, "-filter_complex", ";".join(fil), "-map", "[a]", "-c:a", "aac", "-b:a", "192k", son], check=True)
     out = os.path.join(d, plan.get("sortie", "rendu.mp4"))
