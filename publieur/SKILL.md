@@ -9,6 +9,7 @@ description: Le Publieur. Programme tes reels déjà montés (et tes carrousels)
 - Même description partout (seul YouTube ajoute son titre court).
 - **Style de description, la 1re fois seulement**, en boutons : 1) Optimisée SEO (mots-clés pour être trouvé, 3 à 5 hashtags du sujet) 2) Courte (1 ou 2 lignes). Noté dans la config (`style_description`), jamais redemandé ensuite, sauf si la personne veut changer.
 - **CTA** : s'il y en a un, il est en PREMIÈRE ligne de la description, sur tous les réseaux.
+- **Reel en 2 versions (CTA différent par réseau)** : chaque version part UNIQUEMENT sur ses réseaux. Version Instagram (ex. « commente MOT ») = Instagram seul ; version autres réseaux (ex. « lien en bio ») = TikTok, YouTube, Facebook, LinkedIn, Threads. Un `blotato_create_post` par compte avec le BON fichier, vérifié avant l'envoi. Jamais la version Instagram ailleurs.
 
 # Le Publieur : reels montés → programmés partout, un seul OK
 
