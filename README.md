@@ -5,7 +5,7 @@ Tout tourne sur ton Mac, avec ton abonnement Claude. Tu parles à Claude dans le
 
 ## Avant de commencer
 1. **Claude (obligatoire)** : l'app sur claude.ai/download, abonnement Pro ou plus (le gratuit n'ouvre pas l'onglet Code).
-2. **ElevenLabs (obligatoire pour monter et transcrire)** : compte sur elevenlabs.io, formule Creator. Crée une clé API. Après l'installation : copie-la, puis dis à Claude « Range ma clé ElevenLabs ».
+2. **ElevenLabs (obligatoire pour monter et transcrire)** : compte sur elevenlabs.io, formule Starter (environ 6 €/mois, suffit largement ; Creator si un jour il en manque). Crée une clé API. Après l'installation : copie-la, puis dis à Claude « Range ma clé ElevenLabs ».
 3. **Blotato (obligatoire pour publier)** : compte sur blotato.com (~29 $/mois), branche tes réseaux. Puis dans Claude : Réglages > Connecteurs > Blotato. Il publie tes reels et envoie tes cadeaux en message privé quand on commente ton mot-clé.
 4. **Les 100 musiques (obligatoire pour les montages)** : mets `100-MUSIQUES.zip` (lien envoyé à part) dans Téléchargements AVANT d'installer.
 5. **Google Chrome (obligatoire pour les carrousels et les PDF)** : google.com/chrome.
