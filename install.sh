@@ -211,13 +211,15 @@ python3 -c "import scipy, cv2" 2>/dev/null || python3 -m pip install --user -q s
 # 1.7 (juge 1.6 : 1er démarrage du Carrousel = 188 s) : le tout 1er chargement de ces modules est long, on le fait ici
 echo "Préparation du Carrousel (jusqu'à 3 min la première fois)…"
 /usr/bin/python3 -c "import numpy, scipy.ndimage, PIL" 2>/dev/null || true
-# Les 100 musiques si leur ZIP est posé à côté
-mkdir -p "$HOME/Documents/Montage"
-for z in "$ICI/100-MUSIQUES.zip" "$ICI/../100-MUSIQUES.zip" "$HOME/Downloads/100-MUSIQUES.zip"; do
-    # le dossier MUSIQUE existe déjà (mkdir plus haut) : on teste la présence de mp3, pas du dossier
-  if [[ -f "$z" && -z "$(find "$HOME/Documents/Montage/MUSIQUE" -name '*.mp3' -print -quit 2>/dev/null)" ]]; then echo "Installation des 100 musiques…"; unzip -q "$z" -d "$HOME/Documents/Montage" && echo "100 musiques installées dans Documents/Montage/MUSIQUE."; break; fi
-done
-[[ -n "$(find "$HOME/Documents/Montage/MUSIQUE" -name '*.mp3' -print -quit 2>/dev/null)" ]] || echo "Attention : pas encore de musiques. Mets 100-MUSIQUES.zip à côté de ce dossier et relance, ou pose tes mp3 dans Documents/Montage/MUSIQUE."
+# Les 100 musiques : zip ou dossier « musique » trouvé dans Téléchargements / Bureau (sinon Claude le demande pendant Bienvenue)
+mkdir -p "$HOME/Documents/Montage/MUSIQUE"
+if [[ -z "$(find "$HOME/Documents/Montage/MUSIQUE" -iname '*.mp3' -print -quit 2>/dev/null)" ]]; then
+  # ancienne install : musiques dézippées par erreur dans « Montage/100 MUSIQUES »
+  [[ -d "$HOME/Documents/Montage/100 MUSIQUES" ]] && bash "$ICI/ranger-musiques.command" "$HOME/Documents/Montage/100 MUSIQUES" >/dev/null
+  [[ -n "$(find "$HOME/Documents/Montage/MUSIQUE" -iname '*.mp3' -print -quit 2>/dev/null)" ]] || bash "$ICI/ranger-musiques.command" >/dev/null 2>&1 || true
+fi
+if [[ -n "$(find "$HOME/Documents/Montage/MUSIQUE" -iname '*.mp3' -print -quit 2>/dev/null)" ]]; then echo "Musiques prêtes dans Documents/Montage/MUSIQUE."
+else echo "MUSIQUES_MANQUANTES : Claude va te demander le fichier des musiques (lien reçu à part)."; fi
 # ElevenLabs obligatoire (transcription des rushs)
 security find-generic-password -s elevenlabs-api-key -w >/dev/null 2>&1 || echo "Clé ElevenLabs (sous-titres sans faute) : Claude te guide pendant « Bienvenue », ou écris « Range ma clé ElevenLabs »."
 echo "Super Studio installé (version $(cat "$ICI/VERSION"))."
