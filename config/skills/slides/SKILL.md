@@ -76,4 +76,4 @@ Il sort dans `out` : `deck.html`, `deck.pdf`, `png/01.png...`, `planche.png`, `p
 - Idée de départ : scène fixe 1920x1080 en HTML (projet frontend-slides, licence MIT). Aucun code copié.
 
 ## Retours : Slide Notes
-Dès qu'un deck est rendu (premier jet ou version corrigée), ouvrir Slide Notes DIRECTEMENT, sans demander (`outils/slide-notes/SLIDE-NOTES.md`) : une page locale avec chaque slide, un champ de retour, « Supprimer », « + Ajouter une slide ici », tout s'enregistre seul. Quand l'utilisateur écrit « suivant » : lire notes.json, 1 ligne de plan par retour, corriger, re-rendre, rouvrir Slide Notes.
+Dès qu'un deck est rendu (premier jet ou version corrigée), ouvrir Slide Notes DIRECTEMENT, sans demander (`outils/slide-notes/SLIDE-NOTES.md`) : une page locale avec chaque slide, un champ de retour, « Supprimer », « + Ajouter une slide ici », tout s'enregistre seul. Après chaque version, 2 boutons dans le chat : « Corriger » (lire notes.json, 1 ligne de plan par retour, corriger, re-rendre, rouvrir Slide Notes) et « C'est parfait » (deck validé).

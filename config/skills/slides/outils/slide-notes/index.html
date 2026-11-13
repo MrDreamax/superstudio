@@ -45,7 +45,7 @@ textarea:focus{border-color:var(--b);box-shadow:0 0 0 4px var(--bl)}
 <p class="help">Écris (ou dicte) ton retour sous chaque slide. Rien à dire ? Laisse vide. Tout s'enregistre tout seul.</p>
 <div id="list"></div>
 </main>
-<div id="fin"><b>C'est noté.</b><p>Écris <code>suivant</code> dans le chat : je corrige tout.</p><button class="ghost" onclick="fin.style.display='none'">Revenir aux slides</button></div>
+<div id="fin"><b>C'est noté.</b><p>Dans le chat, clique <code>Corriger</code> (je corrige tout) ou <code>C'est parfait</code> (version validée).</p><button class="ghost" onclick="fin.style.display='none'">Revenir aux slides</button></div>
 <script>
 let slides=[], items=[], timer=null, uid=1;
 const list=document.getElementById('list');
