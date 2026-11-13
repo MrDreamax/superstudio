@@ -1,5 +1,8 @@
 # Style Lab client : la DA de montage choisie sur SA 1re rush (1 seul tour)
 
+## Avant de lancer Style Lab : demander les références (obligatoire)
+On propose un Style Lab de base. Mais d'abord, demande une fois : « Tu as un style que tu aimes déjà ? Des références : un autre créateur, une charte graphique, ou tes anciennes vidéos pour garder ton propre style. C'est facultatif, mais recommandé pour un style plus précis. Glisse-les ici. » S'il en donne, pars de ses références. Sinon, Style Lab de base.
+
 Quand : 1er lancement chez un client (`mode-client.md`), après les connecteurs et `setup.sh`. Le client vote sur de vrais rendus de lui, ça écrit `da/<prenom>.json` tout seul.
 Durée : ~25 min dont ~10 min de rendu (8 variantes). Coût : 0 crédit (aucune image générée), musiques de sa bibliothèque.
 5 sections, 1 seule variable par carte : **Ton ambiance** (4 vraies photos de lui, facultatif), **Tes polices** (4 couples), **Ta couleur** (2 de son rush + sa marque + bleu maison), **Ta musique** (4 émotions), **Ton rythme** (posé / nerveux).

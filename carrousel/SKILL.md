@@ -3,17 +3,16 @@ name: carrousel
 description: Le Carrousel. Carrousel Instagram (1080x1440, nombre de slides libre, le plus court qui dit tout) au modèle validé - bleu-blanc, vraies photos de l'utilisateur + illustrations 2D SVG, jamais d'image IA. Livre PNG + légende, ne publie jamais. Use when "carrousel", "carousel", "fais-moi un carrousel", "carrousel de la semaine", "transforme ce reel en carrousel", "carrousel sur X", "carousel maker".
 ---
 
+## Avant tout carrousel : demander le style (obligatoire)
+Avant de faire le moindre carrousel, pose UNE question ouverte, sauf si la personne l'a déjà dit : « Quel style de carrousel tu veux ? Tu as des inspirations (captures, liens, carrousels d'autres créateurs ou les tiens) ? Glisse-les ici, c'est facultatif mais recommandé pour un résultat plus précis. » Attends la réponse. Ne pars jamais d'un style choisi au hasard.
+
 ## CHEZ TOI (client) : CE BLOC PASSE AVANT TOUT LE RESTE DE CE FICHIER
+
 - On fait le carrousel dans le chat, sans ouvrir d'appli avant. Rendu des images : Google Chrome doit être installé sur le Mac (google.com/chrome) ; absent = dis-le en 1 ligne avec ce lien.
 - Ses photos : celles qu'il glisse dans le chat, ou `~/Documents/Brain/00-Moi/photos/` s'il en a rangé. Jamais une photo inventée, jamais d'image IA.
 - Sa voix : `~/Documents/Brain/00-Moi/` s'il est rempli. Pas de veille, pas d'onglet SuperDA : sa DA est déjà réglée (`~/Documents/SuperApps/superda/da.json`).
 - Publier : c'est le skill `publieur` (Blotato), après son OK.
 - Un fichier ou un skill cité plus bas qui n'existe pas chez lui : ignore-le.
-
-
-
-
-
 
 # Le Carrousel : une grande idée, le moins de slides possible, la DA de la marque
 

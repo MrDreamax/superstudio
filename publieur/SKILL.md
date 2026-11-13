@@ -3,6 +3,9 @@ name: publieur
 description: Le Publieur. Programme tes reels déjà montés (et tes carrousels) sur Instagram, Facebook, TikTok, YouTube Shorts, LinkedIn et Threads via Blotato - légende optimisée, meilleure heure, un seul OK par lot. Crée aussi les réponses automatiques en DM (1 mot-clé = le lead magnet de ce mot). Ne publie jamais sans ton OK. Use when "publie", "publication", "programme mes reels", "programme la semaine", "poste mes vidéos", "publie maintenant", "légende", "Blotato", "publieur", "mets en ligne", "réponse automatique", "mot-clé en DM", "envoie mon lead magnet".
 ---
 
+## Avant d'écrire la légende : demander le style (obligatoire)
+Avant la première légende d'un lot, demande en boutons, sauf si c'est déjà dit ou déjà noté dans sa config : « Quel style de description tu veux ? » 1) Courte et optimisée (mots-clés pour être trouvé, hashtags) 2) Personnalisée : tu me donnes tes indications ou un exemple que tu aimes 3) Comme d'habitude (le style déjà noté). Note la réponse dans sa config pour ne plus la redemander, sauf s'il veut changer.
+
 # Le Publieur : reels montés → programmés partout, un seul OK
 
 **Règle d'or : rien ne part sans le OK explicite de l'utilisateur sur le lot.** Un OK vaut pour ce lot-là, pas pour le suivant.
