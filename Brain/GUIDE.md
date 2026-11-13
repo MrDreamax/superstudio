@@ -167,6 +167,24 @@ Règle de base : Claude prépare, toi tu décides. Rien n'est envoyé, publié o
 
 ---
 
+## Tes logiciels
+Ce qu'on utilise, et à quoi ça sert. Claude t'aide à tout installer : dis « Installe mes logiciels ».
+
+### Ceux qu'il te faut
+- **Claude** : ton assistant. C'est lui qui fait tout : tu lui parles dans le chat. Il faut l'abonnement Pro (environ 20 € par mois).
+- **Blotato** : il publie tes vidéos sur tous tes réseaux à ta place, et envoie ton cadeau en message privé quand quelqu'un écrit ton mot en commentaire (environ 29 € par mois).
+- **ElevenLabs, offre Creator** : il écoute ta vidéo et écrit tes sous-titres sans faute (environ 22 € par mois).
+- **Google Chrome** : ton navigateur internet. Claude s'en sert pour fabriquer tes carrousels et tes PDF. Gratuit.
+- **Le pack de musiques** : les musiques de fond de tes vidéos. Le lien t'est envoyé à part : mets le fichier dans Téléchargements, Claude le range tout seul.
+
+### Ceux qu'on te conseille (gratuits)
+- **Wispr Flow** : tu parles au lieu de taper, partout sur ton ordinateur. Tu vas 3 fois plus vite.
+- **Obsidian** : pour voir ta mémoire (le Brain) comme un carnet bien rangé.
+- **Fathom** : il enregistre tes appels vidéo et t'en fait un résumé.
+- **Claude dans Chrome** : une petite extension : Claude peut cliquer et remplir des pages internet à ta place.
+
+### Ceux que tu ne vois jamais
+- **Les moteurs** : des petits programmes qui découpent tes vidéos et fabriquent tes images. Claude les installe tout seul, tu n'y touches pas.
 ## Ta mémoire (le Brain)
 - Elle est dans Documents/Brain. Tu n'as pas besoin de l'ouvrir.
 - Elle contient déjà des fiches d'experts (vente, contenu, pubs, montage...).
