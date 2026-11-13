@@ -9,3 +9,4 @@ Si une nouvelle règle contredit une ancienne : remplace l'ancienne. Ménage cha
 
 ## Règles apprises
 - (vide pour l'instant : chaque correction que tu fais à cet agent s'ajoute ici)
+- Slides : dès qu'un deck est rendu, ouvrir Slide Notes directement (retour par slide, supprimer, ajouter) ; « suivant » = lire notes.json et corriger.

@@ -74,3 +74,6 @@ Il sort dans `out` : `deck.html`, `deck.pdf`, `png/01.png...`, `planche.png`, `p
 - Moteur maison : `scripts/slides.py` (plan → HTML + alertes) + `assets/deck.html` (gabarit : ajuste le texte qui déborde et le signale ; couleurs et polices injectées depuis marque.json). Chrome en ligne de commande mesure chaque slide, fait un PNG par slide (en parallèle) et le PDF.
 - Polices en local dans `assets/fonts` : le dossier livré marche sans Internet tant que marque.json n'utilise que ces polices.
 - Idée de départ : scène fixe 1920x1080 en HTML (projet frontend-slides, licence MIT). Aucun code copié.
+
+## Retours : Slide Notes
+Dès qu'un deck est rendu (premier jet ou version corrigée), ouvrir Slide Notes DIRECTEMENT, sans demander (`outils/slide-notes/SLIDE-NOTES.md`) : une page locale avec chaque slide, un champ de retour, « Supprimer », « + Ajouter une slide ici », tout s'enregistre seul. Quand l'utilisateur écrit « suivant » : lire notes.json, 1 ligne de plan par retour, corriger, re-rendre, rouvrir Slide Notes.
