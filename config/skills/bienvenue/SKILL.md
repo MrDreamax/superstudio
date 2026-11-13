@@ -62,9 +62,9 @@ Dis en 1 ligne : « Tu crées du contenu : je règle tes skills contenu sur ta v
 - Plus tard : « Quand tu veux, écris : ma marque. »
 
 ### 6 bis. La clé ElevenLabs (si « Créer du contenu » est coché)
-ElevenLabs = le site qui écrit tes sous-titres sans faute. Sans clé, le Monteur marche quand même, avec un outil gratuit moins précis.
+ElevenLabs = le site qui écrit tes sous-titres sans faute. Il faut l'offre Creator. Sans clé, le Monteur dépanne avec un outil gratuit moins précis.
 Si `security find-generic-password -s elevenlabs-api-key -w` répond déjà une clé : saute cette étape. Sinon, une action à la fois :
-1. « Crée ton compte sur elevenlabs.io (formule Creator conseillée pour tes vidéos), puis ouvre ce lien : https://elevenlabs.io/app/developers/api-keys. Clique sur Create API Key, puis copie la clé. Écris "copié" quand c'est fait. » Bouton : Copié · Plus tard.
+1. « Crée ton compte sur elevenlabs.io et prends l'offre **Creator** (c'est elle qu'il faut pour tes vidéos), puis ouvre ce lien : https://elevenlabs.io/app/developers/api-keys. Clique sur Create API Key, puis copie la clé. Écris "copié" quand c'est fait. » Bouton : Copié · Plus tard.
 2. À « copié » : range la clé toi-même depuis le presse-papier, sans jamais l'afficher ni la demander dans le chat : `CLE="$(pbpaste | tr -d '[:space:]')"; [ ${#CLE} -ge 20 ] && security add-generic-password -U -a "$USER" -s elevenlabs-api-key -w "$CLE" && printf '' | pbcopy && echo OK`. Si ça ne répond pas OK : « Le presse-papier ne contient pas la clé, recopie-la puis écris copié. »
 3. Vérifie avec `security find-generic-password -s elevenlabs-api-key -w >/dev/null && echo rangée`, puis dis en 1 ligne : « Clé rangée dans le trousseau de ton Mac, jamais dans un fichier. »
 Plus tard : « Quand tu veux, écris : range ma clé ElevenLabs. » (même déroulé).
