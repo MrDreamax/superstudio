@@ -13,6 +13,9 @@ MOD = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
 K, LO, HI = 0.41, 1100, 1340
 
 
+MENTON = None
+
+
 def by_face():
     import mediapipe as mp
     from mediapipe.tasks.python import vision, BaseOptions
@@ -28,6 +31,8 @@ def by_face():
             L = r.face_landmarks[0]
             chin.append(L[152].y * 1920); face.append((L[152].y - L[10].y) * 1920)
     if len(chin) < 0.3 * len(fr): return None
+    global MENTON
+    MENTON = np.percentile(chin, 90)
     y = np.percentile(chin, 90) + K * np.median(face)
     print(f"sous-titres sous le col : menton {np.percentile(chin, 90):.0f} + 0,41 x visage {np.median(face):.0f} = {y:.0f}px", file=sys.stderr)
     return y
@@ -51,6 +56,13 @@ try:
 except Exception as e:
     print(f"détection visage impossible ({e})", file=sys.stderr); y = None
 if y is None: y = by_contrast()
-y = int(round(min(max(y, LO), HI)))
-if y == HI: print("attention : visage très proche, le texte peut toucher le cou (bloqué à 1340 pour rester hors de la zone de l'appli)", file=sys.stderr)
+# « jamais sur la bouche ou le menton, toujours en dessous ; au col si possible, sinon au niveau du cou, pas trop bas ».
+# Visage trop proche (col sous 1340) : 20 px sous le menton le plus bas, plafond 1560 ; build.mjs permet alors aux sous-titres
+# de passer sous 1480 (subcou.json, lu par zones.mjs).
+MENTON = globals().get("MENTON")
+if y > HI and MENTON and MENTON + 20 > HI:
+    y = int(round(min(MENTON + 20, 1560)))
+    print(f"visage très proche : sous-titres au cou, 20 px sous le menton ({MENTON:.0f}) = {y}px", file=sys.stderr)
+else:
+    y = int(round(min(max(y, LO), HI)))
 print(y)

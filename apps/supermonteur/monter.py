@@ -683,7 +683,15 @@ def monte(D):
             verrou.close()
         zones = "16:9 : sous-titres en bas de l'image"
     elif recette == "plan.json":
-        monte_sh(D, D, lambda t: etat(D, etape=t))
+        try:
+            monte_sh(D, D, lambda t: etat(D, etape=t))
+        except RuntimeError as x:
+            # Le Gardien
+            # ne doit plus arrêter un montage pour une simple coupe. Coupe trop courte = réparée seule (plages recollées), 1 essai.
+            if not COUPES.search(str(x)) or not reparer_coupes(D): raise
+            etat(D, etape="Je recolle 2 coupes trop courtes et je relance…")
+            redecoupe(D)
+            monte_sh(D, D, lambda t: etat(D, etape=t))
         # le Gardien final vient de passer zones.mjs ; son verdict est repris (avant : 2e passage, Chrome relancé pour rien)
         g = next((x for x in (lire(os.path.join(D, "gardien.json"), []) or []) if x.get("controle") == "Zones mortes Insta"), None)
         if g:
@@ -1012,6 +1020,60 @@ def plan_auto(D, rid, style, cases, words):
     plan["_note"] = (f"{datetime.date.today():%d/%m} SuperMonteur v1 auto, style {style} : dernière prise gardée, titre = 1re phrase, "
                      "musique MUSIQUE. Claude enrichit (mots forts, cartons, animations) au tour des retours.")
     return plan
+
+
+COUPES = re.compile(r"Micro-coupes|micro-coupure|Plans ≥ 2 s|Silences entendus")
+
+
+def reparer_coupes(D, minshot=2.0):
+    """cut.segments.json (secondes du RUSH) -> plages.json sans bout < 0,6 s, sans coupe qui gagne < 0,15 s, sans plan < 2 s
+    (un plan trop court est recollé à son voisin le plus proche, mots du trou remis : drop.json les libère). True si changé."""
+    segs = [list(x) for x in lire(os.path.join(D, "cut.segments.json"), []) or []]
+    if len(segs) < 2: return False
+    avant = [list(x) for x in segs]
+    segs = [x for x in segs if x[1] - x[0] >= 0.1]
+    W = lire(os.path.join(D, "words.rush.json"), []) or []
+    W = W if isinstance(W, list) else W.get("words", [])
+    # silence > 0,5 s entre deux mots d'un même plan (Gardien « Silences entendus ») : coupé, 0,12 s gardé après le mot, 0,08 s avant
+    coupe = []
+    for a, b in segs:
+        mots = [w for w in W if a <= (w["start"] + w["end"]) / 2 <= b]
+        cur = a
+        for w1, w2 in zip(mots, mots[1:]):
+            # coupé seulement si les 2 morceaux restent des plans d'au moins 2 s (sinon on recréerait un plan court)
+            if w2["start"] - w1["end"] > 0.5 and w1["end"] + 0.12 - cur >= minshot and b - (w2["start"] - 0.08) >= minshot:
+                coupe.append([cur, round(w1["end"] + 0.12, 3)]); cur = round(w2["start"] - 0.08, 3)
+        coupe.append([cur, b])
+    segs = coupe
+    fin = lambda t: (t or "").rstrip(" »\"'").endswith((".", "?", "!", "…", ":", ","))
+    def entiere(a, b):   # phrase entière (règle du Gardien) : un plan court qui la contient passe
+        dans = [k for k, w in enumerate(W) if a - 0.05 <= (w["start"] + w["end"]) / 2 <= b + 0.05]
+        avant = [w for w in W if (w["start"] + w["end"]) / 2 < a - 0.05 and any(x - 0.02 <= (w["start"] + w["end"]) / 2 <= y + 0.02 for x, y in m)]
+        txt = lambda w: w.get("text", w.get("word"))
+        return bool(dans) and b - a >= 0.6 and (not avant or fin(txt(avant[-1]))) and fin(txt(W[dans[-1]]))   # mot d'avant = dernier mot GARDÉ
+    m = [segs[0]]
+    for a, b in segs[1:]:
+        if a - m[-1][1] < 0.15 or b - a < 0.6: m[-1][1] = max(m[-1][1], b)
+        else: m.append([a, b])
+    k = 0
+    while k < len(m) and len(m) > 1:
+        a, b = m[k]
+        if b - a >= minshot or entiere(a, b): k += 1; continue
+        g_av = a - m[k - 1][1] if k > 0 else 1e9
+        g_ap = m[k + 1][0] - b if k + 1 < len(m) else 1e9
+        if g_av <= g_ap: m[k - 1][1] = b; del m[k]; k = max(k - 1, 0)
+        else: m[k + 1][0] = a; del m[k]
+    if m == avant: return False
+    dedans = lambda i: any(a - 0.02 <= (W[i]["start"] + W[i]["end"]) / 2 <= b + 0.02 for a, b in m)
+    drop = lire(os.path.join(D, "drop.json"), []) or []
+    if os.path.exists(os.path.join(D, "drop.json")): shutil.copy2(os.path.join(D, "drop.json"), os.path.join(D, "drop.avant.json"))
+    garde = []
+    for i, j in drop:
+        bloc = [x for x in range(i, j + 1) if x < len(W) and not dedans(x)]
+        garde += [[x, x] for x in bloc]
+    ecrire(os.path.join(D, "drop.json"), garde)
+    ecrire(os.path.join(D, "plages.json"), [[round(a, 3), round(b, 3)] for a, b in m])
+    return True
 
 
 def redecoupe(D):

@@ -13,7 +13,7 @@
 // au-dessus de 270 px (14 %, Meta Ads Guide Reels), à moins de 65 px des bords (6 %), sous 1480 px (pseudo + légende),
 // ni à droite des sous-titres là où sont les boutons (sous-titres entre 120 et 960 px). Fonds et décors peuvent déborder.
 // Contrôle après chaque montage : node scripts/zones.mjs <dossier> (0 élément attendu).
-import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync, statSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync, statSync, unlinkSync } from "node:fs";
 import { dirname, join, resolve, isAbsolute, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
@@ -211,7 +211,11 @@ if (SUBY == null) {
 }
 // zones mortes Insta : encre d'un sous-titre 52 px = de +8 à +53 px sous son haut ; mot fort serif 132 px = de +16 à +143 px
 // (jambages g, p, j compris), mesuré au navigateur. Rien sous 1480 px, rien au-dessus de 270 px.
-const SUB_MAX = 1480 - Math.round(53 * SUBSIZE / 52), KW = plan.kwSize || 132, EMW = {};
+// Visage trop proche : « jamais sur la bouche ou le menton, au niveau du cou » : plan.subCou = bas permis des sous-titres (px),
+// au-delà de la zone de l'appli ; seuls les sous-titres en profitent.
+const SUBCOU = plan.subCou || (SUBY > 1427 ? Math.min(SUBY + 70, 1630) : 0);
+try { if (SUBCOU) writeFileSync("subcou.json", JSON.stringify({ y: SUBCOU })); else if (existsSync("subcou.json")) unlinkSync("subcou.json"); } catch {}
+const SUB_MAX = (SUBCOU || 1480) - Math.round(53 * SUBSIZE / 52), KW = plan.kwSize || 132, EMW = {};
 // (RUSH, Gardien « zones mortes » : « personal » en mot fort à 1484 px) : les lignes se comptaient sur le SEUL mot fort ;
 // les mots normaux du même sous-titre (« conçu ta ») le poussaient sur une 2e ligne, 4 px dans la zone morte. On mesure tout le
 // sous-titre (mot fort en serif 132 px + mots normaux dans la police des sous-titres) et le mot fort est supposé sur la dernière ligne.

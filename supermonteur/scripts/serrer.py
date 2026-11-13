@@ -92,6 +92,25 @@ for k in range(len(W) - 1):
     retire = [r for r in retire if r not in dedans] + [(round(a, 3), round(b, 3))]
     coupes = autres + [a]
 retire.sort()
+# Gardien « micro-coupe 0,02 s » : un petit bruit au milieu d'un blanc de raccord le coupait en deux
+# blancs retirés séparément, et laissait un îlot d'image de 0,02 s entre les deux. Deux retraits séparés de < 0,3 s sans mot
+# entre eux = un seul retrait.
+_fus = []
+for r in retire:
+    if _fus and r[0] - _fus[-1][1] < 0.3 and not any(_fus[-1][1] <= w["start"] < r[0] for w in W):
+        _fus[-1] = (_fus[-1][0], max(_fus[-1][1], r[1]))
+    else:
+        _fus.append(tuple(r))
+retire = _fus
+# Même cas, 2e forme : le dérush colle la fin d'une plage 0,1 s après le mot (filet), serrer retire le blanc juste avant le raccord
+# et laisse 0,02 s d'image seule avant ce raccord. Un bout < 0,6 s sans mot entre un retrait et un raccord = retiré avec.
+_r2 = []
+for a, b in retire:
+    for j in joints:
+        if b < j < b + 0.6 and not any(b <= w["start"] < j for w in W): b = j
+        if a - 0.6 < j < a and not any(j < w["end"] <= a for w in W): a = j
+    _r2.append((round(a, 3), round(b, 3)))
+retire = _r2
 
 # fin : la voix s'éteint, on garde 0,5 s de souffle (règle fin-basse ; test client 13/11 : fin coupée 0,1 s après le
 # dernier mot = sec). Calé sur la fin du dernier mot OU de la voix, la plus tardive. Le fondu court est fait par mix.py.
