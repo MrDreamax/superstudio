@@ -151,7 +151,7 @@ def duck(sfx):
 # Voix : config "voice_lufs" (défaut -14) ou plan "voice_lufs". Experts (Curtis Judd, Boykin, EBU) : -16 pour la parole sur mobile.
 # La musique et les SFX suivent la voix : l'équilibre validé par l'utilisateur (musique 17 dB sous une voix à -14) ne bouge pas.
 VOICE = plan.get("voice_lufs", CFG.get("voice_lufs", -14))
-TARGET = CFG.get("music_target_lufs", -29) + (VOICE + 14)
+TARGET = CFG.get("music_target_lufs", -35) + (VOICE + 14)
 SFXG = 10 ** ((VOICE + 14) / 20)
 for s_ in segs: s_.setdefault("lufs", s_.get("target", TARGET) + 5)   # point de départ, recalé par la mesure
 

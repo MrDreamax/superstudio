@@ -84,7 +84,7 @@
     "sheet"
   ],
   "sfx_gap": 1.5,
-  "music_target_lufs": -29,
+  "music_target_lufs": -35,
   "voice_lufs": -14,
   "voice_ref": "",
   "_voice_ref": "Facultatif : 30-40 s de la voix du client au micro (wav) = référence d'EQ de voix_propre.py.",
