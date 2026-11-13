@@ -13,3 +13,4 @@ Dans SKILL.md, « l’utilisateur » = le goût de la maison (la règle s'appliq
 - **Chiffres et preuves** = vrais résultats du client, jamais inventés. Jamais de promesse de revenu.
 - **Avant de livrer** : planche d'images aux instants clés, zones mortes, -14 LUFS, la vidéo commence à 0 (pas d'écran noir).
 - **Plans stables** : jamais de B-roll qui saccade. Choisir le moment du rush le plus stable (à-coups, pas le mouvement total), mesurer le plan rendu, sinon prendre un autre rush du même sujet ; garder la version avec ou sans stabilisation qui bouge le moins.
+- **Voix off + rushs** : transcrire TOUS les rushs qui ont du son avant de monter. Mêler à la voix off la présentation face caméra, 2 ou 3 phrases d'interview (prénom en étiquette quand on la voit parler) et les réactions en direct. Tenir l'interview 4 à 8 s avec du B-roll rapide autour, musique environ 10 dB sous la voix, carton logo de la marque à la fin si on l'a. Jamais un diaporama sur voix off seule.
