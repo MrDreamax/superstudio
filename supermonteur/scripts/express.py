@@ -201,6 +201,17 @@ def fond_charge(t0, t1, box):
     k0 = min(int(t0 * FOND_FPS), len(FOND) - 1); k1 = min(max(k0 + 1, int(t1 * FOND_FPS)), len(FOND))
     z = FOND[k0:k1, y0:max(y0 + 1, min(480, y1)), x0:max(x0 + 1, min(270, x1))].astype(np.float32)
     return bool(z.mean() > 150 or z.std() > 48)
+def part_chargee(t0, t1, box):   # part du temps où le fond derrière la boîte est clair ou chargé (0 à 1)
+    if FOND is None or not len(FOND) or not box or t1 <= t0: return 0.0
+    x0, y0, x1, y1 = [max(0, v // 4) for v in box]
+    k0 = min(int(t0 * FOND_FPS), len(FOND) - 1); k1 = min(max(k0 + 1, int(t1 * FOND_FPS)), len(FOND))
+    z = FOND[k0:k1, y0:max(y0 + 1, min(480, y1)), x0:max(x0 + 1, min(270, x1))].astype(np.float32)
+    m = (z.reshape(len(z), -1).mean(1) > 150) | (z.reshape(len(z), -1).std(1) > 48)
+    return float(m.mean()) if len(m) else 0.0
+# Règle Cyril 13/11 : l'ombre ne s'allume ni ne s'éteint pendant la vidéo (ça se voit et ça perturbe).
+# On décide UNE fois pour toute la vidéo : contraste suffisant = ombre légère de la DA seule ; sinon voile constant du début à la fin.
+SEUIL_VOILE = 0.25
+_DECISION = {}
 def boite(layer):
     a = layer.split()[3].point(lambda v: 255 if v > 120 else 0)
     return a.getbbox()
@@ -235,8 +246,13 @@ for i, (a, b) in enumerate(zip(bornes, bornes[1:])):
     tit = bool(title and title["a"] <= mid < title["b"])
     # le titre (4 flous sur tout l'écran) se dessine UNE fois, puis chaque état part d'une copie
     if tit and not TITRE_SEUL: TITRE_SEUL.append(Image.new("RGBA", (W, H), (0, 0, 0, 0))); calque_titre(TITRE_SEUL[0]); TITRE_SEUL.append(boite(TITRE_SEUL[0]))
-    vt = bool(tit and fond_charge(a, b, TITRE_SEUL[1]))
-    vs = tuple(fond_charge(a, b, boite_sous_titre(c[2], c[3])) for c in on)
+    if tit and "titre" not in _DECISION:
+        _DECISION["titre"] = part_chargee(title["a"], min(title["b"], dur), TITRE_SEUL[1]) >= SEUIL_VOILE
+    if "sous" not in _DECISION:
+        tot = sum(b_ - a_ for a_, b_, *_ in caps) or 1.0
+        _DECISION["sous"] = sum(part_chargee(a_, b_, boite_sous_titre(r_, t_)) * (b_ - a_) for a_, b_, r_, t_, *_ in caps) / tot >= SEUIL_VOILE
+    vt = bool(tit and _DECISION.get("titre"))
+    vs = tuple(bool(_DECISION["sous"]) for c in on)
     cle = (tuple((c[2], c[3]) for c in on), tit, vt, vs)
     if cle not in vu:
         img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
@@ -250,7 +266,7 @@ for i, (a, b) in enumerate(zip(bornes, bornes[1:])):
 with open("express/calques.txt", "w") as f:
     for p, d_ in liste: f.write(f"file '{os.path.basename(p)}'\nduration {d_:.4f}\n")
     f.write(f"file '{os.path.basename(liste[-1][0])}'\n")
-print(f"{len(vu)} images de calque pour {len(liste)} moments · voile de lisibilité : titre {VOILES_POSES[0]}, sous-titres {VOILES_POSES[1]} états")
+print(f"{len(vu)} images de calque pour {len(liste)} moments · voile constant : titre {'oui' if _DECISION.get('titre') else 'non'}, sous-titres {'oui' if _DECISION.get('sous') else 'non'}")
 
 etape("Rendu express (puce vidéo du Mac)")
 os.makedirs("renders", exist_ok=True)
