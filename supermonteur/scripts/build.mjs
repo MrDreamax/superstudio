@@ -955,10 +955,13 @@ groups = groups.reduce((acc, gr, gi, all) => {
 }, []);
 // (RUSH, débit 213 mots/min, blocs de 0,14 s illisibles) : plan.subMin = durée mini d'un bloc (s), sinon il rejoint son voisin
 // (4 mots max, plan.subLarge + 2 caractères max, jamais par-dessus une fin de phrase).
-if (plan.subMin) for (let g = 0; g < groups.length; g++) {
+// (test client 13/11, blocs « ça » et « Et on a » qui clignotent) : 0,6 s par défaut (règle oeil-grille), plan.subMin pour changer.
+const SUBMIN = plan.subMin ?? 0.6;
+if (SUBMIN) for (let g = 0; g < groups.length; g++) {
   const gr = groups[g], next = groups[g + 1], prev = groups[g - 1];
-  if ((next ? W[next[0]].t : W[gr.at(-1)].e + 0.3) - W[gr[0]].t >= plan.subMin) continue;
-  const taille = (x, y) => !x || !y || /[.!?]$/.test(W[x.at(-1)].text) || x.length + y.length > 4 ? Infinity : W.slice(x[0], y.at(-1) + 1).map(w => w.text).join(" ").length;
+  if ((next ? W[next[0]].t : W[gr.at(-1)].e + 0.3) - W[gr[0]].t >= SUBMIN) continue;
+  // 6 mots max (avant 4 : « Il y a » + « pas mal » restait un flash de 0,28 s, test client 13/11) ; la largeur reste la vraie limite
+  const taille = (x, y) => !x || !y || /[.!?]$/.test(W[x.at(-1)].text) || x.length + y.length > 6 ? Infinity : W.slice(x[0], y.at(-1) + 1).map(w => w.text).join(" ").length;
   const tn = taille(gr, next), tp = taille(prev, gr);
   if (Math.min(tn, tp) > SUBLARGE + 2) continue;
   if (tn <= tp) { gr.push(...next); groups.splice(g + 1, 1); g--; } else { prev.push(...gr); groups.splice(g, 1); g -= 2; }

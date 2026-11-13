@@ -74,9 +74,11 @@ for s0, s1 in blancs:
         coupes.append(a)
     retire.append((round(a, 3), round(b, 3)))
 
-# fin : la voix s'éteint, on garde 0,15 s (sinon le Gardien voit un « trou de son » dans la queue muette, RUSH v1)
+# fin : la voix s'éteint, on garde 0,5 s de souffle (règle fin-basse ; test client 13/11 : fin coupée 0,1 s après le
+# dernier mot = sec). Calé sur la fin du dernier mot OU de la voix, la plus tardive. Le fondu court est fait par mix.py.
 on = np.where(~calme)[0]
-fin = min(total, on[-1] / 100 + 0.15) if len(on) else total
+_dern = max([w.get("end", 0) for w in json.load(open(os.path.join(D, "words.json"))).get("words", [])] or [0]) if os.path.exists(os.path.join(D, "words.json")) else 0
+fin = min(total, max(on[-1] / 100 if len(on) else 0, _dern) + 0.5) if (len(on) or _dern) else total
 if fin < total - 0.1: retire.append((round(fin, 3), round(total, 3)))
 if not retire:
     print("serrer : rien à resserrer"); sys.exit(0)

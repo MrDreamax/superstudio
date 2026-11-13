@@ -157,6 +157,15 @@ def preparer_prises(D):
             ecrire(os.path.join(D, "drop.prepare.json"), {"cle": cle_mots(D), "drop": prises_par_claude(D, W) or drop_auto(W)})
         except Exception as x:
             log_erreur(f"SuperMonteur {os.path.basename(D)} : prises pas préparées à l'écran 0 : {str(x)[:200]}")
+            return
+    # le titre de Claude a son propre verrou : le dérush démarre sans l'attendre, le plan l'attend (déjà fini en pratique)
+    with open(os.path.join(D, ".titre.lock"), "w") as v:
+        fcntl.flock(v, fcntl.LOCK_EX)
+        try:
+            if not os.path.exists(os.path.join(D, "titre.claude.json")):
+                titre_par_claude(D, W)
+        except Exception as x:
+            log_erreur(f"SuperMonteur {os.path.basename(D)} : titre de Claude pas préparé : {str(x)[:200]}")
 
 
 # ------------------------------------------------------------------------------------------------- le dérush automatique
@@ -179,6 +188,32 @@ def mots_doubles(words, drop):
         x, y = norm(words[i]["text"]), norm(words[i + 1]["text"])
         if not x or x != y or x in DOUBLES_OK or i in deja or i + 1 in deja: continue
         if words[i + 1]["start"] - words[i]["end"] < 1.5: res.append([i, i])
+    return res
+
+
+# (test client 13/11 : « c'est là au niveau », « Là, il y a », « Donc là, il se fait ») : le « là » de remplissage saute,
+# comme un « euh ». Règle générale, pas un cas : « là » seul (pas « là-bas », « celui-là »), jamais en fin de phrase
+# (« je suis là. »), jamais après « par / de / jusque / ici » ni avant « que / qu' / où / -bas » (sens de lieu ou d'insistance).
+TIC_AVANT = set("donc alors et bon bah ben mais bref voila puis c'est".split())   # comparés après norm() (sans accents)
+TIC_JAMAIS_AVANT = set("par de d jusque jusqu ici là".split())
+TIC_JAMAIS_APRES = set("que qu où ou bas dedans dessus dessous".split())
+def tics(words, drop):
+    deja = {i for a, b in (drop or []) for i in range(a, b + 1)}
+    res = []
+    for i, w in enumerate(words):
+        brut = w["text"].strip()
+        if i in deja or re.sub(r"[^\wà]", "", brut.lower()) != "là" or brut.rstrip(" »\"'").endswith((".", "!", "?", "…")) or i == len(words) - 1:
+            continue
+        av = norm(words[i - 1]["text"]).replace("’", "'") if i else ""
+        ap = norm(words[i + 1]["text"]).replace("’", "'")
+        if av.strip("'") in TIC_JAMAIS_AVANT or ap.split("'")[0] in TIC_JAMAIS_APRES: continue
+        virgule = brut.rstrip(" »\"'").endswith(",")
+        pause = words[i + 1]["start"] - w["end"] >= 0.25
+        debut = i == 0 or words[i - 1]["text"].strip().rstrip(" »\"'")[-1:] in ".?!…,"
+        # coupe propre seulement : un côté au moins a un vrai blanc (≥ 0,2 s). Collé des deux côtés (« Là, il » en 0,06 s),
+        # la coupe mangerait l'attaque du mot suivant (Gardien « mot coupé », test client 13/11) : on le garde.
+        net = max(w["start"] - (words[i - 1]["end"] if i else 0), words[i + 1]["start"] - w["end"]) >= 0.2
+        if net and (virgule or av in TIC_AVANT or pause or debut): res.append([i, i])
     return res
 
 
@@ -412,6 +447,40 @@ def prises_par_claude(D, words):
     # les « euh » seuls sautent aussi dans les prises gardées
     drop += [[i, i] for i in sorted(garde) if norm(words[i]["text"]) in {"euh", "heu", "hum", "euhm", "bah"}]
     return sorted(drop)
+
+
+def titre_par_claude(D, words):
+    """(test client 13/11, juge : titre plat = la 1re phrase recopiée) : Claude écrit le VRAI hook à partir du sens du rush.
+    Préparé pendant que la personne décrit son montage (aucune attente en plus). -> titre.claude.json, sinon titre_auto."""
+    txt = " ".join(w["text"] for w in words)[:3000]
+    prompt = ("Voici ce que dit une personne face caméra dans un reel :\n" + txt + "\n\n"
+              "Écris le TITRE affiché en haut de la vidéo : un hook court qui donne envie de regarder, fidèle au sens de la vidéo, "
+              "dans les mots simples de la personne (tutoiement si elle tutoie). Pas de promesse inventée, pas d'emoji, pas de "
+              "ponctuation sauf « ? » si c'est une question, pas de guillemets. 1 ligne de 24 caractères max si ça tient, "
+              "sinon 2 lignes de 24 caractères max chacune (compte les caractères : une ligne plus longue est jetée). "
+              "Le hook dit le bénéfice ou la nouveauté la plus forte de la vidéo, pas son sujet en général. "
+              "Réponds SEULEMENT par la ou les lignes, une par ligne, rien d'autre.")
+    try:
+        sys.path.insert(0, os.path.dirname(APP))
+        import ouvrier_claude
+        ok, sortie = ouvrier_claude.lancer(prompt, D, ["Read"], delai=120, modele="sonnet")
+    except Exception:
+        return None
+    if not ok: return None
+    L = [re.sub(r"[\"«»“”.,:;!]", "", l).strip() for l in (sortie or "").strip().splitlines() if l.strip()][-2:]
+    L = [l for l in L if 3 <= len(l) <= 28]
+    if not L: return None
+    T = {"l1": L[0], "l2": L[1] if len(L) > 1 else ""}
+    ecrire(os.path.join(D, "titre.claude.json"), dict(T, cle=cle_mots(D)))
+    return T
+
+
+def titre_choisi(D, words):
+    """Le titre de Claude s'il a été préparé pour CES mots, sinon le titre automatique (secours)."""
+    t = lire(os.path.join(D, "titre.claude.json"), {}) or {}
+    if t.get("l1") and t.get("cle") == cle_mots(D):
+        return {"l1": t["l1"], "l2": t.get("l2", "")}
+    return titre_auto(words)
 
 
 def titre_auto(words):
@@ -692,6 +761,7 @@ def monter(D):
             etat(D, etape="Je dérushe : dernière prise gardée, blancs coupés…")
             drop = prep["drop"] if prep.get("cle") == cle_mots(D) and "drop" in prep else (prises_par_claude(D, W) or drop_auto(W))
         drop = drop + mots_doubles(W, drop)
+        drop = drop + tics(W, drop)
         ecrire(os.path.join(D, "drop.json"), drop)
         # Minimaliste = cadre d'origine (styles/raw.md : le cadre serré met les cheveux dans le titre) ; sinon cadre.py
         st = json.loads(subprocess.check_output(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_streams", "-of", "json", rush]))["streams"][0]
@@ -734,6 +804,12 @@ def suite(D, ref=None):
     rid, style, cases = e["id"], e.get("style", "Minimaliste"), e.get("cases", {})
     try:
         etat(D, statut="montage", etape="J'écris le plan : titre, sous-titres, musique…")
+        if cases.get("titre", True):
+            with open(os.path.join(D, ".titre.lock"), "w") as v:   # attend le titre préparé pendant le dérush
+                fcntl.flock(v, fcntl.LOCK_EX)
+                if not os.path.exists(os.path.join(D, "titre.claude.json")):
+                    try: titre_par_claude(D, lire(os.path.join(D, "words.rush.json"))["words"])
+                    except Exception: pass   # secours : titre_auto
         plan = plan_auto(D, rid, style, cases, lire(os.path.join(D, "words.json"))["words"])
         ecrire(os.path.join(D, "plan.json"), plan)
         if ref is None:
@@ -872,7 +948,7 @@ def plan_auto(D, rid, style, cases, words):
             "cases": cases, "style_supermonteur": style}
     if style == "Dynamique":   # (RUSH v1 cam fixe : « transforme en dynamique, ajoute des zoom/dézoom ») : zooms auto, rythme nerveux
         plan.update({"zoom": True, "zoomGap": [2.5, 4]})
-    T = titre_auto(words) if cases.get("titre", True) else None
+    T = titre_choisi(D, words) if cases.get("titre", True) else None
     if T:
         # Minimaliste : le titre reste toute la vidéo ; les autres : pendant le hook (SKILL : title 0-4 s)
         T.update({"start": 0, "end": 999 if style == "Minimaliste" else 4.0, "top": 250})

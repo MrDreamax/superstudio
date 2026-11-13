@@ -158,6 +158,8 @@ for s_ in segs: s_.setdefault("lufs", s_.get("target", TARGET) + 5)   # point de
 def graph():
     inp = ["-i", video, "-i", voice]
     f = [f"[1:a]highpass=f=80,acompressor=threshold=-20dB:ratio=3:attack=5:release=80,loudnorm=I={VOICE}:TP=-1.5:LRA=7,"
+         # (test client 13/11, fin sèche) : fondu court de la voix sur la dernière 0,35 s, la phrase retombe
+         f"afade=t=out:st={max(0, dur - 0.35):.3f}:d=0.35,"
          "aformat=sample_rates=48000:channel_layouts=stereo,asplit=2[vo][key]"]
     mix = ["[vo]"]
     n = 2
