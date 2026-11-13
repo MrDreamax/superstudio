@@ -172,8 +172,8 @@ Ce qu'on utilise, et à quoi ça sert. Claude t'aide à tout installer : dis « 
 
 ### Ceux qu'il te faut
 - **Claude** : ton assistant. C'est lui qui fait tout : tu lui parles dans le chat. Il faut l'abonnement Pro (environ 20 € par mois).
-- **Blotato** : il publie tes vidéos sur tous tes réseaux à ta place, et envoie ton cadeau en message privé quand quelqu'un écrit ton mot en commentaire (environ 29 € par mois).
-- **ElevenLabs, offre Starter** : il écoute ta vidéo et écrit tes sous-titres sans faute (environ 6 € par mois, largement assez).
+- **Blotato** : il publie tes vidéos sur tous tes réseaux à ta place, et envoie ton cadeau en message privé quand quelqu'un écrit ton mot en commentaire (environ 26 € par mois).
+- **ElevenLabs, offre Starter** : il écoute ta vidéo et écrit tes sous-titres sans faute (environ 5 € par mois, largement assez).
 - **Google Chrome** : ton navigateur internet. Claude s'en sert pour fabriquer tes carrousels et tes PDF. Gratuit.
 - **Le pack de musiques** : les musiques de fond de tes vidéos. Le lien t'est envoyé à part : mets le fichier dans Téléchargements, Claude le range tout seul.
 
