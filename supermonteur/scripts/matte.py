@@ -15,12 +15,12 @@ model = os.path.expanduser("~/.cache/supermonteur/rvm_mobilenetv3_fp32.onnx")
 sess = ort.InferenceSession(model, providers=["CPUExecutionProvider"])
 W, H, FPS, WARM = 1080, 1920, 30, 0.5
 src = os.path.join(d, plan["cam"])
-#  (RUSH) : 3 détourages en 1080x1920 + 10 vidéos = le rendu HyperFrames calait vers l'image 900 (Chrome ne répond
+# 3 détourages en 1080x1920 + 10 vidéos = le rendu HyperFrames calait vers l'image 900 (Chrome ne répond
 # plus, Mac 8 Go). Écrits en 720x1280 (le navigateur les remet à 1080x1920 : bords doux identiques à l'œil), le rendu passe.
 
 # vidéo avec titre-question : pas de mot géant (règle), donc rien à détourer pour eux
 jobs = [(n, f"fg_{k}.webm") for k, n in enumerate(plan.get("numbers", []))] + [(w, f"fgw_{k}.webm") for k, w in enumerate(plan.get("bigwords", []))]   # mots géants permis avec un titre
-#  cockpit : motion design « chiffres » (1-2-3 géants derrière la tête) = la tête passe devant, comme un mot géant
+# cockpit : motion design « chiffres » (1-2-3 géants derrière la tête) = la tête passe devant, comme un mot géant
 jobs += [(m, f"fgm_{k}.webm") for k, m in enumerate(plan.get("motions", [])) if m.get("kind") == "chiffres"]
 for n, name in jobs:
     a, b = max(0.0, n["start"] - 0.1), n["end"] + 0.05

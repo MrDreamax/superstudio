@@ -24,7 +24,7 @@ except SansElevenLabs as e:   # une seule ligne claire, c'est elle que SuperMont
     print(e, file=sys.stderr)
     sys.exit(3)
 print(f"transcription : {moteur}")
-#  (2 fois dans le même reel) : ElevenLabs colle « » “ ”
+# (2 fois dans le même reel) : ElevenLabs colle « » “ ”
 # aux mots (« dit:« »). Jamais de guillemet dans les sous-titres : retirés à la source, ponctuation française « : » remise.
 import re
 for w in words:

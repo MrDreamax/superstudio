@@ -34,7 +34,7 @@ def trouver_claude():
 def lancer(prompt, dossier, outils, delai=900, modele="opus", autres_dossiers=(), attendre_son_tour=True):
     """Lance `claude -p` dans le dossier de l'appli, avec seulement les outils donnés. Renvoie (ok, fin de la sortie)."""
     exe = trouver_claude()
-    if not exe:  #  (juge 1.6) : noté aussi dans _claude.log, l'écran y renvoie
+    if not exe:  # (juge 1.6) : noté aussi dans _claude.log, l'écran y renvoie
         sortie = "Je ne trouve pas Claude Code sur ce Mac : installe l'appli Claude (claude.ai/download), onglet Code."
         with open(os.path.join(dossier, "_claude.log"), "a", encoding="utf-8") as f:
             f.write("\n===== %s (ÉCHEC)\n%s\n" % (time.strftime("%Y-%m-%d %H:%M:%S"), sortie))

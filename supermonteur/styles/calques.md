@@ -1,8 +1,6 @@
 # Style Calques : mots derrière la tête, un style par phrase
 
 Reprise du reel de @viashaan (recette : Brain/02-Formations/viashaan-sous-titres-ia-derriere-la-tete.md).
-Premier usage : un reel FR ((exemple retiré)).
-Échantillon de test : (exemple retiré) (rush RUSH, 33 s, 10 styles).
 
 ## Comment ça marche
 Chaque image = une pile : décor, mots DERRIÈRE toi, toi (détouré), mots DEVANT, lueurs.
@@ -11,7 +9,7 @@ Une caméra virtuelle recadre chaque phrase (zoom, poussée lente, à-coup au d�
 ## Lancer
 1. Détourage de tout l'extrait (une fois, ~1 min pour 33 s) :
    `python3 styles/calques/scripts/detoure.py clip.mp4 DEBUT FIN masque.mp4`
-2. Écrire `plan.json` (modèle : (exemple retiré)) : clip, mots (ElevenLabs), masque, t0, t1,
+2. Écrire `plan.json` : clip, mots (ElevenLabs), masque, t0, t1,
    et une scène par phrase `{de, a, style, mot, zoom, tete_a}`.
 3. Réglage rapide en images : `python3 styles/calques/scripts/calques.py plan.json --images 1.6,5.0,...`
 4. Rendu : `python3 styles/calques/scripts/calques.py plan.json` -> vidéo + voix + bruitages (dossier `sfx/` à côté du plan).
@@ -46,7 +44,7 @@ Une caméra virtuelle recadre chaque phrase (zoom, poussée lente, à-coup au d�
 « Plus lisible » plutôt que « plus caché » : la tête couvre au plus ~50 % de la hauteur du mot géant (geant couvre=0.5, serif 0.45, or posé sur le crâne). Ne pas enfoncer plus sans qu'il le demande.
 
 ## Décors Beeble
-`scripts/beeble.py beeble.json` (modèle : (exemple retiré)) : 1 image de pièce par décor puis chaque plan en vidéo (masque custom = detoure.py), envoyés en parallèle, cache dans beeble/ (relancer ne repaie pas). Clé : trousseau `beeble-api-key`. **720p par défaut (choix de l’utilisateur)** = 0,10 $ / s ; `"resolution": 1080` dans beeble.json = 0,30 $ / s (rien d'autre ne baisse le prix), 8 s max par plan, vidéo et masque coupés à l'IMAGE près. Puis refaire detoure.py sur clip_beeble.mp4.
+`scripts/beeble.py beeble.json` : 1 image de pièce par décor puis chaque plan en vidéo (masque custom = detoure.py), envoyés en parallèle, cache dans beeble/ (relancer ne repaie pas). Clé : trousseau `beeble-api-key`. **720p par défaut (choix de l’utilisateur)** = 0,10 $ / s ; `"resolution": 1080` dans beeble.json = 0,30 $ / s (rien d'autre ne baisse le prix), 8 s max par plan, vidéo et masque coupés à l'IMAGE près. Puis refaire detoure.py sur clip_beeble.mp4.
 Appris : prompts « night time, dim moody… » sinon la pièce sort en plein jour ; un décor PAR phrase (juge : 10 s dans la même pièce = monotone) ; styles ajoutés « dit » (chaque bloc prend le style qu'il nomme) et « fleches » (zone de danger Insta + flèches vers les boutons) ; textes 80-90 px minimum (juge : illisible sur téléphone en dessous).
 
 ## Retours de l’utilisateur sur la v1 -> styles fidèles à l'original

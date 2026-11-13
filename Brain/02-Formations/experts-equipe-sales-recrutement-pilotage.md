@@ -14,13 +14,13 @@ sujets: [closing, business]
 - Tout vient des US (B2B, info-business) : marqué « à transposer ». Droit du travail FR : à faire valider, pas de conseil juridique ici.
 
 Règle de ce fichier : sources primaires seulement (vidéo de l'expert qui parle). Format : [ID] = https://www.youtube.com/watch?v=ID puis [mm:ss]. Transcriptions automatiques, précision +-30 s. Le texte est de la paraphrase.
-, pas refait ici :  (déroulé du call),  (méthode de closing ; sa note dit que recrutement et KPI manquent),  (setter ~5 % à la vente, process anti no-show),  (chiffres), . Conseillers simulés (pas des sources) : , .
+Déjà couvert ailleurs : les fiches closing, setting et chiffres du Brain (02-Formations), pas refaites ici.
 
 ---
 
 ## 0) Experts retenus (preuves)
 - **Cole Gordon** (Closers.io, recrutement et formation de closers/setters). Dit : équipe de vente à 2,5 M$/mois de cash, méthode répliquée chez 700+ clients [-EixnIeWHq0] [01:35] ; 450+ équipes high ticket coachées [SPHi0KCmAL8] [06:36]. Pas de livre trouvé (cours 5h19. Conflit d'intérêt : il vend du recrutement. Vidéos lues : [SPHi0KCmAL8], [-EixnIeWHq0], [hobnnctH0aY], [oWYKaIULG9Q], [5uo9Aqsm6W0] (Cole parle au mastermind de Sam Ovens, ce n'est pas Sam Ovens), [3svp8fsqtwo], [87xSdKzf940].
-- **Alex Hormozi** (Acquisition.com, dit ~85 M$/an [AH_R5cZNFFc] [00:00]). Vidéos : [2lA_A8BGRRs], [bgmh7p1s7zs], [Lxp-e5NionA], [okA9Yt2KZuk] (équipe outbound, ses paliers), [StVqS0jD7Ls]. Livre cité : chapitre employés de $100M Leads [StVqS0jD7Ls] [131:52] (fiche : , non relue ici).
+- **Alex Hormozi** (Acquisition.com, dit ~85 M$/an [AH_R5cZNFFc] [00:00]). Vidéos : [2lA_A8BGRRs], [bgmh7p1s7zs], [Lxp-e5NionA], [okA9Yt2KZuk] (équipe outbound, ses paliers), [StVqS0jD7Ls]. Livre cité : chapitre employés de $100M Leads [StVqS0jD7Ls] [131:52].
 - **Dan Martell** (SaaS, son livre Buy Back Your Time) : [vN2-WfVDtzQ], [MbN4aWxEncY]. Peu de matière vente.
 - **Jeremy Haynes** (agence call funnels, dit 41 entreprises à 1 M$/mois [WEwwAvTY1B4] [00:00]) : seulement son modèle de coût dans [TebRrpcFens].
 - **Praticien FR « Closer Evolution »** (nom et résultats non vérifiés, vend son programme) : [jNvpHWv9oIo], [qnaopKRHiwM], [0X-T3Yw4iVA], [qq7jo56ylhU]. À prendre avec prudence, utile pour le contexte FR.

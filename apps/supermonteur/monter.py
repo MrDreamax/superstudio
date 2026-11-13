@@ -160,13 +160,13 @@ def preparer_prises(D):
 
 
 # ------------------------------------------------------------------------------------------------- le dérush automatique
-#  (RUSH, Claude à sa limite : le secours gardait la version anglaise lue de la référence et 20 prises ratées -> 2 min
+# (RUSH, Claude à sa limite : le secours gardait la version anglaise lue de la référence et 20 prises ratées -> 2 min
 # de reel, 3 mots coupés) : mots-outils qui disent la langue d'un morceau
 MOTS_EN = set("the you your is are it it's will of to and a an that this if so in into which be gonna don't make sure type".split())
 MOTS_FR = set("tu te ta ton le la les de des du que qui et si ça ce c'est est une un en pour à il je mon ma va vas t'as".split())
 
 
-#  (studio Super, « Pas le temps de filmer » : « en fait, faut Faut leur proposer » gardé, ni Claude ni le secours ne
+# (studio Super, « Pas le temps de filmer » : « en fait, faut Faut leur proposer » gardé, ni Claude ni le secours ne
 # voyaient le mot doublé) : un mot dit deux fois de suite (même mot, moins de 1,5 s entre les deux) = bégaiement, le 1er saute.
 # Jamais pour les doublons qui se disent en français (« nous nous », « vous vous », « très très », « non non »…).
 DOUBLES_OK = set("nous vous très tres non oui si ha haha bla hop allez vite trop beaucoup".split())
@@ -198,14 +198,14 @@ def drop_auto(words):
             if " ".join(norm(words[i]["text"]) for i in range(a2, min(a2 + 3, b2 + 1))) == tete:
                 morts |= set(range(a, b + 1))
                 break
-    #  (RUSH) : un morceau dans l'autre langue que le reel (version anglaise de la référence lue) saute
+    # Un morceau dans l'autre langue que le reel (version anglaise de la référence lue) saute
     lg = lambda a, b: (sum(x in MOTS_EN for x in mots(a, b)), sum(x in MOTS_FR for x in mots(a, b)))
     tot = [sum(x) for x in zip(*(lg(a, b) for a, b in F))] or [0, 0]
     autre = 0 if tot[1] >= tot[0] else 1   # langue minoritaire (0 = anglais)
     for a, b in F:
         L = lg(a, b)
         if L[autre] >= 2 and L[autre] > L[1 - autre]: morts |= set(range(a, b + 1))
-    #  (RUSH, RUSH) : dernière prise de chaque idée. Un morceau repris dans les 8 morceaux / 90 s suivants saute :
+    # Dernière prise de chaque idée. Un morceau repris dans les 8 morceaux / 90 s suivants saute :
     # même 1er mot et 60 % des mots dans l'ordre (« or ce que j'observe… » puis « Or de ce que j'observe… »), ou début de prise
     # court (10 mots max) pas fini (sans . ? !) qui repart pareil (« Si tu mets /flash, »), ou morceau contenu en entier dans un
     # suivant. Sinon, une phrase de 4 mots ou plus reprise dans un morceau suivant saute seule (« Autres codes. Et je t'envoie… »).
@@ -231,7 +231,7 @@ def drop_auto(words):
                 if pa >= a and pb <= b and len(ph) >= 4 and any(dans(ph, mots(c, d)) for c, d in suite):
                     morts |= set(range(pa, pb + 1))
     drop = [[i, i] for i in sorted(morts)]
-    #  (RUSH : Claude à sa limite d'usage -> ce repli, v1 bloquée par le Gardien « Micro-coupes » (0,47 et 0,2 s) et
+    # (RUSH : Claude à sa limite d'usage -> ce repli, v1 bloquée par le Gardien « Micro-coupes » (0,47 et 0,2 s) et
     # « flash ») : comme après le choix de Claude, une prise abandonnée encore gardée saute (reprises_restantes)
     F = [(a, b) for a, b in F if not all(i in morts for i in range(a, b + 1))]
     drop += [[i, i] for i in sorted(reprises_restantes(words, F)) if i not in morts]
@@ -248,14 +248,14 @@ def drop_auto(words):
         for x in runs:
             d = words[x[-1]]["end"] - words[x[0]]["start"]
             entiere = (x[0] == 0 or fin(x[0] - 1) or x[0] - 1 in morts) and fin(x[-1])
-            #  (seul entre 2 pauses, 0,42 s, jeté = phrase amputée « …au hasard. si tu postes ») :
+            # (seul entre 2 pauses, 0,42 s, jeté = phrase amputée « …au hasard. si tu postes ») :
             # un morceau court qui finit par une virgule après une phrase finie, suivi d'un morceau en minuscule, est le DÉBUT
             # de la phrase suivante (« Forcément, », « Bref, », « Donc, ») : il est gardé.
             suite = x[-1] + 1 < len(words) and words[x[-1]]["text"].rstrip(" »\"'").endswith(",") \
                 and words[x[-1] + 1]["text"][:1].islower() and (x[0] == 0 or fin(x[0] - 1))
             if suite: continue
             if d < 0.6 or (d < 2 and not entiere): drop.append([x[0], x[-1]])
-    #  (l’utilisateur) : chaque « euh / heu / hum » seul saute
+    # Chaque « euh / heu / hum » seul saute
     gardes = {i for a, b in drop for i in range(a, b + 1)}
     drop += [[i, i] for i, w in enumerate(words) if i not in gardes and norm(w["text"]) in {"euh", "heu", "hum", "euhm", "bah"}]
     return sorted(drop)
@@ -346,11 +346,11 @@ def reprises_restantes(words, gardes):
     out = set()
     for (a, b), (c, d) in zip(gardes, gardes[1:]):
         p, q = mots(a, b), mots(c, d)
-        #  (jgvg) : « En sep... » puis « En septembre, des chercheurs… » = mot coupé net, repris juste après -> tout le 1er saute
+        # Ex. : « En sep... » puis « En septembre, des chercheurs… » = mot coupé net, repris juste après -> tout le 1er saute
         if words[b]["text"].strip().endswith(("...", "…", "-")) and len(p) <= len(q) and p[:-1] == q[:len(p) - 1] and q[len(p) - 1].startswith(p[-1]):
             out |= set(range(a, b + 1))
             continue
-        #  ( puis « mais si ta stratégie est
+        # (puis « mais si ta stratégie est
         # mauvaise… ») : morceau coupé net, repris au milieu -> la fin depuis le dernier « mais si » (2 mots = le début du suivant) saute
         if words[b]["text"].strip().endswith(("...", "…", "-")) and len(q) >= 2:
             j = next((j for j in range(len(p) - 2, 0, -1) if p[j:j + 2] == q[:2]), None)
@@ -394,7 +394,7 @@ def prises_par_claude(D, words):
     if not nums: return None
     garde = {i for n in nums for i in range(F[n - 1][0], F[n - 1][1] + 1)}
     garde -= reprises_restantes(words, [F[n - 1] for n in nums])
-    #  (seul entre 2 pauses, jeté par Sonnet = « …au hasard. si tu postes au hasard ») : un morceau
+    # (seul entre 2 pauses, jeté par Sonnet = « …au hasard. si tu postes au hasard ») : un morceau
     # de 1 à 3 mots qui finit par une virgule, coincé entre une phrase gardée finie et un morceau gardé en minuscule, ouvre la
     # phrase suivante : il revient.
     for a, b in F:
@@ -418,7 +418,7 @@ def titre_auto(words):
     """Titre = 1re phrase (la question du hook), 2 lignes équilibrées, sans , . : (build.mjs les retire de toute façon)."""
     P = phrases(words)
     if not P: return None
-    #  (juge Super 1.7 : « SALUT À TOUS AUJOURD 'HUI JE VOUS ») : une phrase de salut n'est pas un titre, on prend la suivante
+    # (juge Super 1.7 : « SALUT À TOUS AUJOURD 'HUI JE VOUS ») : une phrase de salut n'est pas un titre, on prend la suivante
     # salut seul (« Salut à tous. ») = phrase suivante ; salut + virgule (« Salut à tous, aujourd'hui… ») = on retire le salut
     salut = lambda ab: re.match(r"(salut|bonjour|hello|coucou|hey|yo)\b", words[ab[0]]["text"].strip().lower())
     a, b = P[0]
@@ -453,7 +453,7 @@ def titre_auto(words):
             while k < len(mots) and len(" ".join(mots[:k + 1])) <= 48: k += 1
             faibles = {"le", "la", "les", "l", "un", "une", "des", "de", "du", "d", "à", "au", "aux", "et", "ou", "qui", "que", "qu",
                        "ton", "ta", "tes", "votre", "vos", "mon", "ma", "mes", "son", "sa", "ses", "ce", "cette", "ces", "en", "pour", "sur", "dans", "avec",
-                       #  (chrono-test : titre « …LE TEMPS DE SE ») : un pronom collé au verbe qui suit ne finit jamais un titre
+                       # (chrono-test : titre « …LE TEMPS DE SE ») : un pronom collé au verbe qui suit ne finit jamais un titre
                        "se", "s", "me", "m", "te", "t", "ne", "n", "y", "je", "j", "tu", "il", "ils", "elle", "elles", "on", "nous", "vous", "lui", "leur", "est", "sont", "a", "ont", "comme"}
             while k > 3 and mots[k - 1].lower().strip("'’") in faibles: k -= 1
             mots = mots[:max(k, 3)]
@@ -565,7 +565,7 @@ def monte(D):
     e = lire(os.path.join(D, "etat.json"), {})
     # reel monté dans un chat (importer_montages) : pas de plan.json, son propre monte.py = sa recette, qu'on relance
     recette = "plan.json" if os.path.exists(os.path.join(D, "plan.json")) else "monte.py"
-    #  (test-images : face cam + b-rolls choisis à l'écran « Tes images » partait dans brolltexte.py) : B-roll + texte = pas de cam
+    # (test-images : face cam + b-rolls choisis à l'écran « Tes images » partait dans brolltexte.py) : B-roll + texte = pas de cam
     p = lire(os.path.join(D, "plan.json"), {}) or {}
     if recette == "plan.json" and (p.get("famille") == "broll-texte" or ("brolls" in p and not p.get("cam"))):
         verrou = attendre_le_mac(D, lambda t: etat(D, etape=t))
@@ -610,7 +610,7 @@ def monte(D):
     os.makedirs(os.path.join(D, "versions"), exist_ok=True)
     shutil.copy2(os.path.join(D, "final.mp4"), os.path.join(D, "versions", f"v{n}.mp4"))
     shutil.copy2(os.path.join(D, recette), os.path.join(D, "versions", f"v{n}.{recette}"))
-    #  (disque plein : 20 Go d'essais) : on garde la vidéo des 2 dernières versions seulement ; les recettes .json restent
+    # (disque plein : 20 Go d'essais) : on garde la vidéo des 2 dernières versions seulement ; les recettes .json restent
     for k in range(1, n - 1):
         try: os.remove(os.path.join(D, "versions", f"v{k}.mp4"))
         except OSError: pass
@@ -695,7 +695,7 @@ def monter(D):
         w, h = st["width"], st["height"]
         if any(abs(int(sd.get("rotation", 0))) == 90 for sd in st.get("side_data_list", [])): w, h = h, w
         horizontal = w > h
-        if horizontal:   #  (RUSH, l’utilisateur « répare-le ») : rush horizontal = vidéo 16:9 sous-titrée (soustitres169.py), plus de crash de cadre.py
+        if horizontal:   # rush horizontal = vidéo 16:9 sous-titrée (soustitres169.py), plus de crash de cadre.py
             if style != "Minimaliste":
                 raise RuntimeError("Rush horizontal : choisis le style Minimaliste (vidéo 16:9 sous-titrée). "
                                    "Pour un reel vertical tiré d'un rush horizontal, demande le style horizontal dans un chat Claude.")
@@ -709,7 +709,7 @@ def monter(D):
         run(D, ["python3", os.path.join(S, "derush.py"), rush, "words.rush.json", "cut.mp4", "--drop", "drop.json", "--vf", vf], "derush.log")
         os.replace(os.path.join(D, "cut.mp4"), os.path.join(D, "clip.mp4"))
         shutil.copy2(os.path.join(D, "cut.words.json"), os.path.join(D, "words.json"))
-        #   : derush.py laisse 0,2-0,4 s de blanc à chaque raccord ;
+        # : derush.py laisse 0,2-0,4 s de blanc à chaque raccord ;
         # serrer.py les ramène au ras de la voix (plans >= 2 s, jamais en milieu de phrase, queue muette finale coupée).
         run(D, ["python3", os.path.join(S, "serrer.py"), D], "serrer.out.log")
         if not horizontal: rallonge_60(D, rush, vf)   # la règle des 60 s (TikTok) ne vaut que pour un reel
@@ -867,7 +867,7 @@ def plan_auto(D, rid, style, cases, words):
         return plan
     plan = {"cam": "clip.mp4", "words": "words.json", "zoom": False, "fixes": {}, "keywords": [], "sfx": [],
             "cases": cases, "style_supermonteur": style}
-    if style == "Dynamique":   #  (RUSH v1 cam fixe : « transforme en dynamique, ajoute des zoom/dézoom ») : zooms auto, rythme nerveux
+    if style == "Dynamique":   # (RUSH v1 cam fixe : « transforme en dynamique, ajoute des zoom/dézoom ») : zooms auto, rythme nerveux
         plan.update({"zoom": True, "zoomGap": [2.5, 4]})
     T = titre_auto(words) if cases.get("titre", True) else None
     if T:
@@ -911,7 +911,7 @@ def redecoupe(D):
     rush = e["rush"]
     vf = (lire(os.path.join(D, "cadre.json"), {}) or {}).get("vf") or "scale=1080:1920:flags=lanczos,fps=30"
     etat(D, statut="montage", etape="Je recoupe ta vidéo…")
-    #  (« mais », « vie. » coupés comme des pauses, pas par drop.json) : plages.json
+    # (« mais », « vie. » coupés comme des pauses, pas par drop.json) : plages.json
     # ([[a, b], ...] secondes du RUSH, posées par Claude) = plages gardées à la main, elles remplacent le calcul des pauses.
     plages = ["--plages", "plages.json"] if os.path.exists(os.path.join(D, "plages.json")) else []
     avant = temps_des_mots(D, "drop.avant.json" if os.path.exists(os.path.join(D, "drop.avant.json")) else "drop.json")

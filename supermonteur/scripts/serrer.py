@@ -14,7 +14,7 @@ import json, os, subprocess, sys
 import numpy as np
 
 D = sys.argv[1]
-GARDE, BLANC, MINSHOT, PONCT, PAUSE, RESPI = 0.05, 0.10, 2.0, ".,!?…;:", 0.40, 0.22   #  RUSH (« cut plus serré entre les phrases, il ne faut pas de blanc », « mais il ne faut pas couper les mots ») : blanc dès 0,10 s
+GARDE, BLANC, MINSHOT, PONCT, PAUSE, RESPI = 0.05, 0.10, 2.0, ".,!?…;:", 0.40, 0.22   # RUSH (« cut plus serré entre les phrases, il ne faut pas de blanc », « mais il ne faut pas couper les mots ») : blanc dès 0,10 s
 P = lambda f: os.path.join(D, f)
 clip = P("clip.mp4")
 wj = json.load(open(P("words.json"))); W = wj["words"]
@@ -24,7 +24,7 @@ raw = subprocess.run(["ffmpeg", "-v", "error", "-i", clip, "-vn", "-ac", "1", "-
                      capture_output=True).stdout
 x = np.frombuffer(raw, np.float32); n = len(x) // 160 * 160
 db = 20 * np.log10(np.sqrt((x[:n].reshape(-1, 160) ** 2).mean(1)) + 1e-9)
-#  RUSH : silence = sous le bruit de la pièce + 25 % de l'écart bruit -> voix (avant : bruit + 12 dB, qui prenait les fins
+# RUSH : silence = sous le bruit de la pièce + 25 % de l'écart bruit -> voix (avant : bruit + 12 dB, qui prenait les fins
 # de mots douces pour du calme et obligeait à se caler sur les temps de mots, qui débordent : 0,15 s de blanc restait par phrase)
 _bruit, _voix = np.percentile(db, 10), np.percentile(db, 70)
 calme = db < _bruit + 0.25 * (_voix - _bruit)
@@ -47,7 +47,7 @@ for s0, s1 in blancs:
     if s0 < 0.2 or s1 > total - 0.2: continue                 # début / fin : gérés par le dérush
     avant = [w for w in W if w["start"] < s0]
     apres = [w for w in W if w["end"] > s1]
-    #  sans reprise et en parlant de manière fluide, on garde les blancs et respirations entre phrases ; on coupe serré seulement
+    # sans reprise et en parlant de manière fluide, on garde les blancs et respirations entre phrases ; on coupe serré seulement
     # sur une grande pause ou une reprise.
     #  - raccord entre deux prises (joint du dérush) : au ras de la voix, queue 0,04 s, attaque 0,03 s, aucun blanc ;
     #  - dans une prise fluide : on ne touche qu'une vraie pause (>= PAUSE), ramenée à une respiration naturelle (RESPI).
@@ -59,7 +59,7 @@ for s0, s1 in blancs:
         a, b = s0 + RESPI / 2, s1 - RESPI / 2
     # le seuil strict (bruit + 25 %) garde déjà les fins et attaques douces (f, s, ch) dans la voix ; les temps de mots ne
     # servent plus que de garde-fou grossier (un temps qui déborde de plus de 0,15 s dans le blanc = faux, ignoré)
-    # aux raccords les temps de mots débordent de 0,1 s dans le blanc (RUSH) : seul le son décide, queue 0,05 s, attaque 0,04 s
+    # aux raccords les temps de mots débordent de 0,1 s dans le blanc : seul le son décide, queue 0,05 s, attaque 0,04 s
     if sur_joint:
         a, b = s0 + 0.05, s1 - 0.04
     else:
@@ -67,7 +67,7 @@ for s0, s1 in blancs:
         if apres and s1 - 0.15 < apres[0]["start"] < s1: b = min(b, apres[0]["start"] - 0.01)
     if b - a < 0.05: continue
     if not sur_joint:
-        #  (studio Super, « Pas le temps de filmer » : coupe posée à 2,09 s du raccord suivant, puis le blanc retiré (0,25 s)
+        # (studio Super, « Pas le temps de filmer » : coupe posée à 2,09 s du raccord suivant, puis le blanc retiré (0,25 s)
         # raccourcit le plan à 1,84 s -> Gardien « Plans >= 2 s » bloque) : la longueur se mesure APRÈS retrait du blanc, début et fin
         # du clip compris, avec 0,15 s de marge pour les autres blancs retirés dans le même plan.
         if any((c < a and a - c < MINSHOT + 0.15) or (c >= a and c - b < MINSHOT + 0.15) for c in coupes + [0.0, total]): continue

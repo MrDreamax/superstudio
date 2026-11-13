@@ -57,8 +57,7 @@ words_p = plan.get("words") and os.path.join(here, plan["words"])
 W = json.load(open(words_p)) if words_p and os.path.exists(words_p) else []
 W = W.get("words", W) if isinstance(W, dict) else W
 
-# --- LA VIDÉO FINIT QUAND LA MUSIQUE FINIT (, voix off : « à la fin il n'y a plus de musique et la vidéo continue
-# de tourner ») : on mesure la fin réelle de la musique (dernier instant à moins de 20 dB de son niveau des 6 dernières s, seuil 20 dB) ;
+# --- LA VIDÉO FINIT QUAND LA MUSIQUE FINIT (jamais de vidéo qui continue sans musique) : on mesure la fin réelle de la musique (dernier instant à moins de 20 dB de son niveau des 6 dernières s, seuil 20 dB) ;
 # si elle s'arrête > 0,4 s avant la fin, la vidéo est coupée 0,25 s après (jamais avant la fin de la voix + 0,3 s). ---
 def music_end():
     import array
@@ -179,7 +178,7 @@ def graph():
             # resserrée pour rester audible du début à la fin, au lieu de disparaître sous la voix dans ses creux
             f.append(f"[{n}:a]atrim=0:{t1 - t0:.3f},asetpts=PTS-STARTPTS,loudnorm=I={s['lufs']}:TP=-3:LRA={s.get('lra', 6)},"
                      f"equalizer=f=1200:width_type=q:width=0.45:g=-4,"
-                     f"bass=g=-6:f=120,"   #  (PHONE) : basses -6 dB, inaudibles sur téléphone et elles mangent la place de la voix
+                     f"bass=g=-6:f=120,"   # basses -6 dB, inaudibles sur téléphone et elles mangent la place de la voix
                      f"aformat=sample_rates=48000:channel_layouts=stereo,afade=t=in:d={fi}:curve=qsin,"
                      f"afade=t=out:st={max(0, t1 - t0 - fo):.3f}:d={fo}:curve=qsin,adelay={ms}|{ms}[m{i}]")
             parts.append(f"[m{i}]"); n += 1
@@ -232,21 +231,21 @@ def measure(inp, f, n_music_inp):
         hits = [l for l in e.splitlines() if " I:" in l]
         v = float(hits[-1].split()[1]) if hits else None
         res.append(v if v is not None and v > -69 else None)
-    os.remove(tmp)   #  PHONE : mesure au-dessus de 200 Hz = ce qu'un téléphone joue (un highpass dans le graphe de mesure bloque ffmpeg 6)
+    os.remove(tmp)   # PHONE : mesure au-dessus de 200 Hz = ce qu'un téléphone joue (un highpass dans le graphe de mesure bloque ffmpeg 6)
     return res
 
 PEAKS = {}
-#  PHONE (RUSH v5 : « on n'entend pas trop la musique, surtout au début ») : Sweet Dreams slowed = 84 % de son énergie
+# PHONE (RUSH v5 : « on n'entend pas trop la musique, surtout au début ») : Sweet Dreams slowed = 84 % de son énergie
 # sous 150 Hz. Un haut-parleur de téléphone ne joue rien sous ~200 Hz : mesurée pleine bande, la musique était « OK à -29 »
 # et pourtant inaudible sur iPhone. La cible (target) se mesure maintenant au-dessus de 200 Hz (ce qu'on entend vraiment),
 # et les basses de la musique sont baissées de 6 dB (elles ne servent pas sur téléphone et brouillent la voix au casque).
-#  (RUSH v3 : « au début le son de la musique n'est pas assez fort… commencer par un petit impact, augmenter légèrement
+# (RUSH v3 : « au début le son de la musique n'est pas assez fort… commencer par un petit impact, augmenter légèrement
 # le son de la musique au début puis la réduire après ») : la musique démarrait en fondu de 0,6 s et baissait déjà sous la voix
 # (1er mot à 0,1 s). music.intro = {"db": 4, "dur": 2.0, "ramp": 2.0} : départ sec, +db pendant dur secondes, puis retour à la
 # cible en ramp secondes. Le niveau mesuré (cible -29) reste celui de tout le morceau ; l'impact se met dans plan.sfx
 # (kind "impact-intro" : la musique ne s'efface pas dessous, contrairement à "impact").
-#  (l’utilisateur, « oui, partout ») : ce début est le DÉFAUT de tous les reels. "intro": false dans music pour l'enlever.
-#  suite : « l'impact n'est pas nécessaire, trouve le moment de la musique qui a de l'impact » -> pas de bruitage par défaut
+# (l’utilisateur, « oui, partout ») : ce début est le DÉFAUT de tous les reels. "intro": false dans music pour l'enlever.
+# suite : « l'impact n'est pas nécessaire, trouve le moment de la musique qui a de l'impact » -> pas de bruitage par défaut
 # ("impact": true pour le remettre) ; music.from se pose sur un temps fort du morceau (scripts/attaque.py le trouve).
 _i = segs[0].get("intro", True) if segs else False
 INTRO = None if _i is False else ({"db": 6, "dur": 2.5, "ramp": 2.0} | (_i if isinstance(_i, dict) else {}))
@@ -261,7 +260,7 @@ ZONES = [dict(z, db=max(-30.0, min(12.0, float(z.get("db", 0))))) for z in (plan
 for z in ZONES: print(f"musique {z['db']:+g} dB seulement de {z['from']:.2f} à {z['to']:.2f} s (zone locale)")
 LIM_DB = -2.3   # plafond du limiteur ; abaissé tout seul si l'AAC fait remonter la crête (voir boucle finale)
 inp, f, n_music_inp = graph()
-#  (RUSH : mix de 21 s au calme, 109 à 139 s Mac chargé) : une version qui ne change ni la voix ni la musique (titre,
+# (RUSH : mix de 21 s au calme, 109 à 139 s Mac chargé) : une version qui ne change ni la voix ni la musique (titre,
 # sous-titres) reprend les niveaux trouvés au mix d'avant au lieu de refaire 2 ou 3 passes de mesure. La clé = le graphe de
 # mesure exact + taille et date de chaque fichier son (la vidéo rendue n'y entre pas : elle est muette). La mesure étant
 # déterministe, le résultat est le même au réglage près. Un changement = mesure complète, comme avant.
@@ -297,7 +296,7 @@ for essai in range(3):
     # écran noir au départ (« la toute première seconde, c'est toujours un écran noir ») : le rendu HyperFrames commence
     # à 0,021 s avec une « edit list » vide devant ; Chrome l'ignore mais AVFoundation (QuickTime, iPhone, Instagram) ne trouve AUCUNE
     # image à 0 s. On recale la vidéo à 0 (setts) + faststart (moov en tête). Vérifié : image à 0,00 s, segment unique.
-    #  (VSL David « ça bug ») : « setts=ts=... » met pts = dts sur chaque image -> avec des B-frames, iPhone/QuickTime affichent
+    # (VSL David « ça bug ») : « setts=ts=... » met pts = dts sur chaque image -> avec des B-frames, iPhone/QuickTime affichent
     # les images dans l'ordre de décodage (82 % dans le désordre = saccades), ffmpeg/Chrome ne le voient pas. pts et dts recalés à part,
     # et PAS de -use_editlist 0 (sinon dts négatif décalé -> 1re image à 0,067 s). Vérifié AVFoundation : 0 image dans le désordre, image à 0 s.
     subprocess.check_call(["ffmpeg", "-nostdin", "-y", "-v", "error", *inp, "-filter_complex", ";".join(f), "-map", "0:v", "-map", "[a]",

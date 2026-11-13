@@ -5,7 +5,7 @@ statut: actif
 sujets: [offre, closing, business]
 ---
 # La science du prix : psychologie et méthodes
-Cette fiche est la MAISON de : 3 niveaux et leurre, annuel vs mensuel, Van Westendorp, Ramanujam 72 %, Marn et Rosiello. Les autres fiches renvoient ici. Voir aussi [[experts-pricing-audit-diagnostic]], , , .
+Cette fiche est la MAISON de : 3 niveaux et leurre, annuel vs mensuel, Van Westendorp, Ramanujam 72 %, Marn et Rosiello. Les autres fiches renvoient ici. Voir aussi [[experts-pricing-audit-diagnostic]].
 
 ## En 10 lignes
 1. Ton cerveau n'a pas de « vrai prix » en tête : un chiffre vu avant, même au hasard, le déplace. Dis le prix haut d'abord [1].

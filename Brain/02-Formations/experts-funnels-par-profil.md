@@ -12,7 +12,7 @@ Règle du fichier : sources primaires seulement (l'expert qui parle, ou la doc o
 - Setter humain contre IA, règles Meta/ManyChat des 24 h et 7 jours : [[02-Formations/experts-setter-ia]].
 - Du contenu au DM au call (chemin Kareem, Martell, Koe) : [[02-Formations/experts-contenu-vers-clients]]. Bio, stories, lien en bio : [[02-Formations/experts-carrousels-profil-stories]].
 - Pub : [[02-Formations/experts-media-buying-meta]], [[02-Formations/experts-creas-pub-high-ticket]], règles officielles .
-- Closing et call : , , . Échelle de valeur et offre d'entrée : , , , . Prix d'un audit : [[02-Formations/experts-pricing-audit-diagnostic]].
+- Prix d'un audit : [[02-Formations/experts-pricing-audit-diagnostic]].
 
 ## L'essentiel (5 lignes)
 1. Pas de « meilleur funnel » unique. Le bon dépend de la preuve, de l'audience et du prix. Repère de Jason Meland : sous 20 k$/mois, contenu organique > DM ; de 20 à 50 k$, une masterclass live par mois ; au-dessus de 50 k$, deux portes avec pub [Dj80G9oQwNw] [19:00].

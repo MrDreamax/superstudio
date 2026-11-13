@@ -2,9 +2,7 @@
 
 **Cockpit et Derush Lab PÉRIMÉS (Derush Lab retiré, retours dans l'appli SuperMonteur). Voir `SKILL.md`. Ce fichier reste pour l'historique et la réparation.**
 
-Remplace **Style Lab ET Cut Notes** (décision de l'utilisateur). Maquette validée en 2 rounds (Brain `01-Projets/cockpit-montage.md`,
-images `(exemple retiré)`, `complet-r2/1c.png` et `2b.png`). Ancienne page v2 (panneau de cartes)
-et ancien serveur : `supermonteur/_backup/2026-10-23-cockpit-v2/`. Look Apple clair. Utilisable par un client SANS bibliothèque de B-rolls
+Remplace **Style Lab ET Cut Notes** (décision de l'utilisateur). Maquette validée en 2 rounds. Look Apple clair. Utilisable par un client SANS bibliothèque de B-rolls
 ni de photos, ni de musique.
 
 **Règle : jamais d'étalonnage ni de traitement du son du rush.** Un look = polices + couleur du texte + rythme. Rien d'autre.
@@ -13,8 +11,7 @@ ni de photos, ni de musique.
 **le Derush Lab est une ÉTAPE OBLIGATOIRE de SuperMonteur, pour TOUS les reels, clients compris : la règle « interne » ci-dessous est périmée. Voir `apps/supermonteur/CLAUDE.md` 1 bis.Décision : cette timeline s'appelle Derush Lab, outil INTERNE (jamais pour les clients ni le kit), qui sert
 EXCLUSIVEMENT à dérusher une vidéo.** Séparation « dérush seul » à faire (Brain 01-Projets/cockpit-montage.md, Reprise).
  (prime sur la v4 ci-dessous pour l'étape 1)
-- **DERUSH LAB = `cockpit.py <dossier> --port <p> --lab` (codé, maquette `(exemple retiré)`
-  choisie par l’utilisateur)** : la timeline SEULE. En haut « Derush Lab · titre · 1:00 → 0:34 », plus d'étapes, ni Tout auto, ni Exporter
+- **DERUSH LAB = `cockpit.py <dossier> --port <p> --lab`** : la timeline SEULE. En haut « Derush Lab · titre · 1:00 → 0:34 », plus d'étapes, ni Tout auto, ni Exporter
   (`body.lab`). Pas besoin de `plan.json` (dossier = words_rush.json + 1er dérush derush.py + cut.words.json → words.json + cockpit.json
   + cadre.json). Bouton « ✓ Valider le dérush » → `/api/valider` : derush.py `--plages` si la timeline a changé (clip.mp4), puis
   **`gardien.py <dossier> --derush`** (~5 s : mot coupé, respiration, plans ≥ 2 s, micro-coupure, silence, flash ; rapport
@@ -23,7 +20,7 @@ EXCLUSIVEMENT à dérusher une vidéo.** Séparation « dérush seul » à faire
   Testé sur une copie d'RUSH : 20 s, 6/6 vert, clip.mp4 h264 1080x1920 33,8 s, 0 erreur dans la page. Sauvegarde avant :
   `supermonteur/_backup/2026-10-23-derushlab-avant/`.
 Demande de .
-Maquettes : `(exemple retiré)` (A, B, C) puis `timeline-r2/1.png` VALIDÉE + son `timeline-r2/courbe-1-bourse.png`
+Maquette validée : la timeline avec sa courbe du son façon « Bourse ».
 (« courbe depuis le bas » finition Bourse, MAIS « exacte, très précise »). Sauvegarde avant v5 : `supermonteur/_backup/2026-10-23-cockpit-v4/`.
 - **Écran** : la conversation se range (classe `.main.e1`) ; en haut à gauche le téléphone joue le RUSH en sautant les coupes ;
   à droite la **LOUPE** = le bloc ouvert en grand (images du rush + son) avec 1,6 s autour, règle en secondes, ‹ Précédent / Suivant ›
@@ -48,8 +45,7 @@ Maquettes : `(exemple retiré)` (A, B, C) puis `timeline-r2/1.png` VALIDÉE + so
   « à écouter » sans bloquer (fins ET débuts) ; mots hors des plages = retirés des sous-titres. Le Gardien bloque toujours un plan < 2 s :
   la timeline montre en orange un bloc gardé < 2 s.
 
-- **Barre de lecture (, maquette `(exemple retiré)`, son choix « barre en rouge sur la timeline et sur la
-  coupe en grand »)** : la barre rouge s'attrape et se tire dans le reel bout à bout ET dans la loupe (étiquette = l'instant du reel,
+- **Barre de lecture rouge, sur la timeline et sur la coupe en grand** : la barre rouge s'attrape et se tire dans le reel bout à bout ET dans la loupe (étiquette = l'instant du reel,
   ou « coupé ») ; la vidéo suit en pause, l'image du rush s'affiche au-dessus du doigt (reel bout à bout), la loupe suit si on sort de sa
   fenêtre. Fonctions `brancherTete`, `ovVersRush`.
 - **1er dérush** : derush.py ne coupe JAMAIS en milieu de phrase (seulement après ., ! ? … ; :) ; voir SKILL.md.
@@ -61,7 +57,7 @@ Maquettes : `(exemple retiré)` (A, B, C) puis `timeline-r2/1.png` VALIDÉE + so
   (macOS refuse ~/Documents aux serveurs de preview), puis `preview_start {url: "http://127.0.0.1:<port>"}` (pas de `name`).
 - **2 étapes seulement : 1 Dérushage › 2 Style**, puis Exporter. L'étape 3 (moments forts : zoom, carton, mot géant, motion, B-roll)
   est SUPPRIMÉE : `plan_final` n'appelle plus `ajouter_moments` (code laissé dormant, ne plus le proposer).
-- **Étape 1 = dérushage « phrase en grand »** (maquette `(exemple retiré)`) : à gauche le téléphone joue le
+- **Étape 1 = dérushage « phrase en grand »** : à gauche le téléphone joue le
   RUSH en sautant ce qui est coupé (montage virtuel, instantané) ; à droite le texte en phrases (`cockpit.json` `"phrases"` [[i, j]]
   si Claude les écrit, sinon découpage auto : reprises de `_cockpit/drop.claude.json`, mots de liaison, vrais blancs) ; dessous le son
   de la phrase choisie en grand (`/api/onde`, 10 ms, en dB) avec 2 poignées Début / Fin (←/→ = 10 ms, rejoue 1 s autour de la coupe
@@ -81,7 +77,7 @@ Maquettes : `(exemple retiré)` (A, B, C) puis `timeline-r2/1.png` VALIDÉE + so
 - Sauvegarde avant v4 : `supermonteur/_backup/2026-10-23-cockpit-v3/`.
 
 ## L'écran
-- **À droite, la conversation** (420 px ; à droite depuis le). Chaque bulle de Claude vient de l'état du montage, rien n'est écrit à la main :
+- **À droite, la conversation** (420 px). Chaque bulle de Claude vient de l'état du montage, rien n'est écrit à la main :
   « J'ai monté ta vidéo : 0:42 → 0:37 » ; 1 bulle par coupe (Écouter / Remettre / C'est bon, ou Couper à nouveau si remise) ;
   l'ouverture en 3 vignettes (les `hooks`) ; les sous-titres (plus petit / plus grand, haut / menton / bas, mots forts) ; la musique
   (les émotions de `cockpit.json`, + Ajoute ta musique, Sans musique) ; puis les phrases de la personne et les réponses de Claude.
@@ -92,7 +88,7 @@ Maquettes : `(exemple retiré)` (A, B, C) puis `timeline-r2/1.png` VALIDÉE + so
 - **Au centre, la vidéo** (téléphone + calques HTML) et la bande : coupes en rouge numérotées en haut, notes en bleu en bas. Barre espace =
   lecture. En pause, la **zone interdite d'Insta** (règle : haut 270 px, bas 1480 px, côtés 65 px, 120 px à droite sous 1100 px) est en rouge sur la vidéo ; le Gardien (`zones.mjs`) bloque tout rendu avec du texte dedans. « Écouter » une coupe = le téléphone passe sur le rush (`/video/rush`) le temps du passage. Voile « Je remets le passage… »
   pendant le dérush. Pas de zone qui défile dans la page : si la conversation est longue, c'est la page qui défile, la vidéo reste en place.
-- **1er lancement (ni style ni ancien look)** : « Bienvenue » + **5 lignes qui se déplient** (, maquettes `(exemple retiré)`) :
+- **1er lancement (ni style ni ancien look)** : « Bienvenue » + **5 lignes qui se déplient** :
   1 Police (ouvre la **galerie des 6 polices au centre**, en blanc), 2 Taille (titre S / M / L / XL, sous-titres 44-58 px), 3 Couleurs
   (titre ligne 1, ligne 2, sous-titres : 6 pastilles + une couleur libre), 4 Position (titre en haut / plus bas, centré / à gauche ;
   sous-titres haut / menton / bas), 5 Plus (majuscules ou minuscules, 1 à 4 mots, ombre douce / forte). La vidéo se pose pendant le titre
@@ -101,7 +97,7 @@ Maquettes : `(exemple retiré)` (A, B, C) puis `timeline-r2/1.png` VALIDÉE + so
   la date dessous (touche la date du reel ou d'un essai pour la changer), les réseaux du reel, « Fabriquer le reel » (puis Télécharger)
   et « Programmer N contenus ». Pendant la fabrication : une roue sur chaque carte, ✓ ou ✗ à la fin. « Revenir au montage » en haut.
 
-## Les 3 étapes (, maquettes validées : `(exemple retiré)` + `r2-3b.png`)
+## Les 3 étapes
 - **Barre du haut : 1 Dérushage › 2 Style › 3 Motion / B-roll** (`cockpit-etat.json` `passe`). On touche une étape pour y aller.
   **⚡ Tout auto** (en haut à droite) : garde tous les conseils de Claude (coupes, ouverture, style « Ton combo » si aucun, moments
   forts, musique) et lance « Fabriquer le reel » (pas de programmation).
@@ -122,7 +118,7 @@ Maquettes : `(exemple retiré)` (A, B, C) puis `timeline-r2/1.png` VALIDÉE + so
   - Mot géant `mot: tete | sous` → `plan.bigwords` (matte.py, derrière la tête) ou `plan.subwords` (en géant dans le sous-titre, même avec un titre).
   - Carton plein `carton: {l1, l2, fond: nuit | noir | bleu | flou}` → `plan.mini` card. Fond TOUJOURS en dégradé (jamais uni, l’utilisateur).
   - Motion design `motion: chiffres | trait` (+ `illus` pour trait) → `plan.motions` (build.mjs). Validé après 5 rounds
-    (`(exemple retiré)` motion3-F + motion5-L ; étude Jun Yuh : Brain 02-Formations/jun-yuh-motion-design.md) :
+    (étude Jun Yuh : Brain 02-Formations/jun-yuh-motion-design.md) :
     `chiffres` = 1-2-3 géants derrière la tête (matte.py `fgm_k`), numérotés dans l'ordre de la vidéo, 4 max, mot au-dessus ;
     `trait` = illustration du Carrousel (`art.py`, 8 : camera, script_long, chat, checklist, stairs, chart_up, copies, apples_grid) au
     trait blanc, côté opposé au visage, mot dessous ; servie par `GET /illus/<nom>.svg` (`-trait` = version au trait). Le moment peut
@@ -170,7 +166,7 @@ Maquettes : `(exemple retiré)` (A, B, C) puis `timeline-r2/1.png` VALIDÉE + so
 
 ## Comment Claude s'en sert
 1. Étapes 1-4 du SKILL (cadre, transcription du rush, `drop.json` + dérush, `words.json` corrigé, `plan.json`).
-2. Écrire `cockpit.json` dans le dossier du reel (exemple : `(exemple retiré)`) : `titre`, `rush`
+2. Écrire `cockpit.json` dans le dossier du reel : `titre`, `rush`
    (chemin du rush ORIGINAL), `hooks` (3 : `id`, `nom`, `detail`, + `title` ou `bigwords`), `reco_hook`, `keywords` (6-10 mots forts),
    `musiques` (0 à 3 : `id`, `nom`, `titre`, `artiste`, `src`, `from`, `pourquoi`), `reco_musique`, `legende`, `raisons`, `essais`,
    `story`, `carrousel`, et `looks` seulement pour un client qui a les siens.

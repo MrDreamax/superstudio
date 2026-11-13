@@ -14,7 +14,7 @@ sujets: [closing, pub-meta]
 - Presque tout est US, offres à 5-10 k$, souvent info-business : « à transposer ». Promesses de revenu, SMS, RGPD : à valider côté FR.
 
 Règle de ce fichier : sources primaires seulement (l'expert qui parle). Format : [ID] = https://www.youtube.com/watch?v=ID puis [mm:ss]. Transcriptions automatiques, précision +-30 s. Le texte est de la paraphrase.
-, pas refait ici :  (Halo, HVCO),  (VSL = Star-Story-Solution, One Belief),  (page de confirmation, process anti no-show du setter),  (DM vers VSL), [[02-Formations/experts-creas-pub-high-ticket]] (économie du funnel, coût par call), [[02-Formations/experts-media-buying-meta]] (signal qualifié vers Meta), .
+Déjà couvert ailleurs, pas refait ici : [[02-Formations/experts-creas-pub-high-ticket]] (économie du funnel, coût par call), [[02-Formations/experts-media-buying-meta]] (signal qualifié vers Meta).
 
 ---
 
@@ -22,7 +22,7 @@ Règle de ce fichier : sources primaires seulement (l'expert qui parle). Format 
 - **Jon Benson** (« inventeur de la VSL », selon lui : a créé la première en 2005-2006 [gWX_eDA4stU] [00:00] [3Al-8n4f_fE] [00:00]). Dit que sa méthode a généré plus d'un milliard de dollars [gWX_eDA4stU] [00:31] (autre vidéo : « 12 milliards », probable erreur de transcription ou d'oral [X27bOuUgWNM] [00:30]). Vend un outil d'IA et des cours. Pas de livre trouvé. Vidéos lues : [gWX_eDA4stU], [3Al-8n4f_fE], [X27bOuUgWNM], [mjonl_vW4V0].
 - **Sabri Suby** (King Kong, livre Sell Like Crazy. Dit 7,8 Md$ générés [Zv6SD4EVSHk] [00:00] (autre vidéo : 1,33 Md$ et 50 M$ de pub testés [JfFxZaPo7SU] [04:36]). Transcription brouillée sur le nombre de niches. Vidéos : [Zv6SD4EVSHk], [JfFxZaPo7SU], [K9kYwUWUjLc], [kRDSbpwA-Qw], [mMnLQ1GRipo].
 - **Alex Hormozi** : [9Dc2UQbQNTo], [Mst4hreQYl0], [StVqS0jD7Ls] (show rate, créneaux). Livres au . Pas de vidéo « VSL » proprement dite.
-- **Russell Brunson** : [C5fNfxHUY_U] (Funnel Friday, VSL funnel). Livre : , .
+- **Russell Brunson** : [C5fNfxHUY_U] (Funnel Friday, VSL funnel).
 - **Jeremy Haynes** (agence de call funnels, dit 41 entreprises à 1 M$/mois [WEwwAvTY1B4] [00:00]). Vend ses programmes et en retient 90 %. Vidéos : [WEwwAvTY1B4], [1VxWGjtRikQ], [TebRrpcFens], [Z5LG8QtpBTs].
 - **Cole Gordon** (+ un co-animateur de Sales Kick) : [87xSdKzf940] (cours sur les show rates, candidature, pré-call) ; [oWYKaIULG9Q] pour le flux setter.
 - Sam Ovens : rien de primaire trouvé (voir « Pas trouvé »).

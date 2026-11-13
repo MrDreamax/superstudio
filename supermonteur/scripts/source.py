@@ -96,7 +96,7 @@ def render_span(here, cam, fg, a, b, kind, it, layout, out, face_y, band_y=None,
         sin, sf = src_chain(it, d)
         fw, fh = int(1080 * GS_SCALE) // 2 * 2, int(1920 * GS_SCALE) // 2 * 2
         # PAS de -ss sur la vidéo détourée : un saut dans un webm VP9 + transparence rend la 1re image SANS alpha
-        #  (rectangle noir, vuà 36,45 s) -> on décode depuis le début et on coupe à l'image près (trim)
+        # (rectangle noir, vuà 36,45 s) -> on décode depuis le début et on coupe à l'image près (trim)
         cmd = sin + ["-c:v", "libvpx-vp9", "-i", fg, "-filter_complex",
                      f"[0:v]{sf}[bg];[1:v]trim=start={a - fg_off:.3f}:duration={d:.3f},setpts=PTS-STARTPTS,fps=30,"
                      f"scale={fw}:{fh}:flags=lanczos,format=yuva420p[p];"
@@ -119,7 +119,7 @@ def render_span(here, cam, fg, a, b, kind, it, layout, out, face_y, band_y=None,
                               f"color=white:s={r + 12}x{r + 12}:r=30,format=yuva420p,geq=lum=255:cb=128:cr=128:"
                               f"a='255*lte(hypot(X-{(r + 12) / 2},Y-{(r + 12) / 2}),{(r + 12) / 2 - 1})'[ring];"
                               f"[bg][ring]overlay=65:{1440 - r - 6}:shortest=1[b1];[b1][c]overlay=71:{1440 - r}:shortest=1,format=yuv420p[v]"]   # bulle à 65 px du bord (zones mortes)
-    if False and band_y is not None and kind != "face":   #  bande retirée : traînée grise sur fond blanc -> ombre renforcée côté build.mjs (zone "light")
+    if False and band_y is not None and kind != "face":   # bande retirée : traînée grise sur fond blanc -> ombre renforcée côté build.mjs (zone "light")
         fc = cmd[cmd.index("-filter_complex") + 1].replace("format=yuv420p[v]", "format=yuv420p[v0]")
         fc += (f";color=black:s=1080x1920:r=30,format=rgba,geq=r=0:g=0:b=0:a='115*exp(-pow((Y-{band_y + 45})/170,2))'[g];"
                f"[v0][g]overlay=0:0:shortest=1,format=yuv420p[v]")

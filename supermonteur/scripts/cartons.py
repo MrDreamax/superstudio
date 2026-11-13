@@ -53,7 +53,7 @@ def inject(plan_path):
         x = x0 + i * (W + GAP)
         vert = it["couleur"] == "vert"
         rot = -4 if (i % 2 or vert) else 4
-        body.append(f'<div class="cs" style="left:{x}px"></div>')   #  l’utilisateur : case verte en pointillé vert = « ça spoile la suite » -> toutes blanches
+        body.append(f'<div class="cs" style="left:{x}px"></div>')   # l’utilisateur : case verte en pointillé vert = « ça spoile la suite » -> toutes blanches
         glow = ",0 0 18px #2fb87259" if vert else ""
         body.append(f'<div class="cd" id="cd{i}" style="left:{x}px;background:{VERT if vert else ROUGE};'
                     f'box-shadow:0 18px 40px #000a, inset 0 0 0 3px #fff3{glow}"></div>')

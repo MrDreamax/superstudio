@@ -52,7 +52,7 @@ def fin(a, b):          # -> (nouvelle fin, fin du mot f)
     return min(b, f - FIN), f
 
 def debut(a, b):        # -> (nouveau début, attaque)
-    #  (Gardien, « t » de « Tu es coach ? » mangé) : derush.py pose parfois son début DANS l'attaque ; on cherche l'attaque
+    # (Gardien, « t » de « Tu es coach ? » mangé) : derush.py pose parfois son début DANS l'attaque ; on cherche l'attaque
     # à partir de 0,05 s avant sa plage et on part DEBUT avant elle (la voix continue, au plus 0,15 s plus tôt que derush.py).
     # Puis on remonte la voix CONTINUE (au-dessus du calme + 12 dB) jusqu'à 0,15 s avant la plage (« Et » doux de 308,3 s).
     for k in range(int((a - 0.05) * 100), min(len(db), int(b * 100))):

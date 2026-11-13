@@ -77,7 +77,7 @@ Le style est VERROUILLÉ par l'utilisateur au Style Lab : Montserrat 700 majuscu
 - Sidechain 30 / 450 ms (la musique remonte en douceur entre les phrases).
 - Zoom : 5 s mini entre deux zooms dans le hook (0-7 s), 8 s ensuite.
 - Outils : `lookstats.py` (mesure du look + cadre), `match_look.py` (cale chaque ajout sur le rush, couleur réelle jamais touchée), `univers_check.py` (fiche univers + test 5 sur 7 + planche), `score.py` (débit, car/s, image cam, yeux).
-- Voix : paramètre `voice_lufs` (config, défaut -14 ; musique et SFX suivent). Test A/B -14 / -16 rendu : `(exemple retiré)`, en attente du choix de l'utilisateur.
+- Voix : paramètre `voice_lufs` (config, défaut -14 ; musique et SFX suivent).
 
 ### Appliqués (greffe GitHub, « tout greffer » de l'utilisateur, testés sur copies OPUS + green screen, sauvegarde `_backup/2026-10-14-avant-greffe-github/`)
 - Bug corrigé : GSAP arrondissait `strokeDashoffset` au px entier, donc tout tracé `pathLength=1` sautait de vide à plein à mi-course (courbe `chart`, coche `badge`, lien `connect`, courbe et axes des preuves). `F` ajoute `autoRound:false`. Mesuré : anneau 0,81 -> 0,52 -> 0,26 -> 0,08 au lieu de 1 -> 1 -> 0 -> 0.

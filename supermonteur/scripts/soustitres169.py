@@ -1,5 +1,5 @@
-"""Vidéo 16:9 sous-titrée (RUSH : l’utilisateur « répare-le » = SuperMonteur doit monter seul un rush horizontal).
-Recette validée sur RUSH et RUSH (juge 9/10) : rush dérushé en 1920x1080, sous-titres SF Pro 50 px,
+"""Vidéo 16:9 sous-titrée : SuperMonteur monte seul un rush horizontal.
+Recette validée (juge 9/10) : rush dérushé en 1920x1080, sous-titres SF Pro 50 px,
 blancs avec halo sombre, EN BAS de l'image (centre du texte y=975, 
 voix intacte à -14 LUFS (mix_youtube.py), musique seulement si plan.json en a une.
 

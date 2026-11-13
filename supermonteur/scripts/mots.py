@@ -63,7 +63,7 @@ def whisper(src, debut=None, fin=None, langue="fr", modele="small", **opts):
     return [{"text": w.word.strip(), "start": round(float(w.start), 3), "end": round(float(w.end), 3)} for s in segs for w in s.words]
 
 
-#  (crédits vides de 13h26 à 20h28 sans que l’utilisateur le sache, 3 reels publiés sur Whisper) : un refus d'ElevenLabs
+# (crédits vides de 13h26 à 20h28 sans que l’utilisateur le sache, 3 reels publiés sur Whisper) : un refus d'ElevenLabs
 # (quota, clé) écrit ALERTE (bandeau rouge de SuperMonteur) et sonne sur son iPhone (ntfy, 1 fois par 3 h max).
 # Une transcription ElevenLabs réussie efface l'alerte. Une panne de ffmpeg (vidéo sans son) n'est pas un refus.
 ALERTE = os.path.expanduser("~/.claude/skills/supermonteur/.alerte-elevenlabs.json")

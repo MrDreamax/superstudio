@@ -12,7 +12,7 @@
 def fin_du_mot(db, voisee, q, floor, e, cap):
     """db : énergie par trame de 10 ms ; voisee(k) -> bool ; e : où la voix forte s'arrête (s) ; cap : limite dure (s)."""
     thr = floor + 15
-    #  (RUSH, Gardien « mot coupé » à 59,2 s sur la fin de « ça. ») : sur un rush calme, le seuil de voix douce (q - 4)
+    # (RUSH, Gardien « mot coupé » à 59,2 s sur la fin de « ça. ») : sur un rush calme, le seuil de voix douce (q - 4)
     # tombe AU NIVEAU du bruit de la pièce (ici q = -44 dB, bruit = -47 dB), et ce bruit bourdonne (« voisé ») : la voix douce était
     # suivie dans le bourdonnement jusqu'à 0,6 s après le mot. Une voix douce doit rester 6 dB au-dessus du bruit de la pièce.
     doux = max(q - 4, floor + 6)

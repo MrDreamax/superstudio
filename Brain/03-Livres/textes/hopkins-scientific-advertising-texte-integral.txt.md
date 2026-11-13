@@ -3483,9 +3483,7 @@ My Very Best to You,
 
 Cart Galletti 
 
-Help@CarlGalletti.com 
 ScientificAdvertising.com/dir 
-928-300-0168 
 
 Scientific Advertising Illustrated Vol 2 
 

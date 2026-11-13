@@ -13,7 +13,7 @@ sujets: [closing, business]
 - Impayé : Stripe relance seul (8 essais en 2 semaines conseillés) mais seulement tant que l'abonnement vit. Chez toi, les abonnements ont été annulés : plus aucune tentative. Il faut un humain, un nouveau lien, et un réglage Stripe.
 - KPI n°1 : cash collecté le jour de la vente (Cole) et part du prix encaissée d'avance (Hormozi), pas le CA signé. Source du cash : Stripe, pas GHL.
 
-, pas refait ici : [[02-Formations/experts-marge-finances]] (règles 39 à 46 : cash par terre d'abord, remise comptant, escalier de paiement, layaway, paiements échoués),  (payment plan downsell),  (objection « trop cher »),  (méthode),  (gros acompte, fonds de tiroir), [[02-Formations/experts-reactivation-leads-dormants]] (cadence de relance, segment acomptes), [[02-Formations/experts-equipe-sales-recrutement-pilotage]] (payer sur le cash encaissé). Données : , .
+Déjà couvert ailleurs, pas refait ici : [[02-Formations/experts-marge-finances]] (règles 39 à 46 : cash par terre d'abord, remise comptant, escalier de paiement, layaway, paiements échoués), [[02-Formations/experts-reactivation-leads-dormants]] (cadence de relance, segment acomptes), [[02-Formations/experts-equipe-sales-recrutement-pilotage]] (payer sur le cash encaissé).
 
 Règles de ce fichier : sources primaires seulement (l'expert qui parle, ou page officielle). [ID] = https://www.youtube.com/watch?v=ID puis [mm:ss] ou [h:mm:ss]. Transcriptions automatiques, précision +-30 s. Presque tout est US : « à transposer ». Aucun conseil juridique : seulement ce que disent les pages officielles, à faire valider.
 

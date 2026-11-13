@@ -88,7 +88,7 @@ const camDur = +execFileSync("ffprobe", ["-v", "error", "-show_entries", "format
 // corrections des erreurs de Whisper (plan.fixes : {"boulettes": "bullet"}), relues par Claude avant chaque montage
 const FIX = Object.fromEntries(Object.entries(plan.fixes || {}).map(([k, v]) => [norm(k), v]));
 for (const w of W) { const k = norm(w.text); if (FIX[k] !== undefined) w.text = w.text.replace(/^[^.,!?]+/, FIX[k]); }
-// (RUSH) :
+// Note :
 // les nombres dits en lettres par Whisper (« vingt ans », « trente-cinq », « quatre-vingt-dix ») passent en chiffres à l'écran.
 // Jamais « un » / « une » seuls (articles), ni « neuf » en fin de phrase (« un téléphone neuf. »). Les mots fusionnés
 // gardent le début du 1er et la fin du dernier.

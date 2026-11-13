@@ -202,13 +202,13 @@ def prep(plan_p):
             if b.get("from") == "auto": b["from"], m, pk = steady(b["src"], du)
             else: d_ = shakes(b["src"], b.get("from", 0), du); m, pk = d_.mean(), d_.max()
             print(f"  tremblement {m:.2f} px/img, pic {pk:.1f}" + ("  <-- INSTABLE : prendre un autre passage (from auto) ou un autre plan" if m > SHAKE_MAX or pk > PEAK_MAX else "  (stable)"))
-            #  (RUSH v2 : image FIGÉE à 21 s) : plan de 4 s posé sur 4,17 s, rien ne le voyait. Bloquant.
+            # (RUSH v2 : image FIGÉE à 21 s) : plan de 4 s posé sur 4,17 s, rien ne le voyait. Bloquant.
             long_ = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", b["src"]]))
             if long_ - float(b.get("from", 0)) < du - 0.02:
                 sys.exit(f"B-ROLL TROP COURT : {os.path.basename(b['src'])} a {long_ - float(b.get('from', 0)):.2f} s utiles pour {du:.2f} s à l'écran "
                          f"({b['start']} -> {b['end']}). Raccourcir le plan ou prendre un autre B-roll.")
         src_cut, ss = b["src"], b.get("from", 0)
-        #  (Titanic) : un B-roll iPhone HDR (HLG, BT.2020 10 bits) faisait passer tout le rendu HyperFrames en « HDR
+        # (Titanic) : un B-roll iPhone HDR (HLG, BT.2020 10 bits) faisait passer tout le rendu HyperFrames en « HDR
         # layered composite » : mot géant et chiffres cachés derrière la tête, sortie HEVC 10 bits. Tout B-roll HDR est
         # converti en SDR bt709 par la conversion Apple (avconvert, la plus naturelle des 4 testées) avant la coupe.
         if not img and hdr(b["src"]):
@@ -220,7 +220,7 @@ def prep(plan_p):
             print(f"  HDR -> SDR (avconvert) : {os.path.basename(b['src'])}")
         cmd = ["ffmpeg", "-y", "-v", "error"] + ([] if img else ["-ss", str(ss)]) + ["-i", src_cut]
         cmd += ["-vf", vf.replace(",fps=30", "") if img else vf] + (["-frames:v", "1", "-q:v", "2"] if img else
-               #  (« Mode difficile » v4 : 0,13 s d'écran NOIR à 33,8 s) : build.mjs fait chevaucher les pleins écrans enchaînés
+               # (« Mode difficile » v4 : 0,13 s d'écran NOIR à 33,8 s) : build.mjs fait chevaucher les pleins écrans enchaînés
                # (B-roll qui démarre 0,35 s plus tôt sous un carton, ou qui se prolonge 0,35 s sous le suivant) : marge de 0,9 s en fin.
                ["-t", f"{b['end'] - b['start'] + 0.9:.2f}", "-an", "-c:v", "libx264", "-crf", "18", "-preset", "fast",
                 "-pix_fmt", "yuv420p", "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709"])

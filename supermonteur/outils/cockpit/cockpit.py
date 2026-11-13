@@ -90,12 +90,12 @@ def relire_cockpit():
 
 
 relire_cockpit()
-ETAT.setdefault("coches", ["reel"])   #  (l’utilisateur) : carrousel, story et reels d'essai décochés ; proposés à la fin, après le reel
+ETAT.setdefault("coches", ["reel"])   # carrousel, story et reels d'essai décochés ; proposés à la fin, après le reel
 ETAT.setdefault("look", None)       # v3 : aucun look = 1er lancement (3 looks proposés) ; plan inchangé tant qu'il n'y en a pas
 ETAT.setdefault("affine", {})       # « Affiner » : polices, couleur des mots en serif, rythme
 ETAT.setdefault("style", None)      # le style réglé (police, tailles, couleurs, position, plus) ; None = 1er lancement
 ETAT.setdefault("coupes_ok", [])    # coupes validées « C'est bon » dans la conversation
-ETAT.setdefault("passe", 1)         #  montage en 3 étapes : 1 Dérushage, 2 Style, 3 Motion / B-roll (maquettes passes-r1 validées)
+ETAT.setdefault("passe", 1)         # montage en 3 étapes : 1 Dérushage, 2 Style, 3 Motion / B-roll (maquettes passes-r1 validées)
 ETAT.setdefault("moments_choix", {})   # étape 3 : id du moment -> un de CHOIX_MOMENT (zoom | carton | rien absent = le conseil de Claude)
 ETAT.setdefault("passe3", None)     # "sautee" = étape 3 sautée (la vidéo reste telle quelle)
 ETAT.setdefault("prog", {"reseaux": ["instagram", "tiktok", "youtube"], "quand": "", "essais_heure": "18:00"})
@@ -292,7 +292,7 @@ def recouper(cid):
     return lancer("Je recoupe", derush)
 
 
-# ---------- v4 dérushage « phrase en grand » (maquette (exemple retiré) validée) ----------
+# ---------- v4 dérushage « phrase en grand » ----------
 # Le texte du rush en phrases : la personne barre une phrase (ou un seul mot), ouvre une phrase pour voir son son en grand et
 # pose ses bords au pixel. Ses choix : ETAT["derush"] = {"coupes": [indices de mots du rush], "bords": {"debut": {i: t}, "fin": {j: t}}}
 # -> drop.json (plages de mots) + bords.json (lu par derush.py --bords). Le moteur ne tourne qu'à « Suivant ».
@@ -328,7 +328,7 @@ def mots_rush():
             for i, w in enumerate(RW) for t in [CORR.get(str(i), {}).get("text", w["text"])]]
 
 
-# ---------- v5 : dérushage en TIMELINE (maquette (exemple retiré) validée) ----------
+# ---------- v5 : dérushage en TIMELINE ----------
 # Plus de texte : la personne voit le reel bout à bout (les coupes en petit) et ouvre n'importe quel bloc en grand pour remettre
 # un bout du gris ou retirer un petit mot du bleu. Ses choix = les plages GARDÉES, en secondes du rush :
 # ETAT["derush"] = {"plages": [[a, b], ...], "applique": sig} -> plages.json (derush.py --plages) au « Suivant ».
@@ -373,7 +373,7 @@ def plages_propres(liste):
     return pl
 
 
-# Derush Lab : « Valider le dérush » (maquette (exemple retiré) validée) = le moteur recoupe
+# Derush Lab : « Valider le dérush » = le moteur recoupe
 # si la timeline a changé (clip.mp4), puis le Gardien du dérush (gardien.py --derush). La page montre ses contrôles en vert / rouge.
 GROUPES_LAB = ["mot coupé", "respiration", "plans ≥ 2 s", "micro-coupure", "silence", "flash"]
 
@@ -648,13 +648,13 @@ def ecrire_da_look(lk):
 #   zoom "avant" | "arriere" ; mot "tete" (derrière la tête) | "sous" (en géant dans le sous-titre) ; carton {l1, l2, fond} ;
 #   motion "coeur" | "entoure" | "souligne" (dessins faits par le code, jamais d'IA) ; broll = un plan de SA bibliothèque
 #   (chemin relatif au dossier des B-rolls) ou "perso" (la vidéo envoyée). Jamais d'image ni de vidéo générée par IA.
-#  (l’utilisateur, après test dans Chrome) : l'étape 3 ne propose plus que Zoom, Carton plein et Rien, POUR TOUT LE MONDE.
+# (l’utilisateur, après test dans Chrome) : l'étape 3 ne propose plus que Zoom, Carton plein et Rien, POUR TOUT LE MONDE.
 # Mot géant, Motion design et Ton B-roll sont CACHÉS, pas supprimés (build.mjs, matte.py, headtop.py, /api/biblio, /illus/ intacts) :
 # pour les remettre, reprendre TOUS_EFFETS ici (la page lit la liste dans /api/etat "effets").
 TOUS_EFFETS = ("zoom", "mot", "carton", "motion", "broll", "rien")
 CHOIX_MOMENT = ("zoom", "carton", "rien")
 REGLAGE_DEF = {"zoom": "avant", "mot": "tete", "motion": "chiffres"}
-# Motion design (maquettes motion-r2 F + L validées par l’utilisateur après 5 rounds ; leçon Jun Yuh : pro, sans fond, coupe franche) :
+# Motion design (leçon Jun Yuh : pro, sans fond, coupe franche) :
 #   "chiffres" = 1-2-3 géants derrière la tête (les moments « chiffres » de la vidéo sont numérotés dans l'ordre) ;
 #   "trait" = une illustration au trait blanc (celles du skill Carrousel, art.py, dessinées, jamais d'IA) + son mot.
 # Les anciens coeur / entoure / souligne (« dégueulasses ») deviennent "chiffres".
@@ -975,7 +975,7 @@ def plan_final(h=None, st=None, m="choisie"):
     elif lk:   # sans look, le plan reste celui de Claude (rendu identique) ; « look » dans le plan = refaire le rendu s'il change
         plan["da"] = ecrire_da_look(lk)
         plan["look"] = {k: lk[k] for k in ("id", "sans", "serif", "texte", "serif_couleur", "accent", "rythme")}
-    #  (l’utilisateur, après test) : étape 3 SUPPRIMÉE (zoom, carton, mot géant, motion, B-roll des moments) : ajouter_moments n'est plus appelé.
+    # (l’utilisateur, après test) : étape 3 SUPPRIMÉE (zoom, carton, mot géant, motion, B-roll des moments) : ajouter_moments n'est plus appelé.
     if plan.get("keywords") and plan.get("bigwords"):   # un mot fort qui contient un mot géant (« piège du script » / SCRIPT) :
         geants = {norm(b["text"]) for b in plan["bigwords"]}   # le mot géant le remplace (avant : « piège du » seul en serif)
         plan["keywords"] = [k for k in plan["keywords"] if not geants & {norm(x) for x in k.split()}]

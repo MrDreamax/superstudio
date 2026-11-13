@@ -18,7 +18,7 @@ EYES, FACE, ZMAX = opt("--eyes", 35) / 100, opt("--face", 33) / 100, opt("--max"
 W0, H0, _ = _size(src)
 if abs(W0 / H0 - 9 / 16) > 0.02: sys.exit(f"source {W0}x{H0} pas en 9:16 : recadrage 16:9 -> 9:16 pas encore géré (SKILL : monter en 9:16)")
 F = face(src, 16)
-if not F.get("yeux_y"):   #  (RUSH, plan de scène déjà recadré en 9:16 : visage trop petit pour MediaPipe) : mise au format, pas d'arrêt
+if not F.get("yeux_y"):   # (RUSH, plan de scène déjà recadré en 9:16 : visage trop petit pour MediaPipe) : mise au format, pas d'arrêt
     json.dump({"source": src, "zoom": 1.0, "visage": None, "vf": "scale=1080:1920:flags=lanczos,fps=30"}, open("cadre.json", "w"), indent=1)
     sys.exit(print("pas de visage détecté : pas de recadrage, simple mise au format") or 0)
 ey, fx, fw = F["yeux_y"] / 100, F["visage_x"] / 100, F["visage_largeur"] / 100
@@ -36,7 +36,7 @@ print(f"zoom x {z:.2f} · yeux {F['yeux_y']} % -> {eyes_after:.1f} % · visage {
       + (f"  (plafonné : source {W0} px de large)" if z >= zmax and FACE / fw > zmax else ""))
 if y + ch >= H0 - 2 and eyes_after > EYES * 100 + 2: print("!! le bas de la source est atteint : yeux pas assez hauts, cadrer plus bas au tournage")
 if z == 1: print(f"cadre déjà bon (yeux {F['yeux_y']} %, visage {F['visage_largeur']} %) : pas de recadrage, simple mise au format")
-#  (retour : « le montage prend du temps ») : puce vidéo du Mac (VideoToolbox) au lieu de libx264, 4,6 x plus rapide,
+# (retour : « le montage prend du temps ») : puce vidéo du Mac (VideoToolbox) au lieu de libx264, 4,6 x plus rapide,
 # image mesurée plus fidèle (SSIM 0,972 contre 0,968 pour crf 16). Mieux encore : ne pas encoder ici (sans --apply = cadre.json
 # seul) et passer le cadre au dérush (`derush.py <rush> ... --vf`), qui n'encode que les secondes gardées.
 # Plage de couleurs de la source gardée (caméra = pc, iPhone = tv) : convertir pc -> tv assombrissait l'image (~5 %).

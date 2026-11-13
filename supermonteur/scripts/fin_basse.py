@@ -39,7 +39,7 @@ def chute(video, mots):
         return None, med, None
     f = np.median(fin[-max(3, len(fin) // 2):])   # la toute fin de la dernière syllabe voisée
     plancher = np.percentile(f0[ok], 20)
-    #  (« par le business », 98 Hz, phrase de 135 à 97 Hz) : une phrase qui DESCEND jusqu'à son plancher est une fin basse,
+    # (« par le business », 98 Hz, phrase de 135 à 97 Hz) : une phrase qui DESCEND jusqu'à son plancher est une fin basse,
     # même si la chute finale est douce. Sinon chute >= 8 % sous la médiane.
     return (min(f / med, SEUIL) if f <= plancher * 1.03 else f / med), med, f
 

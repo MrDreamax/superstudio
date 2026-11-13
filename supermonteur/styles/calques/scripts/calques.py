@@ -86,7 +86,7 @@ def paste(cv, spr, cx, cy, scale=1.0, rot=0.0, op=1.0, blur=0.0):
     reg[:] = o + reg * (1 - o[..., 3:4])
 
 
-OMBRE = [0.55]   #  (mur clair, RUSH) : "ombre": 0.9 dans plan.json = ombre plus forte sous les textes blancs
+OMBRE = [0.55]   # (mur clair, RUSH) : "ombre": 0.9 dans plan.json = ombre plus forte sous les textes blancs
 
 
 def ombre(cv, spr, cx, cy, scale=1.0, rot=0.0, op=1.0, blur=0.0, force=None, dy=5):
@@ -289,7 +289,7 @@ def st_orbite(c):
     t, ws, (top, hx, hw) = c["t"], c["mots"], c["tete"]
     hy = top + 0.30 * hw
     f = font("Outfit.ttf", 124, 700)
-    #  (13 mots empilés sur RUSH) : 6 mots max autour de la tête ; le plus récent arrive devant à droite,
+    # (13 mots empilés sur RUSH) : 6 mots max autour de la tête ; le plus récent arrive devant à droite,
     # les autres reculent d'un cran (52°) vers l'arrière, le 6e s'efface.
     dits = [m for m in ws if t >= m["start"] - 0.02]
     for j, m in enumerate(reversed(dits)):
@@ -398,7 +398,7 @@ def st_tracking(c):
     top, hx, hw = c["tete"]
     creme = np.array([237, 233, 225], np.float32) / 255
     noir = np.array([18, 16, 15], np.float32) / 255
-    #  (RUSH : trous blancs dans la silhouette au niveau du micro et des mains) : silhouette pleine, trous bouchés
+    # (RUSH : trous blancs dans la silhouette au niveau du micro et des mains) : silhouette pleine, trous bouchés
     mp = cv2.resize(m, (W // 4, H // 4), interpolation=cv2.INTER_AREA)
     mp = cv2.morphologyEx(mp, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (25, 25)))
     pl_ = (mp > 0.5).astype(np.uint8)
@@ -475,7 +475,7 @@ def st_contour(c):
     vecteur(c["F"], trace)
     pts, nr = chemin_tete(ms, c["tete"][1])
     if pts is None: return
-    #  (juge : texte trop dense) : un groupe court à la fois (coupé aux virgules, 4 mots max), centré sur le sommet
+    # (juge : texte trop dense) : un groupe court à la fois (coupé aux virgules, 4 mots max), centré sur le sommet
     f = font("Outfit.ttf", 64, 700)
     bloc = groupe_du_moment(groupes(ws, maxi=4), t)
     if not bloc: return

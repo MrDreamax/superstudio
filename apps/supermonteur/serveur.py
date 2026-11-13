@@ -210,15 +210,15 @@ plan = celles que l’utilisateur a choisies (liste dans le retour, détail dans
 Réponds en 1 ligne quand la nouvelle version est montée."""
 ESSAIS = {}  # (reel, version) -> nombre d'essais
 
-#  (RUSH : Opus 15 min sur 4 retours, arrêté sans répondre) : les retours simples passent par Sonnet avec une fiche
+# (RUSH : Opus 15 min sur 4 retours, arrêté sans répondre) : les retours simples passent par Sonnet avec une fiche
 # d'1 page (FICHE-RETOURS.md) au lieu de CLAUDE.md + SKILL.md + feedback.md (~45 000 mots), 4 min max. Claude ne fait QUE corriger
 # plan.json / words.json et écrire reponses.json ; le serveur prend les images avant, remonte, répond à l’utilisateur et vide la boîte
 # lui-même (avant : 4 à 6 allers-retours de Claude, et un Claude qui s'arrête = retours jamais répondus).
-#  (studio Super, « mets le titre en plus gros » : 1 min de Claude pour 1 chiffre) : la fiche et plan.json sont DANS la
+# (studio Super, « mets le titre en plus gros » : 1 min de Claude pour 1 chiffre) : la fiche et plan.json sont DANS la
 # consigne (plus de Read), Claude écrit 1 seul fichier neuf, retouche.json = {"plan": <morceau de plan.json à changer>,
 # "reponses": {...}}, que le serveur fusionne lui-même dans plan.json ; le serveur note aussi feedback-retours.md. Il reste
 # 2 tours de Claude au lieu de 5 à 7. Les fichiers du dérush (cut.segments.json…) sont remis tels quels si Claude y touche :
-#  il avait réécrit cut.segments.json à la main, d'où un « plan de 0,11 s » fantôme et la v4 bloquée.
+# il avait réécrit cut.segments.json à la main, d'où un « plan de 0,11 s » fantôme et la v4 bloquée.
 CONSIGNE_RAPIDE = """Tu es Claude dans l'appli SuperMonteur de l’utilisateur. Ne publie rien. Ne lance aucune commande : le serveur remonte
 la version suivante tout seul dès que tu as fini. Va vite : 1 seul Write dans le cas courant.
 Reel %s, dossier %s, version %s. Retours de l’utilisateur (t = seconde dans la version affichée) et l'image de cet instant :
@@ -318,7 +318,7 @@ def titre_max(d):
     return a, (int(a[0] * f), int(a[1] * f))
 
 
-#  (studio Super, note « baisse un peu la musique ici » posée à 5 s : la musique avait baissé sur TOUTE la vidéo ; méthode de
+# (studio Super, note « baisse un peu la musique ici » posée à 5 s : la musique avait baissé sur TOUTE la vidéo ; méthode de
 # l’utilisateur = seules les notes sont retouchées) : une note posée à un moment précis (t > 0) ne change QUE ce moment.
 # - le serveur donne à Claude la fenêtre de la note (t ± 2 s, calée sur les mots) et le mot dit à t avec son numéro ;
 # - « plus bas / plus fort » sur la musique = music_zones (mix.py, son seul ~20 s) ; si Claude change quand même le niveau
@@ -515,7 +515,7 @@ def ouvrier():
                 rid, d = dem.get("reel"), dem.get("dossier")
                 if not rid or not d or not os.path.isdir(d):
                     continue
-                if lire(os.path.join(d, "etat.json"), {}).get("format") == "16:9":   #  RUSH : montage 16:9 fait à la main (sous_titres.py), le correcteur auto ne sait que le 9:16 : la demande attend un chat
+                if lire(os.path.join(d, "etat.json"), {}).get("format") == "16:9":   # RUSH : montage 16:9 fait à la main (sous_titres.py), le correcteur auto ne sait que le 9:16 : la demande attend un chat
                     if lire(os.path.join(d, "etat.json"), {}).get("statut") == "correction":
                         etat(d, statut="retours", etape="Vidéo 16:9 : écris « corrige mes retours » dans le chat Claude.")
                     continue
@@ -608,7 +608,7 @@ def carte(rid):
     e["titre"] = re.sub(r"<[^>]+>", "", " ".join(x for x in (t.get("l1"), t.get("l2")) if x) if isinstance(t, dict) else str(t)).strip()
     v = (e.get("versions") or [{}])[-1].get("fichier")
     if not (v and os.path.isfile(os.path.join(d, v))) and os.path.isfile(os.path.join(d, "final.mp4")):
-        v = "final.mp4"   #  (studio, Publieur : miniatures vides) : reel monté dans un chat = pas de versions, mais un final.mp4
+        v = "final.mp4"   # (studio, Publieur : miniatures vides) : reel monté dans un chat = pas de versions, mais un final.mp4
     vig = os.path.join(d, "vignette.jpg")
     if v and os.path.isfile(os.path.join(d, v)):
         if not os.path.exists(vig) or os.path.getmtime(vig) < os.path.getmtime(os.path.join(d, v)):
@@ -631,7 +631,7 @@ def fiche(rid):
     r = lire(os.path.join(d, "retours.json"), []) or []
     e["retours"] = r
     e["cases_du_style"] = CASES
-    e["images"] = lire(os.path.join(d, "images.json")) if e.get("statut") == "images" else None   #  écran « Tes images »
+    e["images"] = lire(os.path.join(d, "images.json")) if e.get("statut") == "images" else None   # écran « Tes images »
     if e["images"]:   # le titre du reel, montré dans le brouillon avec sa police
         t = (lire(os.path.join(d, "plan.json"), {}) or {}).get("title") or {}
         e["images"]["titre"] = re.sub(r"<[^>]+>", "", " ".join(x for x in (t.get("l1"), t.get("l2")) if x) if isinstance(t, dict) else str(t)).strip()
@@ -802,7 +802,7 @@ class H(BaseHTTPRequestHandler):
                 etat(d, statut="montage", style=style, cases=b.get("cases", {}), reference=ref, etape="Je prépare le montage…", erreur=None)
                 lancer("monter", rid)
                 return self.envoyer(200, fiche(rid))
-            if act == "derush_ok":  #  « Monter le reel » sous le Derush Lab : monter.py attend ce feu vert
+            if act == "derush_ok":  # « Monter le reel » sous le Derush Lab : monter.py attend ce feu vert
                 if e.get("statut") != "derush": return self.envoyer(409, {"erreur": "le dérush est déjà validé"})
                 v = lab_valide(d)
                 if not v: return self.envoyer(409, {"erreur": "clique d'abord « ✓ Valider le dérush » en bas"})
@@ -819,7 +819,7 @@ class H(BaseHTTPRequestHandler):
                     etat(d, statut="montage")
                     lancer("suite", rid)
                 return self.envoyer(200, fiche(rid))
-            if act == "images":     #  « Monter avec ces images » : ses choix, puis Claude monte au style de la référence
+            if act == "images":     # « Monter avec ces images » : ses choix, puis Claude monte au style de la référence
                 if e.get("statut") != "images": return self.envoyer(409, {"erreur": "les images sont déjà envoyées"})
                 images.prendre(d, b.get("pris") or {})
                 pousser_ref(d, texte=e.get("images_texte"))
@@ -831,7 +831,7 @@ class H(BaseHTTPRequestHandler):
                 R.append({"id": max([x["id"] for x in R] or [0]) + 1, "t": round(float(b.get("t", 0)), 2), "texte": texte,
                           "statut": "a_faire", "version": e.get("version", 1), "reponse": "",
                           "date": datetime.datetime.now().isoformat(timespec="seconds"),
-                          **({"auto": "lourd"} if b.get("lourd") else {})})   #  studio : images à ajouter, style à refaire = Claude complet (Opus), pas le correcteur rapide
+                          **({"auto": "lourd"} if b.get("lourd") else {})})   # studio : images à ajouter, style à refaire = Claude complet (Opus), pas le correcteur rapide
                 ecrire(os.path.join(d, "retours.json"), R)
                 return self.envoyer(200, fiche(rid))
             if act == "effacer":     # retirer un retour pas encore envoyé (faute de frappe)
@@ -856,7 +856,7 @@ class H(BaseHTTPRequestHandler):
             if act == "rouvrir":
                 etat(d, statut="retours")
                 return self.envoyer(200, fiche(rid))
-            if act == "cacher":      #  « Supprimer » de l'accueil (2 clics) : le projet disparaît, ses fichiers et le rush restent
+            if act == "cacher":      # « Supprimer » de l'accueil (2 clics) : le projet disparaît, ses fichiers et le rush restent
                 etat(d, cache=datetime.datetime.now().isoformat(timespec="seconds"))
                 return self.envoyer(200, {"ok": True})
             return self.envoyer(404, {"erreur": "action inconnue"})
@@ -905,7 +905,7 @@ class H(BaseHTTPRequestHandler):
         os.makedirs(dst, exist_ok=True)
         p = os.path.join(dst, re.sub(r"[^\w.-]", "_", nom))
         n = int(self.headers.get("Content-Length") or 0)
-        #  (RUSH : copie arrêtée à 5,8 / 6,4 Go, vidéo illisible) : copie dans .part, gardée seulement si complète
+        # (RUSH : copie arrêtée à 5,8 / 6,4 Go, vidéo illisible) : copie dans .part, gardée seulement si complète
         part = p + ".part"
         with open(part, "wb") as f:
             while n > 0:

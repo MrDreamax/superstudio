@@ -33,7 +33,7 @@ Il parle face cam pendant toute la vidéo : la source remplit l'écran pendant l
 - `webapp` (astuce prix : appli « + frais des stores » vs PC « prix réduit », `webAt` / `appAt`)
 - `ring` (anneau qui se remplit jusqu'à `value` % avec le compteur au centre, `suffix` défaut « % », `label` en serif italique dessous ; pour UN pourcentage dit à voix haute)
 - `bars` (`values` = 3-5 barres, `labels` sous chaque barre, `title`, `value` + `prefix`/`suffix` = chiffre qui compte ; les barres grises montent, pause 0,35 s, puis la dernière en accent monte avec son chiffre ; pour une progression « avant → maintenant »)
-(`ring` et `bars` ajoutés, greffe GitHub, démo `(exemple retiré)`.) Ajouter un type quand une idée revient.
+Ajouter un type quand une idée revient.
 
 ## Options (pas dans la v8 validée, seulement si l'utilisateur le demande)
 - **Hook react** (né sur la démo) : 3-5 s d'une vidéo du web sur le sujet (`yt-dlp --download-sections "*0:00-0:06"`, accord de l'utilisateur avant tout téléchargement), `"fit": true` (vidéo entière en haut, fond bleu nuit, muette, `"credit"` = source à l'écran, `"pre": "delogo=..."` pour flouter une bulle webcam) ; pas de titre-question en même temps (doublon).

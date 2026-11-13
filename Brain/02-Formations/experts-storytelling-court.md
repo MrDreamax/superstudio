@@ -14,7 +14,7 @@ sujets: [contenu]
 - Presque tout vient du marketing US et de la vidéo courte : « à transposer ».
 
 Règle de ce fichier : sources primaires seulement (l'expert qui parle). Format : [ID] = https://www.youtube.com/watch?v=ID puis [mm:ss]. Transcriptions auto : précision +-30 s. Le texte est de la paraphrase. Aucun livre lu en entier.
-, pas refait ici :  (le moment de 5 secondes, commencer près de la fin, enjeux),  (le client est le héros, 7 phrases), , , [[02-Formations/experts-hooks-retention]] (hooks, zone de verrouillage, échelle de dopamine, hooks de désir de Kallaway),  (histoire d'origine en 3 temps), [[02-Formations/experts-resultats-clients-temoignages]] (comment récolter un résultat chiffré). Algo et CTA commentaire : [[02-Formations/experts-algo-instagram]].
+Déjà couvert ailleurs, pas refait ici : [[02-Formations/experts-hooks-retention]] (hooks, zone de verrouillage, échelle de dopamine, hooks de désir de Kallaway), [[02-Formations/experts-resultats-clients-temoignages]] (comment récolter un résultat chiffré), [[02-Formations/experts-algo-instagram]].
 
 ---
 

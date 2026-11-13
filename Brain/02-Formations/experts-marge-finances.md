@@ -16,7 +16,7 @@ C'est la ligne n°1 avant toute théorie.
 
 HORS SUJET : fiscalité et structures (SASU, LLC, FZE, TVA, taux d'impôt, qui détient quel compte) = job d'un fiscaliste. Je ne fixe aucun taux d'impôt ici.
 
-Règles de ce fichier : sources primaires uniquement (l'expert qui parle). [ID] = https://www.youtube.com/watch?v=ID puis [mm:ss], transcriptions auto, précision +-30 s. Presque tout est US : "à transposer". Déjà couvert, pas répété : définitions LTV/CAC, CAC all-in, cash à 30 jours > 2x, CAC max 673 € ([[02-Formations/experts-creas-pub-high-ticket]], section 4), money models, prix et offre. Pour la rétention et le renouvellement : [[02-Formations/experts-resultats-clients-temoignages]]. Pointeurs (pas des sources) : ,  (ne jamais risquer la ruine : dette et trésorerie mince).
+Règles de ce fichier : sources primaires uniquement (l'expert qui parle). [ID] = https://www.youtube.com/watch?v=ID puis [mm:ss], transcriptions auto, précision +-30 s. Presque tout est US : "à transposer". Déjà couvert, pas répété : définitions LTV/CAC, CAC all-in, cash à 30 jours > 2x, CAC max 673 € ([[02-Formations/experts-creas-pub-high-ticket]], section 4), money models, prix et offre. Pour la rétention et le renouvellement : [[02-Formations/experts-resultats-clients-temoignages]]. Principe : ne jamais risquer la ruine (dette et trésorerie mince).
 
 ---
 

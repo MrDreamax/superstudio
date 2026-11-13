@@ -83,9 +83,9 @@ def pour_moteur():
     fonts_dir = os.path.join(SK, "fonts")
     fp = p.get("fichier") if p.get("fichier") and os.path.exists(os.path.join(fonts_dir, p["fichier"])) else "Outfit.ttf"   # police par défaut = Outfit (duo Moderne)
     fs = s.get("fichier") if s.get("fichier") and os.path.exists(os.path.join(fonts_dir, s["fichier"])) else "Outfit.ttf"
-    # contrat SuperDA (note01:50) : titre.taille = ligne 2 (police secondaire) ; ligne 1 = taille x 0,5
+    # contrat SuperDA : titre.taille = ligne 2 (police secondaire) ; ligne 1 = taille x 0,5
     t2 = int(m.get("titre", {}).get("taille") or 62)   # défauts = ceux de SuperDA (62 · 54)
-    t1 = round(t2 * p.get("ratio_ligne1", 0.5))   #  duo Moderne : ligne 1 fine et presque aussi grande que la ligne 2
+    t1 = round(t2 * p.get("ratio_ligne1", 0.5))   # duo Moderne : ligne 1 fine et presque aussi grande que la ligne 2
     sub = int(m.get("sous_titres", {}).get("taille") or 54)
     # police étroite = « echelle » du catalogue (Bebas x1,35), même présence à réglage égal
     t1, t2, sub = round(t1 * p.get("echelle", 1)), round(t2 * s.get("echelle", 1)), round(sub * p.get("echelle", 1))

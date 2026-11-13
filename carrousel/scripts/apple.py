@@ -24,7 +24,7 @@ from art import ARTS, BLUE
 W, H = 1080, 1440
 MODEL = os.path.expanduser("~/.cache/supermonteur/rvm_mobilenetv3_fp32.onnx")  # modèle du skill supermonteur
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-HAIR = 110  # pixels de cheveux qui dépassent au-dessus de la photo (choix de)
+HAIR = 110  # pixels de cheveux qui dépassent au-dessus de la photo
 INK, MUTE, GRAY = "#1D1D1F", "#6E6E73", "#E9E9EB"
 
 CSS = f"""<!doctype html><html lang="fr"><head><meta charset="utf-8">
@@ -136,7 +136,7 @@ def note(s):
 
 # ---- Couverture « sujet géant » (remède 1 d'Ayo, VALIDÉE par l’utilisateur 2 rounds) ----
 # Fond blanc, titre à gauche 2 lignes 165 px, seul le mot "accent" en bleu, tête détourée en très grand dont les
-# cheveux frôlent le bas du titre, ombre douce, aucun bouton. Modèle : (exemple retiré)
+# cheveux frôlent le bas du titre, ombre douce, aucun bouton.
 COVERS = {}
 SWIFT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "detoure.swift")
 HEAD_W, HEAD_CX, OVER = 549, 696, 49  # calés sur A-final.png  # largeur de la tête à l'écran, son centre, cheveux qui mangent le titre (px)

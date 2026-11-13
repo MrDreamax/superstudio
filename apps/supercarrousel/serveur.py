@@ -222,7 +222,7 @@ def ouvrier():
                     tache = "écrire la version 1" if quoi == "texte" else "corriger ses retours (version suivante)"
                     ok, sortie = ouvrier_claude.lancer(CONSIGNE % (pid, tache, pid, pid, pid, pid), m.ICI,
                                                        ["Read", "Write", "Edit", "Glob", "Grep", "Skill", "Bash(python3 sc.py:*)"])
-                    #  (juge Super 1.7) : Claude absent ou déconnecté = dit à l'écran tout de suite, sans 2 essais pour rien
+                    # (juge Super 1.7) : Claude absent ou déconnecté = dit à l'écran tout de suite, sans 2 essais pour rien
                     if not ok and ("Je ne trouve pas Claude" in sortie or "pas connecté" in sortie):
                         TENTATIVES[cle] = 99
                         DERNIERE[cle] = sortie

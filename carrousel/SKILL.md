@@ -52,7 +52,7 @@ Le détourage ne garde que la tête au-dessus de la photo (mains et bruit effac�
 | Alternance | PAS obligatoire : photo ou dessin selon l'idée de la slide (couverture = photo) |
 | Illustrations | 2D motion design dessinées en SVG (`art.py`) : fond blanc, grand cercle bleu très clair, aplats, 2 à 4 petits éléments déco |
 | Interdit | images générées par IA, quel que soit l'outil. Pas de @, pas de numéro de slide |
-| Couverture | **« sujet géant »** (remède 1 d'Ayo, validée en 2 rounds) : fond blanc, titre 2 lignes à gauche, `"accent"` = le mot clé seul en bleu, tête détourée en très grand dont les cheveux frôlent le bas du titre, AUCUN bouton ni flèche. Photo cadrée BUSTE obligatoire (en pied → le moteur reprend l'ancienne couverture et le dit). 7 mots max. Modèle : `(exemple retiré)`. Ancienne : `"cover_style": "ancienne"` |
+| Couverture | **« sujet géant »** (remède 1 d'Ayo, validée en 2 rounds) : fond blanc, titre 2 lignes à gauche, `"accent"` = le mot clé seul en bleu, tête détourée en très grand dont les cheveux frôlent le bas du titre, AUCUN bouton ni flèche. Photo cadrée BUSTE obligatoire (en pied → le moteur reprend l'ancienne couverture et le dit). 7 mots max. Ancienne : `"cover_style": "ancienne"` |
 | Slides | 1 idée par slide : titre serif + 1 phrase courte (ou liste 1-2-3 de 3 lignes courtes). Jamais de pavé |
 | Fin | « Commente MOT » + la ressource promise. Flèche de swipe partout sauf sur la dernière |
 

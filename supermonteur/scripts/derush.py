@@ -21,7 +21,7 @@ dead = {k for a, b in drop for k in range(a, b + 1)}
 PAUSE = int(sys.argv[sys.argv.index("--pause") + 1]) if "--pause" in sys.argv else None
 keep = [w for i, w in enumerate(W) if i not in dead]
 PRE, POST, MID, MAXGAP = 0.06, 0.12, 0.15, 0.25
-#  (Tesla v3 : « on n'entend pas le mot data en entier ») : les temps de Whisper sont faux de 0,1-0,3 s aux bords
+# (Tesla v3 : « on n'entend pas le mot data en entier ») : les temps de Whisper sont faux de 0,1-0,3 s aux bords
 # des mots. Aux coupes qui retirent un blanc entier (fin de phrase, prise sautée), on coupe sur le VRAI son : fin = 1er blanc
 # de 120 ms après le mot, début = vraie attaque de la voix. Seuil = niveau de parole (95e centile) - 21 dB (énergie lissée 30 ms).
 _RAW = []
@@ -40,12 +40,12 @@ def _env():
         db = np.convolve(db, np.ones(3) / 3, "same")     # lissé sur 30 ms : le bruit de la pièce frôle le seuil
         _ENV.extend([db, float(np.percentile(db, 95)) - 21])
     return _ENV
-#  (RUSH, 3 respirations restées après le dérush) : une inspiration fait -27 à -34 dB quand la voix fait -10 à -16 :
+# (RUSH, 3 respirations restées après le dérush) : une inspiration fait -27 à -34 dB quand la voix fait -10 à -16 :
 # au seuil « 95e centile - 21 dB » elle passait pour de la voix et la fin du mot s'allongeait jusqu'à +0,35 s. Pour trouver la FIN
 # d'un mot, le blanc est compté 6 dB plus haut (respiration = blanc) ; l'attaque d'un mot garde le seuil normal.
 BREATH_DB = 6
 PAUSE_DB = 10   # pause / inspiration DANS une plage : >= 0,3 s sous « 95e centile - 11 dB » (RUSH : souffle à -22/-26, voix à -10/-16)
-#  (RUSH v1 : « à un moment le mot est coupé, et à la fin aussi le mot est coupé ») : la queue SOURDE d'un mot
+# (RUSH v1 : « à un moment le mot est coupé, et à la fin aussi le mot est coupé ») : la queue SOURDE d'un mot
 # (« t » de « script » : 70 ms de silence puis l'explosion à -28/-35 dB ; « x » de « l’utilisateur » à -36/-41 dB) est sous le seuil
 # de parole, donc speech_end / tail_end la prenaient pour un blanc et la coupaient. Elle est pourtant 20 dB au-dessus du bruit
 # de la pièce (FLOOR = 3e centile, -59 dB sur ce rush). word_tail() prolonge la fin tant que le son reste > FLOOR + 15 dB,
@@ -84,7 +84,7 @@ def speech_start(t, lo):   # vraie attaque du mot annoncé à t : DERNIER passag
     for k in range(max(0, int(lo * 100)), min(len(db) - 4, int((t + 0.15) * 100))):
         if db[k] < q and (db[k + 1:k + 4] >= q).all(): best = (k + 1) / 100 - 0.04
     return best
-#  (d'une prise ratée gardé après « publication, ») : la butée d'une coupe devant un mot SUPPRIMÉ était
+# (d'une prise ratée gardé après « publication, ») : la butée d'une coupe devant un mot SUPPRIMÉ était
 # son début selon Whisper (189,30 s), alors que sa voix démarrait à 189,24 s. Et le filet, qui recalculait « le mot suivant » depuis
 # la coupe déjà avancée, glissait d'un mot à chaque tour (189,32 -> 189,40 -> 189,47 s). La butée = la VRAIE attaque mesurée du mot
 # supprimé : dernier passage calme (bruit de la pièce + 15 dB, seuil du Gardien) -> voix avant son début Whisper ; reprise collée
@@ -102,19 +102,19 @@ def attaque_reelle(i):
 SERRE = []   # coupes sans blanc (phrase retirée collée au mot d'avant), voir plus bas
 MINCUT, MINSEG, BREATH = 0.45, 0.6, 0.3   # pas de coupe pour un blanc < 0,45 s ; pas de bout de face cam < 0,6 s entre deux coupes
 # --serre = coupe aussi les blancs de 0,3 s et les respirations de 0,22 s
-#  (, 3e demande) : SERRÉ PAR DÉFAUT. Un blanc de 0,28 s après un
+# SERRÉ PAR DÉFAUT. Un blanc de 0,28 s après un
 # point ou une virgule est coupé, la marge après le mot tombe à 0,06 s (le filet queue_mot garde la queue entière), une coupe
 # visible doit gagner au moins GAINMIN = 0,15 s (avant 0,45 s : les blancs de 0,3-0,6 s restaient tous). --large = ancien réglage.
 GAINMIN = 0.15
 if "--large" in sys.argv: GAINMIN = 0.45
 else: MINCUT, BREATH, POST = 0.28, 0.22, 0.06
-LONG = 1.0   #  (repris de kit-visibles) : un blanc de plus d'1 s est toujours coupé, même sans ponctuation
-#  (l’utilisateur, règle pour TOUT 1er dérush : « ne coupe jamais en plein milieu d'une phrase, toujours sur un point ou une virgule »,
+LONG = 1.0   # (repris de kit-visibles) : un blanc de plus d'1 s est toujours coupé, même sans ponctuation
+# (l’utilisateur, règle pour TOUT 1er dérush : « ne coupe jamais en plein milieu d'une phrase, toujours sur un point ou une virgule »,
 # déjà dit sur RUSH). L'IMAGE n'est coupée qu'après un mot qui finit par . , ! ? … ; : (ou à une reprise sautée).
 # Un blanc ou une respiration en milieu de phrase reste à l'image ; seul son SON est baissé au bruit de la pièce (MUTE plus bas).
 # Les bords posés à la main (--bords, --plages : timeline du cockpit) ne sont pas concernés : c'est la personne qui décide.
 PONCT = ".,!?…;:"
-#  (» transcrit avec le guillemet après le point -> 2,9 s de blanc gardées) : guillemets et parenthèses fermants ignorés
+# (» transcrit avec le guillemet après le point -> 2,9 s de blanc gardées) : guillemets et parenthèses fermants ignorés
 fin_phrase = lambda w: w["text"].rstrip().rstrip("»\"'”’) ").rstrip()[-1:] in PONCT
 
 segs = []
@@ -142,10 +142,10 @@ for i, w in enumerate(keep):
             segs[-1][1] = e; continue
         if jumped and not end_of_sentence:
             print(f"!! reprise : coupe après « {prev['text'].strip()} » ({prev['end']:.2f} s), sans point ni virgule : vérifier que la phrase gardée est entière")
-        #  (lot de 6 : « respiration cut sur tous les rushs ») : un blanc >= BREATH entre deux mots = une respiration
+        # (lot de 6 : « respiration cut sur tous les rushs ») : un blanc >= BREATH entre deux mots = une respiration
         # (souvent sans ponctuation dans la transcription) -> coupée en entier comme une fin de phrase, même si < MINCUT.
         breath = end_of_sentence or gap >= BREATH
-        if not jumped and gap < MINCUT and not breath:   #  (Tesla : « micro cuts qui buggent ») : une coupe qui ne
+        if not jumped and gap < MINCUT and not breath:   # (Tesla : « micro cuts qui buggent ») : une coupe qui ne
             segs[-1][1] = e; continue                    # gagne que 0,1-0,3 s = un saut de tête visible pour rien -> on garde
         if not jumped and not breath:
             segs[-1][1] = prev["end"] + MID / 2          # milieu de phrase : on resserre seulement
@@ -154,7 +154,7 @@ for i, w in enumerate(keep):
             segs[-1][1] = min(segs[-1][1], w["start"] - 0.01)
             j, pj = W.index(w), W.index(prev)
             att = attaque_reelle(pj + 1) if jumped else None   # vraie attaque du mot supprimé (pas le début Whisper)
-            if jumped:   #  (Tesla 49,3 s « petit silence mal cut ») : la marge POST gardait 0,1 s du mot SUPPRIMÉ
+            if jumped:   # (Tesla 49,3 s « petit silence mal cut ») : la marge POST gardait 0,1 s du mot SUPPRIMÉ
                          # qui suit (« data e- »). Les marges s'arrêtent au mot voisin dans le RUSH.
                 segs[-1][1] = min(segs[-1][1], max(prev["end"], att - 0.01))
                 s = max(s, min(w["start"], W[j - 1]["end"] + 0.01))
@@ -162,10 +162,10 @@ for i, w in enumerate(keep):
             se = speech_end(prev["end"], W[pj + 1]["start"] + 0.15 if jumped else min(prev["end"] + 0.35, w["start"] - 0.05),
                             cap=att - 0.01 if jumped else w["start"] - 0.05)   # la queue du mot s'arrête avant le mot suivant
             if se: segs[-1][1] = min(se, att - 0.01) if jumped else se   # fin réelle du mot (pas celle de Whisper)
-            #  (RUSH « vite, | mais si tu n'as pas de strat... » : 0,18 s, la voix ne retombe pas avant le mot retiré,
+            # (RUSH « vite, | mais si tu n'as pas de strat... » : 0,18 s, la voix ne retombe pas avant le mot retiré,
             # speech_end rendait la butée = Gardien « mot coupé » bloquant) : jusqu'à 0,3 s, et aussi quand la fin = la butée
             if jumped and att - prev["end"] < 0.3 and (not se or se >= att - 0.04):
-                #  (cockpit v4 : phrase barrée collée au mot d'avant, « sujet | et le message ») : aucun blanc entre les deux.
+                # (cockpit v4 : phrase barrée collée au mot d'avant, « sujet | et le message ») : aucun blanc entre les deux.
                 # On coupe au creux du son entre les deux mots ; la coupe est notée « serrée » (le Gardien la signale sans bloquer :
                 # c'est la personne qui a choisi de retirer la suite).
                 db, _ = _env(); lo, hi = int((prev["end"] - 0.1) * 100), int(att * 100)   # jamais après la vraie attaque
@@ -176,7 +176,7 @@ for i, w in enumerate(keep):
             s = max(s, w["start"] - 0.15)               # l'inspiration juste avant le mot passe le seuil -> jamais > 0,15 s avant
     segs.append([max(0.0, s), e])
 segs = [[a, b] for a, b in segs if b - a > 0.05]
-#  (RUSH) : Whisper colle souvent une pause DANS un mot (« c » de 106,9 à 107,4 s, « intelligence » sur 9 s) et
+# Whisper colle souvent une pause DANS un mot (« c » de 106,9 à 107,4 s, « intelligence » sur 9 s) et
 # le dérush ne la voyait pas : respirations et pauses restaient. Toute pause RÉELLE >= BREATH (énergie sous le seuil
 # « respiration », mesurée sur le son, pas sur Whisper) à l'intérieur ou au bord d'une plage gardée est coupée.
 def inner_pauses(a, b):
@@ -189,11 +189,11 @@ def inner_pauses(a, b):
             run0 = None
     if run0 is not None and int(b * 100) - run0 >= 8: out.append((run0 / 100, b))
     return out
-#  (retour : « enlève les respirations en début et en fin de phrase, sans couper le mot, il faut que ce soit bien audible ») :
+# (retour : « enlève les respirations en début et en fin de phrase, sans couper le mot, il faut que ce soit bien audible ») :
 # marges autour de la voix forte = EDGE_IN avant l'attaque (consonne douce gardée), EDGE_OUT après la fin (« s », « x » finals gardés).
 EDGE_IN, EDGE_OUT = 0.12, 0.10
 if "--serre" in sys.argv: EDGE_IN, EDGE_OUT = 0.09, 0.07   # marges au bord de la voix resserrées (le Gardien « mot coupé » veille)
-#  (retour : « "longueur d'avance" : on n'entend pas la dernière syllabe ») : la fin douce d'un mot (« -vance », « s », « x »)
+# (retour : « "longueur d'avance" : on n'entend pas la dernière syllabe ») : la fin douce d'un mot (« -vance », « s », « x »)
 # est sous le seuil « voix forte » : couper à p0 + 0,10 la mangeait. La fin du mot = 1er VRAI silence (sous le seuil de parole q,
 # 60 ms d'affilée) après la voix forte ; le souffle éventuel qui suit part avec le reste.
 def tail_end(p0, lim):
@@ -202,7 +202,7 @@ def tail_end(p0, lim):
         run = run + 1 if db[k] < q else 0
         if run >= 6: return word_tail((k - 5) / 100, lim)   # fin réelle du mot (queue sourde gardée, souffle collé retiré)
     return None
-#  (RUSH : le « M » de « l’utilisateur » mangé) : la voix qui reprend après une pause commence souvent par une consonne
+# (RUSH : le « M » de « l’utilisateur » mangé) : la voix qui reprend après une pause commence souvent par une consonne
 # douce VOISÉE (m, n, l, j, v : -26/-36 dB) sous le seuil « voix forte » de inner_pauses ; p1 - EDGE_IN la coupait (ou la
 # baissait). soft_attack remonte depuis p1 tant que le son est au-dessus du bruit de la pièce (FLOOR + 12) et redevient voisé
 # (trous sourds de 80 ms max : le « st » de « Mister ») ; une inspiration (sourde) l'arrête : elle reste retirée.
@@ -220,7 +220,7 @@ for a, b in segs:
         if p0 - cur < 0.05: cur = max(cur, soft_attack(p0, p1) - EDGE_IN); continue   # début de plage : inspiration / blanc retiré (pas de coupe en plus)
         if p1 >= b - 0.01:                                             # fin de plage : souffle / blanc retiré, mot entier
             te = tail_end(p0, b); end = min(end, te if te else end); break
-        #  (retour : « micro-coupures, on dirait que la vidéo bugue ») : une pause AU MILIEU n'est coupée que si on gagne
+        # (retour : « micro-coupures, on dirait que la vidéo bugue ») : une pause AU MILIEU n'est coupée que si on gagne
         # >= MINCUT (marges 0,04 + 0,06 s comprises). Avant : des coupes de 0,16-0,34 s = sauts de tête pour rien.
         _pw = max((w for w in keep if w["end"] <= p0 + 0.1), key=lambda w: w["end"], default=None)
         if _pw is not None and not fin_phrase(_pw) and p1 - p0 < LONG: continue   # pause en milieu de phrase = jamais coupée (son baissé)
@@ -229,11 +229,11 @@ for a, b in segs:
         if pa - te >= MINCUT: _new.append([cur, te]); cur = pa
     if end - cur > 0.05: _new.append([cur, end])
 segs = _new
-#  (RUSH, Claude à sa limite d'usage -> secours drop_auto : « Mais quand c'est trop fort. » marmonné, 0,78 s de mots
+# (RUSH, Claude à sa limite d'usage -> secours drop_auto : « Mais quand c'est trop fort. » marmonné, 0,78 s de mots
 # selon la transcription mais 0,12 s de vraie voix -> bout de 0,2 s isolé, v1 bloquée par le Gardien « Micro-coupes ») : un bout
 # < MINSEG qu'on ne peut recoller à aucune voisine (blanc ≥ 0,5 s des deux côtés) n'a pas de vraie voix sous ses mots (mots mal
 # calés, prise avortée). Il saute avec ses mots (sous-titres), au lieu d'un plan éclair. Le Gardien garde sa règle des 0,6 s.
-#  (0,59 s de VRAIE voix à -5 dB, retiré comme « bout sans vraie voix ») : le bout n'était
+# (0,59 s de VRAIE voix à -5 dB, retiré comme « bout sans vraie voix ») : le bout n'était
 # jugé que sur sa durée. Désormais on MESURE : s'il a au moins VOIXMIN de voix forte (au-dessus du seuil de parole), c'est une
 # vraie phrase courte -> gardée, élargie à MINSEG avec le blanc autour (jamais dans un mot voisin). Seul un bout sans voix saute.
 VOIXMIN = 0.25
@@ -262,7 +262,7 @@ def _retire_bout(k, ou):
     print(f"bout de {b - a:.2f} s à {a:.2f} s {ou} retiré, pas de vraie voix sous ses mots : « {' '.join(W[i]['text'] for i in mots)[:60]} »")
     dead.update(mots); keep = [w for i, w in enumerate(W) if i not in dead]
     segs.pop(k)
-#  (Tesla 14,8 s : « enlève le micro rush inutile qui saccade ») : un bout gardé < MINSEG entre deux coupes
+# (Tesla 14,8 s : « enlève le micro rush inutile qui saccade ») : un bout gardé < MINSEG entre deux coupes
 # (« par » seul, 0,17 s, puis saut) = la tête saute deux fois. On le recolle au bout voisin de la même prise (blanc gardé).
 k = 0
 while k < len(segs):
@@ -273,7 +273,7 @@ while k < len(segs):
         if k > 0 and a - segs[k - 1][1] < 0.5:            segs[k - 1][1] = b; segs.pop(k); continue
         _retire_bout(k, "entre deux prises"); continue
     k += 1
-#  (retour : « chaque plan dure minimum 2 secondes », « plus de micro-coupures ») : tout bout de face cam < MINSHOT est recollé
+# (retour : « chaque plan dure minimum 2 secondes », « plus de micro-coupures ») : tout bout de face cam < MINSHOT est recollé
 # à son voisin quand la pause entre les deux est courte (< SHOTGAP : elle reste, c'est un temps naturel). Entre deux prises
 # (pause longue), impossible : le script le signale, le bout doit être caché sous un B-roll ou un carton.
 MINSHOT, SHOTGAP = 2.0, 0.6   # 3 s demandé puis « passe à minimum 2 secondes »
@@ -289,7 +289,7 @@ while changed and len(segs) > 1:
         if gn <= gp: segs[k + 1][0] = a
         else:        segs[k - 1][1] = b
         segs.pop(k); changed = True; break
-#  (RUSH v1 à 42 s : « ne fais jamais de cut en plein milieu d'une phrase, j'étais en train de faire des sons
+# (RUSH v1 à 42 s : « ne fais jamais de cut en plein milieu d'une phrase, j'étais en train de faire des sons
 # avec ma bouche ») : --garde garde.json = [[a, b], ...] plages du RUSH où l'on ne coupe jamais (bruitage fait avec la bouche,
 # geste, temps voulu) : deux plages gardées dont le blanc tombe dans une zone --garde sont recollées.
 GARDE = json.load(open(sys.argv[sys.argv.index("--garde") + 1])) if "--garde" in sys.argv else []
@@ -298,7 +298,7 @@ while k + 1 < len(segs):
     b0, a1 = segs[k][1], segs[k + 1][0]
     if any(ga < a1 and b0 < gb for ga, gb in GARDE): segs[k][1] = segs[k + 1][1]; segs.pop(k + 1); continue
     k += 1
-#  (RUSH, Gardien avant rendu : coupes visibles de 0,13 et 0,17 s à 61,2 et 51,7 s) : une virgule comptait comme fin
+# (RUSH, Gardien avant rendu : coupes visibles de 0,13 et 0,17 s à 61,2 et 51,7 s) : une virgule comptait comme fin
 # de phrase et faisait couper un blanc de 0,26 s pour gagner 0,13 s = saut de tête pour rien. « Zéro micro-coupure »
 # passe avant « couper toutes les respirations » : deux plages de la MÊME prise (aucun mot supprimé entre elles) séparées de
 # moins de MINCUT sont recollées, le petit blanc reste (temps naturel).
@@ -318,7 +318,7 @@ TAIL = float(sys.argv[sys.argv.index("--tail") + 1]) if "--tail" in sys.argv els
 if segs:
     segs[0][0] = max(0.0, min(segs[0][0], keep[0]["start"] - LEAD))
     segs[-1][1] = max(segs[-1][1], keep[-1]["end"] + TAIL)
-#  (RUSH v1 : « à la toute fin, le rush est mal coupé, il y a une microseconde de trop ») : après le dernier mot il
+# (RUSH v1 : « à la toute fin, le rush est mal coupé, il y a une microseconde de trop ») : après le dernier mot il
 # s'immobilise (28,33 s), puis rebouge à 28,73 s (il sort du rôle) et TAIL gardait ce geste. La fin s'arrête maintenant sur la
 # dernière image immobile : mouvement mesuré image par image dans la traîne, coupe juste avant qu'il ne reparte.
 def _fin_immobile(t0, t1):
@@ -335,7 +335,7 @@ def _fin_immobile(t0, t1):
     return None if go is None else t0 + go / 30   # d[i] = image i+1 contre image i : on garde jusqu'à l'image i comprise
 if segs and "--fin-libre" not in sys.argv:
     fe = _fin_immobile(keep[-1]["end"], segs[-1][1])
-    #  (RUSH dans le Derush Lab : Gardien « mot coupé » ('fin', 22.31) à chaque validation, impossible à corriger à la
+    # (RUSH dans le Derush Lab : Gardien « mot coupé » ('fin', 22.31) à chaque validation, impossible à corriger à la
     # main) : il rebougeait AVANT la fin de son dernier mot, et la coupe immobile mangeait la queue du mot. Jamais avant la vraie
     # fin du dernier mot (queue_mot.py, même définition que le Gardien) + 0,06 s.
     _qf = speech_end(keep[-1]["end"], keep[-1]["end"] + 0.35, segs[-1][1]) if fe else None
@@ -343,7 +343,7 @@ if segs and "--fin-libre" not in sys.argv:
     if fe and fe >= keep[-1]["end"] + 0.15 and fe < segs[-1][1] - 0.02:
         print(f"fin : il rebouge après le dernier mot -> coupe sur la dernière image immobile ({segs[-1][1] - fe:.2f} s retirées)")
         segs[-1][1] = fe
-#  (RUSH v2, Cut Notes : « enlève la respiration dès le départ », « respiration à cut » à 18,6 s, « bug ici » à 11 s) :
+# (RUSH v2, Cut Notes : « enlève la respiration dès le départ », « respiration à cut » à 18,6 s, « bug ici » à 11 s) :
 # au début d'une plage (1er mot de la vidéo, reprise après une coupe), deux restes passaient :
 #  1) une inspiration FORTE (-16/-25 dB, presque la voix) que le seuil d'énergie prenait pour de la parole ;
 #  2) la queue d'un mot supprimé (« …tion » de « information ») : Whisper étalait le mot gardé (« mais ») sur 0,8 s, pause comprise.
@@ -355,7 +355,7 @@ def first_voiced(t0, t1):   # 1re trame de 10 ms VOISÉE (note de voix : autocor
     import numpy as np
     x, (db, q) = _raw(), _env()
     for k in range(int(t0 * 100), min(len(db), int(t1 * 100))):
-        if db[k] < q: continue   #  (RUSH, « Mr » coupé) : un « m », « n », « l » voisé et doux (-26/-36 dB) est une vraie attaque
+        if db[k] < q: continue   # (RUSH, « Mr » coupé) : un « m », « n », « l » voisé et doux (-26/-36 dB) est une vraie attaque
         f = x[k * 160: k * 160 + 480].astype(np.float64); f = f - f.mean()
         if len(f) < 480: break
         if (f * f).sum() <= 0: continue
@@ -373,7 +373,7 @@ for sg in segs:
     if cut_at:
         k = int(cut_at * 100)
         while k < len(db) and db[k] < q + PAUSE_DB: k += 1
-        #  (de « l’utilisateur » perdait son « M ») : la consonne douce du début (-26/-36 dB) est sous le seuil
+        # (de « l’utilisateur » perdait son « M ») : la consonne douce du début (-26/-36 dB) est sous le seuil
         # « voix forte » et passait pour la pause. L'attaque = juste après le DERNIER vrai calme (bruit de la pièce + 12 dB)
         # de la pause ; s'il n'y en a pas (souffle d'un bout à l'autre), on garde l'ancien point.
         j = k - 1
@@ -383,14 +383,14 @@ for sg in segs:
     v = first_voiced(a, min(sg[1], a + 1.2))
     if v is not None and v - EDGE_V > a + 0.03:
         a = v - EDGE_V
-        #  (RUSH, « Je t'explique. ») : la 1re trame « voisée » tombait après le « J » (consonne sifflée) -> début à 112,86 s,
+        # (RUSH, « Je t'explique. ») : la 1re trame « voisée » tombait après le « J » (consonne sifflée) -> début à 112,86 s,
         # l'attaque (112,82 s) mangée. Jamais après la vraie attaque du 1er mot quand elle colle à son début Whisper (< 0,1 s : pas un souffle).
         if not cut_at:
             ar = attaque_reelle(W.index(w))
             if w["start"] - ar < 0.1: a = min(a, ar - 0.03)
     if a > sg[0] + 0.01 and sg[1] - a > 0.3:
         print(f"début de plage {sg[0]:.2f} -> {a:.2f} s (respiration / reste du mot supprimé retiré)"); sg[0] = round(a, 3)
-#  (cockpit v4, dérushage « phrase en grand ») : --bords bords.json = {"debut": {"i": t}, "fin": {"j": t}}, les bords posés
+# (cockpit v4, dérushage « phrase en grand ») : --bords bords.json = {"debut": {"i": t}, "fin": {"j": t}}, les bords posés
 # À LA MAIN par la personne (poignées Début / Fin, bouton « Garder le souffle ») : i = 1er mot gardé d'une phrase, j = dernier,
 # t = seconde du RUSH. Ils passent après tout le calcul automatique. Un bord au milieu d'une plage (pas de coupe là) la coupe en
 # deux. Ce qu'elle garde exprès avant / après la voix (souffle) n'est jamais baissé, et le Gardien ne le bloque pas.
@@ -425,7 +425,7 @@ for j, t in sorted((int(k), float(v)) for k, v in BORDS.get("fin", {}).items()):
 segs = sorted([[a, b] for a, b in segs if b - a > 0.05])
 # un plan court qui est une phrase ENTIÈRE est permis (jamais de coupe en plein milieu
 # d'une phrase) : plus de silence ajouté pour atteindre 2 s, le Gardien accepte la phrase entière.
-#  (cockpit v5, dérushage en TIMELINE, maquette (exemple retiré)) : --plages plages.json =
+# (cockpit v5, dérushage en TIMELINE) : --plages plages.json =
 # [[a, b], ...] les plages GARDÉES posées à la main sur la timeline (secondes du RUSH). Elles remplacent tout le calcul
 # automatique (qui ne sert plus qu'à savoir ce que la personne a changé) :
 #  - ce qu'elle a remis en plus du calcul auto = gardé exprès (jamais baissé, souffle_garde pour le Gardien) ;
@@ -436,7 +436,7 @@ VPRE = "".join(p + "," for p in VFS if p.startswith("fps="))
 VPOST = "".join("," + p for p in VFS if not p.startswith("fps="))
 FPS = eval(VPRE[4:-1]) if VPRE else eval(subprocess.check_output(["ffprobe", "-v", "error", "-select_streams", "v:0",
                                     "-show_entries", "stream=r_frame_rate", "-of", "csv=p=0", src]).decode().strip())
-#  (studio Super, « Pas le temps de filmer » : TAIL posait la fin à 20,5 s sur un rush de 20,09 s image / 20,02 s son) :
+# (studio Super, « Pas le temps de filmer » : TAIL posait la fin à 20,5 s sur un rush de 20,09 s image / 20,02 s son) :
 # cut.segments.json annonçait 0,3 à 0,6 s qui n'existent pas -> le Gardien voyait une vidéo plus longue que le clip et un
 # « plan de 0,11 s » fantôme à la fin. Aucune plage ne dépasse la fin réelle du rush (image ET son), calée sur l'image.
 def _fin_flux(k):
@@ -463,7 +463,7 @@ if "--plages" in sys.argv:
     dead = {i for i, w in enumerate(W) if not any(a - 0.02 <= (w["start"] + w["end"]) / 2 <= b + 0.02 for a, b in segs)}
     keep = [w for i, w in enumerate(W) if i not in dead] or keep
     print(f"plages posées à la main : {len(segs)} ({len(LIBRE)} bout(s) remis, {len(SERRE) + len(SERRE_D)} bord(s) à la main)")
-#  (RUSH : Gardien « mot coupé » sur 4 bords de prises, montage SuperMonteur arrêté sans réparation) : dernier filet,
+# (RUSH : Gardien « mot coupé » sur 4 bords de prises, montage SuperMonteur arrêté sans réparation) : dernier filet,
 # avec la MÊME mesure que le Gardien (même trame, même AFADE) : une fin qui tombe avant la queue du mot (queue_mot.fin_du_mot)
 # va jusqu'à elle ; un début dont la trame d'avant est déjà de la voix (voisée, > bruit + 15 dB) recule jusqu'au calme.
 # Jamais jusqu'au mot voisin du rush. Les bords posés à la main (SERRE, SERRE_D) ne bougent pas.
@@ -477,7 +477,7 @@ def _filet_mots(segs):
         a, b = s
         bt = _butee(a, b)
         if not any(abs(b - x) < 0.005 for x in SERRE):
-            k = min(int((b - AFADE) * 100), n - 1); j = k   #  RUSH : coupe après la fin du son (vidéo plus longue que l'audio) = index hors limites
+            k = min(int((b - AFADE) * 100), n - 1); j = k   # RUSH : coupe après la fin du son (vidéo plus longue que l'audio) = index hors limites
             while j > max(0, k - 60) and db[j] < q + 6: j -= 1
             if db[j] >= q + 6:
                 nx = k
@@ -521,7 +521,7 @@ for _ in range(3):
     _avant = [list(s) for s in segs]
     segs = _caler(_filet_mots(segs))
     if segs == _avant: break
-#  (RUSH, « l'I- ») : dernier verrou après filet + calage (le calage arrondit la fin à l'image du DESSUS, +0,03 s) : une fin
+# (RUSH, « l'I- ») : dernier verrou après filet + calage (le calage arrondit la fin à l'image du DESSUS, +0,03 s) : une fin
 # de plage ne dépasse JAMAIS la vraie attaque du mot supprimé qui suit (arrondie à l'image du dessous). Coupe serrée = signalée au Gardien.
 _MAIN = [float(v) for v in BORDS.get("fin", {}).values()]
 for s in ([] if "--plages" in sys.argv else segs):   # plages posées à la main : c'est la personne qui décide
@@ -531,7 +531,7 @@ for s in ([] if "--plages" in sys.argv else segs):   # plages posées à la main
         nb = round(math.floor(bt * FPS + 1e-6) / FPS, 4)
         if nb - s[0] > 0.3:
             print(f"butée : fin {s[1]:.2f} -> {nb:.2f} s (le mot supprimé suivant commence à {bt:.2f} s)"); s[1] = nb; SERRE.append(nb)
-#  (RUSH v1 bloquée par le Gardien « Zéro micro-coupure » (14.33, 0.3) et (25.93, 0.4)) : le filet recule les bords
+# (RUSH v1 bloquée par le Gardien « Zéro micro-coupure » (14.33, 0.3) et (25.93, 0.4)) : le filet recule les bords
 # des plages et peut ramener une coupe sous 0,45 s. Même mesure que le Gardien, au dernier moment : deux plages de la MÊME prise
 # (aucun mot supprimé entre elles) à moins de 0,45 s l'une de l'autre sont recollées, le petit blanc reste (comme plus haut).
 k = 0
@@ -547,7 +547,7 @@ k = 0
 while k < len(segs) and len(segs) > 1 and "--plages" not in sys.argv and not BORDS:
     if segs[k][1] - segs[k][0] < MINSEG: _retire_bout(k, "après calage"); continue
     k += 1
-#  (studio Super, rush « Pas le temps de filmer » : plan de 1,84 s né du filet + calage APRÈS la règle des 2 s plus haut ->
+# (studio Super, rush « Pas le temps de filmer » : plan de 1,84 s né du filet + calage APRÈS la règle des 2 s plus haut ->
 # Gardien « Plans >= 2 s » bloque et le montage s'arrête sans rien livrer) : dernière passe de la règle des 2 s, même mesure
 # que plus haut (bout < MINSHOT recollé au voisin quand la pause entre eux est < SHOTGAP), sauf plages posées à la main.
 _chg = True
@@ -564,19 +564,19 @@ while _chg and len(segs) > 1 and "--plages" not in sys.argv:
         else:        segs[k - 1][1] = b
         segs.pop(k); _chg = True; break
 HALF = 0.5 / FPS   # image : on prend les images de a à b exclu -> exactement (b - a) s, comme le son
-#  (RUSH v1, note à 0 s : « au début de chaque phrase, enlève la respiration ») : les petits blancs gardés pour ne
+# (RUSH v1, note à 0 s : « au début de chaque phrase, enlève la respiration ») : les petits blancs gardés pour ne
 # pas faire de micro-coupure (< MINCUT, recollés plus haut) et la marge LEAD du tout début gardaient l'inspiration. On ne coupe
 # plus l'IMAGE pour ça : on coupe seulement le SON de la voix dans ces blancs (la musique continue dessous), avec les mêmes bords
 # que les coupes validées (EDGE_IN avant l'attaque : consonne douce gardée ; tail_end : dernière syllabe gardée).
 # Jamais dans une zone --garde (bruitage de bouche).
-#  (RUSH v1 : « à la toute fin, tu pourrais cut mon souffle ») : TAIL garde 0,6 s d'IMAGE après le dernier
+# (RUSH v1 : « à la toute fin, tu pourrais cut mon souffle ») : TAIL garde 0,6 s d'IMAGE après le dernier
 # mot (la phrase retombe, la musique finit), mais le son de la voix s'éteint juste après le dernier mot : plus de souffle final.
 _lw = keep[-1]["end"] if keep else 0
-#  (RUSH, Gardien « mot coupé » ('fin', 22.31)) : la queue du dernier mot était plafonnée à 0,35 s après lui, le Gardien
+# (RUSH, Gardien « mot coupé » ('fin', 22.31)) : la queue du dernier mot était plafonnée à 0,35 s après lui, le Gardien
 # la cherche jusqu'à la fin de la vidéo : même limite que lui (fin de la dernière plage), sinon la voix s'éteint dans le mot.
 _se = speech_end(_lw, _lw + 0.35, segs[-1][1] if segs else None) if keep else None
 VOICE_END = (_se + 0.06 if _se else _lw + 0.1)   # +0,06 s : le « x » / « s » final reste entier
-#  (RUSH, Gardien « mot coupé » ('fin', 247.04) sur le dernier mot) : même filet que les bords de plages,
+# (RUSH, Gardien « mot coupé » ('fin', 247.04) sur le dernier mot) : même filet que les bords de plages,
 # mesuré comme le Gardien (il contrôle VOICE_END - 0,06 contre queue_mot.fin_du_mot), 1 trame de marge, jamais après la vidéo.
 if keep and segs:
     _db, _q = _env(); _k = min(int((VOICE_END - 0.06) * 100), len(_db) - 1); _j = _k   # rush qui finit sur le dernier mot (IndexError)
@@ -590,7 +590,7 @@ if keep and segs:
             VOICE_END = min(_f + 0.09, segs[-1][1])
 if keep and str(W.index(keep[-1])) in BORDS.get("fin", {}):   # fin posée à la main sur le dernier mot : sa voix va jusque-là
     VOICE_END = max(VOICE_END, float(BORDS["fin"][str(W.index(keep[-1]))]))
-#  (RUSH v2 à 11 s, « bug ici ») puis (RUSH v1 : « dès que j'arrête de parler, il y a un gros silence, ce
+# (RUSH v2 à 11 s, « bug ici ») puis (RUSH v1 : « dès que j'arrête de parler, il y a un gros silence, ce
 # n'est pas naturel ») : la voix ne descend JAMAIS sous le niveau des blancs naturels du rush. Avant : -22 dB fixes dans chaque
 # blanc (sur l'iPhone, les blancs vivent à -42/-45 dB : ils tombaient à -65 = trou à chaque fois qu'il se tait) et silence
 # numérique (-180 dB) après le dernier mot. Maintenant chaque blanc est baissé juste assez pour que son 90e centile retombe au
@@ -600,19 +600,19 @@ def room_gain(m0, m1):
     db = _env()[0]; seg = db[int(m0 * 100):max(int(m0 * 100) + 1, int(m1 * 100))]
     if not len(seg): return 1.0   # blanc entièrement après la fin du son
     return min(1.0, 10 ** ((float(np.percentile(db, 10)) - float(np.percentile(seg, 90))) / 20))
-#  (RUSH, contrôle « mot coupé » du Gardien) : une « pause » de inner_pauses (sous la voix FORTE) peut être de la
+# (RUSH, contrôle « mot coupé » du Gardien) : une « pause » de inner_pauses (sous la voix FORTE) peut être de la
 # voix douce (« concentre sur » à -27/-33 dB) : elle était baissée de 22 dB sur 60 ms = trou dans la phrase. Et quand la queue
 # du mot ne retombe pas dans le calme (souffle juste derrière), tail_end coupait l'explosion du « t » (word_tail la garde).
 # Désormais une zone de moins de 0,10 s ou voisée à plus de 20 % n'est jamais baissée.
 def voiced_share(m0, m1):
-    db = _env()[0]; ks = range(int(m0 * 100), min(len(db), int(m1 * 100)))   #  RUSH : blanc final qui dépasse la fin du son
+    db = _env()[0]; ks = range(int(m0 * 100), min(len(db), int(m1 * 100)))   # RUSH : blanc final qui dépasse la fin du son
     return sum(1 for k in ks if db[k] >= _floor() + 12 and _voiced(k)) / max(1, len(ks))
 MUTE = []
 for a, b in segs:
     for p0, p1 in inner_pauses(a, b):
         m0 = a if p0 - a < 0.05 else (tail_end(p0, p1) or p0 + EDGE_OUT)
         m1 = b if p1 >= b - 0.01 else soft_attack(p0, p1) - EDGE_IN
-        #  (RUSH, rush dehors, grondement grave sous la voix) : tail_end voyait le « s » doux de « hasard. » comme du
+        # (RUSH, rush dehors, grondement grave sous la voix) : tail_end voyait le « s » doux de « hasard. » comme du
         # blanc et baissait le son 0,11 s avant la fin du mot (Gardien « mot coupé » à 30,41 s). Jamais avant fin du mot + 0,03 s.
         _fm = [w["end"] for w in keep if a - 0.1 <= w["start"] and w["end"] <= p1 + 0.05 and w["end"] > m0 - 0.3]
         if _fm and m0 < max(_fm) + 0.03 < m1: m0 = round(max(_fm) + 0.03, 3)
@@ -626,7 +626,7 @@ RAMP = 0.015
 mute = "+".join(f"{1 - g:.3f}*clip(min((t-{m0})/{RAMP},({m1}-t)/{RAMP}),0,1)" for m0, m1, g in MUTE) or "0"
 print(f"{len(MUTE)} respiration(s) / blanc(s) baissés au niveau du bruit de la pièce (image intacte)")
 
-#  (blancs mesurés 0,14-0,17 s à chaque coupe) : --serre rogne le début
+# (blancs mesurés 0,14-0,17 s à chaque coupe) : --serre rogne le début
 # de chaque plage (0,03 s max), jamais dans l'attaque. La fin, non : elle est déjà au ras de la queue du mot (Gardien : 22 mots coupés).
 if "--serre" in sys.argv:
     _db, _q = _env()
@@ -646,13 +646,13 @@ AFADE = 0.03
 GEND = room_gain(VOICE_END, segs[-1][1]) if segs and segs[-1][1] - VOICE_END > 0.05 else 1.0   # souffle final -> bruit de la pièce
 fade = "+".join((f"clip(min(min((t-{a})/{AFADE},({b}-t)/{AFADE}),max({GEND:.3f},({VOICE_END:.3f}-t)/0.06)),0,1)" if k == len(segs) - 1 else
                  f"clip(min((t-{a})/{AFADE},({b}-t)/{AFADE}),0,1)") for k, (a, b) in enumerate(segs))   # min() d'ffmpeg = 2 arguments
-#  (retour : « le montage prend du temps ») : --vf "<cadre.json vf>" = le recadrage se fait ICI, sur les seules secondes
+# (retour : « le montage prend du temps ») : --vf "<cadre.json vf>" = le recadrage se fait ICI, sur les seules secondes
 # gardées, au lieu d'encoder tout le rush avant (cadre.py --apply). Puce vidéo du Mac (VideoToolbox) au lieu de libx264.
 # Plage de couleurs de la source gardée telle quelle (caméra = pc, iPhone = tv) : convertir pc -> tv assombrissait l'image (~5 %).
 # JAMAIS -hwaccel videotoolbox au décodage : avec la conversion de plage, l'image sort toute VERTE. Décodage processeur.
 RNG = "pc" if subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=color_range",
                               "-of", "csv=p=0", src], capture_output=True, text=True).stdout.strip() == "pc" else "tv"
-#  (RUSH, 14 min de 4K pour 66 s gardées : 4 min de coupe) : on ne décode plus TOUT le rush.
+# (RUSH, 14 min de 4K pour 66 s gardées : 4 min de coupe) : on ne décode plus TOUT le rush.
 # Les plages proches (< 2 s) forment un bloc ; chaque bloc = une entrée ffmpeg qui saute droit dessus (-ss avant -i, 1 s de
 # marge) en gardant les temps du rush (-copyts) : select / volume / aselect gardent leurs expressions telles quelles.
 # Chaque bloc repart à 0 (setpts / asetpts) puis concat. Même image, même son ; seules les secondes utiles sont décodées.
@@ -689,7 +689,7 @@ json.dump({"src": src, "floor": round(_floor(), 2), "pauses_phrase": PAUSES_PHRA
           open(out.rsplit(".", 1)[0] + ".voice.json", "w"))
 # Mots recalés sur la version coupée : <out>.words.json = la transcription du rush (souvent meilleure que celle
 # refaite sur le montage coupé, qui a perdu son contexte) avec les temps de la version coupée.
-#  (de « je prépare » absent des sous-titres) : Whisper le faisait démarrer 0,02 s avant la plage
+# (de « je prépare » absent des sous-titres) : Whisper le faisait démarrer 0,02 s avant la plage
 # (9,45 s pour une plage à 9,47 s) : il était oublié. Un mot gardé qui démarre jusqu'à 0,1 s avant la plage en fait partie.
 off, moved, seen = 0.0, [], set()
 for a, b in segs:

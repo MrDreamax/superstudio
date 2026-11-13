@@ -183,7 +183,7 @@ Prix = repère donné par un expert. "Ventes pour 10 k€" = calcul de l'agent (
 
 ## L'échelle des offres (comment les enchaîner)
 
- (ne pas refaire) : attraction, upsell, downsell, continuité, 15 mécanismes, paliers x5 à x10  ; offre et valeur  ; leads  ; value ladder  §2.3, .
+Déjà couvert dans les autres fiches du Brain (ne pas refaire) : attraction, upsell, downsell, continuité, 15 mécanismes, paliers x5 à x10, offre et valeur, leads, value ladder.
 
 Règles nouvelles, chacune sourcée :
 1. **Départ haut ou départ très bas, jamais au milieu.** Hormozi 2025 : soit très cher à peu de gens, soit très bon marché à tout le monde, "le milieu est là où on meurt". Pour démarrer, vendre son temps en 1:1 [uWdIgftpvBI] [00:02] [01:23].

@@ -14,7 +14,7 @@ src, t0, t1 = sys.argv[1], float(sys.argv[2]), float(sys.argv[3])
 MOD = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "models", "face_landmarker.task")
 RVM = os.path.expanduser("~/.cache/supermonteur/rvm_mobilenetv3_fp32.onnx")
 W, H, FPS, WARM = 540, 960, 10, 0.5
-#  (chrono Minimaliste : 15,7 s sur 17 de composition, titre tenu 16 s = 164 images détourées) : 40 images au plus.
+# (chrono Minimaliste : 15,7 s sur 17 de composition, titre tenu 16 s = 164 images détourées) : 40 images au plus.
 # Plage courte (mot géant, <= 4 s) = 10 images/s comme avant ; plage longue (titre) = moins d'images/s, même médiane.
 FPS = float(os.environ.get("HEADTOP_FPS") or (10 if t1 - t0 <= 4 else max(0.5, 40 / (t1 - t0))))
 # même vidéo + même plage = même réponse : gardée dans headtop.cache.json à côté de la vidéo (chaque version la redemandait)

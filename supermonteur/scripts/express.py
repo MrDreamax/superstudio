@@ -51,7 +51,7 @@ caps = []
 for cls, cid, top, txt in re.findall(r'<div class="(cap[^"]*)" id="(c[\d_]+)"(?: style="top:(\d+)px")?>(.*?)</div>', page):
     if "<" in re.sub(r'<span style="color:#[0-9A-Fa-f]{6}">[^<]*</span>', "", txt): stop(f"sous-titre {cid} avec mot fort ({txt}) : lancer monte.sh", 2)
     a, b = times[cid]; caps.append((a, b, txt, int(top or SUBY)))   # txt garde les <span> de plan.couleurs
-#  (RUSH écran coupé, sous-titres sur l'animation claire) : la couleur de plan.typo.sub (CSS .cap) est suivie ;
+# (RUSH écran coupé, sous-titres sur l'animation claire) : la couleur de plan.typo.sub (CSS .cap) est suivie ;
 # une couleur foncée n'a pas d'ombre (l'ombre noire floute le texte foncé). Avant : toujours blanc.
 _col = re.search(r"\.cap\{font-weight:[^}]*?color:(#[0-9A-Fa-f]{6})", page)
 SUBCOL = tuple(int(_col[1][i:i + 2], 16) for i in (1, 3, 5)) if _col else (255, 255, 255)
@@ -60,7 +60,7 @@ FONT = os.path.join("fonts", re.search(r'font-family:"Sub";src:url\("fonts/([^"]
 title = None
 if plan.get("title"):
     T = plan["title"]; ta, tb = times["htitle"]
-    #  (Fable 5.2 version B) : titre recollé sur 1 ligne par build.mjs (règle) = pas de div ht2 -> plantage. ht2 devient optionnelle.
+    # (Fable 5.2 version B) : titre recollé sur 1 ligne par build.mjs (règle) = pas de div ht2 -> plantage. ht2 devient optionnelle.
     l1 = re.search(r'<div class="ht1">(.*?)</div>', page)[1]; l2 = (re.search(r'<div class="ht2">(.*?)</div>', page) or [None, ""])[1]
     _st = {k: re.findall(rf"\.{k}\{{([^}}]*)\}}", page) for k in ("ht1", "ht2")}
     st = {k: (_st[k] or _st["ht1"])[-1] for k in ("ht1", "ht2")}   # la DERNIÈRE règle gagne (comme le CSS)
@@ -79,7 +79,7 @@ if plan.get("title"):
                          num("ht1", r"letter-spacing:([\d.]+)px"), int(num("ht1", r"font-weight:(\d+)", 700)), coul("ht1")),
                         (MAJ("ht2", html.unescape(l2)), tf("ht2"), num("ht2", r"font-size:(\d+)px"), num("ht2", r"line-height:([\d.]+)", 1.1),
                          num("ht2", r"letter-spacing:([\d.]+)px"), int(num("ht2", r"font-weight:(\d+)", 400)), coul("ht2"))])
-    #  (RUSH « L'antiviralité ? » sur une ligne) : une ligne vide gardait sa hauteur = encadré blanc trop haut, texte collé en haut
+    # (RUSH « L'antiviralité ? » sur une ligne) : une ligne vide gardait sa hauteur = encadré blanc trop haut, texte collé en haut
     title["lines"] = [l for l in title["lines"] if l[0].strip()] or title["lines"][:1]
 print(f"{len(caps)} sous-titres · titre {'oui' if title else 'non'} · police {os.path.basename(FONT)} {SUBSIZE} px · y {SUBY}")
 
@@ -116,7 +116,7 @@ def calque_sous_titre(img, raw, top):
         if cur and largeur(essai, f, SUBTRACK) > W - 240: lignes.append(cur); cur = m
         else: cur = essai
     lignes.append(cur)
-    #  (RUSH : 50 s de dessin) : tout se dessine dans une bande de 80 px autour du texte, plus sur l'écran entier :
+    # (RUSH : 50 s de dessin) : tout se dessine dans une bande de 80 px autour du texte, plus sur l'écran entier :
     # le flou (portée ~30 px) n'atteint jamais le bord de la bande, donc même image au pixel près, ~8 x moins de calcul
     y0 = max(0, int(top) - 80); y1 = min(H, int(top + len(lignes) * SUBSIZE * lh) + 80)
     texte = Image.new("L", (W, y1 - y0), 0); dt = ImageDraw.Draw(texte)
@@ -158,7 +158,7 @@ def calque_titre(img):
         if rgba: m = m.point(lambda v, a=float(rgba[4]): int(v * a))
         c = Image.new("RGBA", m.size, tuple(int(rgba[i]) for i in (1, 2, 3)) if rgba else box[2].strip()); c.putalpha(m)
         img.alpha_composite(c, (round(x0), round(y0)))
-    #  (RUSH) : l'ombre du titre comme le CSS de build.mjs
+    # l'ombre du titre comme le CSS de build.mjs
     # (.htitle douce ; onlight / typo.shadow "forte" = ombre forte en 4 couches). Avant : titre express sans aucune ombre.
     if not box:
         masque = Image.new("L", (W, H), 0); dm = ImageDraw.Draw(masque); y = y0 + pt
@@ -210,7 +210,7 @@ if run(["ffmpeg", "-nostdin", "-y", "-v", "error", "-i", plan.get("cam", "clip.m
 
 etape("Mix")
 if run(["python3", f"{S}/mix.py", "plan.json", R, plan.get("cam", "clip.mp4"), "final.mp4"], "mix.log"): stop("mix.py (voir mix.log)")
-#  (disque plein : 20 Go d'anciens rendus) : on garde seulement le dernier rendu, final.mp4 est déjà fait
+# (disque plein : 20 Go d'anciens rendus) : on garde seulement le dernier rendu, final.mp4 est déjà fait
 for vieux in glob.glob("renders/express_*.mp4"):
     if os.path.abspath(vieux) != os.path.abspath(R):
         try: os.remove(vieux)
