@@ -1,6 +1,8 @@
 {
   "nom": "",
   "pseudo": "",
+  "marque": "",
+  "noms_propres": [],
   "logo": "",
   "couleurs": {
     "principale": "#2563EB",
@@ -11,6 +13,9 @@
     "teinte": "#EFF4FF",
     "clair": "#FFFFFF"
   },
-  "polices": {"titre": "Archivo", "texte": "Inter"},
-  "_aide": "Rempli par le skill ma-marque. nom = pied de page des PDF. pseudo = @ affiché seulement si rempli. logo = chemin d'un PNG. Polices = Google Fonts."
+  "polices": {
+    "titre": "Archivo",
+    "texte": "Inter"
+  },
+  "_aide": "Rempli par le skill ma-marque. nom = pied de page des PDF. pseudo = @ affiché seulement si rempli. logo = chemin d'un PNG. Polices = Google Fonts. marque = nom de ta marque, écrit exactement (accents, majuscules) : le Monteur l'écrit ainsi dans les titres et sous-titres. noms_propres = autres noms à bien écrire (produit, ville, prénom)."
 }

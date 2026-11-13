@@ -184,6 +184,46 @@ def calque_titre(img):
 etape("Dessin des sous-titres")
 os.makedirs("express", exist_ok=True)
 dur = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", plan.get("cam", "clip.mp4")]))
+# ---------- lisibilité (test client 13/11, juge : titre et sous-titres sur fond clair ou chargé) ----------
+# La DA ne change pas (taille, police, couleur) : seulement un voile sombre léger et flou DERRIÈRE le texte, posé quand la zone
+# du fond est claire (luminance moyenne > 150) ou chargée (écart-type > 48). Rien sur un fond déjà sombre et calme.
+FOND_FPS = 4
+try:
+    import numpy as np
+    _raw = subprocess.run(["ffmpeg", "-v", "error", "-i", plan.get("cam", "clip.mp4"), "-vf", f"fps={FOND_FPS},scale=270:480,format=gray",
+                           "-f", "rawvideo", "-"], capture_output=True).stdout
+    FOND = np.frombuffer(_raw[:len(_raw) // (270 * 480) * 270 * 480], np.uint8).reshape(-1, 480, 270)
+except Exception:
+    FOND = None
+def fond_charge(t0, t1, box):
+    if FOND is None or not len(FOND) or not box: return False
+    x0, y0, x1, y1 = [max(0, v // 4) for v in box]
+    k0 = min(int(t0 * FOND_FPS), len(FOND) - 1); k1 = min(max(k0 + 1, int(t1 * FOND_FPS)), len(FOND))
+    z = FOND[k0:k1, y0:max(y0 + 1, min(480, y1)), x0:max(x0 + 1, min(270, x1))].astype(np.float32)
+    return bool(z.mean() > 150 or z.std() > 48)
+def boite(layer):
+    a = layer.split()[3].point(lambda v: 255 if v > 120 else 0)
+    return a.getbbox()
+_VOILES = {}
+def voile(box):   # patch local flouté (rapide) + sa position : jamais un flou plein écran
+    if box not in _VOILES:
+        x0, y0, x1, y1 = box; m = 40
+        v = Image.new("RGBA", (x1 - x0 + 52 + 2 * m, y1 - y0 + 32 + 2 * m), (0, 0, 0, 0))
+        ImageDraw.Draw(v).rounded_rectangle((m, m, m + x1 - x0 + 52, m + y1 - y0 + 32), radius=22, fill=(0, 0, 0, 105))
+        _VOILES[box] = (v.filter(ImageFilter.GaussianBlur(14)), (x0 - 26 - m, y0 - 16 - m))
+    return _VOILES[box]
+def poser_voile(img, box):
+    p, (x, y) = voile(box)
+    if x < 0 or y < 0: p = p.crop((max(0, -x), max(0, -y), p.width, p.height)); x, y = max(0, x), max(0, y)
+    p = p.crop((0, 0, min(p.width, W - x), min(p.height, H - y)))
+    img.alpha_composite(p, dest=(x, y))
+_BOX = {}
+def boite_sous_titre(raw, top):
+    if (raw, top) not in _BOX:
+        tmp = Image.new("RGBA", (W, H), (0, 0, 0, 0)); calque_sous_titre(tmp, raw, top); _BOX[(raw, top)] = boite(tmp)
+    return _BOX[(raw, top)]
+VOILES_POSES = [0, 0]
+
 bornes = sorted({0.0, dur, *[x for a, b, *_ in caps for x in (a, b)], *([title["a"], min(title["b"], dur)] if title else [])})
 bornes = [round(round(x * FPS) / FPS, 4) for x in bornes if x <= dur]   # calé sur les images : pas de demi-image
 bornes = sorted(set(bornes))
@@ -193,18 +233,24 @@ for i, (a, b) in enumerate(zip(bornes, bornes[1:])):
     mid = (a + b) / 2
     on = [c for c in caps if c[0] <= mid < c[1]]
     tit = bool(title and title["a"] <= mid < title["b"])
-    cle = (tuple((c[2], c[3]) for c in on), tit)
+    # le titre (4 flous sur tout l'écran) se dessine UNE fois, puis chaque état part d'une copie
+    if tit and not TITRE_SEUL: TITRE_SEUL.append(Image.new("RGBA", (W, H), (0, 0, 0, 0))); calque_titre(TITRE_SEUL[0]); TITRE_SEUL.append(boite(TITRE_SEUL[0]))
+    vt = bool(tit and fond_charge(a, b, TITRE_SEUL[1]))
+    vs = tuple(fond_charge(a, b, boite_sous_titre(c[2], c[3])) for c in on)
+    cle = (tuple((c[2], c[3]) for c in on), tit, vt, vs)
     if cle not in vu:
-        # le titre (4 flous sur tout l'écran) se dessine UNE fois, puis chaque état part d'une copie
-        if tit and not TITRE_SEUL: TITRE_SEUL.append(Image.new("RGBA", (W, H), (0, 0, 0, 0))); calque_titre(TITRE_SEUL[0])
-        img = TITRE_SEUL[0].copy() if tit else Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        if vt: poser_voile(img, TITRE_SEUL[1]); VOILES_POSES[0] += 1
+        for c, v_ in zip(on, vs):
+            if v_: poser_voile(img, boite_sous_titre(c[2], c[3])); VOILES_POSES[1] += 1
+        if tit: img.alpha_composite(TITRE_SEUL[0])
         for c in on: calque_sous_titre(img, c[2], c[3])
         p = f"express/e{len(vu):03d}.png"; img.save(p, compress_level=1); vu[cle] = p
     liste.append((vu[cle], b - a))
 with open("express/calques.txt", "w") as f:
     for p, d_ in liste: f.write(f"file '{os.path.basename(p)}'\nduration {d_:.4f}\n")
     f.write(f"file '{os.path.basename(liste[-1][0])}'\n")
-print(f"{len(vu)} images de calque pour {len(liste)} moments")
+print(f"{len(vu)} images de calque pour {len(liste)} moments · voile de lisibilité : titre {VOILES_POSES[0]}, sous-titres {VOILES_POSES[1]} états")
 
 etape("Rendu express (puce vidéo du Mac)")
 os.makedirs("renders", exist_ok=True)

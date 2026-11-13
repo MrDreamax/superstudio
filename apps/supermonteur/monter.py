@@ -449,6 +449,28 @@ def prises_par_claude(D, words):
     return sorted(drop)
 
 
+# (test client 13/11 : « Stratosphere » sans accent dans le titre et les sous-titres) : les noms propres de la personne
+# (marque, nom, pseudo, liste noms_propres de Brain/00-Moi/marque.json) gardent leur orthographe exacte, accents et casse.
+def noms_propres():
+    m = lire(os.path.expanduser("~/Documents/Brain/00-Moi/marque.json"), {}) or {}
+    L = [m.get("marque"), m.get("nom"), str(m.get("pseudo") or "").lstrip("@")] + list(m.get("noms_propres") or [])
+    out = {}
+    for x in L:
+        for tok in str(x or "").split():
+            tok = tok.strip(".,;:!?«»\"'")
+            if len(tok) >= 3 and tok[:1].isupper(): out[norm(tok)] = tok
+    return out
+
+
+def corrige_noms(texte, NP=None):
+    NP = noms_propres() if NP is None else NP
+    if not NP or not texte: return texte
+    def un(m):
+        mot = m.group(0)
+        return NP.get(norm(mot), mot) if norm(mot) in NP else mot
+    return re.sub(r"[^\W\d_][\w'’-]*", un, texte)
+
+
 def titre_par_claude(D, words):
     """(test client 13/11, juge : titre plat = la 1re phrase recopiée) : Claude écrit le VRAI hook à partir du sens du rush.
     Préparé pendant que la personne décrit son montage (aucune attente en plus). -> titre.claude.json, sinon titre_auto."""
@@ -458,8 +480,12 @@ def titre_par_claude(D, words):
               "dans les mots simples de la personne (tutoiement si elle tutoie). Pas de promesse inventée, pas d'emoji, pas de "
               "ponctuation sauf « ? » si c'est une question, pas de guillemets. 1 ligne de 24 caractères max si ça tient, "
               "sinon 2 lignes de 24 caractères max chacune (compte les caractères : une ligne plus longue est jetée). "
-              "Le hook dit le bénéfice ou la nouveauté la plus forte de la vidéo, pas son sujet en général. "
-              "Réponds SEULEMENT par la ou les lignes, une par ligne, rien d'autre.")
+              "Le hook est une PROMESSE ou une CURIOSITÉ tirée du point le plus fort de la vidéo, jamais une description plate de "
+              "son sujet. Exemples tirés d'AUTRES vidéos (ne les recopie jamais, invente le tien) : bons = « Arrête de poster au hasard », "
+              "« Le prix que personne n'ose dire », « Ce qui change lundi » ; mauvais (plats, interdits) = « Nouveautés chez X », "
+              "« Du nouveau chez X », « Les news de la semaine », « Parlons de mon programme ». "
+              + (("Écris les noms propres exactement ainsi : " + ", ".join(sorted(set(noms_propres().values()))) + ". ") if noms_propres() else "")
+              + "Réponds SEULEMENT par la ou les lignes, une par ligne, rien d'autre.")
     try:
         sys.path.insert(0, os.path.dirname(APP))
         import ouvrier_claude
@@ -479,8 +505,9 @@ def titre_choisi(D, words):
     """Le titre de Claude s'il a été préparé pour CES mots, sinon le titre automatique (secours)."""
     t = lire(os.path.join(D, "titre.claude.json"), {}) or {}
     if t.get("l1") and t.get("cle") == cle_mots(D):
-        return {"l1": t["l1"], "l2": t.get("l2", "")}
-    return titre_auto(words)
+        return {"l1": corrige_noms(t["l1"]), "l2": corrige_noms(t.get("l2", ""))}
+    T = titre_auto(words)
+    return {k: corrige_noms(v) if k in ("l1", "l2") else v for k, v in T.items()} if T else T
 
 
 def titre_auto(words):
@@ -810,7 +837,12 @@ def suite(D, ref=None):
                 if not os.path.exists(os.path.join(D, "titre.claude.json")):
                     try: titre_par_claude(D, lire(os.path.join(D, "words.rush.json"))["words"])
                     except Exception: pass   # secours : titre_auto
-        plan = plan_auto(D, rid, style, cases, lire(os.path.join(D, "words.json"))["words"])
+        _wj = lire(os.path.join(D, "words.json"))
+        _NP = noms_propres()
+        if _NP:   # orthographe des noms propres dans les sous-titres (le texte change, jamais les temps)
+            for w in _wj["words"]: w["text"] = corrige_noms(w["text"], _NP)
+            ecrire(os.path.join(D, "words.json"), _wj)
+        plan = plan_auto(D, rid, style, cases, _wj["words"])
         ecrire(os.path.join(D, "plan.json"), plan)
         if ref is None:
             ref = {"erreur": preparer_ref(D, e)} if e.get("reference") else {}

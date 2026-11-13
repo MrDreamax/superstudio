@@ -986,7 +986,11 @@ groups.forEach((grp, gi) => {
   grp = grp.filter(j => !onScreen(j));
   if (!grp.length) return;
   const html = grp.map(j => { const t = FINS(W[j].text, W[j + 1]?.text); if (kwOf[j] >= 0) return `<em>${esc(kwCase(W[j].text.replace(FINP, "")))}</em>`;
-    const c = coulOf(j), b0 = c && c.e ? c.e : t, tt = TY && TY.sub.caps === false ? b0 : b0.toUpperCase();
+    const c = coulOf(j), b00 = c && c.e ? c.e : t;
+    // (test client 13/11 : « Bref ça » à côté de « il y a pas mal ») : casse cohérente, chaque bloc commence par une majuscule
+    // (plan.subCase = "phrase", défaut) ; "brut" = casse de la transcription. N'agit pas en majuscules (caps).
+    const b0 = (plan.subCase || "phrase") === "phrase" && j === grp[0] ? b00.charAt(0).toUpperCase() + b00.slice(1) : b00;
+    const tt = TY && TY.sub.caps === false ? b0 : b0.toUpperCase();
     return c ? `<span style="color:${c.c}">${esc(tt)}</span>` : esc(tt); }).join(" ");
   const emTxt = grp.filter(j => kwOf[j] >= 0).map(j => kwCase(W[j].text.replace(FINP, ""))).join(" ");
   const bEnd = Math.min(b, ...FULL.filter(l => l.start > a).map(l => l.start));
