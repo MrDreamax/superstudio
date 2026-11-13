@@ -1,7 +1,7 @@
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Cut Notes</title>
 <style>
-  /* mêmes couleurs que Style Lab, noir + bleu, police système Apple */
   :root {
     color-scheme: dark;
     --ground: #0B0B0D;
@@ -22,16 +22,16 @@
   html, body { height: 100%; }
   body {
     margin: 0; background: var(--ground); color: var(--bone);
-    font: 15px/1.5 var(--ui); padding-inline: 16px; padding-block: 16px 24px;
+    font: 14px/1.45 var(--ui); padding: 10px; height: 100dvh; overflow: hidden;
   }
   button, select, textarea { font: inherit; color: var(--bone); }
   :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
-  .app { max-width: 1280px; margin: 0 auto; display: grid; gap: 16px; }
+  .app { height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 8px; max-width: 1600px; margin: 0 auto; }
 
-  header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
-  .mark { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-  .mark h1 { margin: 0; font: 600 28px/1 var(--display); letter-spacing: -0.01em; }
+  header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+  .mark { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .mark h1 { margin: 0; font: 600 20px/1 var(--display); letter-spacing: -0.01em; }
   .mark p { margin: 0; color: var(--ash); font-size: 13px; }
   .head-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   label.fps { display: flex; align-items: center; gap: 6px; color: var(--ash); font-size: 13px; }
@@ -47,40 +47,118 @@
   .btn.quiet { background: transparent; border-color: transparent; color: var(--ash); padding-inline: 8px; }
   .btn.quiet:hover { color: var(--bone); border-color: var(--line); }
 
-  main { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 16px; align-items: start; }
-  @media (max-width: 900px) { main { grid-template-columns: minmax(0, 1fr); } }
+  main { min-height: 0; display: grid; gap: 8px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto clamp(150px, 30dvh, 280px);
+    grid-template-areas: "screen" "transport" "side"; }
+  .stage { display: contents; }
+  .screen, .transport, .composer { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+  .screen { grid-area: screen; position: relative; background: #000; overflow: hidden; display: grid; place-items: center; min-height: 0; min-width: 0; }
+  .transport { grid-area: transport; min-width: 0; }
+  .side { grid-area: side; min-height: 0; min-width: 0; display: grid; gap: 8px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+  .side > .composer, .side > aside { min-height: 0; overflow: hidden; }
+  .composer { align-content: start; }
+  ol.notes { min-height: 0; grid-row: 3; }
+  .notes-head { grid-row: 1; } #banner { grid-row: 2; } .notes-foot { grid-row: 4; }  /* bandeau caché = la liste reste à sa place */
+  video { width: 100%; height: 100%; display: block; object-fit: contain; background: #000; }
 
-  .stage { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: grid; }
-  .screen { position: relative; background: #000; display: grid; place-items: center; min-height: 240px; max-height: 62vh; aspect-ratio: 16 / 9; max-width: 100%; }
-  .screen.portrait { aspect-ratio: 9 / 16; }
-  video { width: 100%; height: 100%; max-height: 62vh; display: block; object-fit: contain; background: #000; }
+  /* Vidéo verticale : colonne gauche = vidéo puis barre de lecture, de la même largeur ;
+     colonne droite = note puis retours, centrés en hauteur. */
+  body.portrait main {
+    --vw: min(50vw, calc((100dvh - 205px) * 9 / 16));
+    grid-template-columns: var(--vw) minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    grid-template-areas: "screen side" "transport side";
+    align-content: center; }
+  body.portrait .screen { width: 100%; aspect-ratio: 9 / 16; }
+  body.portrait .side { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, auto);
+    align-content: center; max-height: 100%; max-width: 560px; width: 100%; justify-self: center; }
+  body.portrait .side > aside { max-height: calc(100dvh - 260px); }
+  body.portrait .transport .row { flex-wrap: wrap; row-gap: 4px; }
+
+  /* Bouton « J'ai fini » discret, à droite. */
+  .notes-foot { justify-items: end; }
+  .notes-foot .btn { font-size: 13px; padding: 6px 14px; }
+  .notes-foot p { text-align: right; }
+
+  /* Écran étroit (panneau Claude, petite fenêtre) : on resserre tout. */
+  @media (max-width: 900px) {
+    body { padding: 6px; font-size: 13px; }
+    .app, main, .side { gap: 6px; }
+    .mark p, .keys, footer, #frameNo, #modePill, .notes-foot p { display: none !important; }
+    .mark h1 { font-size: 17px; }
+    .btn { padding: 5px 9px; }
+    .transport, .composer { padding: 6px 8px; }
+    .transport .row { gap: 6px; }
+    .tc { font-size: 12px; }
+    .tc .dur, #clearBtn, #copyBtn { display: none !important; }  /* dans Claude les notes partent seules */
+    .notes-head { padding: 8px 10px; }
+    .notes-head .row { flex-wrap: nowrap; }
+    .note { padding: 6px 6px; }
+    /* notes lisibles en étroit : le temps au-dessus, le texte sur toute la largeur */
+    aside .note { grid-template-columns: minmax(0, 1fr); }
+    aside .note .chip { justify-self: start; }
+    aside .note .reply, aside .note .note-actions, aside .note .confirm, aside .note .edit-box { grid-column: 1; }
+    aside .note .note-actions { margin-left: -6px; }
+    textarea#noteInput { min-height: 48px; max-height: 96px; }
+    body:not(.portrait) textarea#noteInput { max-height: 76px; }
+    .how { display: none; }
+    main { grid-template-rows: auto auto minmax(0, 1fr); }
+    main .screen { aspect-ratio: 16 / 9; max-height: 40dvh; width: 100%; }
+    body.portrait main { --vw: min(50vw, calc((100dvh - 150px) * 9 / 16)); }
+    body.portrait .transport .row { gap: 4px; }
+    body.portrait .tc { font-size: 11px; }
+    body.portrait .screen { max-height: none; }
+    body.portrait .side > aside { max-height: calc(100dvh - 200px); }
+  }
+  /* Très étroit (téléphone) : seul cas où la page défile, une colonne. */
+  @media (max-width: 430px) {
+    body { overflow: auto; height: auto; }
+    .app { height: auto; }
+    main, body.portrait main { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto;
+      grid-template-areas: "screen" "transport" "side"; }
+    body.portrait .screen { width: auto; height: 70dvh; justify-self: center; }
+    .side { grid-template-columns: minmax(0, 1fr); }
+    aside { min-height: 260px; }
+  }
+  /* Écran bas : on cache l'aide clavier et la phrase d'accueil pour garder la place à la vidéo. */
+  @media (max-height: 720px) { .keys, .mark p, footer { display: none !important; } }
   .drop { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 24px; gap: 10px; border: 2px dashed transparent; transition: border-color .15s; }
   .drop.over { border-color: var(--gold); background: rgba(79, 139, 255, .08); }
   .drop strong { display: block; font: 600 22px/1.2 var(--display); }
   .drop span { color: var(--ash); font-size: 14px; max-width: 36ch; display: block; margin-inline: auto; }
 
-  .transport { display: grid; gap: 10px; padding: 12px 14px; border-top: 1px solid var(--line); }
+  .transport { display: grid; gap: 6px; padding: 8px 12px; }
   .row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .tc { font: 500 15px/1 var(--mono); font-variant-numeric: tabular-nums; letter-spacing: .02em; }
   .tc .now { color: var(--gold); }
   .tc .dur { color: var(--ash); }
   .spacer { flex: 1; }
 
-  .scrub { position: relative; height: 22px; }
+  .scrub { position: relative; height: 22px; overflow: hidden; }
   .scrub input { position: absolute; inset: 0; width: 100%; margin: 0; accent-color: var(--ember); background: transparent; }
   .marks { position: absolute; left: 8px; right: 8px; top: 0; bottom: 0; pointer-events: none; }
   .marks i { position: absolute; top: 1px; width: 2px; height: 7px; margin-left: -1px; background: var(--gold); border-radius: 1px; }
   .marks i.closed { background: var(--done); opacity: .7; }
 
-  .composer { display: grid; gap: 6px; padding: 12px 14px 14px; border-top: 1px solid var(--line); background: var(--raised); }
+  .composer { display: grid; gap: 6px; padding: 8px 12px 10px; background: var(--raised); }
   .composer .at { font-size: 13px; color: var(--ash); }
   .composer .at b { font: 500 13px var(--mono); color: var(--gold); }
-  textarea#noteInput { width: 100%; min-height: 44px; resize: vertical; background: var(--ground); border: 1px solid var(--line); border-radius: 10px; padding: 9px 10px; line-height: 1.4; }
+  .how { margin: 0; font-size: 12px; color: var(--ash); }
+  .composer .at { display: flex; align-items: baseline; gap: 8px; }
+  .composer .at .toast { margin-left: auto; font-size: 12px; }
+  .write { display: grid; gap: 6px; }
+  .send { justify-self: end; padding: 5px 16px; font-size: 13px; }
+  .speed { min-width: 50px; font-variant-numeric: tabular-nums; }
+  .speed.fast { color: #FFFFFF; border-color: var(--gold); background: color-mix(in srgb, var(--gold) 30%, var(--raised)); }
+  video { cursor: pointer; }
+  textarea#noteInput { width: 100%; min-height: 58px; max-height: 160px; resize: none; overflow-y: auto; background: var(--ground); border: 1px solid var(--line); border-radius: 10px; padding: 9px 10px; line-height: 1.4; }
   textarea#noteInput::placeholder { color: var(--ash); }
   .keys { font-size: 12px; color: var(--ash); display: flex; flex-wrap: wrap; gap: 4px 14px; }
   kbd { font: 500 11px var(--mono); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; color: var(--bone); background: var(--ground); }
 
-  aside { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; max-height: calc(62vh + 190px); min-height: 320px; }
+  aside { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; min-height: 0; }
   .notes-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 14px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
   .notes-head h2 { margin: 0; font: 600 16px/1 var(--ui); letter-spacing: .01em; }
   .notes-head .count { color: var(--ash); font-size: 13px; font-weight: 400; margin-left: 6px; }
@@ -126,7 +204,7 @@
     </div>
     <div class="head-controls">
       <span class="pill" id="modePill">Notes gardées dans ce navigateur</span>
-      <label class="fps" for="fps">Images/s
+      <label class="fps" for="fps" hidden>Images/s
         <select id="fps">
           <option value="23.976">23.976</option>
           <option value="24">24</option>
@@ -160,28 +238,34 @@
           <div class="marks" id="marks"></div>
         </div>
         <div class="row">
-          <button class="btn" id="back1" type="button" aria-label="Une image en arrière" disabled>◀︎ 1 image</button>
+          <button class="btn" id="back1" type="button" aria-label="Une image en arrière" title="Une image en arrière" disabled>◀︎</button>
           <button class="btn" id="play" type="button" disabled>Lecture</button>
-          <button class="btn" id="fwd1" type="button" aria-label="Une image en avant" disabled>1 image ▶︎</button>
+          <button class="btn" id="fwd1" type="button" aria-label="Une image en avant" title="Une image en avant" disabled>▶︎</button>
+          <button class="btn speed" id="speed" type="button" title="Vitesse : x1, x1.5, x2 (touche V)" disabled>x1</button>
           <div class="tc"><span class="now" id="now">00:00:00:00</span> <span class="dur">/ <span id="dur">00:00:00:00</span></span></div>
           <div class="spacer"></div>
           <span class="tc dur" id="frameNo">image 0</span>
         </div>
       </div>
+    </section>
+
+    <div class="side">
       <div class="composer">
-        <div class="at">Note à <b id="noteAt">00:00:00:00</b></div>
-        <textarea id="noteInput" rows="2" placeholder="Écris ici (ou dicte). La note s'accroche à cette image : pas besoin d'écrire le temps. Entrée = envoyer." disabled></textarea>
-        <div class="row"><button class="btn primary" id="saveNote" type="button" disabled>Envoyer la note</button><span class="toast" id="noteSaved" hidden>Note envoyée</span></div>
+        <div class="at">Retouche à <b id="noteAt">00:00:00:00</b><span class="toast" id="noteSaved" hidden>Envoyée</span></div>
+        <p class="how">Mets pause là où ça cloche, écris, puis Entrée.</p>
+        <div class="write">
+          <textarea id="noteInput" rows="2" placeholder="Ex. : change ce plan, coupe ce mot, musique trop forte…" disabled></textarea>
+          <button class="btn primary send" id="saveNote" type="button" disabled>Envoyer</button>
+        </div>
         <div class="keys">
           <span><kbd>Espace</kbd> lecture / pause</span>
+          <span><kbd>V</kbd> vitesse x1 / x1.5 / x2</span>
           <span><kbd>←</kbd> <kbd>→</kbd> une image</span>
           <span><kbd>Maj</kbd>+<kbd>←</kbd> <kbd>→</kbd> une seconde</span>
           <span><kbd>N</kbd> ou tape direct : nouvelle note</span>
           <span><kbd>Entrée</kbd> envoyer, <kbd>Maj</kbd>+<kbd>Entrée</kbd> à la ligne, <kbd>Échap</kbd> annuler</span>
         </div>
       </div>
-    </section>
-
     <aside aria-label="Notes">
       <div class="notes-head">
         <h2>Tes notes<span class="count" id="count"></span></h2>
@@ -197,6 +281,7 @@
         <p id="doneText">Quand tu as fini, clique ici, puis écris « suivant » dans le chat Claude.</p>
       </div>
     </aside>
+    </div>
   </main>
 
   <footer id="foot">Tes notes restent dans ce navigateur. Rien ne part tant que tu ne les copies pas.</footer>
@@ -263,7 +348,7 @@
   function enablePlayer() {
     examples = false;
     video.hidden = false; drop.hidden = true;
-    [scrub, $("play"), $("back1"), $("fwd1"), input, $("saveNote")].forEach((el) => el.disabled = false);
+    [scrub, $("play"), $("back1"), $("fwd1"), $("speed"), input, $("saveNote")].forEach((el) => el.disabled = false);
     updateBanner();
   }
   function loadFile(file) {
@@ -294,7 +379,7 @@
 
   video.addEventListener("loadedmetadata", () => {
     scrub.max = video.duration || 1;
-    screen.classList.toggle("portrait", video.videoHeight > video.videoWidth);
+    document.body.classList.toggle("portrait", video.videoHeight > video.videoWidth);
     $("dur").textContent = tc(video.duration || 0);
     tick(); render();
   });
@@ -322,6 +407,14 @@
   };
   const stepSeconds = (s) => { if (!video.src) return; video.currentTime = Math.max(0, Math.min(video.duration || 0, video.currentTime + s)); };
   $("play").addEventListener("click", togglePlay);
+  const RATES = [1, 1.5, 2]; let rate = 1;
+  const setRate = (r) => { rate = r; video.playbackRate = r; const b = $("speed"); b.textContent = "x" + r; b.classList.toggle("fast", r !== 1); };
+  const nextRate = () => setRate(RATES[(RATES.indexOf(rate) + 1) % RATES.length]);
+  $("speed").addEventListener("click", nextRate);
+  video.addEventListener("loadedmetadata", () => { video.playbackRate = rate; });
+  video.addEventListener("click", togglePlay);
+  const grow = () => { input.style.height = "auto"; input.style.height = Math.min(input.scrollHeight + 2, parseFloat(getComputedStyle(input).maxHeight) || 160) + "px"; };
+  input.addEventListener("input", grow);
   $("back1").addEventListener("click", () => stepFrames(-1));
   $("fwd1").addEventListener("click", () => stepFrames(1));
   scrub.addEventListener("input", () => { video.currentTime = parseFloat(scrub.value); });
@@ -331,7 +424,6 @@
   const pin = () => { if (pendingT !== null) return; video.pause(); pendingT = video.currentTime || 0; $("noteAt").textContent = tc(pendingT); };
   input.addEventListener("focus", pin);
   input.addEventListener("input", pin);
-  // les notes n'arrivaient pas (tapées ou dictées sans Entrée, puis « I'm done »). Une note tapée est enregistrée
   // dès qu'on quitte le champ, avec le bouton « Envoyer la note », et avant « I'm done ».
   input.addEventListener("blur", () => { if (input.value.trim()) addNote(); else pendingT = null; });
   $("saveNote").addEventListener("mousedown", (e) => e.preventDefault());
@@ -346,7 +438,7 @@
     const text = input.value.trim();
     if (!text || examples) return;
     const t = pendingT !== null ? pendingT : (video.currentTime || 0);
-    input.value = ""; pendingT = null;
+    input.value = ""; pendingT = null; input.style.height = "";
     const body = { t, tc: tc(t), frame: frameOf(t), fps, text, status: "open", round, created: new Date().toISOString() };
     if (db) {
       try { await db.collection("notes").add(body); const ok = $("noteSaved"); ok.hidden = false; setTimeout(() => ok.hidden = true, 1800); }
@@ -375,6 +467,7 @@
     if (!$("sheetWrap").hidden) { if (e.key === "Escape") closeSheet(); return; }
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (e.key === " " || e.key === "k") { e.preventDefault(); togglePlay(); return; }
+    if (e.key === "v" || e.key === "V") { e.preventDefault(); nextRate(); return; }
     if (e.key === "ArrowLeft") { e.preventDefault(); e.shiftKey ? stepSeconds(-1) : stepFrames(-1); return; }
     if (e.key === "ArrowRight") { e.preventDefault(); e.shiftKey ? stepSeconds(1) : stepFrames(1); return; }
     if (!video.src || input.disabled) return;

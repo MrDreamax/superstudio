@@ -12,3 +12,4 @@ Dans SKILL.md, « l’utilisateur » = le goût de la maison (la règle s'appliq
 - **SFX rares**, seulement sur les gros événements ; 1 silence max par reel.
 - **Chiffres et preuves** = vrais résultats du client, jamais inventés. Jamais de promesse de revenu.
 - **Avant de livrer** : planche d'images aux instants clés, zones mortes, -14 LUFS, la vidéo commence à 0 (pas d'écran noir).
+- **Plans stables** : jamais de B-roll qui saccade. Choisir le moment du rush le plus stable (à-coups, pas le mouvement total), mesurer le plan rendu, sinon prendre un autre rush du même sujet ; garder la version avec ou sans stabilisation qui bouge le moins.
