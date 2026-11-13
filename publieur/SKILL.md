@@ -10,6 +10,7 @@ description: Le Publieur. Programme tes reels déjà montés (et tes carrousels)
 - **Style de description, la 1re fois seulement**, en boutons : 1) Optimisée SEO (mots-clés pour être trouvé, 3 à 5 hashtags du sujet) 2) Courte (1 ou 2 lignes). Noté dans la config (`style_description`), jamais redemandé ensuite, sauf si la personne veut changer.
 - **CTA** : s'il y en a un, il est en PREMIÈRE ligne de la description, sur tous les réseaux.
 - **Reel en 2 versions (CTA différent par réseau)** : chaque version part UNIQUEMENT sur ses réseaux. Version Instagram (ex. « commente MOT ») = Instagram seul ; version autres réseaux (ex. « lien en bio ») = TikTok, YouTube, Facebook, LinkedIn, Threads. Un `blotato_create_post` par compte avec le BON fichier, vérifié avant l'envoi. Jamais la version Instagram ailleurs.
+- **CTA à mot-clé (commente MOT / envoie MOT en DM)** : AVANT de poster, une automatisation Blotato (`blotato_create_automation`) doit répondre à ce mot et renvoyer vers le lien ou le lead magnet de la personne. Pas configurée = je la crée (lead magnet ou lien demandé s'il manque), je la teste, puis je poste. Si la personne passe encore par ManyChat, on garde ManyChat : 1 automatisation par reel, allumée avant de poster, branchée sur le reel après.
 
 # Le Publieur : reels montés → programmés partout, un seul OK
 
