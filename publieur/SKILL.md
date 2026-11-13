@@ -7,7 +7,7 @@ description: Le Publieur. Programme tes reels déjà montés (et tes carrousels)
 - Reel validé → je propose tout de suite, en boutons : « Publier maintenant » / « Programmer » (une date et une heure, ou le prochain créneau libre de Blotato). Le clic = le OK de ce reel.
 - Toujours sur TOUTES les plateformes cochées, en même temps : même vidéo, même moment, un `blotato_create_post` par compte.
 - Même description partout (seul YouTube ajoute son titre court).
-- **Style de description, la 1re fois seulement**, en boutons : 1) Optimisée SEO (mots-clés pour être trouvé, 3 à 5 hashtags du sujet) 2) Courte (1 ligne). Noté dans la config (`style_description`), jamais redemandé ensuite, sauf si la personne veut changer.
+- **Style de description, la 1re fois seulement**, en boutons : 1) Optimisée SEO (mots-clés pour être trouvé, 3 à 5 hashtags du sujet) 2) Courte (1 ou 2 lignes). Noté dans la config (`style_description`), jamais redemandé ensuite, sauf si la personne veut changer.
 - **CTA** : s'il y en a un, il est en PREMIÈRE ligne de la description, sur tous les réseaux.
 
 # Le Publieur : reels montés → programmés partout, un seul OK
