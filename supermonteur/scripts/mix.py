@@ -105,7 +105,7 @@ def peak(src):
 # un son du kit introuvable (disque débranché ?) = alerte, jamais un reel sans bruitage en silence
 _manque = [k for k, v in CFG.get("sfx", {}).items() if not os.path.exists(v["src"])]
 if _manque:
-    print(f"ALERTE SONS : {len(CFG['sfx']) - len(_manque)}/{len(CFG['sfx'])} trouvés, manque {', '.join(_manque)} (SSD branché ?)")
+    print(f"ALERTE SONS : {len(CFG['sfx']) - len(_manque)}/{len(CFG['sfx'])} trouvés, manque {', '.join(_manque)} (bruitages non installés : le montage continue sans)")
 
 # --- SFX auto : gros événements seulement, anti-collision ---
 if "sfx" not in plan:

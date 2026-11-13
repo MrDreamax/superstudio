@@ -454,7 +454,10 @@ def titre_auto(words):
             faibles = {"le", "la", "les", "l", "un", "une", "des", "de", "du", "d", "à", "au", "aux", "et", "ou", "qui", "que", "qu",
                        "ton", "ta", "tes", "votre", "vos", "mon", "ma", "mes", "son", "sa", "ses", "ce", "cette", "ces", "en", "pour", "sur", "dans", "avec",
                        # (chrono-test : titre « …LE TEMPS DE SE ») : un pronom collé au verbe qui suit ne finit jamais un titre
-                       "se", "s", "me", "m", "te", "t", "ne", "n", "y", "je", "j", "tu", "il", "ils", "elle", "elles", "on", "nous", "vous", "lui", "leur", "est", "sont", "a", "ont", "comme"}
+                       "se", "s", "me", "m", "te", "t", "ne", "n", "y", "je", "j", "tu", "il", "ils", "elle", "elles", "on", "nous", "vous", "lui", "leur", "est", "sont", "a", "ont", "comme",
+                       # (test client 13/11 : titre « …CHOSES À VENIR CHEZ ») : une préposition ou un lien ne finit jamais un titre
+                       "chez", "par", "vers", "sans", "sous", "entre", "depuis", "contre", "après", "avant", "pendant", "très", "plus", "si",
+                       "mais", "car", "donc", "quand", "dont", "où", "notre", "nos", "leurs", "mes", "tous", "tout", "toute", "toutes"}
             while k > 3 and mots[k - 1].lower().strip("'’") in faibles: k -= 1
             mots = mots[:max(k, 3)]
     if mots: mots[0] = mots[0][:1].upper() + mots[0][1:]

@@ -34,11 +34,20 @@ etape("Composition (découpage des sous-titres du moteur)")
 if run(["node", f"{S}/build.mjs", "--plan", "plan.json", "--out", "index.html"], "build.log"): stop("build.mjs (voir build.log)")
 print(open("build.log").read().strip().splitlines()[-1])
 
-etape("Gardien avant rendu")
-run(["python3", f"{S}/gardien.py", ".", "--avant"], "gardien-avant.log")
-g = open("gardien-avant.log").read()
-print("\n".join(l for l in g.splitlines() if "❌" in l or "GARDIEN" in l))
-if "le rendu peut partir" not in g: stop("corriger plan.json puis relancer (aucun rendu lancé)")
+etape("Gardien avant rendu (en parallèle du dessin et du rendu express)")
+# (test client 13/11 : 10 s d'attente pour un rendu express de 3 s) : le Gardien avant tourne PENDANT le dessin, le rendu
+# et le mix ; on attend son verdict avant le Gardien final. Il bloque toujours : rien n'est livré s'il dit non.
+_ga_log = open("gardien-avant.log", "w")
+GA = subprocess.Popen(["python3", f"{S}/gardien.py", ".", "--avant"], stdout=_ga_log, stderr=subprocess.STDOUT)
+def gardien_avant_ok():
+    GA.wait(); _ga_log.close()
+    g = open("gardien-avant.log").read()
+    print("\n".join(l for l in g.splitlines() if "❌" in l or "GARDIEN" in l))
+    if "le rendu peut partir" not in g:
+        for f in ("final.mp4",):
+            try: os.remove(f)
+            except OSError: pass
+        stop("corriger plan.json puis relancer (le Gardien avant bloque : rien n'est livré)")
 
 # ---------- ce que build.mjs a posé : textes, places, temps ----------
 page = open("index.html", encoding="utf-8").read()
@@ -217,6 +226,7 @@ for vieux in glob.glob("renders/express_*.mp4"):
         except OSError: pass
 print("\n".join(l for l in open("mix.log").read().splitlines() if l.startswith(("musique", "final"))))
 
+gardien_avant_ok()
 etape("Gardien final")
 G = run(["python3", f"{S}/gardien.py", "."], "gardien.log")
 print("\n".join(l for l in open("gardien.log").read().splitlines() if "❌" in l or "GARDIEN" in l))
