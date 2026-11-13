@@ -7,7 +7,7 @@ Réfs validées (avant le nom « minimaliste ») : RUSH « Comment mieux parler 
 2. **plan.json** : champs communs + `title` qui couvre toute la vidéo :
    `"title": {"l1": "Comment mieux parler", "l2": "en face caméra ?", "start": 0, "end": 999}` (le moteur coupe à la durée du clip). FAQ = la question posée, mot pour mot. Clip = le sujet en 2 lignes. Jamais de virgule, point ni deux-points. Toujours en MAJUSCULES à l'écran (tous styles ; le moteur le fait seul).
    Pas de `keywords`, `bigwords`, `numbers`, `lists`, `brolls`.
-3. **Musique obligatoire** (tous les styles en ont une) : règles de SKILL.md (dossier `music_reels` des réglages seulement, sinon bibliothèque SUNO de son disque externe, continue d'un seul passage, montée calée sur la phrase forte).
+3. **Musique obligatoire, même pour « juste les sous-titres »** (sans musique seulement si c'est écrit en toutes lettres) (tous les styles en ont une) : règles de SKILL.md (dossier `music_reels` des réglages seulement, sinon bibliothèque SUNO de son disque externe, continue d'un seul passage, montée calée sur la phrase forte).
 4. Taille et police du titre et des sous-titres = la DA du setup (`titleSize`, `subSize`, `fonts`), jamais réglées au montage.
 5. **Par défaut : `python3 $S/express.py .`** (~1 min : titre + sous-titres dessinés puis posés par ffmpeg, même mix, même Gardien). Seulement s'il sort en code 2 (mot fort, B-roll…), le moteur normal :
 ```bash

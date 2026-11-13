@@ -58,7 +58,7 @@ Seulement des images qu'il accepte : ses interdits (shooting, look, période) so
 5. Étape 8 : `note-10.md` (9/10 minimum, juge L'Œil Gemini). Modifier un script ou rendu cassé : `moteur.md`.
 
 
-**LES 5 STYLES, LES SEULS (dicté par l'utilisateur ; renommés le même jour).** On ne propose rien d'autre, toujours sous CES noms. **Les 5 ont TOUJOURS une musique**.
+**LES 5 STYLES, LES SEULS (dicté par l'utilisateur ; renommés le même jour).** On ne propose rien d'autre, toujours sous CES noms. **Les 5 ont TOUJOURS une musique**. Même quand la demande ne parle pas de musique (« juste les sous-titres », « monte-la simplement ») : musique quand même. Sans musique SEULEMENT si la personne écrit « sans musique ».
 
 | Style | Ce qu'on voit | Fichier |
 |---|---|---|
