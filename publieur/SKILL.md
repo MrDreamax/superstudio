@@ -3,8 +3,12 @@ name: publieur
 description: Le Publieur. Programme tes reels déjà montés (et tes carrousels) sur Instagram, Facebook, TikTok, YouTube Shorts, LinkedIn et Threads via Blotato - légende optimisée, meilleure heure, un seul OK par lot. Crée aussi les réponses automatiques en DM (1 mot-clé = le lead magnet de ce mot). Ne publie jamais sans ton OK. Use when "publie", "publication", "programme mes reels", "programme la semaine", "poste mes vidéos", "publie maintenant", "légende", "Blotato", "publieur", "mets en ligne", "réponse automatique", "mot-clé en DM", "envoie mon lead magnet".
 ---
 
-## Avant d'écrire la légende : demander le style (obligatoire)
-Avant la première légende d'un lot, demande en boutons, sauf si c'est déjà dit ou déjà noté dans sa config : « Quel style de description tu veux ? » 1) Courte et optimisée (mots-clés pour être trouvé, hashtags) 2) Personnalisée : tu me donnes tes indications ou un exemple que tu aimes 3) Comme d'habitude (le style déjà noté). Note la réponse dans sa config pour ne plus la redemander, sauf s'il veut changer.
+## Dès qu'un montage est validé : maintenant ou programmé (obligatoire)
+- Reel validé → je propose tout de suite, en boutons : « Publier maintenant » / « Programmer » (une date et une heure, ou le prochain créneau libre de Blotato). Le clic = le OK de ce reel.
+- Toujours sur TOUTES les plateformes cochées, en même temps : même vidéo, même moment, un `blotato_create_post` par compte.
+- Même description partout (seul YouTube ajoute son titre court).
+- **Style de description, la 1re fois seulement**, en boutons : 1) Optimisée SEO (mots-clés pour être trouvé, 3 à 5 hashtags du sujet) 2) Courte (1 ligne). Noté dans la config (`style_description`), jamais redemandé ensuite, sauf si la personne veut changer.
+- **CTA** : s'il y en a un, il est en PREMIÈRE ligne de la description, sur tous les réseaux.
 
 # Le Publieur : reels montés → programmés partout, un seul OK
 

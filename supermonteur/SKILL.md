@@ -12,7 +12,7 @@ Ce qui est installé : le moteur `~/Documents/SuperApps/supermonteur` (API `http
 4. Attends que la vidéo soit lue (`curl -s localhost:8801/api/reel/<id>` : `statut` n'est plus `regarde`), puis `curl -s -X POST localhost:8801/api/monter/<id> -H 'Content-Type: application/json' -d '{"style": "<Style>", "lien": "<lien ou vide>"}'`. Le montage tourne seul (quelques minutes) : dis-le en 1 ligne.
 5. Ses demandes précises (un titre, couper un passage, une musique calme) : dès la 1re version, `POST /api/retour/<id>` `{"texte": "<sa demande>"}` puis `POST /api/suivant/<id>`.
 6. **Montage fini** (`statut` = `retours`) : Cut Notes s'ouvre, sans rien demander : `python3 ~/.claude/skills/supermonteur/outils/cut-notes/ouvre.py ~/Documents/SuperApps/supermonteur/reels/<id>`, puis les gestes listés en tête de `ouvre.py`. Dans le chat : 1 ligne + un seul bouton « Suivant ».
-7. « Suivant » : ses notes deviennent des retours (`ouvre.py <dossier> --notes <out_dir>`), le moteur ne retouche QUE les moments notés. Tout est bon : `curl -s -X POST localhost:8801/api/valider/<id>` (le reel passe en `valide`), puis propose « Programme ma semaine » (Le Publieur).
+7. « Suivant » : ses notes deviennent des retours (`ouvre.py <dossier> --notes <out_dir>`), le moteur ne retouche QUE les moments notés. Tout est bon : `curl -s -X POST localhost:8801/api/valider/<id>` (le reel passe en `valide`), puis propose tout de suite « Publier maintenant » / « Programmer » sur toutes les plateformes (Le Publieur, bloc du haut).
 8. Style Lab : seulement s'il dit « change mon style ». Jamais de question de style en boutons.
 
 
@@ -78,7 +78,7 @@ Seulement des images qu'il accepte : ses interdits (shooting, look, période) so
 **l'appli SuperMonteur est CODÉE** (écran 0 style → montage → retours → Publier, Ma DA en tiroir) : `~/Documents/SuperApps/supermonteur/` ; « corrige mes retours » = mode d'emploi `apps/supermonteur/CLAUDE.md`.
 4. **La pause = Cut Notes, ouvert tout seul (voir plus haut)** ; l'écran Retours de l'appli reste en secours (façon Cut Notes, Apple clair) : vidéo + retours accrochés à l'image (écrire ou dicter), « Corrigé ✓ ▶ Revoir », « Suivant : corrige mes retours » / « C'est parfait, on publie », « Ma DA » en tiroir, puis Télécharger (la publication se fait dans le chat avec le Publieur). Les 5 styles ET leurs aperçus respectent la zone interdite d'Instagram (haut 270, bas 1480, côtés 65, 120 à droite sous 1100 px). Règles complètes : Brain `01-Projets/superda-supermonteur.md`.
 5. **Titre + sous-titres seuls (rien d'autre dans plan.json) : `python3 $S/express.py .`** (PAR DÉFAUT, validé par l’utilisateur) = même découpage des sous-titres, même mix, même Gardien, mais sans rendu Chrome : RUSH en 1 min 3 s au lieu de 6 min 9 s. Il sort en code 2 si le plan a autre chose -> monte.sh. SuperMonteur (monter.py) le choisit seul.
-6. **Validation** : la vidéo finale + la note /10. La publication se fait dans un autre chat (Le Publieur), pas dans le chat du montage. Les réparations d'outils aussi.
+6. **Validation** : la vidéo finale + la note /10, puis tout de suite les boutons « Publier maintenant » / « Programmer » (Le Publieur : toutes les plateformes en même temps, CTA en 1re ligne). Les réparations d'outils aussi.
 
 ## Non négociable, tous les styles (détail : `cahier-des-charges.md`)
 - **Un rendu raté ne se garde pas.** Dès qu'un rendu est remplacé par un meilleur, l'ancien est effacé. On garde seulement le rush et le final validé. Pas de copies en double.
