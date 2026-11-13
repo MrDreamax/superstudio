@@ -7,3 +7,5 @@ Tout est dans le bloc « CHEZ TOI (client) » en tête de `SKILL.md`. Il passe a
 
 ## Cut Notes automatique
 - Cut Notes : CHAQUE version montée (v1 et chaque retouche) ouvre Cut Notes TOUT SEUL, sans demander (`outils/cut-notes/ouvre.py <dossier>` + les 4 gestes), même quand le montage part d'un chat. Jamais une vidéo livrée seule dans le chat.
+
+- **Reel en 2 versions** : la 2e version = même montage, seul le CTA de fin change (voir SKILL.md, « Reel en 2 versions »).

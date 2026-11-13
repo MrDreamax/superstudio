@@ -91,6 +91,8 @@ Seulement des images qu'il accepte : ses interdits (shooting, look, période) so
 - Note `note-10.md` obligatoire. Livraison : la vraie vidéo seulement.
 
 
+**Reel en 2 versions (Instagram + autres réseaux).** On monte et fait valider la version Instagram seule. La 2e version garde le montage EXACTEMENT tel quel (mêmes coupes, sous-titres, musique, réglages) : seul le CTA de fin change. Méthode : même dossier copié, mêmes plages de dérush, seules les dernières plages (le CTA) remplacées, `plan.variantes` = le dossier de la 1re version (même musique permise), puis `express.py` / `monte.sh`. Jamais remonter ni re-noter tout le reel. Version Instagram sur Instagram seulement, l'autre sur tous les autres réseaux.
+
 **Après chaque reel : boucle feedback** (`workflow.md`, étape 9) : chaque retour = 1 ligne datée dans `feedback.md` et dans le carnet Brain `00-Moi/regles-agents/supermonteur.md`, le fichier de règles concerné corrigé pour qu'il n'y ait jamais deux versions, et une note mesurable = 1 contrôle de plus dans `gardien.py`.
 
 - `derush.py ... --plan` = calcule les plages seules (3 s, aucun rendu) pour tester un correctif. Les bords de prises suivent la VRAIE attaque mesurée du mot supprimé (jamais le temps Whisper) ; une phrase courte avec vraie voix n'est jamais retirée.
