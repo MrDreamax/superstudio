@@ -13,7 +13,7 @@
 // au-dessus de 270 px (14 %, Meta Ads Guide Reels), à moins de 65 px des bords (6 %), sous 1480 px (pseudo + légende),
 // ni à droite des sous-titres là où sont les boutons (sous-titres entre 120 et 960 px). Fonds et décors peuvent déborder.
 // Contrôle après chaque montage : node scripts/zones.mjs <dossier> (0 élément attendu).
-import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync, statSync, unlinkSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync, statSync } from "node:fs";
 import { dirname, join, resolve, isAbsolute, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
@@ -211,11 +211,7 @@ if (SUBY == null) {
 }
 // zones mortes Insta : encre d'un sous-titre 52 px = de +8 à +53 px sous son haut ; mot fort serif 132 px = de +16 à +143 px
 // (jambages g, p, j compris), mesuré au navigateur. Rien sous 1480 px, rien au-dessus de 270 px.
-// Visage trop proche : « jamais sur la bouche ou le menton, au niveau du cou » : plan.subCou = bas permis des sous-titres (px),
-// au-delà de la zone de l'appli ; seuls les sous-titres en profitent.
-const SUBCOU = plan.subCou || (SUBY > 1427 ? Math.min(SUBY + 70, 1630) : 0);
-try { if (SUBCOU) writeFileSync("subcou.json", JSON.stringify({ y: SUBCOU })); else if (existsSync("subcou.json")) unlinkSync("subcou.json"); } catch {}
-const SUB_MAX = (SUBCOU || 1480) - Math.round(53 * SUBSIZE / 52), KW = plan.kwSize || 132, EMW = {};
+const SUB_MAX = 1480 - Math.round(53 * SUBSIZE / 52), KW = plan.kwSize || 132, EMW = {};
 // (RUSH, Gardien « zones mortes » : « personal » en mot fort à 1484 px) : les lignes se comptaient sur le SEUL mot fort ;
 // les mots normaux du même sous-titre (« conçu ta ») le poussaient sur une 2e ligne, 4 px dans la zone morte. On mesure tout le
 // sous-titre (mot fort en serif 132 px + mots normaux dans la police des sous-titres) et le mot fort est supposé sur la dernière ligne.
@@ -959,13 +955,10 @@ groups = groups.reduce((acc, gr, gi, all) => {
 }, []);
 // (RUSH, débit 213 mots/min, blocs de 0,14 s illisibles) : plan.subMin = durée mini d'un bloc (s), sinon il rejoint son voisin
 // (4 mots max, plan.subLarge + 2 caractères max, jamais par-dessus une fin de phrase).
-// (test client 13/11, blocs « ça » et « Et on a » qui clignotent) : 0,6 s par défaut (règle oeil-grille), plan.subMin pour changer.
-const SUBMIN = plan.subMin ?? 0.6;
-if (SUBMIN) for (let g = 0; g < groups.length; g++) {
+if (plan.subMin) for (let g = 0; g < groups.length; g++) {
   const gr = groups[g], next = groups[g + 1], prev = groups[g - 1];
-  if ((next ? W[next[0]].t : W[gr.at(-1)].e + 0.3) - W[gr[0]].t >= SUBMIN) continue;
-  // 6 mots max (avant 4 : « Il y a » + « pas mal » restait un flash de 0,28 s, test client 13/11) ; la largeur reste la vraie limite
-  const taille = (x, y) => !x || !y || /[.!?]$/.test(W[x.at(-1)].text) || x.length + y.length > 6 ? Infinity : W.slice(x[0], y.at(-1) + 1).map(w => w.text).join(" ").length;
+  if ((next ? W[next[0]].t : W[gr.at(-1)].e + 0.3) - W[gr[0]].t >= plan.subMin) continue;
+  const taille = (x, y) => !x || !y || /[.!?]$/.test(W[x.at(-1)].text) || x.length + y.length > 4 ? Infinity : W.slice(x[0], y.at(-1) + 1).map(w => w.text).join(" ").length;
   const tn = taille(gr, next), tp = taille(prev, gr);
   if (Math.min(tn, tp) > SUBLARGE + 2) continue;
   if (tn <= tp) { gr.push(...next); groups.splice(g + 1, 1); g--; } else { prev.push(...gr); groups.splice(g, 1); g -= 2; }
@@ -990,14 +983,7 @@ groups.forEach((grp, gi) => {
   grp = grp.filter(j => !onScreen(j));
   if (!grp.length) return;
   const html = grp.map(j => { const t = FINS(W[j].text, W[j + 1]?.text); if (kwOf[j] >= 0) return `<em>${esc(kwCase(W[j].text.replace(FINP, "")))}</em>`;
-    const c = coulOf(j), b00 = c && c.e ? c.e : t;
-    // (test client 13/11 : « Bref ça » à côté de « il y a pas mal ») : casse cohérente, chaque bloc commence par une majuscule
-    // (plan.subCase = "phrase", défaut) ; "brut" = casse de la transcription. N'agit pas en majuscules (caps).
-    // « pas une majuscule au début de chaque ligne, juste au début de chaque phrase » : majuscule seulement si le mot
-    // d'avant finit une phrase (. ? ! …) ou ouvre la vidéo ; en milieu de phrase, la casse de la transcription (noms propres gardés).
-    const debut = j === 0 || /[.?!…]["»']?$/.test((W[j - 1]?.text || "").trim());
-    const b0 = (plan.subCase || "phrase") === "phrase" && j === grp[0] && debut ? b00.charAt(0).toUpperCase() + b00.slice(1) : b00;
-    const tt = TY && TY.sub.caps === false ? b0 : b0.toUpperCase();
+    const c = coulOf(j), b0 = c && c.e ? c.e : t, tt = TY && TY.sub.caps === false ? b0 : b0.toUpperCase();
     return c ? `<span style="color:${c.c}">${esc(tt)}</span>` : esc(tt); }).join(" ");
   const emTxt = grp.filter(j => kwOf[j] >= 0).map(j => kwCase(W[j].text.replace(FINP, ""))).join(" ");
   const bEnd = Math.min(b, ...FULL.filter(l => l.start > a).map(l => l.start));

@@ -74,49 +74,9 @@ for s0, s1 in blancs:
         coupes.append(a)
     retire.append((round(a, 3), round(b, 3)))
 
-# (test client 13/11, juge : « également » étiré + inspiration bruyante gardés, 0,9 s entre deux idées) : un trou entre deux
-# mots qui dépasse 0,35 s (inspiration, son étiré, bruit : pas forcément du « calme ») est ramené à une respiration naturelle
-# de ~0,2 s, quel que soit le son. Jamais sur un raccord du dérush (déjà au ras), jamais un plan < 2 s.
-RESPI_IDEE, TROU_MAX = 0.20, 0.35
-for k in range(len(W) - 1):
-    p_, n_ = W[k], W[k + 1]
-    g0, g1 = p_["end"], n_["start"]
-    if g1 - g0 < TROU_MAX or g0 < 0.2 or g1 > total - 0.2: continue
-    if any(g0 - 0.1 <= j <= g1 + 0.1 for j in joints): continue
-    a, b = g0 + 0.12, g1 - 0.08
-    dedans = [r for r in retire if r[0] >= g0 - 0.01 and r[1] <= g1 + 0.01]
-    deja = sum(r[1] - r[0] for r in dedans)
-    if (g1 - g0) - deja <= TROU_MAX: continue
-    autres = [c for c in coupes if not any(abs(c - r[0]) < 1e-6 for r in dedans)]
-    if any((c < a and a - c < MINSHOT + 0.15) or (c >= a and c - b < MINSHOT + 0.15) for c in autres + [0.0, total]): continue
-    retire = [r for r in retire if r not in dedans] + [(round(a, 3), round(b, 3))]
-    coupes = autres + [a]
-retire.sort()
-# Gardien « micro-coupe 0,02 s » : un petit bruit au milieu d'un blanc de raccord le coupait en deux
-# blancs retirés séparément, et laissait un îlot d'image de 0,02 s entre les deux. Deux retraits séparés de < 0,3 s sans mot
-# entre eux = un seul retrait.
-_fus = []
-for r in retire:
-    if _fus and r[0] - _fus[-1][1] < 0.3 and not any(_fus[-1][1] <= w["start"] < r[0] for w in W):
-        _fus[-1] = (_fus[-1][0], max(_fus[-1][1], r[1]))
-    else:
-        _fus.append(tuple(r))
-retire = _fus
-# Même cas, 2e forme : le dérush colle la fin d'une plage 0,1 s après le mot (filet), serrer retire le blanc juste avant le raccord
-# et laisse 0,02 s d'image seule avant ce raccord. Un bout < 0,6 s sans mot entre un retrait et un raccord = retiré avec.
-_r2 = []
-for a, b in retire:
-    for j in joints:
-        if b < j < b + 0.6 and not any(b <= w["start"] < j for w in W): b = j
-        if a - 0.6 < j < a and not any(j < w["end"] <= a for w in W): a = j
-    _r2.append((round(a, 3), round(b, 3)))
-retire = _r2
-
-# fin : la voix s'éteint, on garde 0,5 s de souffle (règle fin-basse ; test client 13/11 : fin coupée 0,1 s après le
-# dernier mot = sec). Calé sur la fin du dernier mot OU de la voix, la plus tardive. Le fondu court est fait par mix.py.
+# fin : la voix s'éteint, on garde 0,15 s (sinon le Gardien voit un « trou de son » dans la queue muette, RUSH v1)
 on = np.where(~calme)[0]
-_dern = max([w.get("end", 0) for w in json.load(open(os.path.join(D, "words.json"))).get("words", [])] or [0]) if os.path.exists(os.path.join(D, "words.json")) else 0
-fin = min(total, max(on[-1] / 100 if len(on) else 0, _dern) + 0.5) if (len(on) or _dern) else total
+fin = min(total, on[-1] / 100 + 0.15) if len(on) else total
 if fin < total - 0.1: retire.append((round(fin, 3), round(total, 3)))
 if not retire:
     print("serrer : rien à resserrer"); sys.exit(0)

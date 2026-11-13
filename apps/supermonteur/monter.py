@@ -157,15 +157,6 @@ def preparer_prises(D):
             ecrire(os.path.join(D, "drop.prepare.json"), {"cle": cle_mots(D), "drop": prises_par_claude(D, W) or drop_auto(W)})
         except Exception as x:
             log_erreur(f"SuperMonteur {os.path.basename(D)} : prises pas préparées à l'écran 0 : {str(x)[:200]}")
-            return
-    # le titre de Claude a son propre verrou : le dérush démarre sans l'attendre, le plan l'attend (déjà fini en pratique)
-    with open(os.path.join(D, ".titre.lock"), "w") as v:
-        fcntl.flock(v, fcntl.LOCK_EX)
-        try:
-            if not os.path.exists(os.path.join(D, "titre.claude.json")):
-                titre_par_claude(D, W)
-        except Exception as x:
-            log_erreur(f"SuperMonteur {os.path.basename(D)} : titre de Claude pas préparé : {str(x)[:200]}")
 
 
 # ------------------------------------------------------------------------------------------------- le dérush automatique
@@ -188,32 +179,6 @@ def mots_doubles(words, drop):
         x, y = norm(words[i]["text"]), norm(words[i + 1]["text"])
         if not x or x != y or x in DOUBLES_OK or i in deja or i + 1 in deja: continue
         if words[i + 1]["start"] - words[i]["end"] < 1.5: res.append([i, i])
-    return res
-
-
-# (test client 13/11 : « c'est là au niveau », « Là, il y a », « Donc là, il se fait ») : le « là » de remplissage saute,
-# comme un « euh ». Règle générale, pas un cas : « là » seul (pas « là-bas », « celui-là »), jamais en fin de phrase
-# (« je suis là. »), jamais après « par / de / jusque / ici » ni avant « que / qu' / où / -bas » (sens de lieu ou d'insistance).
-TIC_AVANT = set("donc alors et bon bah ben mais bref voila puis c'est".split())   # comparés après norm() (sans accents)
-TIC_JAMAIS_AVANT = set("par de d jusque jusqu ici là".split())
-TIC_JAMAIS_APRES = set("que qu où ou bas dedans dessus dessous".split())
-def tics(words, drop):
-    deja = {i for a, b in (drop or []) for i in range(a, b + 1)}
-    res = []
-    for i, w in enumerate(words):
-        brut = w["text"].strip()
-        if i in deja or re.sub(r"[^\wà]", "", brut.lower()) != "là" or brut.rstrip(" »\"'").endswith((".", "!", "?", "…")) or i == len(words) - 1:
-            continue
-        av = norm(words[i - 1]["text"]).replace("’", "'") if i else ""
-        ap = norm(words[i + 1]["text"]).replace("’", "'")
-        if av.strip("'") in TIC_JAMAIS_AVANT or ap.split("'")[0] in TIC_JAMAIS_APRES: continue
-        virgule = brut.rstrip(" »\"'").endswith(",")
-        pause = words[i + 1]["start"] - w["end"] >= 0.25
-        debut = i == 0 or words[i - 1]["text"].strip().rstrip(" »\"'")[-1:] in ".?!…,"
-        # coupe propre seulement : un côté au moins a un vrai blanc (≥ 0,2 s). Collé des deux côtés (« Là, il » en 0,06 s),
-        # la coupe mangerait l'attaque du mot suivant (Gardien « mot coupé », test client 13/11) : on le garde.
-        net = max(w["start"] - (words[i - 1]["end"] if i else 0), words[i + 1]["start"] - w["end"]) >= 0.2
-        if net and (virgule or av in TIC_AVANT or pause or debut): res.append([i, i])
     return res
 
 
@@ -379,7 +344,10 @@ def reprises_restantes(words, gardes):
     Mots comparés sans ponctuation ni majuscules. -> indices de mots à retirer."""
     def mots(a, b): return [norm(words[i]["text"]) for i in range(a, b + 1)]
     out = set()
-    for (a, b), (c, d) in zip(gardes, gardes[1:]):
+    for (a, b0), (c, d) in zip(gardes, gardes[1:]):
+        # un « euh » en fin de morceau ne cache pas une reprise : comparé sans lui, et il saute avec la reprise
+        b = b0
+        while b > a and norm(words[b]["text"]) in {"euh", "heu", "hum", "euhm", "bah"}: b -= 1
         p, q = mots(a, b), mots(c, d)
         # Ex. : « En sep... » puis « En septembre, des chercheurs… » = mot coupé net, repris juste après -> tout le 1er saute
         if words[b]["text"].strip().endswith(("...", "…", "-")) and len(p) <= len(q) and p[:-1] == q[:len(p) - 1] and q[len(p) - 1].startswith(p[-1]):
@@ -393,11 +361,11 @@ def reprises_restantes(words, gardes):
                 out |= set(range(a + j, b + 1))
                 continue
         if 3 <= len(p) < len(q) and q[:len(p)] == p:
-            out |= set(range(a, b + 1))
+            out |= set(range(a, b0 + 1))
             continue
         for k in range(min(len(p) - 1, len(q)), 3, -1):   # 4 mots mini : « …vers le premier coach. Le premier coach le prend » est voulu
             if p[-k:] == q[:k]:
-                out |= set(range(b - k + 1, b + 1))
+                out |= set(range(b - k + 1, b0 + 1))
                 break
     return out
 
@@ -428,6 +396,18 @@ def prises_par_claude(D, words):
     nums = sorted({int(x) for x in re.findall(r"\d+", lignes[-1])} & set(range(1, len(F) + 1))) if lignes else []
     if not nums: return None
     garde = {i for n in nums for i in range(F[n - 1][0], F[n - 1][1] + 1)}
+    # un morceau jeté par Claude mais gardé par le calcul (drop_auto), dont le texte n'est redit nulle part dans ce qui est
+    # gardé, est une idée perdue (souvent l'accroche), pas une reprise : il revient.
+    try:
+        mort_auto = {i for x, y in drop_auto(words) for i in range(x, y + 1)}
+        tri = lambda ids: {tuple(norm(words[i]["text"]) for i in ids[k:k + 3]) for k in range(max(0, len(ids) - 2))}
+        for a, b in F:
+            ids = list(range(a, b + 1))
+            if len(ids) < 4 or any(i in garde for i in ids) or any(i in mort_auto for i in ids): continue
+            mien = tri(ids)
+            if mien and len(mien & tri(sorted(garde))) / len(mien) < 0.5: garde |= set(ids)
+    except Exception:
+        pass
     garde -= reprises_restantes(words, [F[n - 1] for n in nums])
     # (seul entre 2 pauses, jeté par Sonnet = « …au hasard. si tu postes au hasard ») : un morceau
     # de 1 à 3 mots qui finit par une virgule, coincé entre une phrase gardée finie et un morceau gardé en minuscule, ouvre la
@@ -447,67 +427,6 @@ def prises_par_claude(D, words):
     # les « euh » seuls sautent aussi dans les prises gardées
     drop += [[i, i] for i in sorted(garde) if norm(words[i]["text"]) in {"euh", "heu", "hum", "euhm", "bah"}]
     return sorted(drop)
-
-
-# (test client 13/11 : « Stratosphere » sans accent dans le titre et les sous-titres) : les noms propres de la personne
-# (marque, nom, pseudo, liste noms_propres de Brain/00-Moi/marque.json) gardent leur orthographe exacte, accents et casse.
-def noms_propres():
-    m = lire(os.path.expanduser("~/Documents/Brain/00-Moi/marque.json"), {}) or {}
-    L = [m.get("marque"), m.get("nom"), str(m.get("pseudo") or "").lstrip("@")] + list(m.get("noms_propres") or [])
-    out = {}
-    for x in L:
-        for tok in str(x or "").split():
-            tok = tok.strip(".,;:!?«»\"'")
-            if len(tok) >= 3 and tok[:1].isupper(): out[norm(tok)] = tok
-    return out
-
-
-def corrige_noms(texte, NP=None):
-    NP = noms_propres() if NP is None else NP
-    if not NP or not texte: return texte
-    def un(m):
-        mot = m.group(0)
-        return NP.get(norm(mot), mot) if norm(mot) in NP else mot
-    return re.sub(r"[^\W\d_][\w'’-]*", un, texte)
-
-
-def titre_par_claude(D, words):
-    """(test client 13/11, juge : titre plat = la 1re phrase recopiée) : Claude écrit le VRAI hook à partir du sens du rush.
-    Préparé pendant que la personne décrit son montage (aucune attente en plus). -> titre.claude.json, sinon titre_auto."""
-    txt = " ".join(w["text"] for w in words)[:3000]
-    prompt = ("Voici ce que dit une personne face caméra dans un reel :\n" + txt + "\n\n"
-              "Écris le TITRE affiché en haut de la vidéo : un hook court qui donne envie de regarder, fidèle au sens de la vidéo, "
-              "dans les mots simples de la personne (tutoiement si elle tutoie). Pas de promesse inventée, pas d'emoji, pas de "
-              "ponctuation sauf « ? » si c'est une question, pas de guillemets. 1 ligne de 24 caractères max si ça tient, "
-              "sinon 2 lignes de 24 caractères max chacune (compte les caractères : une ligne plus longue est jetée). "
-              "Le hook est une PROMESSE ou une CURIOSITÉ tirée du point le plus fort de la vidéo, jamais une description plate de "
-              "son sujet. Exemples tirés d'AUTRES vidéos (ne les recopie jamais, invente le tien) : bons = « Arrête de poster au hasard », "
-              "« Le prix que personne n'ose dire », « Ce qui change lundi » ; mauvais (plats, interdits) = « Nouveautés chez X », "
-              "« Du nouveau chez X », « Les news de la semaine », « Parlons de mon programme ». "
-              + (("Écris les noms propres exactement ainsi : " + ", ".join(sorted(set(noms_propres().values()))) + ". ") if noms_propres() else "")
-              + "Réponds SEULEMENT par la ou les lignes, une par ligne, rien d'autre.")
-    try:
-        sys.path.insert(0, os.path.dirname(APP))
-        import ouvrier_claude
-        ok, sortie = ouvrier_claude.lancer(prompt, D, ["Read"], delai=120, modele="sonnet")
-    except Exception:
-        return None
-    if not ok: return None
-    L = [re.sub(r"[\"«»“”.,:;!]", "", l).strip() for l in (sortie or "").strip().splitlines() if l.strip()][-2:]
-    L = [l for l in L if 3 <= len(l) <= 28]
-    if not L: return None
-    T = {"l1": L[0], "l2": L[1] if len(L) > 1 else ""}
-    ecrire(os.path.join(D, "titre.claude.json"), dict(T, cle=cle_mots(D)))
-    return T
-
-
-def titre_choisi(D, words):
-    """Le titre de Claude s'il a été préparé pour CES mots, sinon le titre automatique (secours)."""
-    t = lire(os.path.join(D, "titre.claude.json"), {}) or {}
-    if t.get("l1") and t.get("cle") == cle_mots(D):
-        return {"l1": corrige_noms(t["l1"]), "l2": corrige_noms(t.get("l2", ""))}
-    T = titre_auto(words)
-    return {k: corrige_noms(v) if k in ("l1", "l2") else v for k, v in T.items()} if T else T
 
 
 def titre_auto(words):
@@ -550,10 +469,7 @@ def titre_auto(words):
             faibles = {"le", "la", "les", "l", "un", "une", "des", "de", "du", "d", "à", "au", "aux", "et", "ou", "qui", "que", "qu",
                        "ton", "ta", "tes", "votre", "vos", "mon", "ma", "mes", "son", "sa", "ses", "ce", "cette", "ces", "en", "pour", "sur", "dans", "avec",
                        # (chrono-test : titre « …LE TEMPS DE SE ») : un pronom collé au verbe qui suit ne finit jamais un titre
-                       "se", "s", "me", "m", "te", "t", "ne", "n", "y", "je", "j", "tu", "il", "ils", "elle", "elles", "on", "nous", "vous", "lui", "leur", "est", "sont", "a", "ont", "comme",
-                       # (test client 13/11 : titre « …CHOSES À VENIR CHEZ ») : une préposition ou un lien ne finit jamais un titre
-                       "chez", "par", "vers", "sans", "sous", "entre", "depuis", "contre", "après", "avant", "pendant", "très", "plus", "si",
-                       "mais", "car", "donc", "quand", "dont", "où", "notre", "nos", "leurs", "mes", "tous", "tout", "toute", "toutes"}
+                       "se", "s", "me", "m", "te", "t", "ne", "n", "y", "je", "j", "tu", "il", "ils", "elle", "elles", "on", "nous", "vous", "lui", "leur", "est", "sont", "a", "ont", "comme"}
             while k > 3 and mots[k - 1].lower().strip("'’") in faibles: k -= 1
             mots = mots[:max(k, 3)]
     if mots: mots[0] = mots[0][:1].upper() + mots[0][1:]
@@ -683,15 +599,7 @@ def monte(D):
             verrou.close()
         zones = "16:9 : sous-titres en bas de l'image"
     elif recette == "plan.json":
-        try:
-            monte_sh(D, D, lambda t: etat(D, etape=t))
-        except RuntimeError as x:
-            # Le Gardien
-            # ne doit plus arrêter un montage pour une simple coupe. Coupe trop courte = réparée seule (plages recollées), 1 essai.
-            if not COUPES.search(str(x)) or not reparer_coupes(D): raise
-            etat(D, etape="Je recolle 2 coupes trop courtes et je relance…")
-            redecoupe(D)
-            monte_sh(D, D, lambda t: etat(D, etape=t))
+        monte_sh(D, D, lambda t: etat(D, etape=t))
         # le Gardien final vient de passer zones.mjs ; son verdict est repris (avant : 2e passage, Chrome relancé pour rien)
         g = next((x for x in (lire(os.path.join(D, "gardien.json"), []) or []) if x.get("controle") == "Zones mortes Insta"), None)
         if g:
@@ -796,7 +704,6 @@ def monter(D):
             etat(D, etape="Je dérushe : dernière prise gardée, blancs coupés…")
             drop = prep["drop"] if prep.get("cle") == cle_mots(D) and "drop" in prep else (prises_par_claude(D, W) or drop_auto(W))
         drop = drop + mots_doubles(W, drop)
-        drop = drop + tics(W, drop)
         ecrire(os.path.join(D, "drop.json"), drop)
         # Minimaliste = cadre d'origine (styles/raw.md : le cadre serré met les cheveux dans le titre) ; sinon cadre.py
         st = json.loads(subprocess.check_output(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_streams", "-of", "json", rush]))["streams"][0]
@@ -839,18 +746,7 @@ def suite(D, ref=None):
     rid, style, cases = e["id"], e.get("style", "Minimaliste"), e.get("cases", {})
     try:
         etat(D, statut="montage", etape="J'écris le plan : titre, sous-titres, musique…")
-        if cases.get("titre", True):
-            with open(os.path.join(D, ".titre.lock"), "w") as v:   # attend le titre préparé pendant le dérush
-                fcntl.flock(v, fcntl.LOCK_EX)
-                if not os.path.exists(os.path.join(D, "titre.claude.json")):
-                    try: titre_par_claude(D, lire(os.path.join(D, "words.rush.json"))["words"])
-                    except Exception: pass   # secours : titre_auto
-        _wj = lire(os.path.join(D, "words.json"))
-        _NP = noms_propres()
-        if _NP:   # orthographe des noms propres dans les sous-titres (le texte change, jamais les temps)
-            for w in _wj["words"]: w["text"] = corrige_noms(w["text"], _NP)
-            ecrire(os.path.join(D, "words.json"), _wj)
-        plan = plan_auto(D, rid, style, cases, _wj["words"])
+        plan = plan_auto(D, rid, style, cases, lire(os.path.join(D, "words.json"))["words"])
         ecrire(os.path.join(D, "plan.json"), plan)
         if ref is None:
             ref = {"erreur": preparer_ref(D, e)} if e.get("reference") else {}
@@ -988,7 +884,7 @@ def plan_auto(D, rid, style, cases, words):
             "cases": cases, "style_supermonteur": style}
     if style == "Dynamique":   # (RUSH v1 cam fixe : « transforme en dynamique, ajoute des zoom/dézoom ») : zooms auto, rythme nerveux
         plan.update({"zoom": True, "zoomGap": [2.5, 4]})
-    T = titre_choisi(D, words) if cases.get("titre", True) else None
+    T = titre_auto(words) if cases.get("titre", True) else None
     if T:
         # Minimaliste : le titre reste toute la vidéo ; les autres : pendant le hook (SKILL : title 0-4 s)
         T.update({"start": 0, "end": 999 if style == "Minimaliste" else 4.0, "top": 250})
@@ -1020,60 +916,6 @@ def plan_auto(D, rid, style, cases, words):
     plan["_note"] = (f"{datetime.date.today():%d/%m} SuperMonteur v1 auto, style {style} : dernière prise gardée, titre = 1re phrase, "
                      "musique MUSIQUE. Claude enrichit (mots forts, cartons, animations) au tour des retours.")
     return plan
-
-
-COUPES = re.compile(r"Micro-coupes|micro-coupure|Plans ≥ 2 s|Silences entendus")
-
-
-def reparer_coupes(D, minshot=2.0):
-    """cut.segments.json (secondes du RUSH) -> plages.json sans bout < 0,6 s, sans coupe qui gagne < 0,15 s, sans plan < 2 s
-    (un plan trop court est recollé à son voisin le plus proche, mots du trou remis : drop.json les libère). True si changé."""
-    segs = [list(x) for x in lire(os.path.join(D, "cut.segments.json"), []) or []]
-    if len(segs) < 2: return False
-    avant = [list(x) for x in segs]
-    segs = [x for x in segs if x[1] - x[0] >= 0.1]
-    W = lire(os.path.join(D, "words.rush.json"), []) or []
-    W = W if isinstance(W, list) else W.get("words", [])
-    # silence > 0,5 s entre deux mots d'un même plan (Gardien « Silences entendus ») : coupé, 0,12 s gardé après le mot, 0,08 s avant
-    coupe = []
-    for a, b in segs:
-        mots = [w for w in W if a <= (w["start"] + w["end"]) / 2 <= b]
-        cur = a
-        for w1, w2 in zip(mots, mots[1:]):
-            # coupé seulement si les 2 morceaux restent des plans d'au moins 2 s (sinon on recréerait un plan court)
-            if w2["start"] - w1["end"] > 0.5 and w1["end"] + 0.12 - cur >= minshot and b - (w2["start"] - 0.08) >= minshot:
-                coupe.append([cur, round(w1["end"] + 0.12, 3)]); cur = round(w2["start"] - 0.08, 3)
-        coupe.append([cur, b])
-    segs = coupe
-    fin = lambda t: (t or "").rstrip(" »\"'").endswith((".", "?", "!", "…", ":", ","))
-    def entiere(a, b):   # phrase entière (règle du Gardien) : un plan court qui la contient passe
-        dans = [k for k, w in enumerate(W) if a - 0.05 <= (w["start"] + w["end"]) / 2 <= b + 0.05]
-        avant = [w for w in W if (w["start"] + w["end"]) / 2 < a - 0.05 and any(x - 0.02 <= (w["start"] + w["end"]) / 2 <= y + 0.02 for x, y in m)]
-        txt = lambda w: w.get("text", w.get("word"))
-        return bool(dans) and b - a >= 0.6 and (not avant or fin(txt(avant[-1]))) and fin(txt(W[dans[-1]]))   # mot d'avant = dernier mot GARDÉ
-    m = [segs[0]]
-    for a, b in segs[1:]:
-        if a - m[-1][1] < 0.15 or b - a < 0.6: m[-1][1] = max(m[-1][1], b)
-        else: m.append([a, b])
-    k = 0
-    while k < len(m) and len(m) > 1:
-        a, b = m[k]
-        if b - a >= minshot or entiere(a, b): k += 1; continue
-        g_av = a - m[k - 1][1] if k > 0 else 1e9
-        g_ap = m[k + 1][0] - b if k + 1 < len(m) else 1e9
-        if g_av <= g_ap: m[k - 1][1] = b; del m[k]; k = max(k - 1, 0)
-        else: m[k + 1][0] = a; del m[k]
-    if m == avant: return False
-    dedans = lambda i: any(a - 0.02 <= (W[i]["start"] + W[i]["end"]) / 2 <= b + 0.02 for a, b in m)
-    drop = lire(os.path.join(D, "drop.json"), []) or []
-    if os.path.exists(os.path.join(D, "drop.json")): shutil.copy2(os.path.join(D, "drop.json"), os.path.join(D, "drop.avant.json"))
-    garde = []
-    for i, j in drop:
-        bloc = [x for x in range(i, j + 1) if x < len(W) and not dedans(x)]
-        garde += [[x, x] for x in bloc]
-    ecrire(os.path.join(D, "drop.json"), garde)
-    ecrire(os.path.join(D, "plages.json"), [[round(a, 3), round(b, 3)] for a, b in m])
-    return True
 
 
 def redecoupe(D):

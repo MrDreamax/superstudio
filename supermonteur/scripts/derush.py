@@ -79,9 +79,11 @@ def speech_end(t, lim, cap=None):    # vraie fin du mot qui finit vers t : 1er b
             t0 = (i - 11) / 100
             return word_tail(t0, cap if cap is not None else lim) if t0 <= lim else None
     return None
-def speech_start(t, lo):   # vraie attaque du mot annoncé à t : DERNIER passage blanc -> voix (3 x 10 ms) entre lo et t + 0,15
+def speech_start(t, lo, fin=None):   # vraie attaque du mot annoncé à t : DERNIER passage blanc -> voix (3 x 10 ms) entre lo et t + 0,15
     db, q = _env(); best = None   # (le dernier, pour ne jamais reprendre la queue du mot d'avant, supprimé)
-    for k in range(max(0, int(lo * 100)), min(len(db) - 4, int((t + 0.15) * 100))):
+    # un mot très court : la recherche s'arrête avant sa fin, jamais dans le mot suivant (sinon le mot est mangé)
+    h = t + 0.15 if fin is None else max(t + 0.03, min(t + 0.15, fin - 0.02))
+    for k in range(max(0, int(lo * 100)), min(len(db) - 4, int(h * 100))):
         if db[k] < q and (db[k + 1:k + 4] >= q).all(): best = (k + 1) / 100 - 0.04
     return best
 # (d'une prise ratée gardé après « publication, ») : la butée d'une coupe devant un mot SUPPRIMÉ était
@@ -171,7 +173,7 @@ for i, w in enumerate(keep):
                 db, _ = _env(); lo, hi = int((prev["end"] - 0.1) * 100), int(att * 100)   # jamais après la vraie attaque
                 if hi > lo: segs[-1][1] = (lo + int(min(range(hi - lo), key=lambda n: db[lo + n]))) / 100 + 0.01
                 SERRE.append(segs[-1][1])
-            ss = speech_start(w["start"], max(w["start"] - 0.3, W[j - 1]["end"] if jumped else prev["end"]))
+            ss = speech_start(w["start"], max(w["start"] - 0.3, W[j - 1]["end"] if jumped else prev["end"]), w["end"])
             if ss: s = max(ss, segs[-1][1] if not jumped else ss)   # attaque réelle : pas de blanc gardé avant le mot
             s = max(s, w["start"] - 0.15)               # l'inspiration juste avant le mot passe le seuil -> jamais > 0,15 s avant
     segs.append([max(0.0, s), e])
@@ -418,7 +420,7 @@ for j, t in sorted((int(k), float(v)) for k, v in BORDS.get("fin", {}).items()):
     if nk is None or W[nk]["start"] >= b - 0.02: segs[k][1] = round(t, 3)
     elif t < W[nk]["start"] - 0.05:
         dn = BORDS.get("debut", {}).get(str(nk))
-        dn = float(dn) if dn is not None else (speech_start(W[nk]["start"], max(t, W[nk]["start"] - 0.3)) or W[nk]["start"] - 0.06)
+        dn = float(dn) if dn is not None else (speech_start(W[nk]["start"], max(t, W[nk]["start"] - 0.3), W[nk]["end"]) or W[nk]["start"] - 0.06)
         segs[k:k + 1] = [[a, round(t, 3)], [round(max(dn, t + 0.01), 3), b]]
     if t > W[j]["end"] + 0.02: LIBRE.append((W[j]["end"], t))
     print(f"bord posé à la main : fin de « {W[j]['text']} » à {t:.2f} s")

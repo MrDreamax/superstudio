@@ -98,9 +98,9 @@ def pour_moteur():
                    "list": [car.get("depart") or "#161D2F", car.get("arrivee") or "#0B0B0D"]},
         "subSize": sub,
         "typo": {
-            "t1": {"font": fp, "weight": p.get("graisse_ligne1", p.get("graisse", 700)), "size": t1, "color": co.get("titre") or "#FFFFFF", "caps": False},   # quel que soit le duo
+            "t1": {"font": fp, "weight": p.get("graisse_ligne1", p.get("graisse", 700)), "size": t1, "color": co.get("titre") or "#FFFFFF", "caps": True},   # quel que soit le duo
             "t2": {"font": fs, "weight": s.get("graisse", 400), "size": t2, "color": co.get("ligne2") or "#FFFFFF",
-                   "italic": bool(s.get("italique", True)), "caps": False},
+                   "italic": bool(s.get("italique", True)), "caps": True},
             "sub": {"font": fp, "weight": p.get("graisse", 700), "caps": bool(m.get("sous_titres", {}).get("majuscules", True)), "scale": 1, "color": co.get("sous_titres") or "#FFFFFF",
                     "track": 0.5},   # sous-titres du moteur : majuscules, 0,5 px (moteur.md, Style Lab)
             "shadow": "douce", "align": "center"},

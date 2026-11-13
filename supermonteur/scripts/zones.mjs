@@ -19,8 +19,6 @@ const chrome = CH.filter(existsSync).flatMap(c => readdirSync(c).sort().reverse(
 if (!chrome) { console.log("chrome-headless-shell introuvable (~/.cache/hyperframes ou ~/.cache/puppeteer)"); process.exit(1); }
 
 const dir = process.argv[2], step = +(process.argv[3] || 0.25);
-// plan.subCou / subcou.json : sous-titres au cou, permis sous 1480 jusqu'à cette limite (visage trop proche : sinon sur la bouche)
-const SUBCOU = (() => { for (const f of ["plan.json", "subcou.json"]) { try { const j = JSON.parse(readFileSync(join(dir, f), "utf8")); const v = j.subCou || (f === "subcou.json" ? j.y : 0); if (v) return v; } catch {} } return 0; })();
 const MIME = { ".html": "text/html", ".js": "text/javascript", ".png": "image/png", ".jpg": "image/jpeg", ".webp": "image/webp", ".svg": "image/svg+xml", ".ttf": "font/ttf", ".otf": "font/otf", ".woff2": "font/woff2", ".json": "application/json" };
 const srv = http.createServer((q, r) => {
   const p = join(dir, decodeURIComponent(q.url.split("?")[0]));
@@ -38,7 +36,7 @@ const dur = await page.evaluate(() => window.__timelines.root.duration());
 const t0 = +(process.argv[4] || 0), t1 = +(process.argv[5] || dur);
 const hits = new Map();
 for (let t = t0; t <= t1 + 1e-6; t += step) {
-  const res = await page.evaluate(([t, SUBCOU]) => {
+  const res = await page.evaluate((t) => {
     const tl = window.__timelines.root; tl.seek(t, false);
     const T = 270, B = 1480, L = 65, R = 1015, out = [];
     const cv = (window.__zcv = window.__zcv || document.createElement("canvas").getContext("2d"));
@@ -58,7 +56,7 @@ for (let t = t0; t <= t1 + 1e-6; t += step) {
       if (r - l < 2 || bt - tp < 2) return; // hors écran / masqué
       const isSub = el.closest && el.closest(".cap");
       const LL = isSub ? 120 : L, RR = isSub ? 960 : R, bad = [];
-      if (tp < T - 1) bad.push(`haut ${Math.round(tp)}`); if (bt > (isSub && SUBCOU ? SUBCOU : B) + 1) bad.push(`bas ${Math.round(bt)}`);
+      if (tp < T - 1) bad.push(`haut ${Math.round(tp)}`); if (bt > B + 1) bad.push(`bas ${Math.round(bt)}`);
       if (l < LL - 1) bad.push(`gauche ${Math.round(l)}`); if (r > RR + 1) bad.push(`droite ${Math.round(r)}`);
       if (bad.length) out.push({ kind, who: label, t: tp, b: bt, l, r, LL, RR });
     };
@@ -103,7 +101,7 @@ for (let t = t0; t <= t1 + 1e-6; t += step) {
       check(el, rect, "élément", name(el));
     }
     return out;
-  }, [t, SUBCOU]);
+  }, t);
   for (const h of res) { const key = `${h.kind}|${h.who}`; const o = hits.get(key);
     if (!o) hits.set(key, { ...h, first: t, last: t, n: 1 });
     else { o.last = t; o.n++; o.t = Math.min(o.t, h.t); o.b = Math.max(o.b, h.b); o.l = Math.min(o.l, h.l); o.r = Math.max(o.r, h.r); } }
