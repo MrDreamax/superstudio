@@ -278,7 +278,7 @@
       <ol class="notes" id="list"></ol>
       <div class="notes-foot" id="doneFoot" hidden>
         <button class="btn primary" id="doneBtn" type="button">J'ai fini mes notes</button>
-        <p id="doneText">Quand tu as fini, clique ici, puis écris « suivant » dans le chat Claude.</p>
+        <p id="doneText">Quand tu as fini, clique ici, puis « Corriger » dans le chat Claude. Rien à changer ? Clique « C'est parfait » dans le chat.</p>
       </div>
     </aside>
     </div>
@@ -570,7 +570,7 @@
     const shown = visible();
     try {
       await db.doc("review/status").set({ state: "done", round, open: shown.filter((n) => !isClosed(n)).length, at: new Date().toISOString() });
-      $("doneText").textContent = `Tour ${round} terminé. Écris maintenant « suivant » dans le chat Claude : il corrige tes notes.`;
+      $("doneText").textContent = `Tour ${round} terminé. Clique maintenant « Corriger » dans le chat Claude : il corrige tes notes.`;
     } catch (e) { showProblem(e); }
   });
 
@@ -620,7 +620,7 @@
     db.doc("review/current").onSnapshot((snap) => {
       const c = snap.exists ? snap.data() : null;
       if (!c) return;
-      if (typeof c.round === "number" && c.round !== round) { round = c.round; $("doneText").textContent = `Quand tu as fini, clique ici, puis écris « suivant » dans le chat Claude.`; }
+      if (typeof c.round === "number" && c.round !== round) { round = c.round; $("doneText").textContent = `Quand tu as fini, clique ici, puis « Corriger » dans le chat Claude. Rien à changer ? Clique « C'est parfait » dans le chat.`; }
       if (c.fps && Number(c.fps) !== fps) { fps = Number(c.fps); fpsSel.value = String(c.fps); }
       if (c.name) fileName = String(c.name);
       $("modePill").textContent = `Tour ${round} · tes notes partent direct à Claude`;
