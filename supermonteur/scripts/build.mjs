@@ -993,7 +993,10 @@ groups.forEach((grp, gi) => {
     const c = coulOf(j), b00 = c && c.e ? c.e : t;
     // (test client 13/11 : « Bref ça » à côté de « il y a pas mal ») : casse cohérente, chaque bloc commence par une majuscule
     // (plan.subCase = "phrase", défaut) ; "brut" = casse de la transcription. N'agit pas en majuscules (caps).
-    const b0 = (plan.subCase || "phrase") === "phrase" && j === grp[0] ? b00.charAt(0).toUpperCase() + b00.slice(1) : b00;
+    // « pas une majuscule au début de chaque ligne, juste au début de chaque phrase » : majuscule seulement si le mot
+    // d'avant finit une phrase (. ? ! …) ou ouvre la vidéo ; en milieu de phrase, la casse de la transcription (noms propres gardés).
+    const debut = j === 0 || /[.?!…]["»']?$/.test((W[j - 1]?.text || "").trim());
+    const b0 = (plan.subCase || "phrase") === "phrase" && j === grp[0] && debut ? b00.charAt(0).toUpperCase() + b00.slice(1) : b00;
     const tt = TY && TY.sub.caps === false ? b0 : b0.toUpperCase();
     return c ? `<span style="color:${c.c}">${esc(tt)}</span>` : esc(tt); }).join(" ");
   const emTxt = grp.filter(j => kwOf[j] >= 0).map(j => kwCase(W[j].text.replace(FINP, ""))).join(" ");
