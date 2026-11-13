@@ -219,7 +219,7 @@ for z in "$ICI/100-MUSIQUES.zip" "$ICI/../100-MUSIQUES.zip" "$HOME/Downloads/100
 done
 [[ -n "$(find "$HOME/Documents/Montage/MUSIQUE" -name '*.mp3' -print -quit 2>/dev/null)" ]] || echo "Attention : pas encore de musiques. Mets 100-MUSIQUES.zip à côté de ce dossier et relance, ou pose tes mp3 dans Documents/Montage/MUSIQUE."
 # ElevenLabs obligatoire (transcription des rushs)
-security find-generic-password -s elevenlabs-api-key -w >/dev/null 2>&1 || echo "À FAIRE : clé ElevenLabs. Copie ta clé (elevenlabs.io), puis dis à Claude : « Range ma clé ElevenLabs »."
+security find-generic-password -s elevenlabs-api-key -w >/dev/null 2>&1 || echo "Clé ElevenLabs (sous-titres sans faute) : Claude te guide pendant « Bienvenue », ou écris « Range ma clé ElevenLabs »."
 echo "Super Studio installé (version $(cat "$ICI/VERSION"))."
 [[ -d "$BK" ]] && echo "Sauvegarde des anciens fichiers : $BK"
 echo "Publication en mode essai : rien ne part tant que tu ne l'actives pas."
