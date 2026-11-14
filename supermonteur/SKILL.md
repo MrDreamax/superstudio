@@ -94,6 +94,11 @@ La qualité ne baisse jamais. On coupe seulement le temps perdu :
 11. **Jamais de recherche large sur tout le disque** (lent) ; jamais une commande lente collée au lancement du montage.
 12. **Gardien bloqué 2 fois sur le même défaut = corriger le dérush à la racine**, pas relancer. Juge Gemini en panne (402) = juge Claude séparé, et le dire tout de suite.
 13. **Fin trop courte (< 2 s)** : poser `plages.json` et la tester en TEXTE (`derush.py --plan` puis `gardien.py --avant`) avant tout rendu, jamais d'essais de plages à l'aveugle ; avec `plages.json`, serrer ne repasse plus. Juge briefé dès le 1er tour avec ce qui est voulu (mot jaune = s'allume avec son sous-titre, blancs naturels d'une prise, musique douce). Sous-titres : 1 image tête penchée avant le rendu, `subY` sur le col si le texte frôle le menton.
+14. **Avant de monter : ce rush est-il déjà en cours ailleurs ?** `GET /api/reels` (même `rush`, statut `montage`) + `pgrep -f "express.py|monte.sh"`. Oui = reprendre la version existante, ne rien relancer en parallèle (deux montages sur le même dossier s'écrasent).
+15. **Coupes à la main = `monter.redecoupe(D)` puis `express.py .` (~20 s).** `POST /api/monter` refait son propre dérush + serrer et ignore `plages.json`.
+16. **Hésitation sur un mot traîné : lire `derush.log` (filet = vraie queue du mot) avant de couper.** derush recolle 2 plages de la même prise écartées de moins de MINCUT : couper là ne change rien.
+17. **Rush .MOV « 1920x1080 » : vérifier la rotation (`side_data` de ffprobe)** avant de le croire horizontal ; c'est souvent un vertical tourné.
+18. **Juge tour 1 = mesures fournies** (début des mots dans words.rush.json, filet de derush.log, 1er mot à 0 s) pour qu'il ne note pas de faux défauts : 1 tour au lieu de 2.
 
 **Ce que le moteur fait respecter tout seul (14/11)** : Gardien en texte avant le rendu (1er mot perdu, mot à cheval, musique présente, 2e version liée), un seul rendu à la fois (`verrou.py`, se libère seul si un rendu plante), Mac gardé éveillé, outils et disque vérifiés en 1 s, rendu refusé si rien n'a changé (`FORCE=1` pour forcer), durée réelle notée et annoncée. Tout couper : `SUPERMONTEUR_VERROU=0`. Les règles 4 et 6 (diagnostic, juge) restent à moi.
 
