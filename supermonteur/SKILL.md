@@ -6,7 +6,7 @@ description: Le Monteur. Monte ta vidéo brute en reel 9:16 prêt à poster (cou
 ## CHEZ TOI (client) : CE BLOC PASSE AVANT TOUT LE RESTE DE CE FICHIER ET DE workflow.md
 Ce qui est installé : le moteur `~/Documents/SuperApps/supermonteur` (API `http://localhost:8801`), Cut Notes, Style Lab, les 100 musiques (`~/Documents/Montage/MUSIQUE`). Pas d'Epidemic Sound, jamais d'image ni de vidéo IA. Un fichier cité plus bas qui n'existe pas chez lui (Brain de l'auteur, références, archives) : ignore-le.
 1. **Rush + « Monte cette vidéo »** : `bash ~/Documents/SuperApps/supermonteur/lancer.sh` (démarre le moteur s'il dort), puis `curl -s -X POST localhost:8801/api/nouveau -H 'Content-Type: application/json' -d '{"rush": "<chemin du rush>"}'` (réponse = la fiche, son `id`).
-2. **UNE question ouverte**, si la personne n'a pas déjà décrit le montage voulu : « Décris-moi comment tu veux ton montage. Tu as une référence ? Si oui, glisse-la-moi et dis-moi tout ce que tu veux ici. » Zéro suggestion, zéro bouton, zéro liste de styles.
+2. **UNE question ouverte**, si la personne n'a pas déjà décrit le montage voulu : « Décris-moi comment tu veux ton montage. Tu as une référence ? Glisse la vidéo ici, ou colle son lien si c'est une vidéo Instagram ou YouTube, et dis-moi tout ce que tu veux. » Zéro suggestion, zéro bouton, zéro liste de styles.
 3. **Sa réponse → le style** (noms pour toi seul, jamais écrits à la personne) : rien de précis = `Minimaliste` (défaut) ; des images, du rythme, des cartons = `Dynamique` ; une comparaison = `Comparatif` ; une discussion à deux = `Interview` ; une référence = `Inspiration` + `"lien"` (lien Instagram, TikTok, YouTube).
 4. Attends que la vidéo soit lue (`curl -s localhost:8801/api/reel/<id>` : `statut` n'est plus `regarde`), puis `curl -s -X POST localhost:8801/api/monter/<id> -H 'Content-Type: application/json' -d '{"style": "<Style>", "lien": "<lien ou vide>"}'`. Le montage tourne seul (quelques minutes) : dis-le en 1 ligne.
 5. Ses demandes précises (un titre, couper un passage, une musique calme) : dès la 1re version, `POST /api/retour/<id>` `{"texte": "<sa demande>"}` puis `POST /api/suivant/<id>`.
@@ -89,7 +89,10 @@ La qualité ne baisse jamais. On coupe seulement le temps perdu :
 6. **Juge tôt et bien briefé.** Checklist des règles cochée avant ; juge avec le brief + les règles ; lancé pendant Cut Notes ; tours 2 et 3 sur les différences seulement.
 7. **Outils vérifiés en 10 s avant de monter** (serveur 8801 répond, musique lisible). Après une modif du moteur : 1 montage chronométré sur un rush court ; plus lent qu'avant = modif annulée.
 8. **API du moteur sans la relire** : `POST /api/nouveau {rush}` → `POST /api/monter/<id> {style,cases}` → `GET /api/reel/<id>`.
-9. **Durée annoncée = durée mesurée**, jamais devinée.
+9. **Durée annoncée = durée mesurée**, jamais devinée. Le moteur l'écrit dans `_chrono.log` du dossier du reel (départ, fin, secondes).
+10. **Rush déjà monté avec les mêmes réglages (`GET /api/reels`) = montrer la version existante**, remonter seulement si quelque chose change.
+11. **Jamais de recherche large sur tout le disque** (lent) ; jamais une commande lente collée au lancement du montage.
+12. **Gardien bloqué 2 fois sur le même défaut = corriger le dérush à la racine**, pas relancer. Juge Gemini en panne (402) = juge Claude séparé, et le dire tout de suite.
 
 **Ce que le moteur fait respecter tout seul (14/11)** : Gardien en texte avant le rendu (1er mot perdu, mot à cheval, musique présente, 2e version liée), un seul rendu à la fois (`verrou.py`, se libère seul si un rendu plante), Mac gardé éveillé, outils et disque vérifiés en 1 s, rendu refusé si rien n'a changé (`FORCE=1` pour forcer), durée réelle notée et annoncée. Tout couper : `SUPERMONTEUR_VERROU=0`. Les règles 4 et 6 (diagnostic, juge) restent à moi.
 

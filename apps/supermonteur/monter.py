@@ -1030,4 +1030,16 @@ def log_erreur(t):
 if __name__ == "__main__":
     action, D = sys.argv[1], os.path.abspath(sys.argv[2])
     garder_eveille()   # tout montage (1er compris) empêche le Mac de s'endormir tant qu'il tourne (caffeinate -w)
-    {"regarder": regarder, "monter": monter, "remonter": remonter, "suite": suite}[action](D)
+    # durée réelle de chaque montage (départ, fin, secondes) dans _chrono.log : la durée annoncée est mesurée, jamais devinée
+    _t0, _ok = time.time(), "ok"
+    try:
+        {"regarder": regarder, "monter": monter, "remonter": remonter, "suite": suite}[action](D)
+    except BaseException:
+        _ok = "erreur"; raise
+    finally:
+        try:
+            with open(os.path.join(D, "_chrono.log"), "a") as _f:
+                _f.write(f"{datetime.datetime.fromtimestamp(_t0):%Y-%m-%d %H:%M:%S} -> {datetime.datetime.now():%H:%M:%S} "
+                         f"{action} {_ok} {time.time() - _t0:.0f} s\n")
+        except Exception:
+            pass
