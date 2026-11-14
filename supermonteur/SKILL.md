@@ -79,6 +79,8 @@ Seulement des images qu'il accepte : ses interdits (shooting, look, période) so
 5. **Titre + sous-titres seuls (rien d'autre dans plan.json) : `python3 $S/express.py .`** (PAR DÉFAUT, validé par l’utilisateur) = même découpage des sous-titres, même mix, même Gardien, mais sans rendu Chrome : RUSH en 1 min 3 s au lieu de 6 min 9 s. Il sort en code 2 si le plan a autre chose -> monte.sh. SuperMonteur (monter.py) le choisit seul.
 6. **Validation** : la vidéo finale + la note /10, puis tout de suite les boutons « Publier maintenant » / « Programmer » (Le Publieur : toutes les plateformes en même temps, CTA en 1re ligne). Les réparations d'outils aussi.
 
+**Relecteur extérieur (juge) : sauté sur un montage Minimaliste de 30 s ou moins (contrôle automatique + Cut Notes suffisent) ; gardé pour tout montage plus riche, toute pub et tout client.**
+
 ## VITESSE = PRIORITÉ N°1 DU MONTAGE (14/11, audit de 12 montages : 22 à 28 min pour une v1 qui devait prendre 3)
 La qualité ne baisse jamais. On coupe seulement le temps perdu :
 1. **Vérifier en texte avant de rendre.** Plages (`derush.py --plan`), cases, variantes, sous-titres, nombres en chiffres, fin basse, zones mortes : `gardien-avant.log` à 0 ❌ AVANT le 1er rendu. Jamais un rendu « pour voir ».
