@@ -37,3 +37,4 @@ Après la page : ménage du Brain : mets à jour ~/Documents/Brain/hot.md (500 m
 
 ## 6. Ménage des carnets
 Relis ~/Documents/Brain/00-Moi/regles-agents/ (un carnet par agent) : fusionne les doublons, remplace les règles périmées, signale à l'utilisateur en une ligne les règles qui se contredisent entre deux agents. Ne supprime rien sans le dire.
+Auto-amélioration : relis les lignes « la prochaine fois » de la semaine dans les skills touchés : doublon = fusionné, deux lignes contraires = la plus récente gagne, règle jamais servie ou remplacée = rangée. Un skill qui a pris plus de 30 lignes dans la semaine = le dire à l'utilisateur en 1 ligne.

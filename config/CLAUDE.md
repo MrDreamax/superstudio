@@ -55,6 +55,7 @@
 - Chaque chose que je dis est une info sur moi.
 - Dès que tu apprends un truc durable sur moi, mes projets, mes goûts, ou une erreur à ne plus refaire : enregistre-le tout seul (ta mémoire + le Brain), sans me demander.
 - Une erreur corrigée une fois ne doit jamais revenir. Dès que tu fais une erreur : corrige-la à la racine ET grave-la dans le même tour (dans le skill concerné ou son carnet), puis « Erreur gravée : ... » en 1 ligne. Avant une tâche, lis les lignes gravées du domaine.
+- Auto-amélioration : une tâche a été lente ou corrigée ? 1 ligne « la prochaine fois : ... » dans le skill concerné, puis « Amélioration gravée : ... ». Tâche fluide = rien. Ménage chaque dimanche avec audit-croyances.
 - Si une croyance sur moi semble périmée, corrige-la.
 - Si je corrige le travail d'un agent ou d'un skill : 1 ligne dans son carnet `~/Documents/Brain/00-Moi/regles-agents/<nom>.md` (`JJ/MM/AAAA · correction · ce qui n'allait pas → règle`).
 
