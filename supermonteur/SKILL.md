@@ -79,6 +79,18 @@ Seulement des images qu'il accepte : ses interdits (shooting, look, période) so
 5. **Titre + sous-titres seuls (rien d'autre dans plan.json) : `python3 $S/express.py .`** (PAR DÉFAUT, validé par l’utilisateur) = même découpage des sous-titres, même mix, même Gardien, mais sans rendu Chrome : RUSH en 1 min 3 s au lieu de 6 min 9 s. Il sort en code 2 si le plan a autre chose -> monte.sh. SuperMonteur (monter.py) le choisit seul.
 6. **Validation** : la vidéo finale + la note /10, puis tout de suite les boutons « Publier maintenant » / « Programmer » (Le Publieur : toutes les plateformes en même temps, CTA en 1re ligne). Les réparations d'outils aussi.
 
+## VITESSE = PRIORITÉ N°1 DU MONTAGE (14/11, audit de 12 montages : 22 à 28 min pour une v1 qui devait prendre 3)
+La qualité ne baisse jamais. On coupe seulement le temps perdu :
+1. **Vérifier en texte avant de rendre.** Plages (`derush.py --plan`), cases, variantes, sous-titres, nombres en chiffres, fin basse, zones mortes : `gardien-avant.log` à 0 ❌ AVANT le 1er rendu. Jamais un rendu « pour voir ».
+2. **Un seul montage à la fois sur le Mac.** Avant un rendu : `pgrep -f "express.py|monte.sh|ffmpeg"`. Un autre tourne = attendre, ou le dire.
+3. **Rendu en arrière-plan, jamais d'attente passive.** `caffeinate -i` (Mac éveillé) + notification de fin. Pendant le rendu : préparer Cut Notes, légende, consigne du juge. Jamais finir un tour sans rendu surveillé.
+4. **Bug = diagnostic, pas essais.** Lire cut.segments.json + extraire 1 image (`ffmpeg -ss`) au moment fautif. 1 rendu par cause prouvée.
+5. **Retouche = seulement le morceau touché.** express.py (~1 min), plans touchés seuls, MIXSEUL pour le son. Version B = seule la fin change. Corrections groupées en 1 rendu.
+6. **Juge tôt et bien briefé.** Checklist des règles cochée avant ; juge avec le brief + les règles ; lancé pendant Cut Notes ; tours 2 et 3 sur les différences seulement.
+7. **Outils vérifiés en 10 s avant de monter** (serveur 8801 répond, musique lisible). Après une modif du moteur : 1 montage chronométré sur un rush court ; plus lent qu'avant = modif annulée.
+8. **API du moteur sans la relire** : `POST /api/nouveau {rush}` → `POST /api/monter/<id> {style,cases}` → `GET /api/reel/<id>`.
+9. **Durée annoncée = durée mesurée**, jamais devinée.
+
 ## Non négociable, tous les styles (détail : `cahier-des-charges.md`)
 - **Un seul rendu visé (14/11).** Tout se vérifie en TEXTE avant de rendre, jamais par essais de rendus : (1) plages calculées sans rendu (`derush.py ... --plan`) puis lues : 1er et dernier mot de chaque plage, aucun bout < 2 s, aucun trou de voix ; (2) cases vérifiées (musique cochée, `duree_min`) ; (3) 2 versions : `plan.variantes` posé dès le départ et dernière plage ≥ 2 s ; (4) découpage des sous-titres relu (subMax, subLies, mots fusionnés) avant le rendu. Puis 1 rendu, juge, et seulement les corrections qu'il demande, groupées en 1 rendu.
 - **Un rendu raté ne se garde pas.** Dès qu'un rendu est remplacé par un meilleur, l'ancien est effacé. On garde seulement le rush et le final validé. Pas de copies en double.
