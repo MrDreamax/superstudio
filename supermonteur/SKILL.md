@@ -80,6 +80,7 @@ Seulement des images qu'il accepte : ses interdits (shooting, look, période) so
 6. **Validation** : la vidéo finale + la note /10, puis tout de suite les boutons « Publier maintenant » / « Programmer » (Le Publieur : toutes les plateformes en même temps, CTA en 1re ligne). Les réparations d'outils aussi.
 
 ## Non négociable, tous les styles (détail : `cahier-des-charges.md`)
+- **Un seul rendu visé (14/11).** Tout se vérifie en TEXTE avant de rendre, jamais par essais de rendus : (1) plages calculées sans rendu (`derush.py ... --plan`) puis lues : 1er et dernier mot de chaque plage, aucun bout < 2 s, aucun trou de voix ; (2) cases vérifiées (musique cochée, `duree_min`) ; (3) 2 versions : `plan.variantes` posé dès le départ et dernière plage ≥ 2 s ; (4) découpage des sous-titres relu (subMax, subLies, mots fusionnés) avant le rendu. Puis 1 rendu, juge, et seulement les corrections qu'il demande, groupées en 1 rendu.
 - **Un rendu raté ne se garde pas.** Dès qu'un rendu est remplacé par un meilleur, l'ancien est effacé. On garde seulement le rush et le final validé. Pas de copies en double.
 - Images et vidéos générées par IA : JAMAIS, dans aucun style.
 - Zones mortes Instagram : `node $S/zones.mjs .` attendu « OK : 0 ».
