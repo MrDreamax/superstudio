@@ -313,7 +313,8 @@ if segs:
     _fin = lambda w: w["text"].rstrip(" »\"'").endswith((".", "?", "!", "…", ":", ","))
     def phrase_entiere(t0, d):
         dans = [k for k, w in enumerate(_P) if t0 - 0.1 <= w["start"] < t0 + d - 0.05]
-        return bool(dans) and (dans[0] == 0 or _fin(_P[dans[0] - 1])) and _fin(_P[dans[-1]])
+        # Le DERNIER mot de la vidéo finit une phrase, même si la transcription a oublié le point.
+        return bool(dans) and (dans[0] == 0 or _fin(_P[dans[0] - 1])) and (_fin(_P[dans[-1]]) or dans[-1] == len(_P) - 1)
     short = [s_ for s_ in short if not phrase_entiere(*s_)]
     # coupe visible qui ne gagne presque rien (< 0,45 s) = micro-coupure (MINCUT,« plus de micro-coupures ») : à cacher
     micro = []
@@ -321,6 +322,22 @@ if segs:
         g = segs[k][0] - segs[k - 1][1]; c = cuts[k - 1]
         if 0 < g < 0.15 and not any(a + 0.05 < c < b - 0.05 for a, b in ovl): micro.append((round(c, 2), round(g, 2)))   # serré par défaut (RUSH)
     check(not micro, "Zéro micro-coupure", f"{len(micro)} coupe(s) visible(s) qui gagnent < 0,15 s (instant, gain) : {micro} -> cacher sous un B-roll / carton" if micro else "aucune coupe visible pour rien", "Mode difficile v2")
+    # CTA dit 2 fois (2 prises différentes gardées, ex. « Pour t'inscrire, commente… » puis « Pour t'inscrire, le lien est dans
+    # ma bio ») : dans les 20 dernières secondes, deux phrases qui commencent par les 2 mêmes mots = une reprise oubliée.
+    _norm = lambda t: t.lower().strip(" ,.;:!?…«»\"'")
+    _ph, _cur = [], []
+    for w in _P:
+        _cur.append(w)
+        if w["text"].rstrip(" »\"'").endswith((".", "?", "!", "…")): _ph.append(_cur); _cur = []
+    if _cur: _ph.append(_cur)
+    _fin_v = (_P[-1]["end"] if _P else 0) - 20
+    _vus, doublon = {}, []
+    for ph in _ph:
+        if len(ph) < 3 or ph[0]["start"] < _fin_v: continue
+        k = (_norm(ph[0]["text"]), _norm(ph[1]["text"]))
+        if k in _vus: doublon.append((round(_vus[k], 2), round(ph[0]["start"], 2), " ".join(k)))
+        else: _vus[k] = ph[0]["start"]
+    check(not doublon, "CTA dit une seule fois", f"2 prises gardées à la fin (instant 1, instant 2, début) : {doublon} -> garder une seule prise (drop.json)" if doublon else "aucune phrase reprise à la fin", "CTA en double")
     check(not short, "Plans ≥ 2 s", f"{len(short)} plan(s) < 2 s (début, durée) : {short[:8]}" if short else f"{len(shots)} plans, tous ≥ 2 s ou phrase entière", "Mode difficile v2, phrase entière")
 
 # un « flash » au MILIEU d'une prise continue de
