@@ -97,9 +97,18 @@ Lis `00-planche.png`, puis en grand chaque slide douteuse. Contrôle :
 - bon mot-clé à la fin ; 8 PNG en 1080x1440.
 Corrige la description et relance.
 
-### 7. Livrer
+### 7. Slide Notes (automatique)
+Dès que le rendu est vérifié, ouvre Slide Notes SANS demander, comme Cut Notes pour les vidéos :
+1. `python3 <dossier des skills>/slides/outils/slide-notes/prepare.py <dossier du carrousel> <dossier du carrousel>/slide-notes slide-` (garde le format 3:4).
+2. Suis `slides/outils/slide-notes/SLIDE-NOTES.md`, section « Dans Claude » : page publiée (1 par carrousel, URL dans `slide-notes.url`), images en assets, `deck/current`, Artifact open.
+3. 2 boutons dans le chat : « Corriger » et « C'est parfait ». « Corriger » = lire `notes/current`, 1 ligne de plan par retour, corriger, relancer le moteur, refaire 1 à 3 (même page). « Corriger » sans note : demande en 1 ligne s'il a laissé des retours.
+
+### 8. Publier (dès « C'est parfait »)
+Propose tout de suite 2 boutons : « Publier maintenant » / « Programmer » (Blotato, skill publieur, toutes les plateformes qui prennent les carrousels, comptes par défaut). Images = `slide-1.png`, `slide-2.png`… dans l'ordre, légende = `legende.txt`. Rien ne part sans un de ces 2 clics.
+
+### 9. Livrer
 - `SendUserFile` de la planche + 3 à 5 lignes : sujet, d'où il vient (veille, script…), ce qui reste à faire.
-- Ne publie et ne programme JAMAIS sans son feu vert explicite.
+- Ne publie et ne programme JAMAIS sans son feu vert explicite (le clic « Publier maintenant » ou « Programmer » de l'étape 8).
 - Une info absente du Brain : dis « je ne l'ai pas ». Ne l'invente pas.
 
 ## Technique

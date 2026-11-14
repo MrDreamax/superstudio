@@ -2,42 +2,47 @@
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Slide Notes</title>
 <style>
-:root{--b:#0A77BD;--bl:#EAF3FA;--t:#111;--m:#6b6b6b;--line:#e6e6e6;--bg:#F6F6F4;--red:#E8553D}
+/* noir + bleu, police système Apple */
+:root{color-scheme:dark;--ground:#0B0B0D;--panel:#15171C;--raised:#1E2129;--line:#262A33;--t:#F3F4F6;--m:#9AA1AE;--b:#4F8BFF;--bl:rgba(79,139,255,.16);--red:#E8553D}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,system-ui,sans-serif;background:var(--bg);color:var(--t)}
-header{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px;padding:14px 28px}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,system-ui,sans-serif;background:var(--ground);color:var(--t)}
+header{position:sticky;top:0;z-index:5;background:rgba(11,11,13,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px;padding:14px 28px;flex-wrap:wrap}
 header h1{font-size:20px;font-weight:800;letter-spacing:-.3px}
 header h1 span{color:var(--b)}
 #count{color:var(--m);font-size:15px;flex:1}
 #saved{font-size:13px;color:var(--m)}
-button{font:inherit;cursor:pointer;border:0;border-radius:12px}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;color:var(--t)}
+:focus-visible{outline:2px solid var(--b);outline-offset:2px}
 .done{background:var(--b);color:#fff;font-weight:700;font-size:16px;padding:12px 22px}
+.done:hover{filter:brightness(1.08)}
 main{max-width:1500px;margin:0 auto;padding:24px 28px 120px}
 .help{color:var(--m);font-size:15px;margin:4px 0 22px}
-.card{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:22px;background:#fff;border:1px solid var(--line);border-radius:22px;padding:18px;margin-bottom:10px;transition:opacity .2s}
-.card img{width:100%;display:block;border-radius:12px;border:1px solid var(--line);aspect-ratio:16/9;object-fit:cover;background:#fff}
+.card{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:22px;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:18px;margin-bottom:10px;transition:opacity .2s}
+.card img{width:auto;max-width:100%;max-height:78vh;display:block;margin:0 auto;border-radius:12px;border:1px solid var(--line);background:#000}
 .side{display:flex;flex-direction:column;gap:12px}
 .num{font-size:28px;font-weight:800;letter-spacing:-.5px}
 .num small{font-size:14px;color:var(--m);font-weight:600;margin-left:6px}
-textarea{flex:1;min-height:170px;width:100%;resize:vertical;font:inherit;font-size:17px;line-height:1.4;border:1.5px solid var(--line);border-radius:14px;padding:14px;outline:none;background:#fff}
+textarea{flex:1;min-height:170px;width:100%;resize:vertical;font:inherit;font-size:17px;line-height:1.4;border:1.5px solid var(--line);border-radius:14px;padding:14px;outline:none;background:var(--ground);color:var(--t)}
+textarea::placeholder{color:var(--m)}
 textarea:focus{border-color:var(--b);box-shadow:0 0 0 4px var(--bl)}
 .row{display:flex;gap:8px;flex-wrap:wrap}
-.ghost{background:#f1f1ef;color:var(--t);font-size:14px;font-weight:600;padding:10px 14px}
-.ghost:hover{background:#e8e8e5}
+.ghost{background:var(--raised);color:var(--t);border:1px solid var(--line);font-size:14px;font-weight:600;padding:10px 14px}
+.ghost:hover{border-color:var(--m)}
 .card.del{opacity:.45}
 .card.del img{filter:grayscale(1)}
-.card.del .bdel{background:var(--red);color:#fff}
+.card.del .bdel{background:var(--red);border-color:var(--red);color:#fff}
 .badge{display:none;color:var(--red);font-weight:800;font-size:14px}
 .card.del .badge{display:inline}
-.card.new{border:2px dashed var(--b);background:#FBFDFF}
-.newslot{aspect-ratio:16/9;border-radius:12px;background:var(--bl);display:flex;align-items:center;justify-content:center;color:var(--b);font-weight:800;font-size:28px}
+.card.new{border:2px dashed var(--b);background:#111725}
+.newslot{aspect-ratio:var(--ar,16/9);max-height:78vh;border-radius:12px;background:var(--bl);display:flex;align-items:center;justify-content:center;color:var(--b);font-weight:800;font-size:28px}
 .add{display:block;margin:0 auto 10px;background:transparent;color:var(--b);font-weight:700;font-size:14px;padding:6px 14px;border-radius:999px}
 .add:hover{background:var(--bl)}
-.has textarea{border-color:#b9d6ec}
-#fin{position:fixed;inset:0;background:rgba(255,255,255,.96);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;z-index:9;text-align:center;padding:30px}
+.has textarea{border-color:rgba(79,139,255,.55)}
+#fin{position:fixed;inset:0;background:rgba(11,11,13,.97);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;z-index:9;text-align:center;padding:30px}
 #fin b{font-size:40px;letter-spacing:-1px}
 #fin p{font-size:20px;color:var(--m)}
 #fin code{background:var(--bl);color:var(--b);padding:4px 12px;border-radius:8px;font-weight:800;font-size:22px}
+@media (max-width:600px){header{padding:12px 16px;gap:10px}main{padding:16px 16px 100px}.card{padding:12px;border-radius:16px}}
 @media (max-width:900px){.card{grid-template-columns:1fr}}
 </style></head><body>
 <header><h1>Slide <span>Notes</span></h1><div id="count"></div><div id="saved"></div><button class="done" id="bdone">J'ai fini</button></header>
@@ -47,7 +52,7 @@ textarea:focus{border-color:var(--b);box-shadow:0 0 0 4px var(--bl)}
 </main>
 <div id="fin"><b>C'est noté.</b><p>Dans le chat, clique <code>Corriger</code> (je corrige tout) ou <code>C'est parfait</code> (version validée).</p><button class="ghost" onclick="fin.style.display='none'">Revenir aux slides</button></div>
 <script>
-let slides=[], items=[], timer=null, uid=1;
+let slides=[], items=[], timer=null, uid=1, db=null;
 const list=document.getElementById('list');
 function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function render(){
@@ -58,7 +63,7 @@ function render(){
     const c=document.createElement('div');
     c.className='card'+(it.type==='new'?' new':'')+(it.del?' del':'')+(it.note?' has':'');
     if(it.type==='slide'){
-      c.innerHTML=`<img src="${it.img}" loading="lazy" alt=""><div class="side">
+      c.innerHTML=`<img src="${it.img}" loading="lazy" alt="" onload="document.documentElement.style.setProperty('--ar',this.naturalWidth+'/'+this.naturalHeight)"><div class="side">
         <div class="num">Slide ${n}<small>${it.id}</small> <span class="badge">· À supprimer</span></div>
         <textarea placeholder="Ton retour sur cette slide…">${esc(it.note)}</textarea>
         <div class="row"><button class="ghost bdel">${it.del?'Garder':'Supprimer'}</button></div></div>`;
@@ -91,19 +96,38 @@ async function save(done){
   const out={done:!!done,items:items.map((x,k)=>{
     const prev=items.slice(0,k).reverse().find(y=>y.type==='slide');
     return x.type==='slide'?{type:'slide',id:x.id,note:x.note,del:!!x.del}:{type:'new',after:prev?prev.id:null,note:x.note};})};
-  try{await fetch('/api/notes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(out)});
+  try{if(db){out.saved_at=new Date().toISOString();await db.doc('notes/current').set(out);}
+    else await fetch('/api/notes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(out)});
     document.getElementById('saved').textContent='Enregistré '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
   catch(e){document.getElementById('saved').textContent='⚠ Pas enregistré';}
 }
 document.getElementById('bdone').onclick=async()=>{await save(true);document.getElementById('fin').style.display='flex'};
-(async()=>{
-  slides=await (await fetch('slides.json',{cache:'no-store'})).json();
-  let prev={};try{prev=await (await fetch('/api/notes',{cache:'no-store'})).json()}catch(e){}
-  if(prev.items&&prev.items.length){
-    const byId=Object.fromEntries(slides.map(s=>[s.id,s]));
+function build(prev){
+  const byId=Object.fromEntries(slides.map(s=>[s.id,s]));
+  if(prev&&prev.items&&prev.items.length){
     items=prev.items.filter(x=>x.type==='new'||byId[x.id]).map(x=>x.type==='slide'?{...byId[x.id],type:'slide',note:x.note||'',del:!!x.del}:{type:'new',uid:uid++,note:x.note||''});
     slides.forEach(s=>{if(!items.find(x=>x.id===s.id))items.push({...s,type:'slide',note:'',del:false})});
   }else items=slides.map(s=>({...s,type:'slide',note:'',del:false}));
   render();
+}
+/* 2 façons de tourner. En local (server.py) : slides.json + notes.json.
+   Dans Claude (artifact, capability db) : Claude écrit deck/current {slides:[{id,img}]}, les retours vont dans notes/current. */
+(async()=>{
+  try{const r=await fetch('slides.json',{cache:'no-store'});
+    if(r.ok){slides=await r.json();let prev={};try{prev=await (await fetch('/api/notes',{cache:'no-store'})).json()}catch(e){}build(prev);return;}}catch(e){}
+  const cnt=document.getElementById('count');cnt.textContent='Chargement des slides…';
+  try{db=window.claude&&typeof window.claude.use==='function'?await window.claude.use('db'):null}catch(e){db=null}
+  if(!db){cnt.textContent='Ouvre cette page dans Claude pour voir tes slides.';return}
+  let deckKey='';
+  db.doc('deck/current').onSnapshot(async snap=>{
+    const d=snap.exists?snap.data():null;
+    if(!d||!Array.isArray(d.slides)){cnt.textContent='Claude n\'a pas encore chargé les slides.';return}
+    const key=JSON.stringify(d.slides);if(key===deckKey)return;deckKey=key;
+    slides=d.slides.map(x=>({id:String(x.id),img:String(x.img)}));
+    let prev=null;
+    if(items.length)prev={items:items.map((x,k)=>x.type==='slide'?{type:'slide',id:x.id,note:x.note,del:!!x.del}:{type:'new',note:x.note})};
+    else{try{const n=await db.doc('notes/current').get();prev=n.exists?n.data():null}catch(e){}}
+    build(prev);
+  },()=>{cnt.textContent='Les slides ne se chargent pas. Recharge la page.'});
 })();
 </script></body></html>
