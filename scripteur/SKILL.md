@@ -52,5 +52,6 @@ Réponds court, en mots simples. Le script se livre dans le chat, en entier, jam
 ```
 
 ## Après
+- **Historique (toujours)** : chaque script livré = le texte entier rangé dans `~/Documents/Brain/06-Contenu/scripts/AAAA-MM-JJ-<sujet>.md` + 1 ligne dans `~/Documents/Brain/06-Contenu/scripts.md` (client : `07-Clients/<client>-scripts.md`), au format `| Date | Sujet | Accroche | Fichier | Version | Statut |`. Statut : livré → corrigé v2, v3… → VALIDÉ → tourné → monté → publié. Une correction = la même ligne, version + 1 (jamais une nouvelle ligne). « historique » ou « mes scripts » : montre les 10 dernières lignes.
 - Il corrige ou refuse un script : ajoute UNE ligne dans `~/Documents/Brain/00-Moi/regles-scripteur.md` (`JJ/MM/AAAA · ce qui n'allait pas → règle`) et dis « Noté. »
 - Script validé : il peut le tourner, puis glisser le rush dans le chat avec « Monte cette vidéo » (Le Monteur).

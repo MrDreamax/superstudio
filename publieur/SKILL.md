@@ -46,6 +46,7 @@ Durée à annoncer : ~2 min par reel.
 4. Vérifie chaque envoi (`blotato_get_post_status`) et dis le résultat réel : programmé à quelle heure, ou l'erreur exacte. Jamais « c'est fait » sans ce retour.
 5. Un refus de quota ou de plan : dis-le, n'essaie pas de contourner.
 6. 1 ligne dans `~/Documents/Brain/log.md` (date, reel, réseaux, heure).
+7. **Historique (toujours)** : chaque publication, reel OU carrousel, = 1 ligne dans le tableau de `~/Documents/Brain/06-Contenu/publications.md` : `| Date | Titre | Vidéo ou carrousel | Statut | Réseaux | Liens |` (un lien par réseau dès que `blotato_get_post_status` le donne). Jamais une ligne en texte libre sous le tableau. « historique » ou « mes publications » : montre les 10 dernières lignes.
 
 ## 4. Réponse automatique : mot-clé → lead magnet
 - 1 mot-clé = 1 automatisation Blotato : `blotato_create_automation`, déclencheurs commentaire + DM avec ce mot, DM = 1 phrase + le lien du lead magnet (bouton) + 1 question qui fait répondre.

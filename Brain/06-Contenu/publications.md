@@ -6,5 +6,5 @@ sujets: [contenu]
 ---
 # Publications
 
-| Date | Réseau | Vidéo | Mot-clé | Lien | Statut |
+| Date | Titre | Vidéo ou carrousel | Statut | Réseaux | Liens |
 |---|---|---|---|---|---|

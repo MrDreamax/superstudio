@@ -108,6 +108,7 @@ Propose tout de suite 2 boutons : « Publier maintenant » / « Programmer » (B
 
 ### 9. Livrer
 - `SendUserFile` de la planche + 3 à 5 lignes : sujet, d'où il vient (veille, script…), ce qui reste à faire.
+- **Historique (toujours)** : le dossier du carrousel reste dans `~/Documents/Contenu/carrousels/AAAA-MM-JJ-<sujet>/` (slides, planche, légende ; jamais seulement le scratchpad) + 1 ligne dans `~/Documents/Brain/06-Contenu/carrousels.md`, au format `| Date | Sujet | Slides | Dossier | Version | Statut |`. Statut : livré → corrigé v2, v3… → VALIDÉ → publié (lien). Chaque « Corriger » = la même ligne, version + 1. « historique » ou « mes carrousels » : montre les 10 dernières lignes.
 - Ne publie et ne programme JAMAIS sans son feu vert explicite (le clic « Publier maintenant » ou « Programmer » de l'étape 8).
 - Une info absente du Brain : dis « je ne l'ai pas ». Ne l'invente pas.
 
