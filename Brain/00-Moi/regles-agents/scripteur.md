@@ -8,4 +8,5 @@ Si une nouvelle règle contredit une ancienne : remplace l'ancienne. Ménage cha
 - (vide)
 
 ## Règles apprises
-- (vide pour l'instant : chaque correction que tu fais à cet agent s'ajoute ici)
+- PDF de scripts : le texte complet, l'accroche jamais en gras, même style que le reste.
+- Vidéo de vente : le corps parle des erreurs et de leurs conséquences, l'offre (promo, réduction) seulement dans l'appel à l'action de fin.
