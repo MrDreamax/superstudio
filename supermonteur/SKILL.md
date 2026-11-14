@@ -91,6 +91,8 @@ La qualité ne baisse jamais. On coupe seulement le temps perdu :
 8. **API du moteur sans la relire** : `POST /api/nouveau {rush}` → `POST /api/monter/<id> {style,cases}` → `GET /api/reel/<id>`.
 9. **Durée annoncée = durée mesurée**, jamais devinée.
 
+**Ce que le moteur fait respecter tout seul (14/11)** : Gardien en texte avant le rendu (1er mot perdu, mot à cheval, musique présente, 2e version liée), un seul rendu à la fois (`verrou.py`, se libère seul si un rendu plante), Mac gardé éveillé, outils et disque vérifiés en 1 s, rendu refusé si rien n'a changé (`FORCE=1` pour forcer), durée réelle notée et annoncée. Tout couper : `SUPERMONTEUR_VERROU=0`. Les règles 4 et 6 (diagnostic, juge) restent à moi.
+
 ## Non négociable, tous les styles (détail : `cahier-des-charges.md`)
 - **Un seul rendu visé (14/11).** Tout se vérifie en TEXTE avant de rendre, jamais par essais de rendus : (1) plages calculées sans rendu (`derush.py ... --plan`) puis lues : 1er et dernier mot de chaque plage, aucun bout < 2 s, aucun trou de voix ; (2) cases vérifiées (musique cochée, `duree_min`) ; (3) 2 versions : `plan.variantes` posé dès le départ et dernière plage ≥ 2 s ; (4) découpage des sous-titres relu (subMax, subLies, mots fusionnés) avant le rendu. Puis 1 rendu, juge, et seulement les corrections qu'il demande, groupées en 1 rendu.
 - **Un rendu raté ne se garde pas.** Dès qu'un rendu est remplacé par un meilleur, l'ancien est effacé. On garde seulement le rush et le final validé. Pas de copies en double.

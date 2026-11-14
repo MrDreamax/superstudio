@@ -10,6 +10,9 @@ import glob, html, json, os, re, subprocess, sys, time
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 S = os.path.dirname(os.path.abspath(__file__))
+# 14/11 (vitesse) : un seul rendu à la fois + Mac éveillé + durée notée = verrou.py (SUPERMONTEUR_VERROU=0 pour couper)
+if not os.environ.get("SUPERMONTEUR_VERROU_TENU") and os.environ.get("SUPERMONTEUR_VERROU") != "0":
+    os.execvp(sys.executable, [sys.executable, os.path.join(S, "verrou.py"), "--", sys.executable, os.path.abspath(__file__)] + sys.argv[1:])
 D = os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else "."); os.chdir(D)
 T0 = time.time()
 def etape(m): print(f"▶ {m}  ({time.time() - T0:.0f} s)", flush=True)
@@ -30,6 +33,17 @@ os.environ["PATH"] = f"{os.path.expanduser('~/.local/bin')}:{os.path.expanduser(
 r_ = subprocess.run(["python3", f"{S}/fin_propre.py", "plan.json"], capture_output=True, text=True)
 print(r_.stdout.strip()) if r_.stdout.strip() else None
 if r_.returncode: stop("fin_propre.py : " + (r_.stderr.strip().splitlines() or ["?"])[-1])
+# 14/11 (vitesse : 8 rendus pour 1 utile) : rien n'a changé depuis le dernier rendu = pas de rendu. FORCE=1 pour forcer.
+import hashlib
+def _empreinte():
+    h = hashlib.sha1()
+    for p in ["plan.json", "words.json", "cut.segments.json", plan.get("cam", "clip.mp4")] + [os.path.join(S, x) for x in ("express.py", "build.mjs", "mix.py")]:
+        if os.path.exists(p): h.update(p.encode()); h.update(str(os.path.getsize(p)).encode()); h.update(str(os.path.getmtime(p)).encode())
+    return h.hexdigest()
+EMP = _empreinte()
+if os.environ.get("FORCE") != "1" and os.path.exists("final.mp4") and os.path.exists("renders/express.empreinte") and open("renders/express.empreinte").read() == EMP:
+    open(os.path.expanduser("~/.cache/supermonteur/saute"), "w").close()   # verrou.py ne compte pas ce passage dans les durées
+    print("✅ rien n'a changé depuis le dernier rendu : final.mp4 est déjà à jour (aucun rendu lancé, FORCE=1 pour forcer)"); sys.exit(0)
 etape("Composition (découpage des sous-titres du moteur)")
 if run(["node", f"{S}/build.mjs", "--plan", "plan.json", "--out", "index.html"], "build.log"): stop("build.mjs (voir build.log)")
 print(open("build.log").read().strip().splitlines()[-1])
@@ -225,4 +239,5 @@ if G: stop("le Gardien final bloque : NE PAS LIVRER")
 subprocess.Popen(["python3", f"{S}/oeil_gemini.py", "final.mp4", "--sortie", "oeil-gemini.json"], stdout=open("oeil-gemini.log", "w"), stderr=subprocess.STDOUT, start_new_session=True)   # Gemini juge à côté, ne bloque pas la livraison
 fd = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", "final.mp4"]))
 t = time.time() - T0
+open("renders/express.empreinte", "w").write(EMP)
 print(f"✅ final.mp4 ({fd:.2f} s) en {int(t // 60)} min {int(t % 60)} s · planche.jpg")

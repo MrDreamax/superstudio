@@ -95,6 +95,35 @@ if segs and cam:
     _ecart = sum(b - a for a, b in segs) - duree(cam)
     check(_ecart <= 0.1, "Coupes à jour", f"cut.segments.json = {_ecart:+.2f} s de plus que {os.path.basename(cam)}" + (" : ces coupes ne décrivent pas cette vidéo, refaire le dérush (fin_propre.py ne répare que la fin posée après le rush)" if _ecart > 0.1 else ""), "studio Super v4")
 
+# 1 quinquies (1er mot de phrase mangé, vu seulement après plusieurs rendus) : vérifié EN TEXTE, avant le rendu,
+# sur les mots du rush (words.rush.json) et les coupes (cut.segments.json, en temps du rush).
+_wr = (J("words.rush.json") or {}).get("words", []) if segs else []
+if _wr and segs:
+    _dans = lambda w: any(a - 0.02 <= w["start"] and w["end"] <= b + 0.02 for a, b in segs)
+    _coupes = [w["text"] for w in _wr for a, b in segs
+               if (w["start"] < a - 0.03 and w["end"] > a + 0.08) or (w["start"] < b - 0.08 and w["end"] > b + 0.03)]
+    # Signalé, pas bloquant : les fins de mots de la transcription sont approximatives (à 0,1 s près sur un reel validé) ;
+    # le vrai blocage reste le contrôle au son « Pas de mot coupé ».
+    if _coupes: check(None, "Mot à cheval sur une coupe ? (texte)", f"à relire : {_coupes[:6]}", "règle vitesse")
+    # mot retiré collé au début d'un plan gardé, voix continue (< 0,25 s) : souvent le 1er mot d'une phrase perdu. Signalé, pas bloquant.
+    _perdus = []
+    for a, b in segs:
+        av = [w for w in _wr if a - 0.6 < w["end"] <= a + 0.02 and not _dans(w)]
+        ap = [w for w in _wr if w["start"] >= a - 0.02]
+        if av and ap and ap[0]["start"] - av[-1]["end"] < 0.25: _perdus.append(f'{a:.2f} s « {av[-1]["text"]} »')
+    if _perdus: check(None, "1er mot perdu ? (texte)", f"à relire : mot retiré juste avant un plan gardé : {_perdus[:6]}", "règle vitesse")
+# 1 sexies (14/11) : musique toujours, sauf « sans musique » demandé en toutes lettres (plan.sans_musique = true)
+_cs = plan.get("cases") or {}
+if not plan.get("sans_musique"):
+    check(_cs.get("musique", True) is not False and bool(plan.get("music")), "Musique présente (texte)",
+          "musique décochée ou absente : la remettre (sans musique seulement si écrit, plan.sans_musique = true)" if (_cs.get("musique", True) is False or not plan.get("music")) else "musique prévue", "musique toujours")
+# 1 septies (14/11) : 2 versions du même reel (dossier X et X-insta) = plan.variantes posé dès le départ (même musique permise)
+_nom = os.path.basename(os.path.abspath(D)); _base = _nom[:-6] if _nom.endswith("-insta") else _nom
+_soeur = [x for x in (_base, _base + "-insta") if x != _nom and os.path.isdir(os.path.join(os.path.dirname(os.path.abspath(D)), x))]
+if _soeur:
+    _v = {os.path.basename(str(v).rstrip("/")) for v in plan.get("variantes", [])}
+    check(all(x in _v for x in _soeur), "2e version liée (texte)", f"version sœur {_soeur} absente de plan.variantes" if not all(x in _v for x in _soeur) else f"variantes = {sorted(_v)}", "2 versions")
+
 # 2. Silence qu'on entend dans la voix (1 seul silence voulu au plus)
 if not voix: check(None, "Silences entendus", "pas de voix dérushée (cut.mp4 / plan.cam)", "Tesla v2")
 else:

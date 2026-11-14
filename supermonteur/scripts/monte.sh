@@ -5,6 +5,10 @@
 # si possible. Pourquoi : (Titanic), 87 min pour 1 reel, dont 5 rendus au lieu d'1 et 171 commandes une par une.
 # Étapes : B-rolls (prep) -> composition -> Gardien AVANT rendu -> rendu -> mix -> Gardien final -> planche de contrôle.
 D=$(cd "${1:-.}" && pwd) || exit 1; cd "$D" || exit 1
+# 14/11 (vitesse) : un seul rendu à la fois + Mac éveillé + durée notée = verrou.py (SUPERMONTEUR_VERROU=0 pour couper)
+if [ -z "$SUPERMONTEUR_VERROU_TENU" ] && [ "$SUPERMONTEUR_VERROU" != "0" ]; then
+  exec python3 "$(cd "$(dirname "$0")" && pwd)/verrou.py" -- bash "$(cd "$(dirname "$0")" && pwd)/monte.sh" "$D"
+fi
 export PATH="$HOME/.local/bin:$HOME/.local/node/bin:$PATH"
 # HyperFrames 0.8.149 : la 0.6.81 sautait une image à 4,10 / 8,17 / 16,33 / 32,17 s… (arrondi), sur tous les reels.
 S=$(cd "$(dirname "$0")" && pwd); HF="npx --yes hyperframes@0.8.149"
