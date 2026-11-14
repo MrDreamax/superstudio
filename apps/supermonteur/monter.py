@@ -95,6 +95,13 @@ def regarder(D):
         raise
 
 
+def _choix(D):
+    """Un montage déjà lancé (par l'API pendant l'analyse) garde son statut : l'analyse ajoute seulement son conseil,
+    sinon l'écran repasse en « choix » et un 2e montage part pour rien."""
+    e = lire(os.path.join(D, "etat.json"), {}) or {}
+    return {} if e.get("statut") in ("montage", "retours", "correction") or e.get("style") else {"statut": "choix", "etape": ""}
+
+
 def _regarder(D):
     e = lire(os.path.join(D, "etat.json"), {})
     rush = e["rush"]
@@ -102,7 +109,7 @@ def _regarder(D):
     if not a_du_son(rush):   # B-roll muet = B-roll + texte (la transcription plantait et l'écran restait bloqué)
         subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{duree(rush) / 3:.2f}", "-i", rush, "-frames:v", "1",
                         "-vf", "scale=540:-2", os.path.join(D, "apercu.jpg")], env=ENV)
-        return etat(D, statut="choix", etape="", conseil="Inspiration", muet=True, duree_rush=round(duree(rush), 1),
+        return etat(D, **_choix(D), conseil="Inspiration", muet=True, duree_rush=round(duree(rush), 1),
                     pourquoi="vidéo sans voix : B-roll + texte, colle le reel à reprendre")
     d = duree(rush)
     # une image du rush pour les aperçus des 5 styles (vraie image, pas un dessin)
@@ -127,7 +134,7 @@ def _regarder(D):
     # Minimaliste par défaut, toujours.
     # Le reste (images, cartons, zooms…) se demande dans Cut Notes ou au studio, jamais d'office.
     conseil, pourquoi = "Minimaliste", "par défaut : toi + sous-titres ; demande le reste dans Cut Notes"
-    etat(D, statut="choix", etape="", conseil=conseil, pourquoi=pourquoi, duree_rush=round(d, 1))
+    etat(D, **_choix(D), conseil=conseil, pourquoi=pourquoi, duree_rush=round(d, 1))
     preparer_prises(D)
 
 

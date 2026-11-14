@@ -18,6 +18,11 @@ src = sdr(src)   # rush iPhone HDR -> SDR (même fichier que cadre.py, réutilis
 drop = json.load(open(sys.argv[sys.argv.index("--drop") + 1])) if "--drop" in sys.argv else []
 W = json.load(open(words_p))["words"]
 dead = {k for a, b in drop for k in range(a, b + 1)}
+# Faux départ : la transcription marque un mot abandonné par « -- » ou « — » à la fin : il saute tout seul
+# (jamais le dernier mot du rush).
+FAUX = {i for i, w in enumerate(W[:-1]) if w.get("text", "").rstrip().endswith(("--", "—", "–"))}
+if FAUX: print(f"faux départ(s) retiré(s) : {', '.join(W[i]['text'] for i in sorted(FAUX))}")
+dead |= FAUX
 PAUSE = int(sys.argv[sys.argv.index("--pause") + 1]) if "--pause" in sys.argv else None
 keep = [w for i, w in enumerate(W) if i not in dead]
 PRE, POST, MID, MAXGAP = 0.06, 0.12, 0.15, 0.25
@@ -460,6 +465,9 @@ if "--plages" in sys.argv:
     # bord « à la main » = pas sur la même IMAGE qu'un bord auto (le calcul auto calé sur la grille des images, comme cut.segments.json
     # d'où viennent les plages) RUSH : un bord v4 à 37,20 s, à 1 image du bord auto 37,23 s, passait pour auto.
     _g = lambda t, haut: (math.ceil(t * FPS - 1e-6) if haut else math.floor(t * FPS + 1e-6)) / FPS
+    # les plages posées à la main sont calées sur la grille des images DÈS la lecture : sinon un bord hors grille,
+    # recalé plus tard, n'est plus reconnu « à la main » et le filet le recule dans le mot coupé.
+    segs = [[round(_g(a, False), 3), round(_g(b, True), 3)] for a, b in segs]
     SERRE += [b for a, b in segs if not any(abs(b - _g(y, True)) < 0.005 for x, y in _auto)]
     SERRE_D += [a for a, b in segs if not any(abs(a - _g(x, False)) < 0.005 for x, y in _auto)]
     dead = {i for i, w in enumerate(W) if not any(a - 0.02 <= (w["start"] + w["end"]) / 2 <= b + 0.02 for a, b in segs)}
