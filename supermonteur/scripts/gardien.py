@@ -157,7 +157,8 @@ if voix:
     # (RUSH, faux ❌ à 53,95 s) : pièce très calme (bruit du rush à -78 dB, sous le seuil d'écoute). Sa fin baissée
     # au niveau de la pièce tombe sous -80 dB sans qu'on entende rien disparaître : un trou ne s'entend que si la pièce s'entend.
     _fl = (J("cut.voice.json") or {}).get("floor")
-    if _fl is not None and _fl <= -72:
+    # pièce à -71,75 dB : faux ❌ (même cas qu'une pièce à -78) : une pièce à -70 dB ne s'entend pas non plus.
+    if _fl is not None and _fl <= -70:
         trous = [g for g in runs(db < -120, 6) if 0.2 < g[0] < len(db) / 100 - 0.1]   # pièce inaudible : seul un vrai zéro compte
     check(not trous, "Pas de trou de son", f"{len(trous)} silence(s) total(aux) dans la voix : {[(round(a, 2), round(b - a, 2)) for a, b in trous][:6]}"
           if trous else "aucun", "RUSH v2")

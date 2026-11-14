@@ -646,8 +646,13 @@ expr = "+".join(f"between(t,{a},{b})" for a, b in segs)
 # asetnsamples=64 : trames audio de 1,3 ms, sinon le fondu (et la coupe) se calent sur des trames de 21 ms.
 AFADE = 0.03
 GEND = room_gain(VOICE_END, segs[-1][1]) if segs and segs[-1][1] - VOICE_END > 0.05 else 1.0   # souffle final -> bruit de la pièce
-fade = "+".join((f"clip(min(min((t-{a})/{AFADE},({b}-t)/{AFADE}),max({GEND:.3f},({VOICE_END:.3f}-t)/0.06)),0,1)" if k == len(segs) - 1 else
-                 f"clip(min((t-{a})/{AFADE},({b}-t)/{AFADE}),0,1)") for k, (a, b) in enumerate(segs))   # min() d'ffmpeg = 2 arguments
+# À un raccord ENTRE DEUX PHRASES, le fondu de sortie et le fondu
+# d'entrée descendaient tous deux à zéro = 60 ms sous le bruit de la pièce (trou). Là, le son des deux côtés n'est que la
+# pièce : le fondu ne descend plus qu'à 0,5 (-6 dB), pas de clic possible. Raccord serré (mot contre mot) : fondu à zéro, comme avant.
+def _lo_fin(k, b): return 0.0 if k == len(segs) - 1 or any(abs(b - x) < 0.06 for x in SERRE) else 0.5
+def _lo_deb(k, a): return 0.0 if k == 0 or any(abs(a - x) < 0.06 for x in SERRE_D) else 0.5
+fade = "+".join((f"clip(min(min(max({_lo_deb(k, a)},(t-{a})/{AFADE}),({b}-t)/{AFADE}),max({GEND:.3f},({VOICE_END:.3f}-t)/0.06)),0,1)*between(t,{a},{b})" if k == len(segs) - 1 else
+                 f"clip(min(max({_lo_deb(k, a)},(t-{a})/{AFADE}),max({_lo_fin(k, b)},({b}-t)/{AFADE})),0,1)*between(t,{a},{b})") for k, (a, b) in enumerate(segs))   # min()/max() d'ffmpeg = 2 arguments
 # (retour : « le montage prend du temps ») : --vf "<cadre.json vf>" = le recadrage se fait ICI, sur les seules secondes
 # gardées, au lieu d'encoder tout le rush avant (cadre.py --apply). Puce vidéo du Mac (VideoToolbox) au lieu de libx264.
 # Plage de couleurs de la source gardée telle quelle (caméra = pc, iPhone = tv) : convertir pc -> tv assombrissait l'image (~5 %).

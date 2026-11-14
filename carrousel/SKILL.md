@@ -4,7 +4,7 @@ description: Le Carrousel. Carrousel Instagram (1080x1440, nombre de slides libr
 ---
 
 ## Avant tout carrousel : demander le style (obligatoire)
-Avant de faire le moindre carrousel, pose UNE question ouverte, sauf si la personne l'a déjà dit : « Quel style de carrousel tu veux ? Tu as des inspirations (captures, liens, carrousels d'autres créateurs ou les tiens) ? Glisse-les ici ou colle leur lien Instagram, c'est facultatif mais recommandé pour un résultat plus précis. » Attends la réponse. Ne pars jamais d'un style choisi au hasard.
+Avant de faire le moindre carrousel, sauf si la personne l'a déjà dit : 2 BOUTONS (AskUserQuestion). Question : « Quel style de carrousel tu veux ? » Bouton 1 (recommandé) : « Minimaliste » = le modèle sobre, sans fioriture. Bouton 2 : « S'inspirer d'un carrousel » = elle glisse des captures ou colle un lien Instagram. « Autre » reste ouvert. Ne pars jamais d'un style choisi au hasard.
 
 ## CHEZ TOI (client) : CE BLOC PASSE AVANT TOUT LE RESTE DE CE FICHIER
 

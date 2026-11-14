@@ -1,4 +1,4 @@
-> **Chez un client : la question du style est REMPLACÉE par la question ouverte du bloc client de SKILL.md. Jamais de boutons de style ni de cases à cocher dans le chat.**
+> **Chez un client : la question du style est REMPLACÉE par les 2 boutons (Minimaliste / S'inspirer d'un montage) de SKILL.md. Jamais de boutons de style ni de cases à cocher dans le chat.**
 
 # DEVINER LE FORMAT : « monte cette vidéo » = je devine, il confirme
 

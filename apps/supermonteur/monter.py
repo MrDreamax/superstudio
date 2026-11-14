@@ -154,7 +154,7 @@ def preparer_prises(D):
         fcntl.flock(v, fcntl.LOCK_EX)
         try:
             W = mots_verifies(D, lire(os.path.join(D, "etat.json"), {})["rush"])
-            ecrire(os.path.join(D, "drop.prepare.json"), {"cle": cle_mots(D), "drop": prises_par_claude(D, W) or drop_auto(W)})
+            ecrire(os.path.join(D, "drop.prepare.json"), {"cle": cle_mots(D), "drop": _p if (_p := prises_par_claude(D, W)) is not None else drop_auto(W)})
         except Exception as x:
             log_erreur(f"SuperMonteur {os.path.basename(D)} : prises pas préparées à l'écran 0 : {str(x)[:200]}")
 
@@ -702,7 +702,7 @@ def monter(D):
             W = mots_verifies(D, rush)
             prep = lire(os.path.join(D, "drop.prepare.json"), {}) or {}
             etat(D, etape="Je dérushe : dernière prise gardée, blancs coupés…")
-            drop = prep["drop"] if prep.get("cle") == cle_mots(D) and "drop" in prep else (prises_par_claude(D, W) or drop_auto(W))
+            drop = prep["drop"] if prep.get("cle") == cle_mots(D) and "drop" in prep else (_p if (_p := prises_par_claude(D, W)) is not None else drop_auto(W))   # Claude garde TOUT = [] : pas de repli
         drop = drop + mots_doubles(W, drop)
         ecrire(os.path.join(D, "drop.json"), drop)
         # Minimaliste = cadre d'origine (styles/raw.md : le cadre serré met les cheveux dans le titre) ; sinon cadre.py
@@ -933,7 +933,7 @@ def redecoupe(D):
     run(D, ["python3", os.path.join(S, "derush.py"), rush, "words.rush.json", "cut.mp4", "--drop", "drop.json", "--vf", vf] + plages, "derush.log")
     os.replace(os.path.join(D, "cut.mp4"), os.path.join(D, "clip.mp4"))
     shutil.copy2(os.path.join(D, "cut.words.json"), os.path.join(D, "words.json"))
-    run(D, ["python3", os.path.join(S, "serrer.py"), D], "serrer.out.log")
+    if not plages: run(D, ["python3", os.path.join(S, "serrer.py"), D], "serrer.out.log")   # plages posées à la main : serrer ne les re-rogne pas
     if e.get("format") != "16:9": rallonge_60(D, rush, vf)
     recaler_plan(D, avant, temps_des_mots(D))
     if os.path.exists(os.path.join(D, "drop.avant.json")): os.remove(os.path.join(D, "drop.avant.json"))
