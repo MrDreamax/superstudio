@@ -33,6 +33,24 @@ total = n / 16000
 joints, t = [], 0.0
 for a, b in segs: t += b - a; joints.append(t)
 joints = joints[:-1]
+# RUSH (flash de 0,04 s au raccord) : la somme des plages en secondes ≠ la vraie coupe dans clip.mp4 (le dérush coupe
+# à l'image, 30 i/s ; l'écart grandit jusqu'à 0,2 s en fin de clip). On MESURE chaque raccord : le plus gros saut d'image à ±0,3 s.
+_img = subprocess.run(["ffmpeg", "-v", "error", "-i", clip, "-vf", "scale=64:114,format=gray", "-f", "rawvideo", "-"],
+                      capture_output=True).stdout
+_fps = 30.0
+try:
+    _r = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v", "-show_entries", "stream=r_frame_rate", "-of", "csv=p=0", clip],
+                        capture_output=True, text=True).stdout.strip().split("/")
+    _fps = float(_r[0]) / float(_r[1] if len(_r) > 1 else 1)
+except Exception: pass
+_fr = np.frombuffer(_img, np.uint8)
+if len(_fr) >= 2 * 64 * 114:
+    _fr = _fr[: len(_fr) // (64 * 114) * 64 * 114].reshape(-1, 64 * 114).astype(np.float32)
+    _saut = np.abs(np.diff(_fr, axis=0)).mean(1)          # _saut[i] = changement entre l'image i et i+1 -> coupe à (i+1)/fps
+    def _vrai(j):
+        i0, i1 = max(0, int((j - 0.3) * _fps)), min(len(_saut), int((j + 0.3) * _fps) + 1)
+        return round((i0 + int(np.argmax(_saut[i0:i1])) + 1) / _fps, 3) if i1 > i0 else j
+    joints = [_vrai(j) for j in joints]
 
 blancs, run = [], 0
 for i, v in enumerate(np.append(calme, False)):
@@ -43,12 +61,32 @@ for i, v in enumerate(np.append(calme, False)):
 
 coupes = list(joints)                    # coupes visibles (pour la règle des 2 s)
 retire = []
+_fin = lambda w: w["text"].rstrip(" »\"'").endswith((".", "?", "!", "…", ":", ","))
+# RUSH (Gardien « respiration en début de phrase » 0,23 s sur un raccord) : au début de chaque plage, le souffle
+# avant la 1re note de voix (même détection que gardien.py 2 ter) est retiré, attaque gardée 0,03 s.
+_xx = x.astype(np.float64); _p95 = np.percentile(db, 95)
+def _trame(k):
+    f = _xx[k * 160: k * 160 + 480]
+    if len(f) < 480: return -120, 0
+    f = f - f.mean(); e = 10 * np.log10((f * f).mean() + 1e-12)
+    r = max((f[:-l] * f[l:]).sum() / np.sqrt((f[:-l] ** 2).sum() * (f[l:] ** 2).sum() + 1e-12) for l in range(40, 200, 4))
+    return e, r
+souffle = []
+for j in joints:
+    n, voix = 0, None
+    for k in range(int(j * 100), int(min(j + 1.0, total) * 100)):
+        e, r = _trame(k)
+        if e > _p95 - 11 and r > 0.55: voix = k / 100; break
+        if e > _p95 - 30 and r < 0.45: n += 1
+    # j = raccord MESURÉ dans l'image : on part pile dessus (rien de la prise d'avant mangé, aucune image de la suivante laissée)
+    # départ 0,4 image AVANT : j arrondi au millième (38,667) > vraie image (38,6667) gardait la 1re image de la prise suivante = flash
+    if voix and n >= 12 and voix - 0.03 - j > 0.05: souffle.append((round(j - 0.4 / _fps, 3), round(voix - 0.03, 3)))
 for s0, s1 in blancs:
     if s0 < 0.2 or s1 > total - 0.2: continue                 # début / fin : gérés par le dérush
     avant = [w for w in W if w["start"] < s0]
     apres = [w for w in W if w["end"] > s1]
-    # sans reprise et en parlant de manière fluide, on garde les blancs et respirations entre phrases ; on coupe serré seulement
-    # sur une grande pause ou une reprise.
+    # RUSH : « s'il n'y a pas de reprise et que je parle de manière fluide, tu peux laisser certains blancs ou
+    # respirations entre les phrases, on cut serré que quand il y a une grande pause et que je cherche mes pensées, ou quand je me reprends ».
     #  - raccord entre deux prises (joint du dérush) : au ras de la voix, queue 0,04 s, attaque 0,03 s, aucun blanc ;
     #  - dans une prise fluide : on ne touche qu'une vraie pause (>= PAUSE), ramenée à une respiration naturelle (RESPI).
     sur_joint = any(s0 - 0.1 <= j <= s1 + 0.1 for j in joints)
@@ -59,7 +97,7 @@ for s0, s1 in blancs:
         a, b = s0 + RESPI / 2, s1 - RESPI / 2
     # le seuil strict (bruit + 25 %) garde déjà les fins et attaques douces (f, s, ch) dans la voix ; les temps de mots ne
     # servent plus que de garde-fou grossier (un temps qui déborde de plus de 0,15 s dans le blanc = faux, ignoré)
-    # aux raccords les temps de mots débordent de 0,1 s dans le blanc : seul le son décide, queue 0,05 s, attaque 0,04 s
+    # aux raccords les temps de mots débordent de 0,1 s dans le blanc (RUSH) : seul le son décide, queue 0,05 s, attaque 0,04 s
     if sur_joint:
         a, b = s0 + 0.05, s1 - 0.04
     else:
@@ -70,11 +108,23 @@ for s0, s1 in blancs:
         # (studio Super, « Pas le temps de filmer » : coupe posée à 2,09 s du raccord suivant, puis le blanc retiré (0,25 s)
         # raccourcit le plan à 1,84 s -> Gardien « Plans >= 2 s » bloque) : la longueur se mesure APRÈS retrait du blanc, début et fin
         # du clip compris, avec 0,15 s de marge pour les autres blancs retirés dans le même plan.
-        if any((c < a and a - c < MINSHOT + 0.15) or (c >= a and c - b < MINSHOT + 0.15) for c in coupes + [0.0, total]): continue
+        # RUSH (3 blancs de 0,5-0,7 s gardés -> Gardien « Silences entendus » bloquait le moteur) : un plan
+        # court passe s'il contient une phrase ENTIÈRE (même règle que gardien.py, « pas une règle absolue »).
+        def _court_ok(t0, t1):
+            dans = [k for k, w in enumerate(W) if t0 - 0.1 <= w["start"] < t1 - 0.05]
+            return bool(dans) and (dans[0] == 0 or _fin(W[dans[0] - 1])) and _fin(W[dans[-1]])
+        bords = sorted(coupes + [0.0, total])
+        av = max([c for c in bords if c < a], default=0.0); ap = min([c for c in bords if c >= b], default=total)
+        if (a - av < MINSHOT + 0.15 and not _court_ok(av, a)) or (ap - b < MINSHOT + 0.15 and not _court_ok(b, ap)): continue
         coupes.append(a)
     retire.append((round(a, 3), round(b, 3)))
 
-# fin : la voix s'éteint, on garde 0,15 s (sinon le Gardien voit un « trou de son » dans la queue muette, RUSH v1)
+for s0, s1 in souffle:        # fusionné avec un blanc déjà retiré au même raccord
+    hit = [r for r in retire if r[0] - 0.05 <= s1 and s0 <= r[1] + 0.05]
+    for r in hit: retire.remove(r)
+    retire.append((min([s0] + [r[0] for r in hit]), max([s1] + [r[1] for r in hit])))
+retire.sort()
+# fin : la voix s'éteint, on garde 0,15 s (sinon le Gardien voit un « trou de son » dans la queue muette, RUSH)
 on = np.where(~calme)[0]
 fin = min(total, on[-1] / 100 + 0.15) if len(on) else total
 if fin < total - 0.1: retire.append((round(fin, 3), round(total, 3)))
@@ -113,7 +163,8 @@ def moins(segs, retire):
                 if x0 > m0: nouv.append([m0, x0])
                 if x1 < m1: nouv.append([x1, m1])
             morceaux = nouv
-        res += [[round(m0, 3), round(m1, 3)] for m0, m1 in morceaux if m1 - m0 > 0.01]
+        # un bout < 0,08 s = écart d'arrondi à l'image entre le raccord compté et le raccord mesuré, pas un vrai plan
+        res += [[round(m0, 3), round(m1, 3)] for m0, m1 in morceaux if m1 - m0 > 0.08]
     return res
 json.dump(moins(segs, retire), open(P("cut.segments.json"), "w"))
 if os.path.exists(P("cut.mp4")): os.remove(P("cut.mp4"))      # le Gardien lit cut.mp4 en priorité : c'était l'ancienne coupe
